@@ -1,0 +1,37 @@
+/* mainStyle.css */
+
+.invisible-field {
+    height: 28px !important;
+    resize: none;
+    border: none;
+    background: transparent;
+    outline: none;
+    caret-color: gray;
+    line-height: 1.75;
+    overflow-y: hidden;
+    white-space: pre-wrap;
+    spellcheck: false;
+}
+
+#conversation {
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.user {
+    text-align: right;
+    color: blue;
+}
+
+.assistant {
+    text-align: left;
+    color: green;
+}
+
+.message {
+    margin-bottom: 10px;
+}

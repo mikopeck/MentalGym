@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Mental gym</title>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='MG.png') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='mainStyle.css') }}" />
+</head>
+
+<body>
+  <img src="{{ url_for('static', filename='MG.png') }}" class="icon" />
+  <h3>A workout for what's inside.</h3>
+  {% if messages %}
+  <a href="/reset" class="btn btn-primary">Reset Conversation</a>
+  <div id="conversation">
+    {% for message in messages %}
+    {% if message.role != 'system' %}
+    <div class="{{ message.role }}">
+      <p>{{ message.content }}</p>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <form action="/" method="post">
+    <input type="text" name="message" placeholder="Describe yourself." required autocomplete="off" />
+    <input type="submit" value="▶" />
+  </form>
+</body>
