@@ -1,7 +1,9 @@
 import os
+from dotenv import load_dotenv
 import openai
 from flask import Flask, redirect, render_template, request, url_for, session
 
+load_dotenv()
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
@@ -43,7 +45,7 @@ def index():
     return render_template("index.html", messages=session['messages'])
 
 def get_pychoanalysis_context():
-    with open('SystemPrompts/PsychoAnalysisRevised.txt', 'r') as file:
+    with open('SystemPrompts/PsychoAnalysis.txt', 'r') as file:
         return file.read()
     
 @app.route("/reset", methods=["GET"])
