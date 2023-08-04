@@ -22,7 +22,10 @@
   </div>
   {% endif %}
 
-  <form action="/" method="post">
-    <textarea name="message" class="invisible-field" required placeholder="Describe yourself"></textarea>
+  <form action="/" method="post" id="message-form">
+    <textarea name="message" class="invisible-field" required onkeydown="handleEnter(event)" autofocus></textarea>
+    <input type="submit" id="submit-button" value="▶" />
+    <div id="loading-indicator" style="display: none;">Loading...</div>
   </form>
+  <script src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
