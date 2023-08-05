@@ -6,7 +6,7 @@ import openai
 from flask import Flask, redirect, render_template, request, url_for, session
 from flask_session import Session
 
-from systemGuide import update_system_role
+from systemGuide import update_system_role, get_system_message
 
 load_dotenv()
 app = Flask(__name__)
@@ -79,13 +79,7 @@ def index():
         session.modified = True
 
         # Update role
-        session = update_system_role(session)
-        session['messages'] = [
-            {
-                "role": "system",
-                "content": get_system_message(session['system_role'])
-            }
-        ]
+        update_system_role(session)
 
         # Clear the flag now that the response has been sent.
         session['response_pending'] = False
@@ -99,10 +93,3 @@ def index():
 def reset():
     session.clear()
     return redirect(url_for("index"))
-
-########
-
-def get_system_message(filename):
-    with open('SystemPrompts/'+filename+'.txt', 'r') as file:
-        return file.read()
-    

@@ -31,5 +31,18 @@ def update_system_role(session):
                 print(f"System role updated to {new_role}")
                 break
 
+    # Find the index of the last system message
+    system_message_index = next((index for index, message in reversed(list(enumerate(session['messages']))) if message['role'] == 'system'), None)
+
+    # Update the content of the last system message
+    if system_message_index is not None:
+        session['messages'][system_message_index]['content'] = get_system_message(session['system_role'])
+
     # If no keywords were found, the system role remains the same
-    return session
+    return
+
+
+def get_system_message(filename):
+    with open('SystemPrompts/'+filename+'.txt', 'r') as file:
+        return file.read()
+    
