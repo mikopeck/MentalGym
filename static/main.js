@@ -13,11 +13,20 @@ function submitForm() {
     document.getElementById('message-form').submit();
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    // Focus the textarea
+function resizeTextarea() {
     var textarea = document.querySelector(".invisible-field");
     if (textarea) {
-        textarea.focus();
+        textarea.style.height = "auto";
+        textarea.style.height = (textarea.scrollHeight) + "px";
+    }
+}
+
+// Attach the resizeTextarea function to the input event of the textarea
+document.addEventListener("DOMContentLoaded", function() {
+    var textarea = document.querySelector(".invisible-field");
+    if (textarea) {
+        textarea.addEventListener("input", resizeTextarea);
+        resizeTextarea();
     }
 
     // Scroll to the bottom of the conversation
@@ -34,6 +43,21 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 });
 
-function toggleLightMode() {
-    document.body.classList.toggle('light-mode');
+
+    function toggleLightMode() {
+        document.body.classList.toggle('light-mode');
+        // Save the current mode to localStorage
+        if (document.body.classList.contains('light-mode')) {
+            localStorage.setItem('mode', 'light');
+        } else {
+            localStorage.setItem('mode', 'dark');
+        }
+    
 }
+// Apply dark/light mode from localStorage when the page loads
+document.addEventListener("DOMContentLoaded", function() {
+    var mode = localStorage.getItem('mode');
+    if (mode === 'light') {
+        document.body.classList.add('light-mode');
+    }
+});

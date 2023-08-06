@@ -26,7 +26,7 @@
   {% endif %}
 
   <form action="/" method="post" id="message-form">
-      <textarea name="message" class="invisible-field" required onkeydown="handleEnter(event)" autofocus></textarea>
+    <textarea name="message" class="invisible-field" required onkeydown="handleEnter(event)" autofocus placeholder="Describe yourself"></textarea>
     <input type="submit" id="submit-button" value="▶" />
     <div id="loading-indicator" style="display: none;">Loading...</div>
   </form>

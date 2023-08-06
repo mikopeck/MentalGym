@@ -3,7 +3,7 @@
 body {
         font-family: Arial, sans-serif;
         background-color: #333;
-        color: #e0e0e0; /* Added this for dark mode text color */
+        color: #e0e0e0;
         padding: 20px;
 }
 
@@ -14,22 +14,16 @@ body {
 
 h3 {
         text-align: center;
-        color: #888;
+        color: #999;
 }
 
-.invisible-field {
-        color: #888;
-        resize: none;
-        border: none;
-        background: transparent;
-        outline: none;
-        caret-color: #999;
-        line-height: 1.75;
-        overflow-y: hidden;
-        white-space: pre-wrap;
-        spellcheck: false;
-        placeholder:"Describe yourself";
-        float: right;
+#message-form {
+        display: flex;
+        align-items: center;
+}
+
+#submit-button {
+        margin: 0;
 }
 
 #conversation {
@@ -39,6 +33,7 @@ h3 {
         margin-bottom: 10px;
         border-radius: 5px;
 }
+
 #conversation p {
         white-space: pre-line;
 }
@@ -55,6 +50,14 @@ h3 {
 
 .message {
         margin-bottom: 10px;
+}
+
+#submit-button {
+        float: right;
+        background: none;
+        border: none;
+        color: #888;
+        cursor: pointer;
 }
 
 .btn {
@@ -75,18 +78,23 @@ h3 {
 
 /* Light Mode Styles */
 body.light-mode {
-        background-color: #e0e0e0; /* Lighter background color */
-        color: #333; /* Darker text color */
+        background-color: #e0e0e0;
+        /* Lighter background color */
+        color: #333;
+        /* Darker text color */
 }
 
 body.light-mode h3,
 body.light-mode a {
-        color: #333; /* Darker text color */
+        color: #333;
+        /* Darker text color */
 }
 
 body.light-mode .btn {
-        background-color: #444; /* Darker button color */
-        color: white; /* Lighter button text color */
+        background-color: #444;
+        /* Darker button color */
+        color: white;
+        /* Lighter button text color */
 }
 
 body.light-mode .user {
@@ -98,7 +106,8 @@ body.light-mode .assistant {
 }
 
 body.light-mode .invisible-field {
-        color: #333; /* Darker text color */
+        color: #333;
+        /* Darker text color */
 }
 
 #light-mode-toggle {
@@ -116,4 +125,110 @@ body.light-mode .invisible-field {
 body.light-mode #light-mode-toggle {
         color: #e0e0e0;
         background-color: #333;
+}
+
+/* Responsive adjustments for screens less than 768px wide */
+@media only screen and (max-width: 768px) {
+        body {
+                padding: 10px;
+                /* Reduce padding on smaller screens */
+        }
+
+        #message-form {
+                flex-direction: column;
+                /* Stack form elements vertically */
+                align-items: flex-start;
+        }
+
+        textarea {
+                color: #333;
+        }
+
+        #submit-button {
+                width: 100%;
+                /* Full width for textarea and submit button */
+                margin-bottom: 10px;
+        }
+
+        #conversation {
+                font-size: 16px;
+                /* Adjust font size for readability */
+        }
+}
+
+textarea {
+        color: #333;
+        /* Darker color for legibility */
+        font-size: 16px;
+        /* Increased font size */
+        line-height: 1.5;
+        /* Improved line spacing */
+        background-color: #f0f0f0;
+        /* Lighter background color */
+}
+
+body {
+        font-family: Arial, sans-serif;
+        /* General font update */
+        color: #444;
+        /* General text color update */
+}
+
+/* Unfocused input effect */
+@keyframes highlight-border {
+        0% {
+                border-color: #444;
+        }
+
+        50% {
+                border-color: #999;
+        }
+
+        100% {
+                border-color: #444;
+        }
+}
+
+.invisible-field {
+        border: 2px solid #444;
+        transition: border-color 0.5s;
+        font-family: Arial, sans-serif;
+        color: #e0e0e0;
+        /* Darker color for legibility */
+        resize: none;
+        background: transparent;
+        outline: none;
+        caret-color: #999;
+        line-height: 1.75;
+        overflow-y: hidden;
+        white-space: pre-wrap;
+        spellcheck: false;
+}
+
+.invisible-field:focus {
+        border-color: transparent;
+        animation: none;
+}
+
+.invisible-field:not(:focus) {
+        animation: highlight-border 2s infinite;
+}
+@keyframes highlight-border {
+  0% { border-color: #444; }
+  50% { border-color: #666; }
+  100% { border-color: #444; }
+}
+
+.invisible-field {
+  border: 2px solid darkgray;
+  transition: border-color 0.5s;
+}
+
+.invisible-field:focus {
+  border-color: transparent; /* or any color you prefer when in focus */
+  animation: none;
+}
+
+.invisible-field:not(:focus) {
+  animation: highlight-border 2s infinite; /* 2 seconds for a full cycle */
 }
