@@ -1,72 +1,119 @@
 /* mainStyle.css */
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
-    padding: 20px;
+        font-family: Arial, sans-serif;
+        background-color: #333;
+        color: #e0e0e0; /* Added this for dark mode text color */
+        padding: 20px;
 }
 
 .icon {
-    display: block;
-    margin: 0 auto;
+        display: block;
+        margin: 0 auto;
 }
 
 h3 {
-    text-align: center;
-    color: #444;
+        text-align: center;
+        color: #888;
 }
 
 .invisible-field {
-    resize: none;
-    border: none;
-    background: transparent;
-    outline: none;
-    caret-color: gray;
-    line-height: 1.75;
-    overflow-y: hidden;
-    white-space: pre-wrap;
-    spellcheck: false;
-    placeholder:"Describe yourself";
-    float: right;
+        color: #888;
+        resize: none;
+        border: none;
+        background: transparent;
+        outline: none;
+        caret-color: #999;
+        line-height: 1.75;
+        overflow-y: hidden;
+        white-space: pre-wrap;
+        spellcheck: false;
+        placeholder:"Describe yourself";
+        float: right;
 }
 
 #conversation {
-    max-height: 500px;
-    overflow-y: auto;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
 }
 #conversation p {
-    white-space: pre-line;
+        white-space: pre-line;
 }
 
 .user {
-    text-align: left;
-    color: blue;
+        text-align: left;
+        color: #90caf9;
 }
 
 .assistant {
-    text-align: right;
-    color: green;
+        text-align: right;
+        color: #a5d6a7;
 }
 
 .message {
-    margin-bottom: 10px;
+        margin-bottom: 10px;
 }
 
 .btn {
-    display: block;
-    margin: 10px auto;
-    padding: 5px 10px;
-    color: white;
-    background-color: #444;
-    border: none;
-    border-radius: 5px;
-    text-align: center;
-    text-decoration: none;
+        display: block;
+        margin: 10px auto;
+        padding: 5px 10px;
+        color: white;
+        background-color: #444;
+        border: none;
+        border-radius: 5px;
+        text-align: center;
+        text-decoration: none;
 }
 
 #loading-indicator {
-    color: #888;
+        color: #888;
+}
+
+/* Light Mode Styles */
+body.light-mode {
+        background-color: #e0e0e0; /* Lighter background color */
+        color: #333; /* Darker text color */
+}
+
+body.light-mode h3,
+body.light-mode a {
+        color: #333; /* Darker text color */
+}
+
+body.light-mode .btn {
+        background-color: #444; /* Darker button color */
+        color: white; /* Lighter button text color */
+}
+
+body.light-mode .user {
+        color: blue;
+}
+
+body.light-mode .assistant {
+        color: green;
+}
+
+body.light-mode .invisible-field {
+        color: #333; /* Darker text color */
+}
+
+#light-mode-toggle {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        color: #333;
+        background-color: #e0e0e0;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+}
+
+body.light-mode #light-mode-toggle {
+        color: #e0e0e0;
+        background-color: #333;
 }

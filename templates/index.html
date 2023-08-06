@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 
 <head>
-  <title>Mental gym</title>
+    <title>Mental gym</title>
   <link rel="shortcut icon" href="{{ url_for('static', filename='MG.png') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='mainStyle.css') }}" />
 </head>
 
 <body>
+  
+  <button id="light-mode-toggle" onclick="toggleLightMode()">Light Mode</button>
+
   <img src="{{ url_for('static', filename='MG.png') }}" class="icon" />
   <h3>A workout for what's inside.</h3>
   {% if messages %}
   <a href="/reset" class="btn btn-primary">Reset Conversation</a>
   <div id="conversation">
-    {% for message in messages %}
-    {% if message.role != 'system' %}
-    <div class="{{ message.role }}">
-      <p>{{ message.content }}</p>
+      {% for message in messages %}
+      {% if message.role != 'system' %}
+      <div class="{{ message.role }}">
+        <p>{{ message.content }}</p>
     </div>
     {% endif %}
     {% endfor %}
@@ -23,7 +26,7 @@
   {% endif %}
 
   <form action="/" method="post" id="message-form">
-    <textarea name="message" class="invisible-field" required onkeydown="handleEnter(event)" autofocus></textarea>
+      <textarea name="message" class="invisible-field" required onkeydown="handleEnter(event)" autofocus></textarea>
     <input type="submit" id="submit-button" value="▶" />
     <div id="loading-indicator" style="display: none;">Loading...</div>
   </form>

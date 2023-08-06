@@ -7,3 +7,5 @@ If the user says they have completed a challenge previously set, output [ACHIEVE
 If a user reveals information which is in contradiction with their profile, or which is not contained in their profile and could be added, 
 output [PROFILE] followed by relevant information. The output must match the following standard format:
 {profileFormat}
+
+Be proactive in the conversation and guide the user to challenge themselves or find some topic of interest.

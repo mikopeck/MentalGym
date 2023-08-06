@@ -1,8 +1,16 @@
 function handleEnter(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault(); // prevent newline
-        document.getElementById('message-form').submit(); // submit the form
+        submitForm(); // unified form submission handling
     }
+}
+
+function submitForm() {
+    var submitButton = document.getElementById("submit-button");
+    var loadingIndicator = document.getElementById("loading-indicator");
+    submitButton.style.display = "none";
+    loadingIndicator.style.display = "block";
+    document.getElementById('message-form').submit();
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -20,18 +28,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Handle form submission
     var form = document.getElementById("message-form");
-    var submitButton = document.getElementById("submit-button");
-    var loadingIndicator = document.getElementById("loading-indicator");
-    form.onsubmit = function() {
-        submitButton.disabled = true;
-        submitButton.style.display = "none";
-        loadingIndicator.style.display = "block";
+    form.onsubmit = function(e) {
+        e.preventDefault();
+        submitForm();
     };
-
-    var submitButton = document.getElementById("submit-button");
-    if (submitButton) {
-      submitButton.addEventListener('click', function() {
-        submitButton.disabled = true;
-      });
-    }
 });
+
+function toggleLightMode() {
+    document.body.classList.toggle('light-mode');
+}
