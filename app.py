@@ -1,17 +1,18 @@
 #app.py
 
 import os
-from dotenv import load_dotenv
 import openai
+from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, url_for, session
 from flask_session import Session
 
-from systemGuide import update_system_role, get_system_message
+from systemGuide import process_ai_response, get_system_message, update_system_message, process_user_message
+from openapi import generate_response, append_assistant_response
 
 load_dotenv()
 app = Flask(__name__)
-openai.api_key = os.getenv("OPENAI_API_KEY")
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Configure the app for server-side sessions.
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -25,13 +26,7 @@ Session(app)
 @app.route("/", methods=("GET", "POST"))
 def index():
     if 'messages' not in session:
-        session['system_role'] = "PsychoAnalysis"
-        session['messages'] = [
-            {
-                "role": "system",
-                "content": get_system_message(session['system_role'])
-            }
-        ]
+        session.setdefault('messages', [])
 
     # Check if there's already a response pending.
     if session.get('response_pending', False):
@@ -39,11 +34,12 @@ def index():
         return render_template("index.html", messages=session['messages'], error="Response already pending")
 
     if request.method == "POST":
-        print("Posting")
         # Set the flag to indicate that a response is pending.
         session['response_pending'] = True
 
         userInput = request.form["message"]
+        process_user_message(userInput, session)
+        
         session['messages'].append(
             {
                 "role": "user",
@@ -52,39 +48,36 @@ def index():
         )
 
         # Get the system message(s) from the session
+        update_system_message(session)
         system_messages = [msg for msg in session['messages'] if msg['role'] == 'system']
 
         # Get the last 20 user and assistant messages
         user_assistant_messages = [msg for msg in session['messages'] if msg['role'] in ['user', 'assistant']][-20:]
 
         # Combine the system message(s) with the user and assistant messages
-        truncMsg = {
-            'messages': system_messages + user_assistant_messages
-        }
+        truncMsg = system_messages + user_assistant_messages
 
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-0613",
-            messages=truncMsg['messages'],
-            top_p=0.1
-        )
-        ai_message = response['choices'][0]['message']['content']
-        session['messages'].append(
-            {
-                "role": "assistant",
-                "content": ai_message
-            }
-        )
-        print(session['messages'])
-        print(response['usage']['prompt_tokens'])
+        response = generate_response(truncMsg)
+        append_assistant_response(session, response)
+
+        # Clear the flag now that the response has been received.
+        session['response_pending'] = False
         session.modified = True
 
-        # Update role
-        update_system_role(session)
+        session.setdefault('challenges', [])
+        session.setdefault('achievements', [])
+        session.setdefault('lessons', [])
+        session.setdefault('messages', [])
 
-        # Clear the flag now that the response has been sent.
-        session['response_pending'] = False
+        # Update role & other actions
+        process_ai_response(session)
 
-        return render_template("index.html", messages=session['messages'])
+        challenges = session['challenges']
+        achievements = session['achievements']
+        lessons = session['lessons']
+        messages=session['messages']
+
+        return render_template("index.html", messages=messages, challenges=challenges, lessons=lessons, achievements=achievements)
 
     return render_template("index.html", messages=session['messages'])
 
@@ -93,7 +86,6 @@ def index():
 def reset():
     session.clear()
     return redirect(url_for("index"))
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

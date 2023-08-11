@@ -1,34 +1,57 @@
 <!DOCTYPE html>
 
 <head>
-    <title>Mental gym</title>
-  <link rel="shortcut icon" href="{{ url_for('static', filename='MG.png') }}" />
+  <title>Mental gym</title>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='Images/MG.png') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='mainStyle.css') }}" />
 </head>
 
 <body>
-  
+
   <button id="light-mode-toggle" onclick="toggleLightMode()">Light Mode</button>
 
-  <img src="{{ url_for('static', filename='MG.png') }}" class="icon" />
-  <h3>A workout for what's inside.</h3>
-  {% if messages %}
+  <img src="{{ url_for('static', filename='Images/Tutor1.png') }}" class="icon" />
   <a href="/reset" class="btn btn-primary">Reset Conversation</a>
+  {% if messages %}
   <div id="conversation">
-      {% for message in messages %}
+    {% for message in messages %}
       {% if message.role != 'system' %}
       <div class="{{ message.role }}">
         <p>{{ message.content }}</p>
-    </div>
-    {% endif %}
+      </div>
+      {% endif %}
     {% endfor %}
   </div>
   {% endif %}
-
-  <form action="/" method="post" id="message-form">
-    <textarea name="message" class="invisible-field" required onkeydown="handleEnter(event)" autofocus placeholder="Describe yourself"></textarea>
-    <input type="submit" id="submit-button" value="▶" />
-    <div id="loading-indicator" style="display: none;">Loading...</div>
-  </form>
+  <div class="main-container">
+    <div class="left-section">
+      <form action="/" method="post" id="message-form">
+        <textarea name="message" class="user-msgbox" required onkeydown="handleEnter(event)" autofocus></textarea>
+        <input type="submit" id="submit-button" value="" />
+      </form>
+    </div>
+    <div class="right-section">
+      {% if challenges %}
+        <h4>Challenges:</h4>
+        {% for challenge in challenges %}
+          <button onclick="handleChallenge('{{ challenge | tojson | safe }}')"><img src="{{ url_for('static', filename='Images/TopicChoosing2.png') }}" class="icon" />Accept challenge: {{ challenge.description }}</button>
+        {% endfor %}
+      {% endif %}
+      {% if lessons %}
+        <h4>Lessons:</h4>
+        {% for lesson in lessons %}
+          <button onclick="handleLesson('{{ lesson | tojson | safe }}')"><img src="{{ url_for('static', filename='Images/Tutor3.png') }}" class="icon" />Start lesson: {{ lesson.description }}</button>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+  <div class="achievement-container">
+    {% if achievements %}
+        <h4>Lessons:</h4>
+        {% for achievement in achievements %}
+          <p><img src="{{ url_for('static', filename='Images/achievement.png') }}" class="icon" />New achievement: {{ achievement.description }}!</p>
+        {% endfor %}
+      {% endif %}
+  </div>
   <script src="{{ url_for('static', filename='main.js') }}"></script>
 </body>

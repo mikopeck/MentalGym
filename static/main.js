@@ -1,29 +1,27 @@
 function handleEnter(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault(); // prevent newline
-        submitForm(); // unified form submission handling
+        e.preventDefault();
+        submitForm();
     }
 }
 
 function submitForm() {
-    var submitButton = document.getElementById("submit-button");
-    var loadingIndicator = document.getElementById("loading-indicator");
-    submitButton.style.display = "none";
-    loadingIndicator.style.display = "block";
+    var messageBox = document.querySelector(".user-msgbox");
+    messageBox.classList.add('disabled-text-effect');
+    // apply effect also to any buttons for challenge & lesson accepts
     document.getElementById('message-form').submit();
 }
 
 function resizeTextarea() {
-    var textarea = document.querySelector(".invisible-field");
+    var textarea = document.querySelector(".user-msgbox");
     if (textarea) {
         textarea.style.height = "auto";
         textarea.style.height = (textarea.scrollHeight) + "px";
     }
 }
 
-// Attach the resizeTextarea function to the input event of the textarea
 document.addEventListener("DOMContentLoaded", function() {
-    var textarea = document.querySelector(".invisible-field");
+    var textarea = document.querySelector(".user-msgbox");
     if (textarea) {
         textarea.addEventListener("input", resizeTextarea);
         resizeTextarea();
@@ -43,16 +41,15 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 });
 
-
-    function toggleLightMode() {
-        document.body.classList.toggle('light-mode');
-        // Save the current mode to localStorage
-        if (document.body.classList.contains('light-mode')) {
-            localStorage.setItem('mode', 'light');
-        } else {
-            localStorage.setItem('mode', 'dark');
-        }
-    
+// DARK/LIGHT
+function toggleLightMode() {
+    document.body.classList.toggle('light-mode');
+    // Save the current mode to localStorage
+    if (document.body.classList.contains('light-mode')) {
+        localStorage.setItem('mode', 'light');
+    } else {
+        localStorage.setItem('mode', 'dark');
+    }
 }
 // Apply dark/light mode from localStorage when the page loads
 document.addEventListener("DOMContentLoaded", function() {
@@ -61,3 +58,20 @@ document.addEventListener("DOMContentLoaded", function() {
         document.body.classList.add('light-mode');
     }
 });
+
+// LESSON & CHALLENGE
+
+function handleChallenge(challenge) {
+    changeUserText("Accept challenge: " + challenge.description);
+    submitForm();
+}
+
+function handleLesson(lesson) {
+    changeUserText("Start lesson: " +  lesson.description);
+    submitForm();
+}
+
+function changeUserText(desiredText) {
+    var textarea = document.querySelector('.user-msgbox');
+    textarea.value = desiredText;
+}

@@ -1,0 +1,3 @@
+Your task is to summarize the challenge which follows the [CHALLENGE] keyword in only 5 words. 
+If there is only one occurrence of the keyword, output only those 5 words.
+If there are multiple occurrences of the [CHALLENGE] keyword, make a summary of each and divide the five-word summaries with semi-colons.
