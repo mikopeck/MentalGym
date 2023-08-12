@@ -60,9 +60,6 @@ def index():
         response = generate_response(truncMsg)
         append_assistant_response(session, response)
 
-        # Clear the flag now that the response has been received.
-        session['response_pending'] = False
-        session.modified = True
 
         session.setdefault('challenges', [])
         session.setdefault('achievements', [])
@@ -77,6 +74,10 @@ def index():
         lessons = session['lessons']
         messages=session['messages']
 
+        print(session)        
+        # Clear the flag now that the response has been received.
+        session['response_pending'] = False
+        session.modified = True
         return render_template("index.html", messages=messages, challenges=challenges, lessons=lessons, achievements=achievements)
 
     return render_template("index.html", messages=session['messages'])

@@ -44,11 +44,15 @@ document.addEventListener("DOMContentLoaded", function() {
 // DARK/LIGHT
 function toggleLightMode() {
     document.body.classList.toggle('light-mode');
+    var btn = document.getElementById("light-mode-toggle");
+
     // Save the current mode to localStorage
     if (document.body.classList.contains('light-mode')) {
         localStorage.setItem('mode', 'light');
+        btn.value = "Dark mode"
     } else {
         localStorage.setItem('mode', 'dark');
+        btn.value = "Light mode"
     }
 }
 // Apply dark/light mode from localStorage when the page loads

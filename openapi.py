@@ -19,5 +19,3 @@ def append_assistant_response(session, response):
                 "content": ai_message
             }
         )
-
-def append_user_message

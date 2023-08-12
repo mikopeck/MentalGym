@@ -1,0 +1,4 @@
+Your task is to write a short text description of any lessons which immediately follow the [LESSON] keyword. 
+Delimit multiple descriptions with semi-colons.
+Create one description per keyword.
+Limit the description length for each lesson to about 20 words.

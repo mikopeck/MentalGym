@@ -28,12 +28,14 @@ def process_ai_response(session):
     if "[PROFILE]" in keywords_present:        
         if 'profile' not in session:
             # First time profile
+            session['profile'] = last_assistant_message.split("[PROFILE]", 1)[1]
+            print("profile set:", session['profile'])
+            session['messages'].pop()
             session['system_role'] = "TopicChoosing"
             update_system_message(session)
-            session['profile'] = last_assistant_message.split("[PROFILE]", 1)[1]
-            session['messages'].pop()
             response = generate_response(session['messages'])
             append_assistant_response(session, response)
+            process_ai_response(session)
             return
         else:
             # Already has a profile
@@ -82,6 +84,8 @@ def process_ai_response(session):
 def create_entries(keyword, role_name, session, last_assistant_message):
     role = session['system_role']
     session['system_role'] = role_name
+
+    #SPLIT MESSAGE BY KEYWORD
     create_message = [
         {
             "role": "system",
@@ -126,7 +130,7 @@ def get_system_message(session):
         system_message = file.read()
 
     # Replace all occurrences of {user-profile} with session['profile']
-    profile_content = session['profile'] if 'profile' in session else ''
+    profile_content = session['profile'] if 'profile' in session else '!!NO PROFILE!!'
     system_message = system_message.replace("{user-profile}", profile_content)
 
     # Replace all occurrences of {profile} with the content of profile.txt

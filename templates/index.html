@@ -26,7 +26,7 @@
   <div class="main-container">
     <div class="left-section">
       <form action="/" method="post" id="message-form">
-        <textarea name="message" class="user-msgbox" required onkeydown="handleEnter(event)" autofocus></textarea>
+        <textarea name="message" class="user-msgbox" required onkeydown="handleEnter(event)" autofocus ></textarea>
         <input type="submit" id="submit-button" value="" />
       </form>
     </div>
@@ -34,13 +34,13 @@
       {% if challenges %}
         <h4>Challenges:</h4>
         {% for challenge in challenges %}
-          <button onclick="handleChallenge('{{ challenge | tojson | safe }}')"><img src="{{ url_for('static', filename='Images/TopicChoosing2.png') }}" class="icon" />Accept challenge: {{ challenge.description }}</button>
+          <button onclick="handleChallenge('{{ challenge | tojson | safe }}')"><img src="{{ url_for('static', filename='Images/TopicChoosing2.png') }}" class="icon" />Accept challenge: {{ challenge }}</button>
         {% endfor %}
       {% endif %}
       {% if lessons %}
         <h4>Lessons:</h4>
         {% for lesson in lessons %}
-          <button onclick="handleLesson('{{ lesson | tojson | safe }}')"><img src="{{ url_for('static', filename='Images/Tutor3.png') }}" class="icon" />Start lesson: {{ lesson.description }}</button>
+          <button onclick="handleLesson('{{ lesson | tojson | safe }}')"><img src="{{ url_for('static', filename='Images/Tutor3.png') }}" class="icon" />Start lesson: {{ lesson }}</button>
         {% endfor %}
       {% endif %}
     </div>
@@ -49,7 +49,7 @@
     {% if achievements %}
         <h4>Lessons:</h4>
         {% for achievement in achievements %}
-          <p><img src="{{ url_for('static', filename='Images/achievement.png') }}" class="icon" />New achievement: {{ achievement.description }}!</p>
+          <p><img src="{{ url_for('static', filename='Images/achievement.png') }}" class="icon" />New achievement: {{ achievement }}!</p>
         {% endfor %}
       {% endif %}
   </div>

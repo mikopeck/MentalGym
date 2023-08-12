@@ -1,0 +1,3 @@
+Your task is to summarize any challenges which follow the [CHALLENGE] keyword. 
+Delimit multiple summaries with semi-colons.
+Create one summary per keyword, and include all details necessary to complete the given challenge. 

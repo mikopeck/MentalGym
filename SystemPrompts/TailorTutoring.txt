@@ -1,9 +1,7 @@
 You will receive a comprehensive profile of a student, characterized by distinct attributes including:
-Prior knowledge
-Learning goals
-Learning pace
-Study habits
-Motivation
+
+{profile}
+
 Your task is to craft detailed instructions for a tutor, outlining strategies and methodologies to effectively teach and actively engage the student. 
 The goal is to create an educational experience that is as personalized and tailored to the unique needs and characteristics of the student as possible.
 These instructions should encompass comprehensive guides that are not confined to a specific subject but are universally applicable across various fields of study. 
