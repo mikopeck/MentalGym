@@ -1,1 +1,1 @@
-Your task is to summarize the achievement in plain sentences. Output only the summary. 
+Summarize the achievements separated by semi-colons in plain sentences.

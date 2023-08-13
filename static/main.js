@@ -66,12 +66,12 @@ document.addEventListener("DOMContentLoaded", function() {
 // LESSON & CHALLENGE
 
 function handleChallenge(challenge) {
-    changeUserText("Accept challenge: " + challenge.description);
+    changeUserText("Accept challenge: " + challenge);
     submitForm();
 }
 
 function handleLesson(lesson) {
-    changeUserText("Start lesson: " +  lesson.description);
+    changeUserText("Start lesson: " +  lesson);
     submitForm();
 }
 
