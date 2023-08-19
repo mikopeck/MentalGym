@@ -1,26 +1,40 @@
 # systemGuide.py
 
 from flask import request
-from openapi import generate_response, append_assistant_response
+from openapi import generate_response, append_assistant_response, create_message
 
-keywords = {
+ai_keywords = {
     "[PROFILE]",
     "[ACHIEVEMENT]",
     "[CHALLENGE]",
     "[LESSON]",
-    "[END-COMPLETE]",
-    "[END-USER]",
-    "[END-SYSTEM]"
+    "[END-COMPLETE]"
+}
+
+user_keywords ={
+    "End lesson.",
+    "Continue to quiz."
 }
 
 def process_ai_response(session):
+    # Progress roles if needed.
+    if session['system_role'] == "TutorInitialLesson":
+        session['system_role'] = "TutorContinue"
+
+    # Ensure default actions.
+    session['actions'] = []
+    if session['system_role'] == "TutorContinue":
+        session['actions'].append("Continue to quiz.")
+        session['actions'].append("End lesson.")
+
+    if session['system_role'] == "TutorQuiz":
+        session['actions'].append("End lesson.")
+
     # Get the last assistant message from the session
     last_assistant_message = [message['content'] for message in session['messages'] if message['role'] == 'assistant'][-1]
 
-    # Define the keywords and corresponding system roles
-
     # Check if any keywords are present in the last assistant message
-    keywords_present = [keyword for keyword in keywords if keyword in last_assistant_message]
+    keywords_present = [keyword for keyword in ai_keywords if keyword in last_assistant_message]
 
     # If there were no keywords, return.
     if not keywords_present:
@@ -42,16 +56,7 @@ def process_ai_response(session):
             # Already has a profile
             role = session['system_role']
             session['system_role'] = "ProfileUpdate"
-            profile_update_message = [
-                {
-                    "role": "system",
-                    "content": get_system_message(session)
-                },
-                {
-                    "role": "user",
-                    "content": session['profile'] + last_assistant_message
-                }
-            ]
+            profile_update_message = create_message(get_system_message(session), session['profile'] + last_assistant_message)
             response = generate_response(profile_update_message)
             ai_message = response['choices'][0]['message']['content']
             if "[PROFILE]" in ai_message:
@@ -62,17 +67,13 @@ def process_ai_response(session):
             update_system_message(session)
 
     if "[CHALLENGE]" in keywords_present:
-        create_entries("challenge", "ChallengeSummaries", session, last_assistant_message)
+        create_entries("challenge", session, last_assistant_message)
 
     if "[ACHIEVEMENT]" in keywords_present:
-        create_entries("achievement", "AchievementSummaries", session, last_assistant_message)
+        create_entries("achievement", session, last_assistant_message)
 
     if "[LESSON]" in keywords_present:
-        create_entries("lesson", "LessonSummaries", session, last_assistant_message)
-    
-    if "[END-USER]" in keywords_present or "[END-SYSTEM]" in keywords_present:
-        session['system_role'] = "TopicChoosing"
-        update_system_message(session)
+        create_entries("lesson", session, last_assistant_message)
         
     if "[END-COMPLETE]" in keywords_present:
         session.setdefault('achievements', [])
@@ -82,31 +83,29 @@ def process_ai_response(session):
 
     return
 
-def create_entries(keyword, role_name, session, last_assistant_message):
-    role = session['system_role']
-    session['system_role'] = role_name
-
-    #SPLIT MESSAGE BY KEYWORD
+def create_entries(keyword, session, last_assistant_message):
     entries = extract_by_keyword(last_assistant_message, keyword)
     user_prompt = ";".join(entries)
 
-    create_message = [
-        {
-            "role": "system",
-            "content": get_system_message(session)
-        },
-        {
-            "role": "user",
-            "content": user_prompt
-        }
-    ]
-    response = generate_response(create_message)
+    role = session['system_role']
+    if ";" in user_prompt:
+        session['system_role'] = keyword + "Summaries"
+    else:
+        session['system_role'] = keyword + "Summary"
+
+    message = create_message(get_system_message(session), user_prompt)
+    response = generate_response(message)
 
     descriptions = response['choices'][0]['message']['content'].split(';')
     for description in descriptions:
         description = description.strip()
         if description:
-            session[keyword + 's'].append(description)
+            if keyword == "challenge":
+                session['actions'].append("Accept challenge: "+description)
+            if keyword == "lesson":
+                session['actions'].append("Start lesson: "+description)
+            if keyword == "achievement":
+                session['achievements'].append(description)
     session['system_role'] = role
 
 def extract_by_keyword(message, keyword):
@@ -129,7 +128,7 @@ def extract_by_keyword(message, keyword):
             continue
 
         # Check if the current position starts with any other keyword
-        if inside_section and any(message[i:].startswith(other_keyword) for other_keyword in keywords):
+        if inside_section and any(message[i:].startswith(other_keyword) for other_keyword in ai_keywords):
             inside_section = False
             result.append(current_string.strip())
             current_string = ''
@@ -173,6 +172,10 @@ def get_system_message(session):
     profile_content = session['profile'] if 'profile' in session else '!!NO PROFILE!!'
     system_message = system_message.replace("{user-profile}", profile_content)
 
+    # Replace all occurrences of {tutor-generated} with session['tutor']
+    tutor_content = session['tutor'] if 'tutor' in session else '!!NO TUTOR!!'
+    system_message = system_message.replace("{tutor-generated}", tutor_content)
+
     # Replace all occurrences of {profile} with the content of profile.txt
     with open('SystemPrompts/profile.txt', 'r') as profile_file:
         profile_content = profile_file.read()
@@ -186,28 +189,40 @@ def get_system_message(session):
     return system_message
 
 def process_user_message(user_message, session):
+    if user_message == "End lesson.":
+        session['system_role'] = "TopicChoosing"
+        update_system_message(session)
+        return
+
+    if user_message == "Continue to quiz.":
+        session['system_role'] = "TutorQuiz"
+        update_system_message(session)
+        return
+
     if ':' not in user_message:
         return
-    action, description = user_message.split(':', 1)
+    
+    action = user_message.split(':', 1)[0]
     action = action.strip()
-    description = description.strip()
 
-    # Check if the action is to start a lesson
     if action.lower() == "start lesson":
-        # Verify if the description is in the session's lessons
-        if description in session.get('lessons', []):
-            # Handle the logic to start the lesson with the given description
-            session['current_lesson'] = description
-            print(f"Lesson '{description}' started.")
+        if user_message in session.get('actions', []):
+            session['current_lesson'] = user_message
+            print(f"Lesson '{user_message}' started.")
+            # Prompt tutor creator with profile
+            session['system_role'] = "TailorTutoring"
+            tutor_create_message = create_message(get_system_message(session), session['profile'])
+            response = generate_response(tutor_create_message)
+            session['tutor'] = response['choices'][0]['message']['content']
+            session['system_role'] = "TutorInitialLesson"
+            update_system_message(session)
+            return
         else:
-            print(f"Lesson '{description}' not found.")
+            print(f"Lesson '{user_message}' not found.")
 
-    # Check if the action is to accept a challenge
     elif action.lower() == "accept challenge":
-        # Verify if the description is in the session's challenges
-        if description in session.get('challenges', []):
-            # Handle the logic to accept the challenge with the given description
-            session['current_challenge'] = description
-            print(f"Challenge '{description}' accepted.")
+        if user_message in session.get('challenges', []):
+            session['current_challenge'] = user_message
+            print(f"Challenge '{user_message}' accepted.")
         else:
-            print(f"Challenge '{description}' not found.")
+            print(f"Challenge '{user_message}' not found.")

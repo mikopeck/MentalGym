@@ -3,7 +3,7 @@
 import os
 import openai
 from dotenv import load_dotenv
-from flask import Flask, redirect, render_template, request, url_for, session
+from flask import Flask, redirect, render_template, request, url_for, session, jsonify
 from flask_session import Session
 
 from systemGuide import process_ai_response, get_system_message, update_system_message, process_user_message
@@ -27,6 +27,8 @@ Session(app)
 def index():
     if 'messages' not in session:
         session.setdefault('messages', [])
+        session.setdefault('actions', [])
+        session.setdefault('achievements', [])
 
     # Check if there's already a response pending.
     if session.get('response_pending', False):
@@ -60,25 +62,17 @@ def index():
         response = generate_response(truncMsg)
         append_assistant_response(session, response)
 
-
-        session.setdefault('challenges', [])
-        session.setdefault('achievements', [])
-        session.setdefault('lessons', [])
-        session.setdefault('messages', [])
-
-        # Update role & other actions
+        # Update role & other actions.
         process_ai_response(session)
 
-        challenges = session['challenges']
+        actions = session['actions']
         achievements = session['achievements']
-        lessons = session['lessons']
-        messages=session['messages']
 
         print(session)        
         # Clear the flag now that the response has been received.
         session['response_pending'] = False
         session.modified = True
-        return render_template("index.html", messages=messages, challenges=challenges, lessons=lessons, achievements=achievements)
+        return jsonify(messages=session['messages'], actions=actions, achievements=achievements)
 
     return render_template("index.html", messages=session['messages'])
 

@@ -43,7 +43,7 @@ body {
         white-space: pre-line;
     }
     
-    .user, .assistant {
+    .user {
         color: #90caf9;
         text-align: left;
     }
@@ -65,12 +65,15 @@ body {
         color: #888;
         cursor: pointer;
     }
-    
-    textarea {
-        color: #333;
-        font-size: 16px;
-        line-height: 1.5;
-        background-color: #f0f0f0;
+
+    #action-btn {
+        padding: 5px 10px;
+        color: white;
+        background-color: #11131d;
+        border: none;
+        border-radius: 5px;
+        text-align: center;
+        text-decoration: none;
     }
 
     .main-container {
@@ -133,31 +136,6 @@ body {
         background-color: #333;
     }
     
-    /* Responsive adjustments for screens less than 768px wide */
-    @media only screen and (max-width: 768px) {
-        body {
-            padding: 10px;
-        }
-    
-        #message-form {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-    
-        #submit-button {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-    
-        #conversation {
-            font-size: 16px;
-        }
-    
-        textarea {
-            color: #333;
-        }
-    }
-    
     /* Effects */
     @keyframes highlight-border {
         0%, 100% {
@@ -196,5 +174,19 @@ body {
     
     .disabled-text-effect {
         transition: color 0.5s;
-        color: #555;
+        color: #90caf9;
     }
+
+    @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      
+      .fade-in {
+        animation: fadeIn 0.5s ease-in;
+      }
+      
