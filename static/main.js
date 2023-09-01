@@ -24,8 +24,8 @@ function submitForm() {
 
             // Update the page
             // Actions
-            var rightSection = document.querySelector(".right-section");
-            rightSection.innerHTML = '';
+            var actionSection = document.querySelector(".action-section");
+            actionSection.innerHTML = '';
             response.actions.forEach(function(action) {
                 var button = document.createElement("button");
                 button.id = "action-btn";
@@ -33,14 +33,14 @@ function submitForm() {
                 button.onclick = function() { handleAction(action); };
 
                 var img = document.createElement("img");
-                img.src = "/Images/TopicChoosing2.png";
+                img.src = lessonUrl;
                 img.className = "icon";
                 button.appendChild(img);
 
                 var text = document.createTextNode(action);
                 button.appendChild(text);
 
-                rightSection.appendChild(button);
+                actionSection.appendChild(button);
             });
             // Conversation
             var conversationDiv = document.getElementById("conversation");

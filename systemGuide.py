@@ -11,7 +11,7 @@ ai_keywords = {
     "[END-COMPLETE]"
 }
 
-user_keywords ={
+user_keywords = {
     "End lesson.",
     "Continue to quiz."
 }
@@ -47,7 +47,7 @@ def process_ai_response(session):
             print("profile set:", session['profile'])
             session['messages'].pop()
             session['system_role'] = "TopicChoosing"
-            update_system_message(session)
+            change_system_message(session)
             response = generate_response(session['messages'])
             append_assistant_response(session, response)
             process_ai_response(session)
@@ -58,13 +58,10 @@ def process_ai_response(session):
             session['system_role'] = "ProfileUpdate"
             profile_update_message = create_message(get_system_message(session), session['profile'] + last_assistant_message)
             response = generate_response(profile_update_message)
-            ai_message = response['choices'][0]['message']['content']
-            if "[PROFILE]" in ai_message:
-                session['profile'] = last_assistant_message.split("[PROFILE]", 1)[1]
-            else:
-                print("Unsuccessful profile update", ai_message)
+            ai_message = last_assistant_message.split("[PROFILE]", 1)[1]
+            print("Profile updated: ", ai_message)
             session['system_role'] = role
-            update_system_message(session)
+            change_system_message(session)
 
     if "[CHALLENGE]" in keywords_present:
         create_entries("challenge", session, last_assistant_message)
@@ -77,14 +74,15 @@ def process_ai_response(session):
         
     if "[END-COMPLETE]" in keywords_present:
         session.setdefault('achievements', [])
-        session['achievement'].append(session['lesson'])
+        session['achievement'].append(session['current_lesson'])
         session['system_role'] = "TopicChoosing"
-        update_system_message(session)
+        change_system_message(session)
 
     return
 
 def create_entries(keyword, session, last_assistant_message):
     entries = extract_by_keyword(last_assistant_message, keyword)
+    print(entries)
     user_prompt = ";".join(entries)
 
     role = session['system_role']
@@ -116,7 +114,7 @@ def extract_by_keyword(message, keyword):
     if keyword_with_brackets not in message:
         return result
 
-    # Iterate through the message by characters
+     # Iterate through the message by characters
     inside_section = False
     current_string = ''
     i = 0
@@ -128,9 +126,10 @@ def extract_by_keyword(message, keyword):
             continue
 
         # Check if the current position starts with any other keyword
-        if inside_section and any(message[i:].startswith(other_keyword) for other_keyword in ai_keywords):
+        if inside_section and message[i:].startswith("["):
             inside_section = False
             result.append(current_string.strip())
+            print("--------------appending", current_string)
             current_string = ''
             continue
 
@@ -139,25 +138,29 @@ def extract_by_keyword(message, keyword):
 
         i += 1
 
+    # Append any remaining text
     if current_string:
         result.append(current_string.strip())
 
     return result
     
-def update_system_message(session):
-    # Find the index of the last system message
-    system_message_index = next((index for index, message in reversed(list(enumerate(session['messages']))) if message['role'] == 'system'), None)
-
-    # Update the content of the last system message
-    if system_message_index is not None:
-        session['messages'][system_message_index]['content'] = get_system_message(session)
-    else:
-        session['messages'].append(
-            {
-                "role": "system",
-                "content": get_system_message(session)
-            }
-        )
+def change_system_message(session):
+    print("Updating system role: ", session['system_role'])
+    # remove old
+    if 'messages' not in session:
+        session.setdefault('messages', [])
+    elif not session['messages']:
+        system_message_index = next((index for index, message in reversed(list(enumerate(session['messages']))) if message['role'] == 'system'), None)
+        if system_message_index is not None:
+            del session['messages'][system_message_index]
+    
+    # add new
+    session['messages'].append(
+        {
+            "role": "system",
+            "content": get_system_message(session)
+        }
+    )
 
 def get_system_message(session):
     # Default role.
@@ -188,15 +191,29 @@ def get_system_message(session):
 
     return system_message
 
+def prepare_session_messages(session):
+    system_messages = [msg for msg in session['messages'] if msg['role'] == 'system']
+    if not system_messages:
+        change_system_message(session)
+        system_messages = [msg for msg in session['messages'] if msg['role'] == 'system']
+
+    # Limit messages
+    limited_messages = [msg for msg in session['messages']][-16:]
+
+    if not [msg for msg in limited_messages if msg['role'] == 'system']:
+        return system_messages + limited_messages
+    else:
+        return limited_messages
+
 def process_user_message(user_message, session):
     if user_message == "End lesson.":
         session['system_role'] = "TopicChoosing"
-        update_system_message(session)
+        change_system_message(session)
         return
 
     if user_message == "Continue to quiz.":
         session['system_role'] = "TutorQuiz"
-        update_system_message(session)
+        change_system_message(session)
         return
 
     if ':' not in user_message:
@@ -215,14 +232,14 @@ def process_user_message(user_message, session):
             response = generate_response(tutor_create_message)
             session['tutor'] = response['choices'][0]['message']['content']
             session['system_role'] = "TutorInitialLesson"
-            update_system_message(session)
+            change_system_message(session)
             return
         else:
             print(f"Lesson '{user_message}' not found.")
 
     elif action.lower() == "accept challenge":
         if user_message in session.get('challenges', []):
-            session['current_challenge'] = user_message
+            session['challenges'].append(user_message)
             print(f"Challenge '{user_message}' accepted.")
         else:
             print(f"Challenge '{user_message}' not found.")

@@ -18,7 +18,7 @@ def generate_response(messages, max_retries=10, delay=10):
     else:
         print("Max retries reached. Unable to generate response.")
         return None
-
+    
 def append_assistant_response(session, response):
     ai_message = response['choices'][0]['message']['content']
 
@@ -40,3 +40,13 @@ def create_message(system_message, user_message):
             "content": user_message
         }
     ]
+
+def initialize_session(session):
+    session.setdefault('actions', [])
+    session.setdefault('achievements', [])
+    session['messages'].append(
+        {
+            "role": "assistant",
+            "content": "Hello! I'm Azalea, and I'm here to help you grow and achieve your goals. Is there anything you like to learn about today?"
+        }
+    )
