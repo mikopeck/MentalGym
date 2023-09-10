@@ -3,77 +3,86 @@
 import os
 import openai
 from dotenv import load_dotenv
-from flask import Flask, redirect, render_template, request, url_for, session, jsonify
-from flask_session import Session
+from flask import Flask, redirect, render_template, request, url_for, jsonify
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_migrate import Migrate
 
-from systemGuide import process_ai_response, process_user_message, prepare_session_messages, change_system_message
-from openapi import generate_response, append_assistant_response, initialize_session
+from systemGuide import process_ai_response, process_user_message, prepare_session_messages, initialize_session
+from openapi import generate_response
+from models import db, User
+from db_handlers import add_user_message, add_ai_response, get_recent_messages, get_actions, clear_chat_history
+
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Configure the app for server-side sessions.
-app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_USE_SIGNER'] = True
-app.config['SESSION_KEY_PREFIX'] = 'mental_gym:'
-app.config['SESSION_FILE_DIR'] = os.path.join(app.root_path, 'session_data')
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+@login_manager.user_loader
+def load_user(user_id):
+    session = db.session
+    return session.get(User, int(user_id))
 
-Session(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI') or 'mysql+pymysql://root:password@localhost/mind_forge_ai'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db.init_app(app)
+with app.app_context():
+    db.create_all()
 
 @app.route("/", methods=("GET", "POST"))
 def index():
-    if 'messages' not in session:
-        session['system_role'] = "PsychoAnalysis"
-        change_system_message(session)
-        initialize_session(session)
-        print("rendering", session)
-        return render_template("index.html", messages=session['messages'])
-
-    # Check if there's already a response pending.
-    if session.get('response_pending', False):
-        print("Response already pending")
-        return render_template("index.html", messages=session['messages'], error="Response already pending")
-
-    if request.method == "POST":
-        # Set the flag to indicate that a response is pending.
-        session['response_pending'] = True
-
+    if not current_user.is_authenticated:
+        return render_template("index.html", messages=[])
+    elif request.method == "POST":
         userInput = request.form["message"]
-        process_user_message(userInput, session)
+        add_user_message(current_user.id, userInput)
+        process_user_message(current_user.id, userInput)
         
-        session['messages'].append(
-            {
-                "role": "user",
-                "content": userInput
-            }
-        )
-
-        truncMsg = prepare_session_messages(session)
+        truncMsg = prepare_session_messages(current_user.id)
         response = generate_response(truncMsg)
-        append_assistant_response(session, response)
+        add_ai_response(current_user.id, response)
+        process_ai_response(current_user.id, response)
 
-        # Update role & other actions.
-        process_ai_response(session)
-
-        actions = session['actions']
-        achievements = session['achievements']
-
-        session_copy = session.copy() 
-        session_copy.pop('messages', None)
-        print(session_copy)
-
-        session['response_pending'] = False
-        session.modified = True
-        return jsonify(messages=session['messages'], actions=actions, achievements=achievements)
-
-    return render_template("index.html", messages=session['messages'])
-
+        return jsonify(messages=get_recent_messages(current_user.id), actions=get_actions(current_user.id))
+    return render_template("index.html", messages=get_recent_messages(current_user.id))
 
 @app.route("/reset", methods=["GET"])
 def reset():
-    session.clear()
+    if current_user.is_authenticated:
+        clear_chat_history(current_user.id)
+    return redirect(url_for("index"))
+
+@app.route('/login', methods=['POST'])
+def login():
+    email = request.form['email']
+    password = request.form['password']
+    user = User.query.filter_by(email=email).first()
+    if user and check_password_hash(user.password, password):
+        login_user(user)
+        return jsonify({'status': 'success'})
+    else:
+        return jsonify({'status': 'fail'})
+
+@app.route('/signup', methods=['POST'])
+def signup():
+    email = request.form['new-email']
+    password = request.form['new-password']
+    hashed_password = generate_password_hash(password)
+    new_user = User(email=email, password=hashed_password, username=email)
+    db.session.add(new_user)
+    db.session.commit()
+    login_user(new_user)
+    initialize_session(current_user.id)
+    return jsonify({'status': 'success'})
+
+@app.route("/logout", methods=["GET"])
+@login_required
+def logout_route():
+    logout_user()
     return redirect(url_for("index"))
 
 if __name__ == '__main__':

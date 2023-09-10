@@ -7,9 +7,11 @@
 </head>
 
 <body>
+
+<!-- Main content -->
 <div class="content-container">
   <button id="light-mode-toggle" onclick="toggleLightMode()">Light Mode</button>
-
+  <div id="logout-button-container"></div>
   <img src="{{ url_for('static', filename='Images/Tutor1.png') }}" class="icon" />
   <a href="/reset" class="btn btn-primary">Reset Conversation</a>
   <div id="conversation">
@@ -28,9 +30,35 @@
     <textarea name="message" class="user-msgbox" required onkeydown="handleEnter(event)" autofocus ></textarea>
     <input type="submit" id="submit-button" value="" />
   </form>
-  <script>
-    var lessonUrl = "{{ url_for('static', filename='images/TopicChoosing2.png') }}";
-  </script>
-  <script src="{{ url_for('static', filename='main.js') }}"></script>
 </div>
+
+<!-- Login/Signup Popup -->
+<div id="login-popup" class="popup">
+  <div class="popup-content">
+    <form id="login-form">
+      <h1>Login</h1>
+      <label for="email">Email:</label>
+      <input type="text" id="email" name="email" autocomplete="email" required>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" autocomplete="current-password" required>
+      <input type="submit" value="Login">
+    </form>
+    <form id="signup-form" style="display: none;">
+      <h1>Sign Up</h1>
+      <label for="new-email">Email:</label>
+      <input type="text" id="new-email" name="new-email" autocomplete="email" required>
+      <label for="new-password">Password:</label>
+      <input type="password" id="new-password" name="new-password" autocomplete="new-password" required>
+      <label for="confirm-password">Confirm Password:</label>
+      <input type="password" id="confirm-password" name="confirm-password" autocomplete="new-password" required>
+      <input type="submit" value="Sign Up">
+    </form>
+    <button id="toggle-button" onclick="toggleSignup()">Don't have an account? Sign up</button>
+  </div>
+</div>
+
+<script>
+  var lessonUrl = "{{ url_for('static', filename='images/TopicChoosing2.png') }}";
+</script>
+<script src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
