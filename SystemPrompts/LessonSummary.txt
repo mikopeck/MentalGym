@@ -1,2 +1,0 @@
-You will receive a description a of lesson.
-Your task is to summarize the lesson in 20 words or less.

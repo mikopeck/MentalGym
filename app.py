@@ -6,12 +6,11 @@ from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, url_for, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from flask_migrate import Migrate
 
-from systemGuide import process_ai_response, process_user_message, prepare_session_messages, initialize_session
-from openapi import generate_response
+from system_guide import progress
 from models import db, User
-from db_handlers import add_user_message, add_ai_response, get_recent_messages, get_actions, clear_chat_history
+from db_handlers import get_recent_messages, get_actions, clear_chat_history
+from message_handler import initialize_messages
 
 load_dotenv()
 app = Flask(__name__)
@@ -39,14 +38,8 @@ def index():
         return render_template("index.html", messages=[])
     elif request.method == "POST":
         userInput = request.form["message"]
-        add_user_message(current_user.id, userInput)
-        process_user_message(current_user.id, userInput)
+        progress(current_user.id, userInput)
         
-        truncMsg = prepare_session_messages(current_user.id)
-        response = generate_response(truncMsg)
-        add_ai_response(current_user.id, response)
-        process_ai_response(current_user.id, response)
-
         return jsonify(messages=get_recent_messages(current_user.id), actions=get_actions(current_user.id))
     return render_template("index.html", messages=get_recent_messages(current_user.id))
 
@@ -76,7 +69,7 @@ def signup():
     db.session.add(new_user)
     db.session.commit()
     login_user(new_user)
-    initialize_session(current_user.id)
+    initialize_messages(current_user.id)
     return jsonify({'status': 'success'})
 
 @app.route("/logout", methods=["GET"])

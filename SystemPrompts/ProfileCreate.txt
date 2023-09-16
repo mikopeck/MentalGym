@@ -1,0 +1,3 @@
+Your task is to create a profile of relevant information about a user for a tutor.
+You will be given a transcript of a conversation between the user and a psychologist.
+To complete the profile, use the function provided.

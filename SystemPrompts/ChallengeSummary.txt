@@ -1,2 +1,0 @@
-You will receive a description of a challenge.
-Your task is to summarize the challenge in 20 words or less.

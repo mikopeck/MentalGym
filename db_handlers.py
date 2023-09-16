@@ -1,4 +1,4 @@
-from models import db, User, ChatHistory, CompletedChallenge, CompletedLesson
+from models import db, User, ChatHistory, CompletedChallenge, CompletedLesson, UserAction, UserActiveChallenge, Achievement, UserAchievement
 
 def add_user_message(user_id, message_content):
     message = ChatHistory(user_id=user_id, message=message_content, role="user")
@@ -35,23 +35,51 @@ def get_system_role(user_id):
     user = User.query.get(user_id)
     return user.system_role if user else None
 
-def add_action(user_id, action):
-    user = User.query.get(user_id)
-    if user:
-        current_actions = user.actions.split(",") if user.actions else []
-        current_actions.append(action)
-        user.actions = ",".join(current_actions)
-        db.session.commit()
+def add_action(user_id, action_name):
+    action = UserAction(user_id=user_id, action=action_name)
+    db.session.add(action)
+    db.session.commit()
 
 def get_actions(user_id):
-    user = User.query.get(user_id)
-    return user.actions.split(",") if user and user.actions else []
+    actions = UserAction.query.filter_by(user_id=user_id).all()
+    return [action.action for action in actions]
 
 def clear_actions(user_id):
-    user = User.query.get(user_id)
-    if user:
-        user.actions = ''
+    actions = UserAction.query.filter_by(user_id=user_id).all()
+    for action in actions:
+        db.session.delete(action)
+    db.session.commit()
+
+def add_active_challenge(user_id, challenge_name):
+    challenge = UserActiveChallenge(user_id=user_id, challenge=challenge_name)
+    db.session.add(challenge)
+    db.session.commit()
+
+def remove_active_challenge(user_id, challenge_name):
+    challenge = UserActiveChallenge.query.filter_by(user_id=user_id, challenge=challenge_name).first()
+    if challenge:
+        db.session.delete(challenge)
         db.session.commit()
+
+def get_active_challenges(user_id):
+    challenges = UserActiveChallenge.query.filter_by(user_id=user_id).all()
+    return [challenge.challenge for challenge in challenges]
+
+def add_achievement(achievement_name, description=None):
+    achievement = Achievement(name=achievement_name, description=description)
+    db.session.add(achievement)
+    db.session.commit()
+
+def grant_achievement_to_user(user_id, achievement_name):
+    achievement = Achievement.query.filter_by(name=achievement_name).first()
+    if achievement:
+        user_achievement = UserAchievement(user_id=user_id, achievement_id=achievement.id)
+        db.session.add(user_achievement)
+        db.session.commit()
+
+def get_user_achievements(user_id):
+    achievements = db.session.query(Achievement.name).join(UserAchievement).filter(UserAchievement.user_id == user_id).all()
+    return [achievement.name for achievement in achievements]
 
 def set_profile(user_id, profile_data):
     user = User.query.get(user_id)
@@ -112,3 +140,12 @@ def set_current_lesson(user_id, lesson_name):
 def get_current_lesson(user_id):
     user = User.query.get(user_id)
     return user.current_lesson if user else None
+
+def add_completed_challenge(user_id, challenge_name):
+    completed_challenge = CompletedChallenge(user_id=user_id, challenge_name=challenge_name)
+    db.session.add(completed_challenge)
+    db.session.commit()
+
+def get_completed_challenges(user_id):
+    completed_challenges = CompletedChallenge.query.filter_by(user_id=user_id).all()
+    return [challenge.challenge_name for challenge in completed_challenges]
