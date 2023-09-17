@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, url_for, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_migrate import Migrate
 
 from system_guide import progress
 from models import db, User
@@ -32,6 +33,8 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+migrate = Migrate(app, db)
+
 @app.route("/", methods=("GET", "POST"))
 def index():
     if not current_user.is_authenticated:
@@ -47,6 +50,7 @@ def index():
 def reset():
     if current_user.is_authenticated:
         clear_chat_history(current_user.id)
+        initialize_messages(current_user.id)
     return redirect(url_for("index"))
 
 @app.route('/login', methods=['POST'])

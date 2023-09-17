@@ -9,6 +9,7 @@ from openapi import generate_response
 
 function_max_retries = 5
 passing_grade = 60
+profile_limit = 16
     
 def gather_profile(user_id):
     messages = mh.prepare_session_messages(user_id)
@@ -16,8 +17,7 @@ def gather_profile(user_id):
     function_call = "auto"
 
     # Force profile if message limit
-    profile_limit = 20
-    if db.get_recent_messages(user_id, limit=profile_limit).count == profile_limit:
+    if len(db.get_recent_messages(user_id, limit=profile_limit)) == profile_limit:
         mh.update_system_role(user_id, roles.ProfileCreate)
         function_call = {"name": function[0]['name']}
 
@@ -29,8 +29,8 @@ def gather_profile(user_id):
         
         profile_data = try_get_object(fns.Profile, response_message)
         if profile_data:
-            db.set_profile(profile_data)
-            mh.update_system_role(roles.SuggestContent)
+            db.set_profile(user_id, json.dumps(profile_data))
+            mh.update_system_role(user_id, roles.SuggestContent)
             return suggest_content(user_id)
                  
     print("ERROR: failed function!! defaulting to no functions...")
@@ -45,21 +45,21 @@ def suggest_content(user_id):
         response = generate_response(messages, functions, function_call=function_call)
         response_message = response["choices"][0]["message"]
         if not response_message.get("function_call"):
-            identify_content(user_id, response_message)
+            identify_content(user_id, response_message['content'])
             return response
         
         challenge_data = try_get_object(fns.Challenge, response_message)
         if challenge_data:
-            db.add_active_challenge(challenge_data)
+            db.add_active_challenge(user_id, json.dumps(challenge_data))
         
         lesson_data = try_get_object(fns.Lesson, response_message)
         if lesson_data:
-            db.set_current_lesson(lesson_data)
+            db.set_current_lesson(user_id, json.dumps(lesson_data))
             return lesson_create(user_id)
             
     print("ERROR: failed function!! defaulting to no functions...")
     response = generate_response(messages)
-    identify_content(user_id, response["choices"][0]["message"])
+    identify_content(user_id, response["choices"][0]["message"]['content'])
     return response
 
 def lesson_create(user_id):
@@ -92,7 +92,8 @@ def quiz_feedback(user_id):
         
         grade_data = try_get_object(fns.Grade, response_message)
         if grade_data:
-            if grade_data > passing_grade:
+            score = grade_data.get("score")
+            if score > passing_grade:
                 print("lesson success")
                 # TODO:summarize?
                 mh.update_system_role(user_id, roles.SuggestContent)
@@ -107,8 +108,8 @@ def quiz_feedback(user_id):
 
 #### private ####
 
-def try_get_object(fcn: function,response_message):
-    if response_message["function_call"]["name"] == fcn[0]['name']:
+def try_get_object(fcn: fns,response_message):
+    if response_message["function_call"]["name"] == fcn['name']:
         profile_args = json.loads(response_message["function_call"]["arguments"])
         
         # Extract keys for parameters

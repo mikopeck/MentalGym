@@ -44,7 +44,7 @@ def system_message(user_id, file_name:roles = None ):
             system_message = system_message.replace("{tutor-generated}", tutor_content)
 
     if "{profile}" in system_message:
-        system_message = system_message.replace("{profile}", fns.Profile)
+        system_message = system_message.replace("{profile}", str(fns.Profile))
 
     return system_message
 

@@ -36,12 +36,13 @@ def progress(user_id, user_message):
         db.add_action(user_id, "Continue to quiz.")
         db.add_action(user_id, "End lesson.")
 
+    if current_role == roles.QuizFeedback:
+        db.add_action(user_id, "Continue to quiz.")
+        db.add_action(user_id, "End lesson.")
+
     if current_role == roles.QuizCreate:
         mh.update_system_role(user_id, roles.QuizFeedback)
         current_role = roles.QuizFeedback
-    
-    if current_role == roles.QuizFeedback:
-        db.add_action(user_id, "Continue to quiz.")
         db.add_action(user_id, "End lesson.")
 
     db.add_ai_response(user_id, response)
