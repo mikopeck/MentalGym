@@ -8,7 +8,7 @@
     <div class="main-content p-4 flex-grow">
       <ChatConversation :messages="messages" />
     </div>
-    <MessageInput />
+    <MessageInput @messageSent="updateConversation" />
   </div>
 </template>
 
@@ -38,6 +38,9 @@ export default {
   methods: {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
+    },
+    updateConversation(data) {
+        this.messages = data.messages;
     }
   }
 }

@@ -1,18 +1,20 @@
 <template>
-  <div v-if="!loggedIn" class="popup-overlay">
-    <div class="popup-content">
-      <LoginForm v-if="showLoginForm" @loginSuccess="handleLoginSuccess" />
-      <SignupForm v-else @signupSuccess="handleSignupSuccess" />
-      <button @click="toggleForms">
-        {{
-          showLoginForm
-            ? "Don't have an account? Sign up"
-            : "Already have an account? Log in"
-        }}
-      </button>
+    <div v-if="!loggedIn" class="popup-overlay">
+      <div class="popup-content">
+        <transition name="fade" mode="out-in">
+          <LoginForm v-if="showLoginForm" @loginSuccess="handleLoginSuccess" key="loginForm" />
+          <SignupForm v-else @signupSuccess="handleSignupSuccess" key="signupForm" />
+        </transition>
+        <button @click="toggleForms">
+          {{
+            showLoginForm
+              ? "Don't have an account? Sign up"
+              : "Already have an account? Log in"
+          }}
+        </button>
+      </div>
     </div>
-  </div>
-</template>
+  </template>  
   
   <script>
 import LoginForm from "./LoginForm.vue";
@@ -112,6 +114,14 @@ export default {
 
 .popup-content button:hover {
   text-shadow: 0 0 5px #bb86fc, 0 0 10px #bb86fc, 0 0 15px #bb86fc, 0 0 20px #bb86fc;
+}
+
+/* Fade transition styles */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 </style>
   

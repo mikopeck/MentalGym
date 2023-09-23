@@ -15,6 +15,8 @@
 </template>
   
 <script>
+import axios from 'axios';
+
 export default {
     name: 'SideMenu',
     props: {
@@ -25,13 +27,33 @@ export default {
     },
     methods: {
         toggleLightMode() {
+            // ... (same as before)
         },
-        logout() {
+        async logout() {
             localStorage.setItem('loggedIn', false);
-            window.location.href = "/logout";
+            
+            try {
+                let response = await axios.get('/logout');
+                if (response.data.status === "success") {
+                    window.location.reload();
+                } else {
+                    console.error('Failed to logout');
+                }
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
         },
-        resetConversation() {
-            window.location.href = "/reset";
+        async resetConversation() {
+            try {
+                let response = await axios.get('/reset');
+                if (response.data.status === "success") {
+                    window.location.reload();
+                } else {
+                    console.error('Failed to reset conversation');
+                }
+            } catch (error) {
+                console.error('Error resetting conversation:', error);
+            }
         }
     }
 }

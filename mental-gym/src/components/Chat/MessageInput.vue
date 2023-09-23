@@ -15,6 +15,7 @@
 </template>
   
 <script>
+import axios from 'axios';
 export default {
     name: 'MessageInput',
     data() {
@@ -23,18 +24,27 @@ export default {
         };
     },
     methods: {
-        sendMessage(event) {
+        async sendMessage(event) {
+            if (event.shiftKey) return;
             event.preventDefault();
-            if (this.message.trim() === '') return; 
-            
-            // Logic to send the message
 
-            // Clear the input field
+            if (this.message.trim() === '') return;
+
+            let formData = new FormData();
+            formData.append("message", this.message);
+
+            try {
+                const response = await axios.post('/api/messages', formData);
+                // Emit an event to the parent component with the response data
+                this.$emit('messageSent', response.data);
+            } catch (error) {
+                console.error("Error sending message:", error);
+            }
+
             this.message = '';
-            this.$refs.messageInput.style.height = 'auto';
+            this.adjustHeight();
         },
         adjustHeight() {
-            console.log("adjusting")
             const textarea = this.$refs.messageInput;
             textarea.style.height = 'auto';
             textarea.style.height = textarea.scrollHeight + 'px';
