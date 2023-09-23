@@ -7,6 +7,8 @@ from flask import Flask, redirect, render_template, request, url_for, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_migrate import Migrate
+from flask_cors import CORS
+from flask import send_from_directory
 
 from system_guide import progress
 from models import db, User
@@ -34,24 +36,29 @@ with app.app_context():
     db.create_all()
 
 migrate = Migrate(app, db)
+CORS(app)
 
-@app.route("/", methods=("GET", "POST"))
-def index():
-    if not current_user.is_authenticated:
-        return render_template("index.html", messages=[])
-    elif request.method == "POST":
-        userInput = request.form["message"]
-        progress(current_user.id, userInput)
-        
-        return jsonify(messages=get_recent_messages(current_user.id), actions=get_actions(current_user.id))
-    return render_template("index.html", messages=get_recent_messages(current_user.id))
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_frontend(path):
+    if path != "" and os.path.exists("mental-gym/dist/" + path):
+        return send_from_directory('mental-gym/dist', path)
+    else:
+        return send_from_directory('mental-gym/dist', 'index.html')
+
+@app.route("/api/messages", methods=["POST"])
+@login_required
+def post_message():
+    userInput = request.form["message"]
+    progress(current_user.id, userInput)
+    return jsonify(messages=get_recent_messages(current_user.id), actions=get_actions(current_user.id))
 
 @app.route("/reset", methods=["GET"])
+@login_required
 def reset():
-    if current_user.is_authenticated:
-        clear_chat_history(current_user.id)
-        initialize_messages(current_user.id)
-    return redirect(url_for("index"))
+    clear_chat_history(current_user.id)
+    initialize_messages(current_user.id)
+    return jsonify({"status": "success"})
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -80,7 +87,7 @@ def signup():
 @login_required
 def logout_route():
     logout_user()
-    return redirect(url_for("index"))
+    return jsonify({"status": "success"})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

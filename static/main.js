@@ -10,7 +10,6 @@ function submitForm() {
     var messageBox = document.querySelector(".user-msgbox");
     messageBox.classList.add('disabled-text-effect');
     messageBox.disabled = true;
-    // todo: apply effect also to any buttons for challenge & lesson accepts
 
     var formData = new FormData();
     formData.append("message", messageBox.value);
@@ -160,7 +159,6 @@ function toggleSignup() {
 // Login form submission
 document.getElementById('login-form').addEventListener('submit', function (e) {
     e.preventDefault();
-    // Use AJAX to submit the form
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
@@ -185,7 +183,6 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
 // Signup form submission
 document.getElementById('signup-form').addEventListener('submit', function (e) {
     e.preventDefault();
-    // Use AJAX to submit the form
     const email = document.getElementById('new-email').value;
     const password = document.getElementById('new-password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
