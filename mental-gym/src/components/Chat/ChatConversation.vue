@@ -1,30 +1,42 @@
 <template>
-    <div id="conversation">
-      <div v-for="message in messages" :key="message.id" :class="message.role" class="fade-in">
-        <p v-if="message.role !== 'system'">{{ message.content }}</p>
-      </div>
+  <div id="conversation">
+    <div v-for="message in messages" :key="message.id" :class="message.role" class="chat-bubble fade-in">
+      <p v-if="message.role !== 'system'">{{ message.content }}</p>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    props: {
-      messages: Array
-    }
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    messages: Array
   }
-  </script>
-  
-  <style scoped>
-.fade-in {
-  transition: all 0.3s ease;
+}
+</script>
+
+<style scoped>
+.chat-bubble {
+  position: relative;
+  overflow: hidden;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  width: 75%;
+  transition: all 0.3s ease-in-out;
 }
 
 .user {
-  @apply bg-green-200 text-green-700 rounded-br-none rounded-bl-lg rounded-t-lg text-left my-2 p-2 w-3/4 float-left;
+  float: left;
+  text-align: left;
+  background-color: rgba(167, 243, 208, 0.4);
+  box-shadow: 0 0 10px 10px rgba(167, 243, 208, 0.4);
 }
 
 .assistant {
-  @apply bg-purple-200 text-purple-700 rounded-bl-none rounded-br-lg rounded-t-lg text-right my-2 p-2 w-3/4 float-right;
+  float: right;
+  text-align: right;
+  background-color: rgba(221, 214, 254, 0.4);
+  box-shadow: 0 0 10px 10px rgba(221, 214, 254, 0.4);
 }
 
 @keyframes slideInFromBottom {

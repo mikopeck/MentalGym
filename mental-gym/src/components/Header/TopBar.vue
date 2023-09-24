@@ -35,6 +35,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    backdrop-filter: blur(8px);
 }
 
 .logo {

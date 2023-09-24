@@ -69,7 +69,7 @@ export default {
   align-items: center;
   padding: 10px;
   border-radius: 8px;
-  width: 40%;
+  width: 60%;
 }
 
 .popup-content label {
@@ -78,9 +78,9 @@ export default {
 
 .popup-content :deep(input[type="text"]),
 .popup-content :deep(input[type="password"]) {
+  background-color: #00000000;
   padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
+  border: 1px solid #f0f8ff;
   border-radius: 4px;
   width: 100%;
   box-sizing: border-box;

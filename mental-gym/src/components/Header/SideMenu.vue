@@ -65,7 +65,7 @@ export default {
     top: 44px;
     right: -100%;
     height: 100vh;
-    width: 17%;
+    width: 300px;
     transition: right 0.3s ease;
     z-index: 1000;
 }
