@@ -47,7 +47,7 @@ export default {
             try {
                 let response = await axios.get('/reset');
                 if (response.data.status === "success") {
-                    window.location.reload();
+                    this.$emit('conversationReset', { messages: response.data.messages });
                 } else {
                     console.error('Failed to reset conversation');
                 }

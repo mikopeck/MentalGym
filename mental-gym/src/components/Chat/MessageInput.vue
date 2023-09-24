@@ -35,7 +35,6 @@ export default {
 
             try {
                 const response = await axios.post('/api/messages', formData);
-                // Emit an event to the parent component with the response data
                 this.$emit('messageSent', response.data);
             } catch (error) {
                 console.error("Error sending message:", error);

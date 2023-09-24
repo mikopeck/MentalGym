@@ -2,7 +2,7 @@
   <div class="app-container h-screen flex flex-col">
     <LoginSignupPopup v-if="!loggedIn" />
     <TopBar @toggleSideMenu="toggleMenu" />
-    <SideMenu v-show="true" :isMenuOpen="isMenuOpen" />
+    <SideMenu v-show="true" :isMenuOpen="isMenuOpen" @conversationReset="updateConversation"/>
 
 
     <div class="main-content p-4 flex-grow">

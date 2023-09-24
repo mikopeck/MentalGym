@@ -58,7 +58,7 @@ def post_message():
 def reset():
     clear_chat_history(current_user.id)
     initialize_messages(current_user.id)
-    return jsonify({"status": "success"})
+    return jsonify(messages=get_recent_messages(current_user.id), status="success")
 
 @app.route('/login', methods=['POST'])
 def login():
