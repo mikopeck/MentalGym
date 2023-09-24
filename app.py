@@ -45,6 +45,11 @@ def serve_frontend(path):
         return send_from_directory('mental-gym/dist', path)
     else:
         return send_from_directory('mental-gym/dist', 'index.html')
+    
+@app.route("/api/recent_messages", methods=["GET"])
+@login_required
+def get_recent_messages_route():
+    return jsonify(messages=get_recent_messages(current_user.id))
 
 @app.route("/api/messages", methods=["POST"])
 @login_required

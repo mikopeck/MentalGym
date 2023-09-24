@@ -54,6 +54,7 @@ export default {
 .menu-btn {
     background-color: #4a148c;
     border: none;
+    border-radius: 4px;
     padding: 4px;
     display: flex;
     flex-direction: column;
