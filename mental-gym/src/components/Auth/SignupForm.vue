@@ -1,17 +1,17 @@
 <template>
-    <form @submit.prevent="handleSubmit">
-      <label for="new-email">Email:</label>
-      <input type="text" v-model="email" autocomplete="email" required>
-      <br/>
-      <label for="new-password">Password:</label>
-      <input type="password" v-model="password" autocomplete="new-password" required>
-      <br/>
-      <label for="confirm-password">Confirm Password:</label>
-      <input type="password" v-model="confirmPassword" autocomplete="new-password" required>
-      <br/>
-      <input type="submit" value="Sign Up">
-    </form>
-  </template>
+  <form @submit.prevent="handleSubmit">
+    <label for="new-email">Email:</label>
+    <input type="text" id="new-email" name="new-email" v-model="email" autocomplete="email" required>
+    <br/>
+    <label for="new-password">Password:</label>
+    <input type="password" id="new-password" name="new-password" v-model="password" autocomplete="new-password" required>
+    <br/>
+    <label for="confirm-password">Confirm Password:</label>
+    <input type="password" id="confirm-password" name="confirm-password" v-model="confirmPassword" autocomplete="new-password" required>
+    <br/>
+    <input type="submit" id="submit" value="Sign Up">
+  </form>
+</template>
   
   <script>
   export default {
@@ -45,7 +45,7 @@
           if (data.status === 'success') {
             this.$emit('signupSuccess');
           } else {
-            alert('Signup failed. Please try again.');
+            alert(data.message || 'Signup failed. Please try again.');
           }
         });
       }

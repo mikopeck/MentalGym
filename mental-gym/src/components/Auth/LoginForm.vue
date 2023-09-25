@@ -1,14 +1,14 @@
 <template>
-    <form @submit.prevent="handleSubmit">
-      <label for="email">Email:</label>
-      <input type="text" v-model="email" autocomplete="email" required>
-      <br/>
-      <label for="password">Password:</label>
-      <input type="password" v-model="password" autocomplete="current-password" required>
-      <br/>
-      <input type="submit" value="Login">
-    </form>
-  </template>
+  <form @submit.prevent="handleSubmit">
+    <label for="email">Email:</label>
+    <input type="text" id="email" name="email" v-model="email" autocomplete="email" required>
+    <br/>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" v-model="password" autocomplete="current-password" required>
+    <br/>
+    <input type="submit" id="submit" value="Login">
+  </form>
+</template>
   
   <script>
   export default {

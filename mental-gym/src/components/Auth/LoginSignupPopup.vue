@@ -56,20 +56,22 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #00000082;
+  background-color: #0e0c14;
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 95;
 }
 
 .popup-content {
   background-color: #4a148c42;
   display: flex;
+  justify-content: center;
   flex-direction: column;
   align-items: center;
   padding: 10px;
   border-radius: 8px;
-  width: 60%;
+  /* width: 60%; */
 }
 
 .popup-content label {
@@ -88,14 +90,15 @@ export default {
 
 /* Styling for buttons */
 .popup-content :deep(input[type="submit"]) {
+  margin-top: 8px;
   padding: 10px 15px;
   background-color: #4a148c; 
   color: #f0f8ff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  transition: text-shadow 0.3s ease;
+  transition: background-color 0.3s ease, text-shadow 0.3s ease;
+  text-align: center;
 }
 
 .popup-content :deep(input[type="submit"]):hover {
@@ -104,6 +107,7 @@ export default {
 }
 
 .popup-content button {
+  margin-top: 8px;
   padding: 10px 15px;
   color: #f0f8ff;
   border: none;

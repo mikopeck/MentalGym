@@ -1,15 +1,15 @@
 <template>
-    <aside :class="{ 'slide-out': isMenuOpen }" class="side-menu p-4">
-        <button @click="toggleLightMode" class="btn-light-mode mb-4">
+    <aside :class="{ 'slide-out': isMenuOpen }" class="side-menu">
+        <button @click="toggleLightMode" class="btn-light-mode">
             Light Mode
-        </button>
-
-        <button @click="logout" class="btn-logout mb-4">
-            Logout
         </button>
 
         <button @click="resetConversation" class="btn-reset">
             Reset Conversation
+        </button>
+
+        <button @click="logout" class="btn-logout">
+            Logout
         </button>
     </aside>
 </template>
@@ -61,13 +61,15 @@ export default {
   
 <style scoped>
 .side-menu {
+    padding: 4px;
+    margin-left: 2px;
     position: fixed;
     top: 44px;
-    right: -100%;
-    height: 100vh;
+    right: -300px;
+    height: fit-content;
     width: 300px;
     transition: right 0.3s ease;
-    z-index: 1000;
+    z-index: 99;
 }
 
 .slide-out {
@@ -75,10 +77,24 @@ export default {
 }
 
 button {
-    border: 2px solid #f0f8ff;
     padding: 8px 16px;
+    margin: 4px;
+    background-color: #4a148c42;
+    border: 2px solid #f0f8ff;
     border-radius: 8px;
     display: inline-block;
     width: 100%;
+    backdrop-filter: blur(8px);
+    transition: transform 0.2s, background-color 0.2s;
 }
+
+button:hover {
+    background-color: #4a148c;
+    border-color: #e0e0e0;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
 </style>

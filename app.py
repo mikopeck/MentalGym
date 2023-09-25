@@ -3,12 +3,14 @@
 import os
 import openai
 from dotenv import load_dotenv
-from flask import Flask, redirect, render_template, request, url_for, jsonify
+from flask import Flask, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask import send_from_directory
+from sqlalchemy.exc import IntegrityError
+import pymysql.err as pymysql_err
 
 from system_guide import progress
 from models import db, User
@@ -78,15 +80,21 @@ def login():
 
 @app.route('/signup', methods=['POST'])
 def signup():
-    email = request.form['new-email']
-    password = request.form['new-password']
-    hashed_password = generate_password_hash(password)
-    new_user = User(email=email, password=hashed_password, username=email)
-    db.session.add(new_user)
-    db.session.commit()
-    login_user(new_user)
-    initialize_messages(current_user.id)
-    return jsonify({'status': 'success'})
+    try:
+        email = request.form['new-email']
+        password = request.form['new-password']
+        hashed_password = generate_password_hash(password)
+        new_user = User(email=email, password=hashed_password, username=email)
+        db.session.add(new_user)
+        db.session.commit()
+        login_user(new_user)
+        initialize_messages(current_user.id)
+        return jsonify({'status': 'success'})
+    except IntegrityError as e:
+        if isinstance(e.orig, pymysql_err.IntegrityError) and 'Duplicate entry' in str(e.orig):
+            return jsonify({'status': 'error', 'message': 'An account with this email already exists.'}), 400
+        else:
+            return jsonify({'status': 'error', 'message': 'An unexpected error occurred. Please try again later.'}), 500
 
 @app.route("/logout", methods=["GET"])
 @login_required

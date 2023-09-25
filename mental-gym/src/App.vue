@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container h-screen flex flex-col">
+  <div class="app-container">
     <LoginSignupPopup v-if="!loggedIn" />
     <TopBar @toggleSideMenu="toggleMenu" />
     <SideMenu
@@ -8,8 +8,9 @@
       @conversationReset="updateConversation"
     />
 
-    <div class="main-content p-4 flex-grow" ref="mainContent">
-      <ChatConversation :messages="messages" />
+    <div class="main-content" ref="conversation">
+      <ChatConversation :messages="messages" 
+      @messagesChanged="updateView" />
     </div>
     <MessageInput
       @messageSending="handleMessageSending"
@@ -37,7 +38,6 @@ export default {
   },
   mounted() {
     this.fetchRecentMessages();
-    this.scrollToBottom();
   },
   data() {
     return {
@@ -52,23 +52,12 @@ export default {
     },
     updateConversation(data) {
       this.messages = data.messages;
-      this.scrollToBottom();
     },
-    scrollToBottom() {
-      const contentElem = this.$refs.mainContent;
-
-      // Temporarily hide overflow
-      contentElem.style.setProperty("--overflow-setting", "hidden");
-
-      // Wait for any rendering/layout calculations
+    updateView() {
       this.$nextTick(() => {
-        // Scroll to the bottom
-        contentElem.scrollTop = contentElem.scrollHeight;
-
-        // Restore overflow after a delay
-        setTimeout(() => {
-          contentElem.style.setProperty("--overflow-setting", "auto");
-        }, 50); // Restore after 50ms
+        this.$refs.conversation.scrollTop = this.$refs.conversation.scrollHeight;
+        // setTimeout(() => {
+        // }, 500);
       });
     },
     handleMessageSending(message) {
@@ -77,7 +66,6 @@ export default {
         content: message,
       };
       this.messages.push(tempMessage);
-      this.scrollToBottom();
     },
     fetchRecentMessages() {
       if (this.loggedIn) {
@@ -104,8 +92,31 @@ export default {
 }
 
 .main-content {
-  overflow-y: var(--overflow-setting, auto);
+  padding: 1rem;
   max-width: 1200px;
   margin: 0 auto;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: #4a148c #4a148c42;
+  position: relative;
+}
+
+/* Webkit browsers (e.g., Chrome, Safari) scrollbar styles */
+.main-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.main-content::-webkit-scrollbar-track {
+  background: #4a148c42;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+  background-color: #4a148c;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+  background-color: #6a34b9;
 }
 </style>

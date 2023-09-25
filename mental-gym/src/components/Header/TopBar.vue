@@ -28,7 +28,7 @@ export default {
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 100;
+    z-index: 99;
     background-color: #4a148c42;
     color: #f0f8ff;
     padding: 4px;
@@ -36,6 +36,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     backdrop-filter: blur(8px);
+    box-shadow: 0 0 2px 2px #4a148c42;
 }
 
 .logo {
