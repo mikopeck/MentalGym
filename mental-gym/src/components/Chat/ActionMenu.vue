@@ -1,3 +1,4 @@
+<!-- ActionMenu.vue -->
 <template>
   <aside :class="{ 'slide-out': menuOpen }" class="action-menu">
     <div
@@ -23,6 +24,12 @@ export default {
       default: () => [],
     },
   },
+  watch: {
+    actions: function () {
+      const anyActions = this.actions.length !== 0;
+      this.$emit("availableActions", anyActions);
+    },
+  },
   methods: {
     handleAction(action) {
       this.$emit("actionSelected", action);
@@ -34,10 +41,9 @@ export default {
   <style scoped>
 .action-menu {
   padding: 4px;
-  margin-left: 2px;
   position: fixed;
   bottom: 72px;
-  left: -300px;
+  left: -310px;
   height: fit-content;
   width: 300px;
   transition: left 0.3s ease;
@@ -49,6 +55,7 @@ export default {
 }
 
 .action-btn {
+  text-align: center;
   padding: 8px 16px;
   margin: 4px;
   background-color: #4a148c42;
@@ -59,7 +66,6 @@ export default {
   cursor: pointer;
   backdrop-filter: blur(8px);
   transition: transform 0.2s, background-color 0.2s;
-  text-align: left;
 }
 
 .action-btn:hover {

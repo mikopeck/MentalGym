@@ -1,6 +1,10 @@
+<!-- MessageInput.vue -->
 <template>
   <div class="message-input-container">
-    <button @click="toggleMenu" class="plus-btn" :class="plusBtnClass">
+    <button v-if="actionAvailable"
+      @click="toggleMenu" 
+      class="plus-btn" 
+      :class="plusBtnClass">
       +
     </button>
     <textarea
@@ -11,14 +15,14 @@
       @keydown.enter="sendMessage"
       placeholder="Type a message..."
       rows="1"
-      :readonly="sending"
-    >
+      :readonly="sending">
     </textarea>
 
     <ActionMenu
       :menuOpen="menuOpen"
-      :actions="['Action1', 'Action2']"
+      :actions="actionsList"
       @actionSelected="handleAction"
+      @availableActions="handleActionAvailable"
     />
 
     <button @click="sendMessage" class="send-btn">
@@ -41,12 +45,18 @@ export default {
   components: {
     ActionMenu,
   },
+  props: {
+    actionsList: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       message: "",
       sending: false,
       menuOpen: false,
-      actionAvailable: true,
+      actionAvailable: false,
     };
   },
   mounted() {
@@ -55,25 +65,32 @@ export default {
   computed: {
     plusBtnClass() {
       return {
-        glow: this.actionAvailable && !this.menuOpen && !this.sending,
+        glow: !this.menuOpen && !this.sending,
         active: this.menuOpen,
       };
     },
   },
   methods: {
+    handleActionAvailable(available) {
+      this.actionAvailable = available;
+    },
     async sendMessage(event) {
-      if (event.shiftKey || this.sending) return;
-      event.preventDefault();
+      if (event) {
+        if (event.shiftKey || this.sending) return;
+        event.preventDefault();
+      }
 
       if (this.message.trim() === "") return;
 
-      this.sending = true;
-      this.$emit("messageSending", this.message);
-
-      let formData = new FormData();
-      formData.append("message", this.message);
+      const msg = this.message
       this.message = "";
       this.adjustHeight();
+
+      this.sending = true;
+      this.$emit("messageSending", msg);
+
+      let formData = new FormData();
+      formData.append("message", msg);
 
       try {
         const response = await axios.post("/api/messages", formData);
@@ -86,10 +103,16 @@ export default {
       }
     },
     adjustHeight() {
+      this.$nextTick(() => {
       const textarea = this.$refs.messageInput;
       textarea.style.height = "auto";
       textarea.style.height = textarea.scrollHeight + "px";
+      });
     },
+    // minimizeTextArea() {
+    //   const textarea = this.$refs.messageInput;
+    //   textarea.style.height = "64px";
+    // },
     focusTextarea() {
       this.$refs.messageInput.focus();
     },
@@ -244,23 +267,19 @@ textarea:focus {
   font-weight: 900;
 }
 
-.plus-btn:hover {
+.plus-btn:hover, .plus-btn.active {
   background-color: #6c1eb1;
 }
 
-.plus-btn.active {
-  box-shadow: 0 0 15px #6c1eb1, 0 0 20px #6c1eb1;
-}
-
 .plus-btn.glow {
-  animation: glowEffect 1.5s infinite alternate;
+  animation: glowEffect 3s infinite alternate;
 }
 
 @keyframes glowEffect {
-  from {
+  0%, 30% {
     box-shadow: 0 0 5px #4a148c42;
   }
-  to {
+  15% {
     box-shadow: 0 0 15px #6c1eb1, 0 0 20px #6c1eb1;
   }
 }

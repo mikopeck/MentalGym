@@ -36,7 +36,7 @@ def gather_profile(user_id):
     print("ERROR: failed function!! defaulting to no functions...")
     return generate_response(messages)
 
-def suggest_content(user_id):
+def suggest_content(user_id, set_challenge = True):
     messages = mh.prepare_session_messages(user_id)
     functions = [fns.Lesson, fns.Challenge]
     function_call = "auto"
@@ -50,7 +50,8 @@ def suggest_content(user_id):
         
         challenge_data = try_get_object(fns.Challenge, response_message)
         if challenge_data:
-            db.add_active_challenge(user_id, json.dumps(challenge_data))
+            db.add_active_challenge(user_id, challenge_data.challenge_name)
+            return suggest_content(user_id, False)
         
         lesson_data = try_get_object(fns.Lesson, response_message)
         if lesson_data:

@@ -27,7 +27,7 @@ export default {
       msgs = msgs.filter((message) => message.role !== "app")
       const tempMessage = {
         role: "app",
-        content: "...latest messages...",
+        content: "",
       };
       msgs.push(tempMessage);
       return msgs;

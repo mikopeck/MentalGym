@@ -1,9 +1,9 @@
 <template>
     <header class="top-bar">
-        <img src="@/assets/images/TutorLogo.png" alt="Mental Gym Logo" class="logo">
+        <img src="@/assets/images/TutorLogo.png" alt="Mental Gym Logo" width="32" height="32" class="logo">
         <h1 class="app-title">Mental Gym</h1>
 
-        <button @click="toggleSideMenu" class="menu-btn">
+        <button id="sideMenu" @click="toggleSideMenu" class="menu-btn">
             <!-- Three line (hamburger) icon -->
             <span class="menu-line"></span>
             <span class="menu-line"></span>
@@ -40,8 +40,6 @@ export default {
 }
 
 .logo {
-    height: 32px;
-    width: auto;
     margin-right: 16px;
     cursor: pointer;
 }

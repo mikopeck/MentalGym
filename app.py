@@ -14,8 +14,8 @@ import pymysql.err as pymysql_err
 
 from system_guide import progress
 from models import db, User
-from db_handlers import get_recent_messages, get_actions, clear_chat_history
 from message_handler import initialize_messages
+import db_handlers as dbh
 
 load_dotenv()
 app = Flask(__name__)
@@ -51,21 +51,60 @@ def serve_frontend(path):
 @app.route("/api/recent_messages", methods=["GET"])
 @login_required
 def get_recent_messages_route():
-    return jsonify(messages=get_recent_messages(current_user.id))
+    return jsonify(messages=dbh.get_recent_messages(current_user.id), actions=dbh.get_actions(current_user.id))
 
 @app.route("/api/messages", methods=["POST"])
 @login_required
 def post_message():
     userInput = request.form["message"]
     progress(current_user.id, userInput)
-    return jsonify(messages=get_recent_messages(current_user.id), actions=get_actions(current_user.id))
+    return jsonify(messages=dbh.get_recent_messages(current_user.id), actions=dbh.get_actions(current_user.id))
+
+@app.route("/api/profile", methods=["GET"])
+@login_required
+def get_profile_route():
+    profile_data = {
+        "user": dbh.get_profile(current_user.id),
+        "tutor": dbh.get_tutor(current_user.id)
+    }
+    return jsonify(status="success", profile=profile_data)
+
+@app.route("/api/profile/user", methods=["POST"])
+@login_required
+def update_user_profile():
+    new_data = request.json.get("data")
+    dbh.set_profile(current_user.id, new_data)
+    return jsonify(status="success")
+
+@app.route("/api/profile/tutor", methods=["POST"])
+@login_required
+def update_tutor_profile():
+    new_data = request.json.get("data")
+    dbh.set_tutor(current_user.id, new_data)
+    return jsonify(status="success")
+
+@app.route("/api/challenges", methods=["GET"])
+@login_required
+def get_challenges_route():
+    challenges_data = {
+        "active": dbh.get_active_challenges(current_user.id),
+        "completed": dbh.get_completed_challenges(current_user.id)
+    }
+    return jsonify(status="success", challenges=challenges_data)
+
+@app.route("/api/achievements", methods=["GET"])
+@login_required
+def get_achievements_route():
+    achievements_data = dbh.get_user_achievements(current_user.id)
+    return jsonify(status="success", achievements=achievements_data)
 
 @app.route("/reset", methods=["GET"])
 @login_required
 def reset():
-    clear_chat_history(current_user.id)
+    dbh.clear_chat_history(current_user.id)
+    dbh.clear_actions(current_user.id)
     initialize_messages(current_user.id)
-    return jsonify(messages=get_recent_messages(current_user.id), status="success")
+    return jsonify(messages=dbh.get_recent_messages(current_user.id), actions=dbh.get_actions(current_user.id), status="success")
 
 @app.route('/login', methods=['POST'])
 def login():

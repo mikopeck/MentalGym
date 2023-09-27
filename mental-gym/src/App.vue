@@ -1,3 +1,4 @@
+<!-- App.vue -->
 <template>
   <div class="app-container">
     <LoginSignupPopup v-if="!loggedIn" />
@@ -5,17 +6,23 @@
     <SideMenu
       v-show="true"
       :isMenuOpen="isMenuOpen"
-      @conversationReset="updateConversation"
+      @conversationReset="resetConversation"
     />
 
-    <div class="main-content" ref="conversation">
-      <ChatConversation :messages="messages" 
-      @messagesChanged="updateView" />
+    <!-- Main chat -->
+    <div v-if="$route.path === '/'" class="main-content" ref="conversation">
+      <ChatConversation :messages="messages" @messagesChanged="updateView" />
     </div>
     <MessageInput
+      v-if="$route.path === '/'"
       @messageSending="handleMessageSending"
       @messageSent="updateConversation"
+      :actionsList="actions"
+      class="message-input"
     />
+
+    <!-- Routes -->
+    <router-view v-if="$route.path !== '/'"></router-view>
   </div>
 </template>
 
@@ -44,20 +51,26 @@ export default {
       isMenuOpen: false,
       loggedIn: localStorage.getItem("loggedIn") === "true",
       messages: [],
+      actions: [],
     };
   },
   methods: {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
     },
+    resetConversation(data) {
+      this.updateConversation(data);
+    },
     updateConversation(data) {
       this.messages = data.messages;
+      this.actions = data.actions;
     },
     updateView() {
       this.$nextTick(() => {
-        this.$refs.conversation.scrollTop = this.$refs.conversation.scrollHeight;
-        // setTimeout(() => {
-        // }, 500);
+        setTimeout(() => {
+          this.$refs.conversation.scrollTop =
+            this.$refs.conversation.scrollHeight;
+        }, 50);
       });
     },
     handleMessageSending(message) {
@@ -73,6 +86,7 @@ export default {
           .get("/api/recent_messages")
           .then((response) => {
             this.messages = response.data.messages;
+            this.actions = response.data.actions;
           })
           .catch((error) => {
             console.error("Error fetching recent messages:", error);
@@ -96,24 +110,44 @@ export default {
   max-width: 1200px;
   margin: 0 auto;
   overflow-y: scroll;
-  scrollbar-width: thin;
-  scrollbar-color: #4a148c #4a148c42;
+  scrollbar-width: auto;
+  scrollbar-color: transparent transparent;
   position: relative;
+}
+
+.message-input {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 /* Webkit browsers (e.g., Chrome, Safari) scrollbar styles */
 .main-content::-webkit-scrollbar {
-  width: 8px;
+  width: 12px;
 }
 
 .main-content::-webkit-scrollbar-track {
-  background: #4a148c42;
+  background: transparent;
+  transition: background 0.3s ease;
 }
 
 .main-content::-webkit-scrollbar-thumb {
-  background-color: #4a148c;
-  border-radius: 4px;
+  background-color: transparent;
+  border-radius: 6px;
   transition: background-color 0.3s ease;
+}
+
+.main-content:hover {
+  scrollbar-color: #4a148c #4a148c42;
+}
+
+.main-content:hover::-webkit-scrollbar-track {
+  background: #4a148c42;
+}
+
+.main-content:hover::-webkit-scrollbar-thumb {
+  background-color: #4a148c;
 }
 
 .main-content::-webkit-scrollbar-thumb:hover {

@@ -11,7 +11,7 @@ Profile = {
             },
             "language": {
                 "type": "string",
-                "description": "The users preferred language.",
+                "description": "The users preferred language. Never ask for this, but assume from the language the user uses.",
             },
 
 # personal

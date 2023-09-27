@@ -77,7 +77,7 @@ def process_user_message(user_id, user_message):
 
     elif action.lower() == "accept challenge":
         if user_message in current_actions:
-            db.add_active_challenge(user_message)
+            db.add_active_challenge(user_id, user_message)
             print(f"Challenge '{user_message}' accepted.")
         else:
             print(f"Challenge '{user_message}' not found.")
