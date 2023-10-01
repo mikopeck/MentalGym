@@ -69,7 +69,9 @@ export default {
       try {
         let response = await axios.get("/logout");
         if (response.data.status === "success") {
+          this.$emit("logout");
           this.$router.push("/");
+          this.hideMenu();
         } else {
           console.error("Failed to logout");
         }
@@ -85,8 +87,8 @@ export default {
             messages: response.data.messages,
             actions: response.data.actions,
           });
-          this.hideMenu();
           this.$router.push("/");
+          this.hideMenu();
         } else {
           console.error("Failed to reset conversation");
         }

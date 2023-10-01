@@ -7,6 +7,8 @@
       v-show="true"
       :isMenuOpen="isMenuOpen"
       @conversationReset="resetConversation"
+      @menuHidden="hideMenu"
+      @logout="logoutUser"
     />
 
     <!-- Main chat -->
@@ -57,6 +59,12 @@ export default {
   methods: {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
+    },
+    hideMenu() {
+      this.isMenuOpen = false;
+    },
+    logoutUser(){
+      this.loggedIn = false;
     },
     resetConversation(data) {
       this.updateConversation(data);
