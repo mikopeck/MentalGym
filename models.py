@@ -47,6 +47,7 @@ class ChatHistory(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     message = db.Column(db.Text, nullable=False)
     role = db.Column(db.String(50), nullable=False)
+    system_role = db.Column(db.String(100), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 class CompletedLesson(db.Model):

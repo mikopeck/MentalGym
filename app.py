@@ -101,10 +101,9 @@ def get_achievements_route():
 @app.route("/reset", methods=["GET"])
 @login_required
 def reset():
-    dbh.clear_chat_history(current_user.id)
-    dbh.clear_actions(current_user.id)
+    dbh.reset_user_profile(current_user.id)
     initialize_messages(current_user.id)
-    return jsonify(messages=dbh.get_recent_messages(current_user.id), actions=dbh.get_actions(current_user.id), status="success")
+    return jsonify(messages=dbh.get_recent_messages(current_user.id), actions=[], status="success")
 
 @app.route('/login', methods=['POST'])
 def login():

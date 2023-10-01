@@ -1,3 +1,4 @@
+<!-- TopBar.vue -->
 <template>
     <header class="top-bar">
         <img src="@/assets/images/TutorLogo.png" alt="Mental Gym Logo" width="32" height="32" class="logo">

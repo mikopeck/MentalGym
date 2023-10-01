@@ -100,8 +100,8 @@ export default {
 <style scoped>
 .app-container {
   font-family: "Arial", sans-serif;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 1fr auto;
   height: 100vh;
 }
 
@@ -109,17 +109,12 @@ export default {
   padding: 1rem;
   max-width: 1200px;
   margin: 0 auto;
-  overflow-y: scroll;
+  overflow-y: auto;
   scrollbar-width: auto;
   scrollbar-color: transparent transparent;
   position: relative;
-}
-
-.message-input {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 /* Webkit browsers (e.g., Chrome, Safari) scrollbar styles */

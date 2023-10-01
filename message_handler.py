@@ -5,7 +5,7 @@ import db_handlers as db
 def initialize_messages(user_id):
     update_system_role(user_id, roles.ProfileGather)
     message = "Hello! I'm Azalea, and I'm here to help you grow and achieve your goals. Is there anything you like to learn about today?"
-    db.add_ai_message(user_id, message)
+    db.add_ai_message(user_id, message, roles.ProfileGather)
 
 def create_message(system_message, user_message):
     return [
@@ -54,7 +54,7 @@ def prepare_session_messages(user_id):
         initialize_messages(user_id)
         system_messages = db.get_system_messages(user_id)
 
-    limited_messages = db.get_recent_messages(user_id)
+    limited_messages = db.get_api_messages(user_id)
     has_system_message = any(msg['role'] == 'system' for msg in limited_messages)
 
     messages = system_messages + limited_messages if not has_system_message else limited_messages

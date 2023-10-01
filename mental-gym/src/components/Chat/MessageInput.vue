@@ -144,6 +144,7 @@ export default {
   padding-left: 16px;
   padding-right: 16px;
   border: 1px solid #4a148c;
+  box-shadow: 0 0 2px 2px #4a148c42;
   z-index: 10;
 }
 

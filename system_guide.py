@@ -1,5 +1,4 @@
 # systemGuide.py
-from openapi import generate_response
 import db_handlers as db
 import roles as roles
 import functions as functions
@@ -8,44 +7,44 @@ import message_handler as mh
 
 def progress(user_id, user_message):
     process_user_message(user_id, user_message)
-    db.clear_actions(user_id)
+    db.clear_user_actions(user_id)
 
     # Progress chat
-    current_role = db.get_system_role(user_id)
+    current_sys_role = db.get_system_role(user_id)
     response = "No response."
-    if current_role == roles.ProfileGather:
+    if current_sys_role == roles.ProfileGather:
         response = cts.gather_profile(user_id)
-    elif current_role == roles.SuggestContent:
+    elif current_sys_role == roles.SuggestContent:
         response = cts.suggest_content(user_id)
-    elif current_role == roles.LessonCreate:
+    elif current_sys_role == roles.LessonCreate:
         response = cts.lesson_create(user_id)
-    elif current_role == roles.LessonGuide:
+    elif current_sys_role == roles.LessonGuide:
         response = cts.lesson_guide(user_id)
-    elif current_role == roles.QuizCreate:
+    elif current_sys_role == roles.QuizCreate:
         response = cts.quiz_create(user_id)
-    elif current_role == roles.QuizFeedback:
+    elif current_sys_role == roles.QuizFeedback:
         response = cts.quiz_feedback(user_id)
 
     # Progress roles and add actions
-    current_role = db.get_system_role(user_id)
-    if current_role == roles.LessonCreate:
+    current_sys_role = db.get_system_role(user_id)
+    if current_sys_role == roles.LessonCreate:
         mh.update_system_role(user_id, roles.LessonGuide)
-        current_role = roles.LessonGuide
+        current_sys_role = roles.LessonGuide
 
-    if current_role == roles.LessonGuide:
+    if current_sys_role == roles.LessonGuide:
         db.add_action(user_id, "Continue to quiz.")
         db.add_action(user_id, "End lesson.")
 
-    if current_role == roles.QuizFeedback:
+    if current_sys_role == roles.QuizFeedback:
         db.add_action(user_id, "Continue to quiz.")
         db.add_action(user_id, "End lesson.")
 
-    if current_role == roles.QuizCreate:
+    if current_sys_role == roles.QuizCreate:
         mh.update_system_role(user_id, roles.QuizFeedback)
-        current_role = roles.QuizFeedback
+        current_sys_role = roles.QuizFeedback
         db.add_action(user_id, "End lesson.")
 
-    db.add_ai_response(user_id, response)
+    db.add_ai_response(user_id, response, current_sys_role)
 
 def process_user_message(user_id, user_message):
     db.add_user_message(user_id, user_message)

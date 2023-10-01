@@ -1,6 +1,6 @@
 Profile = {
     "name": "create_profile",
-    "description": "Create a comprehensive profile for the user.",
+    "description": "Create a profile for the user. Also use if the user would like to move on to learning or setting challenges.",
     "parameters": {
         "type": "object",
         "properties": {
@@ -11,7 +11,7 @@ Profile = {
             },
             "language": {
                 "type": "string",
-                "description": "The users preferred language. Never ask for this, but assume from the language the user uses.",
+                "description": "The users preferred language - never ask for this, but assume from the language the user uses.",
             },
 
 # personal
