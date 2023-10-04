@@ -50,28 +50,32 @@ def suggest_content(user_id, set_challenge = True):
         
         challenge_data = try_get_object(fns.Challenge, response_message)
         if challenge_data:
-            db.add_active_challenge(user_id, challenge_data.challenge_name)
+            challenge_name = challenge_data.get('challenge_name')
+            print("adding challenge", challenge_name)
+            db.add_or_update_challenge(user_id, challenge_name)
             return suggest_content(user_id, False)
         
         lesson_data = try_get_object(fns.Lesson, response_message)
         if lesson_data:
-            db.set_current_lesson(user_id, json.dumps(lesson_data))
-            return lesson_create(user_id)
+            lesson_name = lesson_data.get('lesson_name')
+            print("adding lesson", lesson_name)
+            db.add_or_update_lesson(user_id, lesson_name)
+            return lesson_create(user_id, lesson_name)
             
     print("ERROR: failed function!! defaulting to no functions...")
     response = generate_response(messages)
     identify_content(user_id, response["choices"][0]["message"]['content'])
     return response
 
-def lesson_create(user_id):
-    print(f"Lesson '{db.get_current_lesson}' started. Generating tutor...")
+def lesson_create(user_id, lesson):
+    print(f"Lesson '{lesson}' started. Generating tutor...")
     profile = db.get_profile(user_id)
     tutor_create_message = mh.create_message(mh.system_message(user_id, roles.TutorCreate), profile)
     response = generate_response(tutor_create_message)
     db.set_tutor(user_id, response['choices'][0]['message']['content'])
 
     mh.update_system_role(user_id, roles.LessonCreate)
-    return generate_response(mh.prepare_session_messages(user_id))
+    return generate_response(mh.prepare_session_messages(user_id)+mh.user_message(lesson))
 
 def lesson_guide(user_id):
     return generate_response(mh.prepare_session_messages(user_id))

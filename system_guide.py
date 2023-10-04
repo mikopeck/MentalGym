@@ -6,7 +6,7 @@ import completion_tasks as cts
 import message_handler as mh
 
 def progress(user_id, user_message):
-    process_user_message(user_id, user_message)
+    lesson = process_user_message(user_id, user_message)
     db.clear_user_actions(user_id)
 
     # Progress chat
@@ -17,7 +17,7 @@ def progress(user_id, user_message):
     elif current_sys_role == roles.SuggestContent:
         response = cts.suggest_content(user_id)
     elif current_sys_role == roles.LessonCreate:
-        response = cts.lesson_create(user_id)
+        response = cts.lesson_create(user_id, lesson)
     elif current_sys_role == roles.LessonGuide:
         response = cts.lesson_guide(user_id)
     elif current_sys_role == roles.QuizCreate:
@@ -62,21 +62,21 @@ def process_user_message(user_id, user_message):
     if ':' not in user_message:
         return # No actions.
     
-    action = user_message.split(':', 1)[0]
+    action, content_name = user_message.split(':', 1)
     action = action.strip()
     current_actions = db.get_actions(user_id)
 
     if action.lower() == "start lesson":
         if user_message in current_actions:
-            db.set_current_lesson(user_id, user_message)
+            db.add_or_update_lesson(user_id, content_name)
             mh.update_system_role(user_id, roles.LessonCreate)
-            return
+            return content_name
         else:
-            print(f"Lesson '{user_message}' not found.")
+            print(f"Lesson '{content_name}' not found in available actions.")
 
     elif action.lower() == "accept challenge":
         if user_message in current_actions:
-            db.add_active_challenge(user_id, user_message)
-            print(f"Challenge '{user_message}' accepted.")
+            db.add_or_update_challenge(user_id, content_name)
+            print(f"Challenge '{content_name}' accepted.")
         else:
-            print(f"Challenge '{user_message}' not found.")
+            print(f"Challenge '{content_name}' not found in available actions.")

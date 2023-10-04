@@ -1,12 +1,15 @@
 <!-- MessageInput.vue -->
 <template>
   <div class="message-input-container">
-    <button v-if="actionAvailable"
-      @click="toggleMenu" 
-      class="plus-btn" 
-      :class="plusBtnClass">
-      +
+    <button
+      v-if="actionAvailable"
+      @click="toggleMenu"
+      class="action-btn"
+      v-tooltip="'Actions available...'"
+    >
+      <div class="action-icon" :class="actionIconClass">?</div>
     </button>
+
     <textarea
       ref="messageInput"
       id="messageInput"
@@ -15,7 +18,8 @@
       @keydown.enter="sendMessage"
       placeholder="Type a message..."
       rows="1"
-      :readonly="sending">
+      :readonly="sending"
+    >
     </textarea>
 
     <ActionMenu
@@ -63,9 +67,9 @@ export default {
     this.focusTextarea();
   },
   computed: {
-    plusBtnClass() {
+    actionIconClass() {
       return {
-        glow: !this.menuOpen && !this.sending,
+        bounce: !this.menuOpen && !this.sending,
         active: this.menuOpen,
       };
     },
@@ -82,7 +86,7 @@ export default {
 
       if (this.message.trim() === "") return;
 
-      const msg = this.message
+      const msg = this.message;
       this.message = "";
       this.adjustHeight();
 
@@ -104,15 +108,11 @@ export default {
     },
     adjustHeight() {
       this.$nextTick(() => {
-      const textarea = this.$refs.messageInput;
-      textarea.style.height = "auto";
-      textarea.style.height = textarea.scrollHeight + "px";
+        const textarea = this.$refs.messageInput;
+        textarea.style.height = "auto";
+        textarea.style.height = textarea.scrollHeight + "px";
       });
     },
-    // minimizeTextArea() {
-    //   const textarea = this.$refs.messageInput;
-    //   textarea.style.height = "64px";
-    // },
     focusTextarea() {
       this.$refs.messageInput.focus();
     },
@@ -250,7 +250,7 @@ textarea:focus {
   }
 }
 
-.plus-btn {
+.action-btn {
   width: 50px;
   height: 50px;
   background-color: #4a148c42;
@@ -265,24 +265,19 @@ textarea:focus {
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  font-weight: 900;
 }
 
-.plus-btn:hover, .plus-btn.active {
+.action-btn:hover,
+.action-btn.active {
   background-color: #6c1eb1;
 }
 
-.plus-btn.glow {
-  animation: glowEffect 3s infinite alternate;
+.action-icon {
+  font-weight: 900;
 }
 
-@keyframes glowEffect {
-  0%, 30% {
-    box-shadow: 0 0 5px #4a148c42;
-  }
-  15% {
-    box-shadow: 0 0 15px #6c1eb1, 0 0 20px #6c1eb1;
-  }
+.action-icon.bounce {
+  animation: bounce 2s infinite;
 }
 </style>
   

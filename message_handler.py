@@ -19,6 +19,14 @@ def create_message(system_message, user_message):
         }
     ]
 
+def user_message(message):
+    return [
+        {
+            "role": "user",
+            "content": message
+        }
+    ]
+
 def update_system_role(user_id, role: roles):
     db.set_system_role(user_id, role)
     print("Updating system role: ", role)

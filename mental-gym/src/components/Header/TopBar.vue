@@ -33,6 +33,8 @@ export default {
     background-color: #4a148c42;
     color: #f0f8ff;
     padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
