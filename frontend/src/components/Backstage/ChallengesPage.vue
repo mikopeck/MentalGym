@@ -1,3 +1,4 @@
+<!-- ChallengesPage.vue -->
 <template>
   <div class="challenges-container">
     <h1 class="page-title">Your Challenges</h1>
@@ -106,5 +107,3 @@ export default {
     background-color: #66c75a;
   }
 </style>
-
-

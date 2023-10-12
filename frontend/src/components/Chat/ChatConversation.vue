@@ -17,7 +17,7 @@ export default {
     messages: Array,
   },
   watch: {
-    messages: function () {
+    messages: () => {
       this.$emit("messagesChanged")
     },
   },

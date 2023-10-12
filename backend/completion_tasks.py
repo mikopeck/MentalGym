@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 import functions as fns
 import roles as roles
@@ -17,7 +18,7 @@ def gather_profile(user_id):
     function_call = "auto"
 
     # Force profile if message limit
-    if len(db.get_recent_messages(user_id, limit=profile_limit)) == profile_limit:
+    if len(db.get_recent_messages(user_id)) == db.history_limit:
         mh.update_system_role(user_id, roles.ProfileCreate)
         function_call = {"name": function[0]['name']}
 
@@ -52,40 +53,66 @@ def suggest_content(user_id, set_challenge = True):
         if challenge_data:
             challenge_name = challenge_data.get('challenge_name')
             print("adding challenge", challenge_name)
-            db.add_or_update_challenge(user_id, challenge_name)
+            db.add_challenge(user_id, challenge_name)
             return suggest_content(user_id, False)
         
         lesson_data = try_get_object(fns.Lesson, response_message)
         if lesson_data:
             lesson_name = lesson_data.get('lesson_name')
             print("adding lesson", lesson_name)
-            db.add_or_update_lesson(user_id, lesson_name)
-            return lesson_create(user_id, lesson_name)
+            lesson_id = db.add_lesson(user_id, lesson_name)
+            return lesson_create(user_id, lesson_id, lesson_name)
             
     print("ERROR: failed function!! defaulting to no functions...")
     response = generate_response(messages)
     identify_content(user_id, response["choices"][0]["message"]['content'])
     return response
 
-def lesson_create(user_id, lesson):
-    print(f"Lesson '{lesson}' started. Generating tutor...")
+def challenge_progress(user_id, challenge_id):
+    messages = mh.prepare_session_messages(user_id, challenge_id=challenge_id)
+    functions = [fns.ChallengeCompletion]
+    function_call = "auto"
+
+    for attempt in range(function_max_retries):
+        response = generate_response(messages, functions, function_call=function_call)
+        response_message = response["choices"][0]["message"]
+        if response_message.get("function_call"):
+            completion = try_get_object(fns.ChallengeCompletion, response_message)
+            if completion:
+                if completion.get('completion') == True:
+                    print("Challenge complete!")
+                    db.update_challenge(user_id, challenge_id)
+                else:
+                    print("failed completion- respond without completion function")
+                    return generate_response(messages)
+        else:
+            print("no completion - word response")
+            return response
+    print("incorrect challenge completion function use, defaulting to no function") 
+    return generate_response(messages)
+
+def lesson_create(user_id, lesson_id, lesson_name = None):
+    if not lesson_name:
+        lesson_name = db.get_user_lesson_name(user_id, lesson_id)
     profile = db.get_profile(user_id)
-    tutor_create_message = mh.create_message(mh.system_message(user_id, roles.TutorCreate), profile)
-    response = generate_response(tutor_create_message)
-    db.set_tutor(user_id, response['choices'][0]['message']['content'])
+    ##### TODO: generate improved tutor #####
+    if not db.get_tutor(user_id):
+        tutor_create_message = mh.create_message(mh.system_message(user_id, roles.TutorCreate), profile)
+        response = generate_response(tutor_create_message)
+        db.set_tutor(user_id, response['choices'][0]['message']['content'])
 
-    mh.update_system_role(user_id, roles.LessonCreate)
-    return generate_response(mh.prepare_session_messages(user_id)+mh.user_message(lesson))
+    mh.update_system_role(user_id, roles.LessonCreate, lesson_id)
+    return generate_response(mh.prepare_session_messages(user_id, lesson_id)+mh.user_message("Lesson topic: "+lesson_name)), lesson_id
 
-def lesson_guide(user_id):
-    return generate_response(mh.prepare_session_messages(user_id))
+def lesson_guide(user_id, lesson_id):
+    return generate_response(mh.prepare_session_messages(user_id, lesson_id))
 
-def quiz_create(user_id):
-    return generate_response(mh.prepare_session_messages(user_id))
+def quiz_create(user_id, lesson_id):
+    return generate_response(mh.prepare_session_messages(user_id, lesson_id)), lesson_id
 
-def quiz_feedback(user_id):
-    mh.update_system_role(user_id, roles.QuizGrade)
-    messages = mh.prepare_session_messages(user_id) 
+def quiz_feedback(user_id, lesson_id):
+    mh.update_system_role(user_id, roles.QuizGrade, lesson_id)
+    messages = mh.prepare_session_messages(user_id, lesson_id) 
     function = [fns.Grade]
     function_call = {"name": function[0]['name']}
 
@@ -100,16 +127,17 @@ def quiz_feedback(user_id):
             score = grade_data.get("score")
             if score > passing_grade:
                 print("lesson success")
+                db.update_lesson(user_id, lesson_id, datetime.utcnow)
                 # TODO:summarize?
                 mh.update_system_role(user_id, roles.SuggestContent)
-                return suggest_content(user_id)
+                return suggest_content(user_id, False), None
             else:
                 print("quiz failed")
-                mh.update_system_role(user_id, roles.QuizFeedback)
-                return generate_response(mh.prepare_session_messages(user_id))
+                mh.update_system_role(user_id, roles.QuizFeedback, lesson_id)
+                return generate_response(messages), lesson_id
                     
     print("ERROR: failed grading function!! defaulting to quiz create again...")
-    return quiz_create(user_id)
+    return quiz_create(user_id, lesson_id)
 
 #### private ####
 

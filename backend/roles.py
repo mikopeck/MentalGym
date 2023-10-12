@@ -13,3 +13,5 @@ LessonGuide = "LessonGuide"
 QuizCreate = "QuizCreate"
 QuizFeedback = "QuizFeedback"
 QuizGrade = "QuizGrade"
+
+ChallengeGuide = "ChallengeGuide"

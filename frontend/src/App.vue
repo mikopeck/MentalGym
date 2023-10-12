@@ -4,7 +4,6 @@
     <LoginSignupPopup v-if="!loggedIn" />
     <TopBar @toggleSideMenu="toggleMenu" />
     <SideMenu
-      v-show="true"
       :isMenuOpen="isMenuOpen"
       @conversationReset="resetConversation"
       @menuHidden="hideMenu"
@@ -12,19 +11,16 @@
     />
 
     <!-- Main chat -->
-    <div v-if="$route.path === '/'" class="main-content" ref="conversation">
-      <ChatConversation :messages="messages" @messagesChanged="updateView" />
-    </div>
-    <MessageInput
-      v-if="$route.path === '/'"
+    <Chat
+      v-if="shouldShowChat"
+      :messages="messages"
+      :actions="actions"
       @messageSending="handleMessageSending"
-      @messageSent="updateConversation"
-      :actionsList="actions"
-      class="message-input"
+      @updateConversation="updateConversation"
     />
 
     <!-- Routes -->
-    <router-view v-if="$route.path !== '/'"></router-view>
+    <router-view v-if="shouldShowRouterView"></router-view>
   </div>
 </template>
 
@@ -35,6 +31,7 @@ import SideMenu from "./components/Header/SideMenu.vue";
 import MessageInput from "./components/Chat/MessageInput.vue";
 import ChatConversation from "./components/Chat/ChatConversation.vue";
 import LoginSignupPopup from "./components/Auth/LoginSignupPopup.vue";
+import Chat from "./components/Chat/Chat.vue";
 
 export default {
   name: "App",
@@ -44,6 +41,7 @@ export default {
     MessageInput,
     ChatConversation,
     LoginSignupPopup,
+    Chat,
   },
   mounted() {
     this.fetchRecentMessages();
@@ -56,6 +54,26 @@ export default {
       actions: [],
     };
   },
+  computed: {
+    shouldShowChat() {
+      const path = this.$route.path;
+      return (
+        path === "/" ||
+        path.includes("/lesson/") ||
+        path.includes("/challenge/")
+      );
+    },
+    shouldShowRouterView() {
+      return this.$route.path !== "/";
+    },
+  },
+  watch: {
+    '$route.path': () => {
+      if (this.shouldShowChat) {
+        this.fetchRecentMessages();
+      }
+    }
+  },
   methods: {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
@@ -63,7 +81,7 @@ export default {
     hideMenu() {
       this.isMenuOpen = false;
     },
-    logoutUser(){
+    logoutUser() {
       this.loggedIn = false;
     },
     resetConversation(data) {
@@ -72,14 +90,14 @@ export default {
     updateConversation(data) {
       this.messages = data.messages;
       this.actions = data.actions;
-    },
-    updateView() {
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.$refs.conversation.scrollTop =
-            this.$refs.conversation.scrollHeight;
-        }, 50);
-      });
+
+      if ("redirect" in data) {
+        if (data.redirect === null) {
+          this.$router.push("/");
+        } else {
+          this.$router.push(`/lesson/${data.redirect}`);
+        }
+      }
     },
     handleMessageSending(message) {
       const tempMessage = {
@@ -90,14 +108,27 @@ export default {
     },
     fetchRecentMessages() {
       if (this.loggedIn) {
+        let apiEndpoint = "/api/chat";
+        const params = {};
+
+        const currentPath = this.$route.path;
+        const isLesson = currentPath.includes("/lesson/");
+        const isChallenge = currentPath.includes("/challenge/");
+
+        if (isLesson) {
+          params.lesson_id = this.$route.params.lesson_id;
+        } else if (isChallenge) {
+          params.challenge_id = this.$route.params.challenge_id;
+        }
+
         axios
-          .get("/api/recent_messages")
+          .get(apiEndpoint, { params })
           .then((response) => {
             this.messages = response.data.messages;
             this.actions = response.data.actions;
           })
           .catch((error) => {
-            console.error("Error fetching recent messages:", error);
+            console.error(`Error fetching recent messages:`, error);
           });
       }
     },
@@ -111,49 +142,5 @@ export default {
   display: grid;
   grid-template-rows: 1fr auto;
   height: 100vh;
-}
-
-.main-content {
-  padding: 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  overflow-y: auto;
-  scrollbar-width: auto;
-  scrollbar-color: transparent transparent;
-  position: relative;
-  display: flex;
-  flex-direction: column-reverse;
-}
-
-/* Webkit browsers (e.g., Chrome, Safari) scrollbar styles */
-.main-content::-webkit-scrollbar {
-  width: 12px;
-}
-
-.main-content::-webkit-scrollbar-track {
-  background: transparent;
-  transition: background 0.3s ease;
-}
-
-.main-content::-webkit-scrollbar-thumb {
-  background-color: transparent;
-  border-radius: 6px;
-  transition: background-color 0.3s ease;
-}
-
-.main-content:hover {
-  scrollbar-color: #4a148c #4a148c42;
-}
-
-.main-content:hover::-webkit-scrollbar-track {
-  background: #4a148c42;
-}
-
-.main-content:hover::-webkit-scrollbar-thumb {
-  background-color: #4a148c;
-}
-
-.main-content::-webkit-scrollbar-thumb:hover {
-  background-color: #6a34b9;
 }
 </style>

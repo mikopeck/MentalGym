@@ -122,3 +122,18 @@ Grade = {
         "required": ["score"],
     },
 }
+
+ChallengeCompletion = {
+    "name": "complete_challenge",
+    "description": "Used when a user has completed the challenge.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "completion": {
+                "type": "boolean",
+                "description": "Has the user really completed the challenge?"
+            }
+        },
+        "required": ["completion"],
+    },
+}

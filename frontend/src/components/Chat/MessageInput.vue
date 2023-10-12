@@ -96,8 +96,18 @@ export default {
       let formData = new FormData();
       formData.append("message", msg);
 
+      const currentPath = this.$route.path;
+      const isLesson = currentPath.includes("/lesson/");
+      const isChallenge = currentPath.includes("/challenge/");
+
+      if (isLesson) {
+        formData.append("lesson_id", this.$route.params.lesson_id);
+      } else if (isChallenge) {
+        formData.append("challenge_id", this.$route.params.challenge_id);
+      }
+
       try {
-        const response = await axios.post("/api/messages", formData);
+        const response = await axios.post("/api/chat", formData);
         this.$emit("messageSent", response.data);
       } catch (error) {
         console.error("Error sending message:", error);

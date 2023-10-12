@@ -12,13 +12,13 @@ from flask import send_from_directory
 from sqlalchemy.exc import IntegrityError
 import pymysql.err as pymysql_err
 
-from system_guide import progress
+from system_guide import progress_chat, progress_challenge, progress_lesson
 from models import db, User
 from message_handler import initialize_messages
 import db_handlers as dbh
 
 load_dotenv()
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../frontend/dist')
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -43,22 +43,58 @@ CORS(app)
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_frontend(path):
-    if path != "" and os.path.exists("mental-gym/dist/" + path):
-        return send_from_directory('mental-gym/dist', path)
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
     else:
-        return send_from_directory('mental-gym/dist', 'index.html')
+        return send_from_directory(app.static_folder, 'index.html')
     
-@app.route("/api/recent_messages", methods=["GET"])
+@app.route("/api/chat", methods=["GET", "POST"])
 @login_required
-def get_recent_messages_route():
-    return jsonify(messages=dbh.get_recent_messages(current_user.id), actions=dbh.get_actions(current_user.id))
+def handle_chat():
+    lesson_id = request.form.get("lesson_id", None)
+    challenge_id = request.form.get("challenge_id", None)
 
-@app.route("/api/messages", methods=["POST"])
-@login_required
-def post_message():
-    userInput = request.form["message"]
-    progress(current_user.id, userInput)
-    return jsonify(messages=dbh.get_recent_messages(current_user.id), actions=dbh.get_actions(current_user.id))
+    if request.method == "GET":
+        return get_recent_chat(lesson_id, challenge_id)
+
+    elif request.method == "POST":
+        userInput = request.form.get("message", "")
+
+        if lesson_id:
+            return post_lesson_message(userInput, lesson_id)
+        elif challenge_id:
+            return post_challenge_message(userInput, challenge_id)
+        else:
+            return post_general_message(userInput)
+
+def get_recent_chat(lesson_id, challenge_id):
+    return jsonify(
+        messages=dbh.get_recent_messages(current_user.id, lesson_id, challenge_id),
+        actions=dbh.get_actions(current_user.id, lesson_id)
+    )
+
+def post_general_message(userInput):
+    lesson_id = progress_chat(current_user.id, userInput)
+    return jsonify(
+        messages=dbh.get_recent_messages(current_user.id),
+        actions=dbh.get_actions(current_user.id, lesson_id),
+        redirect=lesson_id
+    )
+
+def post_lesson_message(userInput, lesson_id):
+    lesson_id = progress_lesson(current_user.id, userInput, lesson_id)
+    return jsonify(
+        messages=dbh.get_recent_messages(current_user.id, lesson_id=lesson_id),
+        actions=dbh.get_actions(current_user.id, lesson_id),
+        redirect=lesson_id
+    )
+
+def post_challenge_message(userInput, challenge_id):
+    progress_challenge(current_user.id, userInput, challenge_id)
+    return jsonify(
+        messages=dbh.get_recent_messages(current_user.id, challenge_id=challenge_id),
+        actions=dbh.get_actions(current_user.id)
+    )
 
 @app.route("/api/profile", methods=["GET"])
 @login_required
@@ -91,6 +127,15 @@ def get_challenges_route():
         "completed": dbh.get_completed_challenges(current_user.id)
     }
     return jsonify(status="success", challenges=challenges_data)
+
+@app.route("/api/lessons", methods=["GET"])
+@login_required
+def get_lessons_route():
+    lessons_data = {
+        "active": dbh.get_active_lessons(current_user.id),
+        "completed": dbh.get_completed_lessons(current_user.id)
+    }
+    return jsonify(status="success", lessons=lessons_data)
 
 @app.route("/api/achievements", methods=["GET"])
 @login_required

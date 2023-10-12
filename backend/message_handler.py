@@ -27,11 +27,14 @@ def user_message(message):
         }
     ]
 
-def update_system_role(user_id, role: roles):
-    db.set_system_role(user_id, role)
+def update_system_role(user_id, role: roles, lesson_id=None):
+    if lesson_id:
+        db.update_lesson(user_id, lesson_id,system_role=role)
+    else:
+        db.set_system_role(user_id, role)
     print("Updating system role: ", role)
-    db.remove_latest_system_message(user_id)
-    db.add_system_message(user_id, system_message(user_id))
+    db.remove_latest_system_message(user_id, lesson_id)
+    db.add_system_message(user_id, system_message(user_id, role), lesson_id)
 
 def system_message(user_id, file_name:roles = None ):
     if not file_name:
@@ -56,13 +59,17 @@ def system_message(user_id, file_name:roles = None ):
 
     return system_message
 
-def prepare_session_messages(user_id):
-    system_messages = db.get_system_messages(user_id)
+def prepare_session_messages(user_id, lesson_id=None, challenge_id=None):
+    if not challenge_id:
+        system_messages = db.get_system_messages(user_id, lesson_id)
+    else: 
+        system_messages = {"role": "system", "content": system_message(user_id, roles.ChallengeGuide)}
+        
     if not system_messages:
         initialize_messages(user_id)
         system_messages = db.get_system_messages(user_id)
 
-    limited_messages = db.get_api_messages(user_id)
+    limited_messages = db.get_api_messages(user_id, lesson_id=lesson_id, challenge_id=challenge_id)
     has_system_message = any(msg['role'] == 'system' for msg in limited_messages)
 
     messages = system_messages + limited_messages if not has_system_message else limited_messages

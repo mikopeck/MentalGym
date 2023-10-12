@@ -10,17 +10,17 @@
     </button>
 
     <button
-      @click="openProfile"
-      class="btn-profile"
-      :class="{ selected: isRouteActive('/profile') }"
+      @click="openLessons"
+      class="btn-lessons"
+      :class="{ selected: isRouteActive('/lessons', '^/lesson/\\w+') }"
     >
-      Profile
+      Lessons
     </button>
 
     <button
       @click="openChallenges"
       class="btn-challenges"
-      :class="{ selected: isRouteActive('/challenges') }"
+      :class="{ selected: isRouteActive('/challenges', '^/challenge/\\w+') }"
     >
       Challenges
     </button>
@@ -33,10 +33,16 @@
       Achievements
     </button>
 
-    <button @click="toggleLightMode" class="btn-light-mode">Light Mode</button>
+    <button
+      @click="openProfile"
+      class="btn-profile"
+      :class="{ selected: isRouteActive('/profile') }"
+    >
+      Profile
+    </button>
 
     <button @click="resetConversation" class="btn-reset">
-      Reset Conversation
+      Reset
     </button>
 
     <button @click="logout" class="btn-logout">Logout</button>
@@ -56,13 +62,21 @@ export default {
   },
   computed: {
     isRouteActive() {
-      return (route) => this.$route.path === route;
+      return (route, pattern = null) => {
+        // Special handling for root route to prevent it from matching all paths
+        if (route === "/" && this.$route.path !== "/") {
+          return false;
+        }
+
+        if (pattern) {
+          const regex = new RegExp(pattern);
+          return regex.test(this.$route.path);
+        }
+        return this.$route.path === route;
+      };
     },
   },
   methods: {
-    toggleLightMode() {
-      console.log("not implemented");
-    },
     async logout() {
       localStorage.setItem("loggedIn", false);
 

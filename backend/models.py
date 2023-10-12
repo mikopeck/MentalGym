@@ -35,6 +35,7 @@ class UserAchievement(db.Model):
 class UserAction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), nullable=True)
     action = db.Column(db.String(100), nullable=False)
 
 class ChatHistory(db.Model):
@@ -59,3 +60,4 @@ class Lesson(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     lesson_name = db.Column(db.String(100), nullable=False)
     completion_date = db.Column(db.DateTime, nullable=True)
+    system_role = db.Column(db.String(100), default='')
