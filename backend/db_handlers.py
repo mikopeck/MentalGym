@@ -1,5 +1,6 @@
 from models import db, User, ChatHistory, Challenge, Lesson, UserAction, Achievement, UserAchievement
 from utils import decode_if_needed
+from datetime import datetime
 
 history_limit = 16
 
@@ -32,11 +33,11 @@ def add_ai_message(user_id, message_content, sys_role, challenge_id=None, lesson
     db.session.commit()
 
 def get_recent_messages(user_id, lesson_id=None, challenge_id=None):
-    query = ChatHistory.query.filter_by(user_id=user_id)
-    if lesson_id is not None:
-        query = query.filter_by(lesson_id=lesson_id)
-    if challenge_id is not None:
-        query = query.filter_by(challenge_id=challenge_id)
+    query = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, challenge_id=challenge_id)
+    # if lesson_id is not None:
+    #     query = query.filter_by(lesson_id=lesson_id)
+    # elif challenge_id is not None:
+    #     query = query.filter_by(challenge_id=challenge_id)
         
     recent_messages = query.order_by(ChatHistory.timestamp.desc()).limit(history_limit).all()
     recent_messages = recent_messages[::-1]
@@ -62,7 +63,7 @@ def set_system_role(user_id, role):
 
 def get_system_role(user_id, lesson_id=None):
     if lesson_id:
-        lesson = Lesson.query.filter_by(user_id=user_id, lesson_id=lesson_id).first()
+        lesson = Lesson.query.filter_by(user_id=user_id, id=lesson_id).first()
         return lesson.system_role if lesson else None
     user = User.query.get(user_id)
     return user.system_role if user else None
@@ -146,10 +147,10 @@ def add_challenge(user_id, challenge_name, completion_date=None):
     db.session.commit()
     return challenge.id
 
-def update_challenge(user_id, challenge_id, completion_date):
-    challenge = Challenge.query.filter_by(user_id=user_id, challenge_id=challenge_id).first()
+def update_challenge(user_id, challenge_id):
+    challenge = Challenge.query.filter_by(user_id=user_id, id=challenge_id).first()
     if challenge:
-        challenge.completion_date = completion_date
+        challenge.completion_date = datetime.now
 
 def add_lesson(user_id, lesson_name):
     lesson = Lesson(user_id=user_id, lesson_name=lesson_name, completion_date=None, system_role=None)
@@ -158,7 +159,7 @@ def add_lesson(user_id, lesson_name):
     return lesson.id
 
 def update_lesson(user_id, lesson_id, completion_date=None, system_role=None):
-    lesson = Lesson.query.filter_by(user_id=user_id, lesson_id=lesson_id).first()
+    lesson = Lesson.query.filter_by(user_id=user_id, id=lesson_id).first()
     if lesson:
         if completion_date:
             lesson.completion_date = completion_date
@@ -170,6 +171,9 @@ def update_lesson(user_id, lesson_id, completion_date=None, system_role=None):
 def get_user_challenges(user_id):
     return Challenge.query.filter_by(user_id=user_id).all()
 
+def get_user_challenge_name(user_id, challenge_id):
+    return Challenge.query.filter_by(id=challenge_id, user_id=user_id).first().challenge_name
+    
 def get_user_lessons(user_id):
     return Lesson.query.filter_by(user_id=user_id).all()
 
@@ -178,19 +182,19 @@ def get_user_lesson_name(user_id, lesson_id):
 
 def get_completed_challenges(user_id):
     completed_challenges = Challenge.query.filter_by(user_id=user_id).filter(Challenge.completion_date.isnot(None)).all()
-    return [challenge.challenge_name for challenge in completed_challenges]
+    return [challenge.as_dict() for challenge in completed_challenges]
 
 def get_active_challenges(user_id):
     active_challenges = Challenge.query.filter_by(user_id=user_id).filter(Challenge.completion_date.is_(None)).all()
-    return [challenge.challenge_name for challenge in active_challenges]
+    return [challenge.as_dict() for challenge in active_challenges]
 
 def get_completed_lessons(user_id):
     completed_lessons = Lesson.query.filter_by(user_id=user_id).filter(Lesson.completion_date.isnot(None)).all()
-    return [lesson.lesson_name for lesson in completed_lessons]
+    return [lesson.as_dict() for lesson in completed_lessons]
 
 def get_active_lessons(user_id):
     active_lessons = Lesson.query.filter_by(user_id=user_id).filter(Lesson.completion_date.is_(None)).all()
-    return [lesson.lesson_name for lesson in active_lessons]
+    return [lesson.as_dict() for lesson in active_lessons]
 
 ### CLEAR ###
 

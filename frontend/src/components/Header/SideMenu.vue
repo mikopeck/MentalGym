@@ -67,10 +67,11 @@ export default {
         if (route === "/" && this.$route.path !== "/") {
           return false;
         }
-
         if (pattern) {
           const regex = new RegExp(pattern);
-          return regex.test(this.$route.path);
+          if (regex.test(this.$route.path)){
+            return true;
+          }
         }
         return this.$route.path === route;
       };
@@ -124,6 +125,10 @@ export default {
     },
     openChat() {
       this.$router.push("/");
+      this.hideMenu();
+    },
+    openLessons() {
+      this.$router.push("/lessons");
       this.hideMenu();
     },
     hideMenu() {

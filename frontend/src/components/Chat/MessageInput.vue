@@ -101,9 +101,9 @@ export default {
       const isChallenge = currentPath.includes("/challenge/");
 
       if (isLesson) {
-        formData.append("lesson_id", this.$route.params.lesson_id);
+        formData.append("lesson_id", currentPath.split('/').pop());
       } else if (isChallenge) {
-        formData.append("challenge_id", this.$route.params.challenge_id);
+        formData.append("challenge_id", currentPath.split('/').pop());
       }
 
       try {

@@ -5,7 +5,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import ProfilePage from './components/Backstage/ProfilePage.vue';
 import AchievementsPage from './components/Backstage/AchievementsPage.vue';
-import LessonsPage from './components/Backstage/LessonPage.vue';
+import LessonsPage from './components/Backstage/LessonsPage.vue';
 import ChallengesPage from './components/Backstage/ChallengesPage.vue';
 
 import './assets/styles.css';
@@ -15,7 +15,6 @@ const routes = [
   { path: '/challenges', component: ChallengesPage },
   { path: '/achievements', component: AchievementsPage },
   { path: '/profile', component: ProfilePage },
-  { path: '/settings', component: SettingsPage},
 ];
 
 const router = createRouter({

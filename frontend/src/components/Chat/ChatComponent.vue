@@ -1,3 +1,4 @@
+<!-- ChatComponent.vue -->
 <template>
   <div class="main-content" ref="conversation">
     <ChatConversation :messages="messages" @messagesChanged="updateView" />
@@ -11,11 +12,11 @@
 </template>
   
   <script>
-import MessageInput from "./Chat/MessageInput.vue";
-import ChatConversation from "./Chat/ChatConversation.vue";
+import MessageInput from "./MessageInput.vue";
+import ChatConversation from "./ChatConversation.vue";
 
 export default {
-  name: "Chat",
+  name: "ChatComponent",
   props: {
     messages: Array,
     actions: Array,

@@ -1,3 +1,4 @@
+<!-- ChatConversation.vue -->
 <template>
   <div id="conversation">
     <div
@@ -17,12 +18,16 @@ export default {
     messages: Array,
   },
   watch: {
-    messages: () => {
+    messages: function() {
       this.$emit("messagesChanged")
     },
   },
   computed: {
     filteredMessages() {
+      if (!this.messages) {
+        console.log("No messages!")
+        return [];
+      }
       var msgs = this.messages.filter((message) => message.role !== "system")
       msgs = msgs.filter((message) => message.role !== "app")
       const tempMessage = {

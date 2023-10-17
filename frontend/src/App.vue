@@ -11,7 +11,7 @@
     />
 
     <!-- Main chat -->
-    <Chat
+    <ChatComponent
       v-if="shouldShowChat"
       :messages="messages"
       :actions="actions"
@@ -28,24 +28,20 @@
 import axios from "axios";
 import TopBar from "./components/Header/TopBar.vue";
 import SideMenu from "./components/Header/SideMenu.vue";
-import MessageInput from "./components/Chat/MessageInput.vue";
-import ChatConversation from "./components/Chat/ChatConversation.vue";
 import LoginSignupPopup from "./components/Auth/LoginSignupPopup.vue";
-import Chat from "./components/Chat/Chat.vue";
+import ChatComponent from "./components/Chat/ChatComponent.vue";
 
 export default {
   name: "App",
   components: {
     TopBar,
     SideMenu,
-    MessageInput,
-    ChatConversation,
     LoginSignupPopup,
-    Chat,
+    ChatComponent,
   },
-  mounted() {
-    this.fetchRecentMessages();
-  },
+  // mounted() {
+    // this.fetchRecentMessages();
+  // },
   data() {
     return {
       isMenuOpen: false,
@@ -68,7 +64,8 @@ export default {
     },
   },
   watch: {
-    '$route.path': () => {
+    '$route.path': function() {
+      console.log("rounting..");
       if (this.shouldShowChat) {
         this.fetchRecentMessages();
       }
@@ -88,6 +85,7 @@ export default {
       this.updateConversation(data);
     },
     updateConversation(data) {
+      console.log("updating convo:"+data);
       this.messages = data.messages;
       this.actions = data.actions;
 
@@ -116,14 +114,16 @@ export default {
         const isChallenge = currentPath.includes("/challenge/");
 
         if (isLesson) {
-          params.lesson_id = this.$route.params.lesson_id;
+          params.lesson_id = currentPath.split('/').pop();
         } else if (isChallenge) {
-          params.challenge_id = this.$route.params.challenge_id;
+          params.challenge_id = currentPath.split('/').pop();
         }
 
+        console.log("Sending params:", params);
         axios
           .get(apiEndpoint, { params })
           .then((response) => {
+            console.log(response);
             this.messages = response.data.messages;
             this.actions = response.data.actions;
           })

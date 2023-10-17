@@ -51,14 +51,19 @@ def serve_frontend(path):
 @app.route("/api/chat", methods=["GET", "POST"])
 @login_required
 def handle_chat():
-    lesson_id = request.form.get("lesson_id", None)
-    challenge_id = request.form.get("challenge_id", None)
+
 
     if request.method == "GET":
+        lesson_id = request.args.get("lesson_id", None)
+        challenge_id = request.args.get("challenge_id", None)
+        print(lesson_id, challenge_id)
         return get_recent_chat(lesson_id, challenge_id)
 
     elif request.method == "POST":
+        lesson_id = request.form.get("lesson_id", None)
+        challenge_id = request.form.get("challenge_id", None)
         userInput = request.form.get("message", "")
+        print(lesson_id, challenge_id)
 
         if lesson_id:
             return post_lesson_message(userInput, lesson_id)
@@ -68,9 +73,13 @@ def handle_chat():
             return post_general_message(userInput)
 
 def get_recent_chat(lesson_id, challenge_id):
+    actions = []
+    if not challenge_id:
+        dbh.get_actions(current_user.id, lesson_id)
+
     return jsonify(
         messages=dbh.get_recent_messages(current_user.id, lesson_id, challenge_id),
-        actions=dbh.get_actions(current_user.id, lesson_id)
+        actions=actions
     )
 
 def post_general_message(userInput):

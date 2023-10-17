@@ -23,10 +23,10 @@ def gather_profile(user_id):
         function_call = {"name": function[0]['name']}
 
     for attempt in range(function_max_retries):
-        response = generate_response(messages, function, function_call=function_call)
+        response = generate_response(messages, function, function_call)
         response_message = response["choices"][0]["message"]
         if not response_message.get("function_call"):
-            return response
+            return response, None
         
         profile_data = try_get_object(fns.Profile, response_message)
         if profile_data:
@@ -35,19 +35,21 @@ def gather_profile(user_id):
             return suggest_content(user_id)
                  
     print("ERROR: failed function!! defaulting to no functions...")
-    return generate_response(messages)
+    return generate_response(messages), None
 
 def suggest_content(user_id, set_challenge = True):
     messages = mh.prepare_session_messages(user_id)
-    functions = [fns.Lesson, fns.Challenge]
+    functions = [fns.Lesson]
+    if set_challenge:
+        functions += [fns.Challenge]
     function_call = "auto"
 
     for attempt in range(function_max_retries):
-        response = generate_response(messages, functions, function_call=function_call)
+        response = generate_response(messages, functions, function_call)
         response_message = response["choices"][0]["message"]
         if not response_message.get("function_call"):
             identify_content(user_id, response_message['content'])
-            return response
+            return response, None
         
         challenge_data = try_get_object(fns.Challenge, response_message)
         if challenge_data:
@@ -66,7 +68,7 @@ def suggest_content(user_id, set_challenge = True):
     print("ERROR: failed function!! defaulting to no functions...")
     response = generate_response(messages)
     identify_content(user_id, response["choices"][0]["message"]['content'])
-    return response
+    return response, None
 
 def challenge_progress(user_id, challenge_id):
     messages = mh.prepare_session_messages(user_id, challenge_id=challenge_id)
@@ -74,14 +76,22 @@ def challenge_progress(user_id, challenge_id):
     function_call = "auto"
 
     for attempt in range(function_max_retries):
-        response = generate_response(messages, functions, function_call=function_call)
+        response = generate_response(messages, functions, function_call)
         response_message = response["choices"][0]["message"]
         if response_message.get("function_call"):
             completion = try_get_object(fns.ChallengeCompletion, response_message)
             if completion:
                 if completion.get('completion') == True:
-                    print("Challenge complete!")
                     db.update_challenge(user_id, challenge_id)
+                    return {
+                        "choices": [
+                            {
+                                "message": {
+                                    "content": "Congratulations! Challenge complete."
+                                }
+                            }
+                        ]
+                    }
                 else:
                     print("failed completion- respond without completion function")
                     return generate_response(messages)
@@ -105,7 +115,15 @@ def lesson_create(user_id, lesson_id, lesson_name = None):
     return generate_response(mh.prepare_session_messages(user_id, lesson_id)+mh.user_message("Lesson topic: "+lesson_name)), lesson_id
 
 def lesson_guide(user_id, lesson_id):
-    return generate_response(mh.prepare_session_messages(user_id, lesson_id))
+    messages = mh.prepare_session_messages(user_id, lesson_id) 
+    functions = [fns.LessonToQuiz]
+    function_call = "auto"
+
+    response = generate_response(messages, functions, function_call)
+    response_message = response["choices"][0]["message"]
+    if response_message.get("function_call"):
+        return quiz_create(user_id, lesson_id)
+    return response, lesson_id
 
 def quiz_create(user_id, lesson_id):
     return generate_response(mh.prepare_session_messages(user_id, lesson_id)), lesson_id
@@ -117,7 +135,7 @@ def quiz_feedback(user_id, lesson_id):
     function_call = {"name": function[0]['name']}
 
     for attempt in range(function_max_retries):
-        response = generate_response(messages, function, function_call=function_call)
+        response = generate_response(messages, function, function_call)
         response_message = response["choices"][0]["message"]
         if not response_message.get("function_call"):
             continue
@@ -157,7 +175,7 @@ def identify_content(user_id, message):
     function = [fns.Content]
     function_call = {"name": function[0]['name']}
 
-    response = generate_response(messages, function, function_call=function_call)
+    response = generate_response(messages, function, function_call)
     response_message = response["choices"][0]["message"]
     if not response_message.get("function_call"):
         print("No content suggested...")

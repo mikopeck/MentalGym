@@ -9,10 +9,10 @@ Profile = {
                 "type": "string",
                 "description": "The users preferred names, nicknames, or the designation they feel most connected to.",
             },
-            "language": {
-                "type": "string",
-                "description": "The users preferred language - never ask for this, but assume from the language the user uses.",
-            },
+            # "language": {
+            #     "type": "string",
+            #     "description": "The users preferred language - never ask for this, but assume from the language the user uses.",
+            # },
 
 # personal
             "prior_knowledge": {
@@ -108,13 +108,13 @@ Content = {
 
 Grade = {
     "name": "grade_quiz",
-    "description": "Give the user a score based on their answers to the quiz.",
+    "description": "Give the user a score based on their answers to the quiz. A score of 0 would mean the user has answered every question incorrectly.",
     "parameters": {
         "type": "object",
         "properties": {
             "score": {
                 "type": "integer",
-                "description": "A score between 0 and 100.",
+                "description": "A score between 0 and 100 where 100 means all questions were answered correctly.",
                 "minimum": 0,
                 "maximum": 100
             }
@@ -135,5 +135,20 @@ ChallengeCompletion = {
             }
         },
         "required": ["completion"],
+    },
+}
+
+LessonToQuiz = {
+    "name": "lesson_to_quiz",
+    "description": "Used when a user wants to continue to a quiz.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "continue": {
+                "type": "boolean",
+                "description": "Does the user want to continue? Should always be true if this method is called."
+            }
+        },
+        "required": ["continue"],
     },
 }

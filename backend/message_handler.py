@@ -63,8 +63,8 @@ def prepare_session_messages(user_id, lesson_id=None, challenge_id=None):
     if not challenge_id:
         system_messages = db.get_system_messages(user_id, lesson_id)
     else: 
-        system_messages = {"role": "system", "content": system_message(user_id, roles.ChallengeGuide)}
-        
+        system_messages = [{"role": "system", "content": system_message(user_id, roles.ChallengeGuide)+db.get_user_challenge_name(user_id, challenge_id)}]
+
     if not system_messages:
         initialize_messages(user_id)
         system_messages = db.get_system_messages(user_id)

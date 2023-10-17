@@ -48,6 +48,9 @@ class ChatHistory(db.Model):
 
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenge.id'), nullable=True)
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), nullable=True)
+    
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 class Challenge(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -55,9 +58,15 @@ class Challenge(db.Model):
     challenge_name = db.Column(db.String(100), nullable=False)
     completion_date = db.Column(db.DateTime, nullable=True)
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 class Lesson(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     lesson_name = db.Column(db.String(100), nullable=False)
     completion_date = db.Column(db.DateTime, nullable=True)
     system_role = db.Column(db.String(100), default='')
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}

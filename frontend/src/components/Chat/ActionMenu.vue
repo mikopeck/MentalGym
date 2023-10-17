@@ -25,7 +25,7 @@ export default {
     },
   },
   watch: {
-    actions: () => {
+    actions: function() {
       const anyActions = this.actions.length !== 0;
       this.$emit("availableActions", anyActions);
     },

@@ -16,39 +16,37 @@ def progress_lesson(user_id, user_message, lesson_id):
 
 def progress_challenge(user_id, user_message, challenge_id):
     db.add_user_message(user_id, user_message, challenge_id=challenge_id)
-    cts.challenge_progress(user_id, challenge_id)
-    #todo
+    response = cts.challenge_progress(user_id, challenge_id)
+    db.add_ai_response(user_id, response, roles.ChallengeGuide, challenge_id=challenge_id)
 
 def progress(user_id, lesson_id):
     db.clear_user_actions(user_id)
 
     # Progress chat
     current_sys_role = db.get_system_role(user_id, lesson_id)
+    print(current_sys_role, "role1")
     response = "No response."
     if current_sys_role == roles.ProfileGather:
         response, lesson_id = cts.gather_profile(user_id)
     elif current_sys_role == roles.SuggestContent:
         response, lesson_id = cts.suggest_content(user_id)
     elif current_sys_role == roles.LessonCreate:
-        response = cts.lesson_create(user_id, lesson_id)
+        response, lesson_id = cts.lesson_create(user_id, lesson_id)
     elif current_sys_role == roles.LessonGuide:
-        response = cts.lesson_guide(user_id, lesson_id)
+        response, lesson_id = cts.lesson_guide(user_id, lesson_id)
     elif current_sys_role == roles.QuizCreate:
-        response = cts.quiz_create(user_id, lesson_id)
+        response, lesson_id = cts.quiz_create(user_id, lesson_id)
     elif current_sys_role == roles.QuizFeedback:
         response, lesson_id = cts.quiz_feedback(user_id, lesson_id)
 
     # Progress roles and add actions
     current_sys_role = db.get_system_role(user_id, lesson_id)
+    print(current_sys_role, "role2")
     if current_sys_role == roles.LessonCreate:
         mh.update_system_role(user_id, roles.LessonGuide, lesson_id)
         current_sys_role = roles.LessonGuide
 
-    if current_sys_role == roles.LessonGuide:
-        db.add_action(user_id, "Continue to quiz.", lesson_id)
-        db.add_action(user_id, "End lesson.", lesson_id)
-
-    if current_sys_role == roles.QuizFeedback:
+    if (current_sys_role == roles.LessonGuide) | (current_sys_role == roles.QuizFeedback):
         db.add_action(user_id, "Continue to quiz.", lesson_id)
         db.add_action(user_id, "End lesson.", lesson_id)
 
@@ -57,8 +55,9 @@ def progress(user_id, lesson_id):
         current_sys_role = roles.QuizFeedback
         db.add_action(user_id, "End lesson.", lesson_id)
 
-    if current_sys_role == roles.LessonGuide | roles.QuizFeedback:
-        db.add_ai_response(user_id, response, current_sys_role, lesson_id)
+    print(current_sys_role, "role3")
+    if (current_sys_role == roles.LessonGuide) | (current_sys_role == roles.QuizFeedback):
+        db.add_ai_response(user_id, response, current_sys_role, lesson_id=lesson_id)
         return lesson_id
     else: 
         db.add_ai_response(user_id, response, current_sys_role)
@@ -71,7 +70,7 @@ def detect_lesson_actions(user_id, user_message, lesson_id):
     
 def detect_content_actions(user_id, user_message):
     if ':' not in user_message:
-        return # No actions.
+        return None
     
     action, content_name = user_message.split(':', 1)
     action = action.strip()
