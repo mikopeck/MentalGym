@@ -35,9 +35,9 @@ def add_ai_message(user_id, message_content, sys_role, challenge_id=None, lesson
 def add_content_message(user_id, content_name, challenge_id=None, lesson_id=None):
     system_role = None
     if challenge_id:
-        system_role = "challenge/"+challenge_id
+        system_role = f"challenge/{challenge_id}"
     elif lesson_id:
-        system_role = "lesson/"+lesson_id
+        system_role = f"lesson/{lesson_id}"
     else:
         print("Content ID not passed error.")
 
@@ -54,10 +54,6 @@ def add_content_message(user_id, content_name, challenge_id=None, lesson_id=None
 
 def get_recent_messages(user_id, lesson_id=None, challenge_id=None):
     query = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, challenge_id=challenge_id)
-    # if lesson_id is not None:
-    #     query = query.filter_by(lesson_id=lesson_id)
-    # elif challenge_id is not None:
-    #     query = query.filter_by(challenge_id=challenge_id)
         
     recent_messages = query.order_by(ChatHistory.timestamp.desc()).limit(history_limit).all()
     recent_messages = recent_messages[::-1]
@@ -69,11 +65,13 @@ def get_api_messages(user_id, lesson_id=None, challenge_id=None):
         query = query.filter_by(lesson_id=lesson_id)
     if challenge_id is not None:
         query = query.filter_by(challenge_id=challenge_id)
+    
+    valid_roles = ['system', 'assistant', 'user', 'function']
+    query = query.filter(ChatHistory.role.in_(valid_roles))
         
     recent_messages = query.order_by(ChatHistory.timestamp.desc()).limit(history_limit).all()
     recent_messages = recent_messages[::-1]
     return [{"role": msg.role, "content": msg.message} for msg in recent_messages]
-
 
 def set_system_role(user_id, role):
     user = User.query.get(user_id)
@@ -232,7 +230,7 @@ def clear_user_lessons(user_id):
     Lesson.query.filter_by(user_id=user_id).delete()
     db.session.commit()
 
-def clear_user_actions(user_id, lesson_id):
+def clear_user_actions(user_id, lesson_id=None):
     UserAction.query.filter_by(user_id=user_id, lesson_id=lesson_id).delete()
     db.session.commit()
 

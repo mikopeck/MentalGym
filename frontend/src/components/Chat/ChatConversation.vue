@@ -66,6 +66,9 @@ export default {
 <style scoped>
 #conversation {
   padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .chat-bubble {
@@ -73,7 +76,7 @@ export default {
   overflow: hidden;
   margin-top: 1rem;
   padding: 0.5rem;
-  width: 75%;
+  max-width: 75%;
   transition: all 0.3s ease-in-out;
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
@@ -89,7 +92,6 @@ export default {
 }
 
 .user {
-  float: left;
   text-align: left;
   background-color: #a7f3c066;
   box-shadow: 0 0 2px 2px #a7f3d066;
@@ -97,26 +99,11 @@ export default {
 }
 
 .assistant {
-  float: right;
   text-align: right;
   background-color: #4a148c42;
   box-shadow: 0 0 2px 2px #4a148c42;
   border-bottom-left-radius: 10px;
-}
-
-@keyframes slideInFromBottom {
-  0% {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.fade-in {
-  animation: slideInFromBottom 0.3s forwards;
+  align-self: flex-end; /* This will push the assistant's messages to the right */
 }
 
 .centered-button {

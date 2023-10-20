@@ -3,12 +3,11 @@
 import os
 import openai
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_migrate import Migrate
 from flask_cors import CORS
-from flask import send_from_directory
 from sqlalchemy.exc import IntegrityError
 import pymysql.err as pymysql_err
 
@@ -47,21 +46,23 @@ def serve_frontend(path):
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, 'index.html')
-    
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return make_response(jsonify({"error": "User not authenticated"}), 401)
+
 @app.route("/api/chat", methods=["GET", "POST"])
 @login_required
 def handle_chat():
     if request.method == "GET":
         lesson_id = request.args.get("lesson_id", None)
         challenge_id = request.args.get("challenge_id", None)
-        print(lesson_id, challenge_id)
         return get_recent_chat(lesson_id, challenge_id)
 
     elif request.method == "POST":
         lesson_id = request.form.get("lesson_id", None)
         challenge_id = request.form.get("challenge_id", None)
         userInput = request.form.get("message", "")
-        print(lesson_id, challenge_id)
 
         if lesson_id:
             return post_lesson_message(userInput, lesson_id)
@@ -74,7 +75,6 @@ def get_recent_chat(lesson_id, challenge_id):
     actions = []
     if not challenge_id:
         actions=dbh.get_actions(current_user.id, lesson_id)
-    print(actions)
 
     return jsonify(
         messages=dbh.get_recent_messages(current_user.id, lesson_id, challenge_id),

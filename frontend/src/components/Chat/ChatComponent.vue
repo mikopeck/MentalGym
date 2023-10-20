@@ -49,6 +49,7 @@ export default {
   padding: 1rem;
   max-width: 1200px;
   margin: 0 auto;
+  flex-grow: 1;
   overflow-y: auto;
   scrollbar-width: auto;
   scrollbar-color: transparent transparent;

@@ -10,17 +10,19 @@
       @logout="logoutUser"
     />
 
-    <!-- Main chat -->
-    <ChatComponent
-      v-if="shouldShowChat"
-      :messages="messages"
-      :actions="actions"
-      @messageSending="handleMessageSending"
-      @updateConversation="updateConversation"
-    />
+    <div class="main-content">
+      <!-- Main chat -->
+      <ChatComponent
+        v-if="shouldShowChat"
+        :messages="messages"
+        :actions="actions"
+        @messageSending="handleMessageSending"
+        @updateConversation="updateConversation"
+      />
 
-    <!-- Routes -->
-    <router-view v-if="shouldShowRouterView"></router-view>
+      <!-- Routes -->
+      <router-view v-if="shouldShowRouterView"></router-view>
+    </div>
   </div>
 </template>
 
@@ -39,9 +41,9 @@ export default {
     LoginSignupPopup,
     ChatComponent,
   },
-  // mounted() {
-    // this.fetchRecentMessages();
-  // },
+  mounted() {
+    this.fetchRecentMessages();
+  },
   data() {
     return {
       isMenuOpen: false,
@@ -64,12 +66,11 @@ export default {
     },
   },
   watch: {
-    '$route.path': function() {
-      console.log("rounting..");
+    "$route.path": function () {
       if (this.shouldShowChat) {
         this.fetchRecentMessages();
       }
-    }
+    },
   },
   methods: {
     toggleMenu() {
@@ -85,7 +86,7 @@ export default {
       this.updateConversation(data);
     },
     updateConversation(data) {
-      console.log("updating convo:"+data);
+      console.log("updating convo:" + data);
       this.messages = data.messages;
       this.actions = data.actions;
 
@@ -114,9 +115,9 @@ export default {
         const isChallenge = currentPath.includes("/challenge/");
 
         if (isLesson) {
-          params.lesson_id = currentPath.split('/').pop();
+          params.lesson_id = currentPath.split("/").pop();
         } else if (isChallenge) {
-          params.challenge_id = currentPath.split('/').pop();
+          params.challenge_id = currentPath.split("/").pop();
         }
 
         console.log("Sending params:", params);
@@ -129,6 +130,10 @@ export default {
           })
           .catch((error) => {
             console.error(`Error fetching recent messages:`, error);
+            if (error.response && error.response.status === 401) {
+              this.loggedIn = false;
+              localStorage.setItem("loggedIn", false);
+            }
           });
       }
     },
@@ -139,8 +144,15 @@ export default {
 <style scoped>
 .app-container {
   font-family: "Arial", sans-serif;
-  display: grid;
-  grid-template-rows: 1fr auto;
+  display: flex;
+  flex-direction: column;
   height: 100vh;
+}
+
+.main-content {
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 </style>

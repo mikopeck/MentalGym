@@ -42,11 +42,11 @@ def progress(user_id, lesson_id):
     # Progress roles and add actions
     current_sys_role = db.get_system_role(user_id, lesson_id)
     print(current_sys_role, "role2")
-    if current_sys_role == roles.LessonCreate:
+    if (current_sys_role == roles.LessonCreate) | (current_sys_role == roles.QuizFeedback):
         mh.update_system_role(user_id, roles.LessonGuide, lesson_id)
         current_sys_role = roles.LessonGuide
 
-    if (current_sys_role == roles.LessonGuide) | (current_sys_role == roles.QuizFeedback):
+    if current_sys_role == roles.LessonGuide:
         db.add_action(user_id, "Continue to quiz.", lesson_id)
         db.add_action(user_id, "End lesson.", lesson_id)
 

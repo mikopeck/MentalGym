@@ -155,6 +155,7 @@ def quiz_feedback(user_id, lesson_id):
                 return generate_response(messages), lesson_id
                     
     print("ERROR: failed grading function!! defaulting to quiz create again...")
+    mh.update_system_role(user_id, roles.QuizCreate, lesson_id)
     return quiz_create(user_id, lesson_id)
 
 #### private ####
