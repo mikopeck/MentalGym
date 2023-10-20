@@ -32,6 +32,26 @@ def add_ai_message(user_id, message_content, sys_role, challenge_id=None, lesson
     db.session.add(message)
     db.session.commit()
 
+def add_content_message(user_id, content_name, challenge_id=None, lesson_id=None):
+    system_role = None
+    if challenge_id:
+        system_role = "challenge/"+challenge_id
+    elif lesson_id:
+        system_role = "lesson/"+lesson_id
+    else:
+        print("Content ID not passed error.")
+
+    message = ChatHistory(
+        user_id=user_id, 
+        message=content_name, 
+        role=system_role, 
+        system_role=system_role,
+        challenge_id=None,
+        lesson_id=None
+    )
+    db.session.add(message)
+    db.session.commit()
+
 def get_recent_messages(user_id, lesson_id=None, challenge_id=None):
     query = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, challenge_id=challenge_id)
     # if lesson_id is not None:
@@ -145,6 +165,7 @@ def add_challenge(user_id, challenge_name, completion_date=None):
     challenge = Challenge(user_id=user_id, challenge_name=challenge_name, completion_date=completion_date)
     db.session.add(challenge)
     db.session.commit()
+    add_content_message(user_id, challenge_name,challenge_id=challenge.id)
     return challenge.id
 
 def update_challenge(user_id, challenge_id):
@@ -156,6 +177,7 @@ def add_lesson(user_id, lesson_name):
     lesson = Lesson(user_id=user_id, lesson_name=lesson_name, completion_date=None, system_role=None)
     db.session.add(lesson)
     db.session.commit()
+    add_content_message(user_id, lesson_name,lesson_id=lesson.id)
     return lesson.id
 
 def update_lesson(user_id, lesson_id, completion_date=None, system_role=None):
@@ -210,8 +232,8 @@ def clear_user_lessons(user_id):
     Lesson.query.filter_by(user_id=user_id).delete()
     db.session.commit()
 
-def clear_user_actions(user_id):
-    UserAction.query.filter_by(user_id=user_id).delete()
+def clear_user_actions(user_id, lesson_id):
+    UserAction.query.filter_by(user_id=user_id, lesson_id=lesson_id).delete()
     db.session.commit()
 
 def clear_user_achievements(user_id):

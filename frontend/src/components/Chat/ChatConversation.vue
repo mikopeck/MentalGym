@@ -7,7 +7,18 @@
       :class="message.role"
       class="chat-bubble"
     >
-      <p v-html="formatMessageContent(message.content)"></p>
+      <p
+        v-if="!isLessonOrChallenge(message.role)"
+        v-html="formatMessageContent(message.content)"
+      ></p>
+
+      <button
+        v-else
+        @click="navigateToContent(message.role)"
+        class="centered-button"
+      >
+        {{ message.content }}
+      </button>
     </div>
   </div>
 </template>
@@ -18,18 +29,18 @@ export default {
     messages: Array,
   },
   watch: {
-    messages: function() {
-      this.$emit("messagesChanged")
+    messages: function () {
+      this.$emit("messagesChanged");
     },
   },
   computed: {
     filteredMessages() {
       if (!this.messages) {
-        console.log("No messages!")
+        console.log("No messages!");
         return [];
       }
-      var msgs = this.messages.filter((message) => message.role !== "system")
-      msgs = msgs.filter((message) => message.role !== "app")
+      var msgs = this.messages.filter((message) => message.role !== "system");
+      msgs = msgs.filter((message) => message.role !== "app");
       const tempMessage = {
         role: "app",
         content: "",
@@ -41,6 +52,12 @@ export default {
   methods: {
     formatMessageContent(content) {
       return content.replace(/\n/g, "<br />");
+    },
+    navigateToContent(role) {
+      this.$router.push(`/${role}`);
+    },
+    isLessonOrChallenge(role) {
+      return role.startsWith("lesson/") || role.startsWith("challenge/");
     },
   },
 };
@@ -101,4 +118,22 @@ export default {
 .fade-in {
   animation: slideInFromBottom 0.3s forwards;
 }
+
+.centered-button {
+  display: block;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
+  background-color: #4a148c;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.centered-button:hover {
+  background-color: #6a2bc2;
+}
+
 </style>

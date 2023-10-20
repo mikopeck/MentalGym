@@ -20,7 +20,7 @@ def progress_challenge(user_id, user_message, challenge_id):
     db.add_ai_response(user_id, response, roles.ChallengeGuide, challenge_id=challenge_id)
 
 def progress(user_id, lesson_id):
-    db.clear_user_actions(user_id)
+    db.clear_user_actions(user_id, lesson_id)
 
     # Progress chat
     current_sys_role = db.get_system_role(user_id, lesson_id)

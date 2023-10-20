@@ -51,8 +51,6 @@ def serve_frontend(path):
 @app.route("/api/chat", methods=["GET", "POST"])
 @login_required
 def handle_chat():
-
-
     if request.method == "GET":
         lesson_id = request.args.get("lesson_id", None)
         challenge_id = request.args.get("challenge_id", None)
@@ -75,7 +73,8 @@ def handle_chat():
 def get_recent_chat(lesson_id, challenge_id):
     actions = []
     if not challenge_id:
-        dbh.get_actions(current_user.id, lesson_id)
+        actions=dbh.get_actions(current_user.id, lesson_id)
+    print(actions)
 
     return jsonify(
         messages=dbh.get_recent_messages(current_user.id, lesson_id, challenge_id),
