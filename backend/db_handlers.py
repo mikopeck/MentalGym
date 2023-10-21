@@ -56,7 +56,7 @@ def get_recent_messages(user_id, lesson_id=None, challenge_id=None):
     query = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, challenge_id=challenge_id)
         
     recent_messages = query.order_by(ChatHistory.timestamp.desc()).limit(history_limit).all()
-    recent_messages = recent_messages[::-1]
+    # recent_messages = recent_messages[::-1]
     return [{"role": msg.role, "content": msg.message, "system_role": msg.system_role} for msg in recent_messages]
 
 def get_api_messages(user_id, lesson_id=None, challenge_id=None):
@@ -70,7 +70,7 @@ def get_api_messages(user_id, lesson_id=None, challenge_id=None):
     query = query.filter(ChatHistory.role.in_(valid_roles))
         
     recent_messages = query.order_by(ChatHistory.timestamp.desc()).limit(history_limit).all()
-    recent_messages = recent_messages[::-1]
+    # recent_messages = recent_messages[::-1]
     return [{"role": msg.role, "content": msg.message} for msg in recent_messages]
 
 def set_system_role(user_id, role):
@@ -227,11 +227,16 @@ def clear_user_challenges(user_id):
     db.session.commit()
 
 def clear_user_lessons(user_id):
+    # MUST CLEAR all actions first.
     Lesson.query.filter_by(user_id=user_id).delete()
     db.session.commit()
 
 def clear_user_actions(user_id, lesson_id=None):
     UserAction.query.filter_by(user_id=user_id, lesson_id=lesson_id).delete()
+    db.session.commit()
+
+def clear_all_user_actions(user_id):
+    UserAction.query.filter_by(user_id=user_id).delete()
     db.session.commit()
 
 def clear_user_achievements(user_id):
@@ -249,7 +254,7 @@ def clear_user_profile(user_id):
 
 def reset_user_profile(user_id):
     clear_user_chat_history(user_id)
-    clear_user_actions(user_id)
+    clear_all_user_actions(user_id)
     clear_user_achievements(user_id)
     clear_user_challenges(user_id)
     clear_user_lessons(user_id)

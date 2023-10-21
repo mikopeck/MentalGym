@@ -32,12 +32,16 @@ def progress(user_id, lesson_id):
         response, lesson_id = cts.suggest_content(user_id)
     elif current_sys_role == roles.LessonCreate:
         response, lesson_id = cts.lesson_create(user_id, lesson_id)
-    elif current_sys_role == roles.LessonGuide:
-        response, lesson_id = cts.lesson_guide(user_id, lesson_id)
     elif current_sys_role == roles.QuizCreate:
         response, lesson_id = cts.quiz_create(user_id, lesson_id)
     elif current_sys_role == roles.QuizFeedback:
         response, lesson_id = cts.quiz_feedback(user_id, lesson_id)
+    else:
+        if lesson_id:
+            response, lesson_id = cts.lesson_guide(user_id, lesson_id)
+        else:
+            print(" Unknown role!!", current_sys_role)
+            response, lesson_id = cts.suggest_content(user_id)
 
     # Progress roles and add actions
     current_sys_role = db.get_system_role(user_id, lesson_id)

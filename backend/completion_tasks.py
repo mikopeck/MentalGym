@@ -145,7 +145,7 @@ def quiz_feedback(user_id, lesson_id):
             score = grade_data.get("score")
             if score > passing_grade:
                 print("lesson success")
-                db.update_lesson(user_id, lesson_id, datetime.utcnow)
+                db.update_lesson(user_id, lesson_id, datetime.utcnow())
                 # TODO:summarize?
                 mh.update_system_role(user_id, roles.SuggestContent)
                 return suggest_content(user_id, False), None

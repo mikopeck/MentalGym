@@ -1,2 +1,2 @@
 Try to objectively asses the answers the user gave to the quiz questions and judge if they are correct or not.
-Use only the function provided to determine a grade.
+Use only the function provided to determine a percent grade from 0 being all answers incorrect to 100 being all correct answers.
