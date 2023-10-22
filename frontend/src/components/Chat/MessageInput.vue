@@ -63,9 +63,6 @@ export default {
       actionAvailable: false,
     };
   },
-  mounted() {
-    this.focusTextarea();
-  },
   computed: {
     actionIconClass() {
       return {
@@ -113,7 +110,6 @@ export default {
         console.error("Error sending message:", error);
       } finally {
         this.sending = false;
-        this.focusTextarea();
       }
     },
     adjustHeight() {

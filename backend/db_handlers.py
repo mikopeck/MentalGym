@@ -84,9 +84,6 @@ def get_recent_messages(user_id, lesson_id=None, challenge_id=None):
     query = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, challenge_id=challenge_id)
         
     recent_messages = query.order_by(ChatHistory.timestamp.desc()).limit(history_limit).all()
-    # recent_messages = recent_messages[::-1]
-    # for msg in recent_messages:
-    #     print(msg.as_dict())
     return [{"role": msg.role, "content": msg.message, "system_role": msg.system_role} for msg in recent_messages]
 
 def get_api_messages(user_id, lesson_id=None, challenge_id=None):
@@ -100,7 +97,6 @@ def get_api_messages(user_id, lesson_id=None, challenge_id=None):
     query = query.filter(ChatHistory.role.in_(valid_roles))
         
     recent_messages = query.order_by(ChatHistory.timestamp.desc()).limit(history_limit).all()
-    # recent_messages = recent_messages[::-1]
     return [{"role": msg.role, "content": msg.message} for msg in recent_messages]
 
 def set_system_role(user_id, role):

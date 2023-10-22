@@ -1,14 +1,17 @@
 <!-- ChatComponent.vue -->
 <template>
-  <div class="main-content" ref="conversation">
-    <ChatConversation :messages="messages" @messagesChanged="updateView" />
+  <div class="main-container">
+    <div class="message-history">
+      <ChatConversation :messages="messages" @messagesChanged="updateView" />
+    </div>
+    <MessageInput
+      ref="messageInput"
+      @messageSending="handleMessageSending"
+      @messageSent="updateConversation"
+      :actionsList="actions"
+      class="message-input"
+    />
   </div>
-  <MessageInput
-    @messageSending="handleMessageSending"
-    @messageSent="updateConversation"
-    :actionsList="actions"
-    class="message-input"
-  />
 </template>
   
   <script>
@@ -29,8 +32,11 @@ export default {
     updateView() {
       this.$nextTick(() => {
         setTimeout(() => {
-          this.$refs.conversation.scrollTop =
-            this.$refs.conversation.scrollHeight;
+          const inputElement = this.$refs.messageInput.$el;
+          window.scrollTo(
+            0,
+            inputElement.offsetTop + inputElement.clientHeight
+          );
         }, 50);
       });
     },
@@ -45,7 +51,13 @@ export default {
 </script>
   
   <style scoped>
-.main-content {
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.message-history {
   padding: 1rem;
   max-width: 1200px;
   margin: 0 auto;
@@ -58,35 +70,40 @@ export default {
   flex-direction: column-reverse;
 }
 
+.message-input {
+  position: sticky;
+  bottom: 0;
+}
+
 /* Webkit browsers (e.g., Chrome, Safari) scrollbar styles */
-.main-content::-webkit-scrollbar {
+.message-history::-webkit-scrollbar {
   width: 12px;
 }
 
-.main-content::-webkit-scrollbar-track {
+.message-history::-webkit-scrollbar-track {
   background: transparent;
   transition: background 0.3s ease;
 }
 
-.main-content::-webkit-scrollbar-thumb {
+.message-history::-webkit-scrollbar-thumb {
   background-color: transparent;
   border-radius: 6px;
   transition: background-color 0.3s ease;
 }
 
-.main-content:hover {
+.message-history:hover {
   scrollbar-color: #4a148c #4a148c42;
 }
 
-.main-content:hover::-webkit-scrollbar-track {
+.message-history:hover::-webkit-scrollbar-track {
   background: #4a148c42;
 }
 
-.main-content:hover::-webkit-scrollbar-thumb {
+.message-history:hover::-webkit-scrollbar-thumb {
   background-color: #4a148c;
 }
 
-.main-content::-webkit-scrollbar-thumb:hover {
+.message-history::-webkit-scrollbar-thumb:hover {
   background-color: #6a34b9;
 }
 </style>
