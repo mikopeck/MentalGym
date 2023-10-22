@@ -3,12 +3,12 @@
   <header class="top-bar">
     <img
       src="@/assets/images/TutorLogo.png"
-      alt="Mental Gym Logo"
+      alt="Ascendance Logo"
       width="32"
       height="32"
       class="logo"
     />
-    <h1 class="app-title">Mental Gym</h1>
+    <h1 class="app-title">{{ pageTitle }}</h1>
 
     <button id="sideMenu" @click="toggleSideMenu" class="menu-btn">
       <!-- Three line (hamburger) icon -->
@@ -22,6 +22,17 @@
 <script>
 export default {
   name: "TopBar",
+  computed: {
+    pageTitle() {
+      if (this.$route.path.includes("lesson/")) {
+        return "Ascendance·📖";
+      } else if (this.$route.path.includes("challenge/")) {
+        return "Ascendance·🎯";
+      } else {
+        return "Ascendance·☁️";
+      }
+    },
+  },
   methods: {
     toggleSideMenu() {
       this.$emit("toggleSideMenu");
@@ -58,6 +69,8 @@ export default {
   flex-grow: 1;
   margin: 0;
   font-size: 24px;
+  text-align: center;
+  font-weight: 700;
 }
 
 .menu-btn {

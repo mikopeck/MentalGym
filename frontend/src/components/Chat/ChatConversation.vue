@@ -8,16 +8,26 @@
       class="chat-bubble"
     >
       <p
-        v-if="!isLessonOrChallenge(message.role)"
+        v-if="isChatMessage(message.role)"
         v-html="formatMessageContent(message.content)"
       ></p>
 
       <button
-        v-else
+        v-if="isContentButton(message.role)"
         @click="navigateToContent(message.role)"
-        class="centered-button"
+        :class="[isCompleted(message.role) ? 'completed-button' : 'content-button']"
       >
         {{ message.content }}
+      </button>
+
+      <button
+        v-if="isCompletionMessage(message.role)"
+        @click="navigateToContent()"
+        class="celebratory-message"
+      >
+        🎉 Congratulations! 🎉 
+        You've completed this! 
+        Return to chat.
       </button>
     </div>
   </div>
@@ -56,8 +66,21 @@ export default {
     navigateToContent(role) {
       this.$router.push(`/${role}`);
     },
-    isLessonOrChallenge(role) {
-      return role.startsWith("lesson/") || role.startsWith("challenge/");
+    isChatMessage(role) {
+      return (
+        role.startsWith("user") ||
+        role.startsWith("assistant") ||
+        role.startsWith("app")
+      );
+    },
+    isContentButton(role) {
+      return role.startsWith("challenge/") || role.startsWith("lesson/");
+    },
+    isCompleted(role) {
+      return role.includes("?completed");
+    },
+    isCompletionMessage(role) {
+      return role == "complete";
     },
   },
 };
@@ -103,10 +126,10 @@ export default {
   background-color: #4a148c42;
   box-shadow: 0 0 2px 2px #4a148c42;
   border-bottom-left-radius: 10px;
-  align-self: flex-end; /* This will push the assistant's messages to the right */
+  align-self: flex-end;
 }
 
-.centered-button {
+.content-button {
   display: block;
   margin: 0 auto;
   padding: 0.5rem 1rem;
@@ -119,8 +142,27 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.centered-button:hover {
+.content-button:hover {
   background-color: #6a2bc2;
 }
 
+.completed-button {
+  display: block;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
+  background-color: #6a2bc2;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  opacity: 0.6;
+}
+
+.celebratory-message {
+  color: #4a148c;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 0.5rem;
+}
 </style>

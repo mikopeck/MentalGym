@@ -83,15 +83,9 @@ def challenge_progress(user_id, challenge_id):
             if completion:
                 if completion.get('completion') == True:
                     db.update_challenge(user_id, challenge_id)
-                    return {
-                        "choices": [
-                            {
-                                "message": {
-                                    "content": "Congratulations! Challenge complete."
-                                }
-                            }
-                        ]
-                    }
+                    db.add_completion_message(user_id, challenge_id=challenge_id)
+                    mh.update_system_role(user_id, roles.SuggestContent)
+                    return suggest_content(user_id, False), None
                 else:
                     print("failed completion- respond without completion function")
                     return generate_response(messages)
@@ -146,7 +140,7 @@ def quiz_feedback(user_id, lesson_id):
             if score > passing_grade:
                 print("lesson success")
                 db.update_lesson(user_id, lesson_id, datetime.utcnow())
-                # TODO:summarize?
+                db.add_completion_message(user_id, lesson_id=lesson_id)
                 mh.update_system_role(user_id, roles.SuggestContent)
                 return suggest_content(user_id, False), None
             else:

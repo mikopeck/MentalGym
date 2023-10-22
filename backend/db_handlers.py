@@ -52,11 +52,41 @@ def add_content_message(user_id, content_name, challenge_id=None, lesson_id=None
     db.session.add(message)
     db.session.commit()
 
+def edit_content_message_to_completed(user_id, challenge_id=None, lesson_id=None):
+    if challenge_id:
+        message = ChatHistory.query.filter_by(user_id=user_id, system_role=f"challenge/{challenge_id}").first()
+    elif lesson_id:
+        message = ChatHistory.query.filter_by(user_id=user_id, system_role=f"lesson/{lesson_id}").first()
+    if not message:
+        return
+
+    message.role += "?completed"
+    message.system_role += "?completed"
+    db.session.commit()
+
+def add_completion_message(user_id, challenge_id=None, lesson_id=None):
+    edit_content_message_to_completed(user_id, challenge_id, lesson_id)
+
+    completion_message = ChatHistory(
+        user_id=user_id,
+        message="Completed!",
+        role="complete",
+        system_role="complete",
+        challenge_id=challenge_id,
+        lesson_id=lesson_id
+    )
+    
+    db.session.add(completion_message)
+    db.session.commit()
+
+
 def get_recent_messages(user_id, lesson_id=None, challenge_id=None):
     query = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, challenge_id=challenge_id)
         
     recent_messages = query.order_by(ChatHistory.timestamp.desc()).limit(history_limit).all()
     # recent_messages = recent_messages[::-1]
+    # for msg in recent_messages:
+    #     print(msg.as_dict())
     return [{"role": msg.role, "content": msg.message, "system_role": msg.system_role} for msg in recent_messages]
 
 def get_api_messages(user_id, lesson_id=None, challenge_id=None):
