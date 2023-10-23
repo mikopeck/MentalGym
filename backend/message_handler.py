@@ -73,5 +73,4 @@ def prepare_session_messages(user_id, lesson_id=None, challenge_id=None):
     has_system_message = any(msg['role'] == 'system' for msg in limited_messages)
 
     messages = system_messages + limited_messages if not has_system_message else limited_messages
-
     return messages

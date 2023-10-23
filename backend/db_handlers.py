@@ -66,7 +66,6 @@ def edit_content_message_to_completed(user_id, challenge_id=None, lesson_id=None
 
 def add_completion_message(user_id, challenge_id=None, lesson_id=None):
     edit_content_message_to_completed(user_id, challenge_id, lesson_id)
-
     completion_message = ChatHistory(
         user_id=user_id,
         message="Completed!",
@@ -79,15 +78,15 @@ def add_completion_message(user_id, challenge_id=None, lesson_id=None):
     db.session.add(completion_message)
     db.session.commit()
 
-
 def get_recent_messages(user_id, lesson_id=None, challenge_id=None):
     query = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, challenge_id=challenge_id)
-        
-    recent_messages = query.order_by(ChatHistory.timestamp.desc()).limit(history_limit).all()
+    recent_messages = query.order_by(ChatHistory.id.desc()).limit(history_limit).all()
+    recent_messages = recent_messages[::-1]
     return [{"role": msg.role, "content": msg.message, "system_role": msg.system_role} for msg in recent_messages]
 
 def get_api_messages(user_id, lesson_id=None, challenge_id=None):
     query = ChatHistory.query.filter_by(user_id=user_id)
+    
     if lesson_id is not None:
         query = query.filter_by(lesson_id=lesson_id)
     if challenge_id is not None:
@@ -95,9 +94,11 @@ def get_api_messages(user_id, lesson_id=None, challenge_id=None):
     
     valid_roles = ['system', 'assistant', 'user', 'function']
     query = query.filter(ChatHistory.role.in_(valid_roles))
-        
-    recent_messages = query.order_by(ChatHistory.timestamp.desc()).limit(history_limit).all()
+
+    recent_messages = query.order_by(ChatHistory.id.desc()).limit(history_limit).all()
+    recent_messages = recent_messages[::-1]
     return [{"role": msg.role, "content": msg.message} for msg in recent_messages]
+
 
 def set_system_role(user_id, role):
     user = User.query.get(user_id)
@@ -148,6 +149,10 @@ def add_action(user_id, action_name, lesson_id=None):
 def get_actions(user_id, lesson_id=None):
     actions = UserAction.query.filter_by(user_id=user_id, lesson_id=lesson_id).all()
     return [action.action for action in actions]
+
+def remove_user_action(user_id, action_name, lesson_id=None):
+    action = UserAction.query.filter_by(user_id=user_id, action=action_name, lesson_id=lesson_id)
+    action.delete()
 
 def add_achievement(achievement_name, description=None):
     achievement = Achievement(name=achievement_name, description=description)

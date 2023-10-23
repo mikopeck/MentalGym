@@ -15,9 +15,13 @@
       <button
         v-if="isContentButton(message.role)"
         @click="navigateToContent(message.role)"
-        :class="[isCompleted(message.role) ? 'completed-button' : 'content-button']"
+        :class="[
+          'content-button',
+          isCompleted(message.role) ? 'completed-button' : '',
+        ]"
       >
         {{ message.content }}
+        <span class="subtext">Take me there ►</span>
       </button>
 
       <button
@@ -25,9 +29,7 @@
         @click="navigateToContent()"
         class="celebratory-message"
       >
-        🎉 Congratulations! 🎉 
-        You've completed this! 
-        Return to chat.
+        🎉 Congratulations! 🎉 You've completed this! Return to chat.
       </button>
     </div>
   </div>
@@ -64,6 +66,9 @@ export default {
       return content.replace(/\n/g, "<br />");
     },
     navigateToContent(role) {
+      if (typeof role === "undefined") {
+        role = "";
+      }
       this.$router.push(`/${role}`);
     },
     isChatMessage(role) {
@@ -88,10 +93,11 @@ export default {
 
 <style scoped>
 #conversation {
+  width: 100%;
+  align-items: center;
   padding-top: 2rem;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
 }
 
 .chat-bubble {
@@ -119,6 +125,7 @@ export default {
   background-color: #a7f3c066;
   box-shadow: 0 0 2px 2px #a7f3d066;
   border-bottom-right-radius: 10px;
+  align-self: flex-start;
 }
 
 .assistant {
@@ -130,7 +137,10 @@ export default {
 }
 
 .content-button {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   margin: 0 auto;
   padding: 0.5rem 1rem;
   background-color: #4a148c;
@@ -140,23 +150,37 @@ export default {
   cursor: pointer;
   text-align: center;
   transition: background-color 0.3s ease;
+  position: relative;
+}
+
+.content-button .subtext {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 5px;
+  transition: color 0.3s ease;
 }
 
 .content-button:hover {
   background-color: #6a2bc2;
 }
 
+.content-button:hover .subtext {
+  color: rgba(255, 255, 255, 0.9);
+}
+
 .completed-button {
-  display: block;
-  margin: 0 auto;
-  padding: 0.5rem 1rem;
-  background-color: #6a2bc2;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  text-align: center;
   opacity: 0.6;
+  position: relative;
+}
+
+.completed-button::after {
+  content: "✓";
+  color: #a7f3c0;
+  font-weight: bold;
+  position: absolute;
+  right: 5px;
+  top: 80%;
+  transform: translateY(-50%);
 }
 
 .celebratory-message {

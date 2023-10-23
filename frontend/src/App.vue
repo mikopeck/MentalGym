@@ -23,6 +23,7 @@
       <!-- Routes -->
       <router-view v-if="shouldShowRouterView"></router-view>
     </div>
+    <BottomBar/>
   </div>
 </template>
 
@@ -32,6 +33,7 @@ import TopBar from "./components/Header/TopBar.vue";
 import SideMenu from "./components/Header/SideMenu.vue";
 import LoginSignupPopup from "./components/Auth/LoginSignupPopup.vue";
 import ChatComponent from "./components/Chat/ChatComponent.vue";
+import BottomBar from "./components/Footer/BottomBar.vue";
 
 export default {
   name: "App",
@@ -40,6 +42,7 @@ export default {
     SideMenu,
     LoginSignupPopup,
     ChatComponent,
+    BottomBar,
   },
   mounted() {
     this.fetchRecentMessages();
@@ -70,6 +73,10 @@ export default {
       if (this.shouldShowChat) {
         this.fetchRecentMessages();
       }
+      else{
+        window.scrollTo(0, 0);
+      }
+      this.hideMenu();
     },
   },
   methods: {

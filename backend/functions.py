@@ -52,7 +52,7 @@ Profile = {
 
 Lesson = {
     "name": "start_lesson",
-    "description": "When a user wants to start a lesson being offered.",
+    "description": "When a user wants to start a lesson being offered. The user must agree to an offer to start this lesson.",
     "parameters": {
         "type": "object",
         "properties": {
@@ -67,7 +67,7 @@ Lesson = {
 
 Challenge = {
     "name": "accept_challenge",
-    "description": "When a user wants to set a challenge for themselves.",
+    "description": "When a user wants to set a challenge for themselves. The user must agree to an offer to accept this challenge.",
     "parameters": {
         "type": "object",
         "properties": {

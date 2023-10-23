@@ -35,6 +35,7 @@ def gather_profile(user_id):
             return suggest_content(user_id)
                  
     print("ERROR: failed function!! defaulting to no functions...")
+    mh.update_system_role(user_id, roles.ProfileGather)
     return generate_response(messages), None
 
 def suggest_content(user_id, set_challenge = True):
@@ -141,8 +142,7 @@ def quiz_feedback(user_id, lesson_id):
                 print("lesson success")
                 db.update_lesson(user_id, lesson_id, datetime.utcnow())
                 db.add_completion_message(user_id, lesson_id=lesson_id)
-                mh.update_system_role(user_id, roles.SuggestContent)
-                return suggest_content(user_id, False), None
+                return None, lesson_id
             else:
                 print("quiz failed")
                 mh.update_system_role(user_id, roles.QuizFeedback, lesson_id)

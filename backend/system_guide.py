@@ -11,7 +11,10 @@ def progress_chat(user_id, user_message):
 
 def progress_lesson(user_id, user_message, lesson_id):
     db.add_user_message(user_id, user_message, lesson_id=lesson_id)
-    detect_lesson_actions(user_id, user_message, lesson_id)
+    if user_message == "Leave lesson.":
+        return None
+    elif user_message == "Continue to quiz.":
+        mh.update_system_role(user_id, roles.QuizCreate, lesson_id)
     return progress(user_id, lesson_id)
 
 def progress_challenge(user_id, user_message, challenge_id):
@@ -36,6 +39,8 @@ def progress(user_id, lesson_id):
         response, lesson_id = cts.quiz_create(user_id, lesson_id)
     elif current_sys_role == roles.QuizFeedback:
         response, lesson_id = cts.quiz_feedback(user_id, lesson_id)
+        if not response:
+            return lesson_id # Completed lesson.
     else:
         if lesson_id:
             response, lesson_id = cts.lesson_guide(user_id, lesson_id)
@@ -52,12 +57,12 @@ def progress(user_id, lesson_id):
 
     if current_sys_role == roles.LessonGuide:
         db.add_action(user_id, "Continue to quiz.", lesson_id)
-        db.add_action(user_id, "End lesson.", lesson_id)
+        db.add_action(user_id, "Leave lesson.", lesson_id)
 
     if current_sys_role == roles.QuizCreate:
         mh.update_system_role(user_id, roles.QuizFeedback, lesson_id)
         current_sys_role = roles.QuizFeedback
-        db.add_action(user_id, "End lesson.", lesson_id)
+        db.add_action(user_id, "Leave lesson.", lesson_id)
 
     print(current_sys_role, "role3")
     if (current_sys_role == roles.LessonGuide) | (current_sys_role == roles.QuizFeedback):
@@ -66,12 +71,6 @@ def progress(user_id, lesson_id):
     else: 
         db.add_ai_response(user_id, response, current_sys_role)
 
-def detect_lesson_actions(user_id, user_message, lesson_id):
-    if user_message == "End lesson.":
-        mh.update_system_role(user_id, roles.SuggestContent)
-    elif user_message == "Continue to quiz.":
-        mh.update_system_role(user_id, roles.QuizCreate, lesson_id)
-    
 def detect_content_actions(user_id, user_message):
     if ':' not in user_message:
         return None
@@ -83,6 +82,7 @@ def detect_content_actions(user_id, user_message):
     if action.lower() == "start lesson":
         if user_message in current_actions:
             lesson_id = db.add_lesson(user_id, content_name)
+            db.remove_user_action(user_id,user_message)
             mh.update_system_role(user_id, roles.LessonCreate, lesson_id)
             return lesson_id
         else:
@@ -91,6 +91,6 @@ def detect_content_actions(user_id, user_message):
     elif action.lower() == "accept challenge":
         if user_message in current_actions:
             db.add_challenge(user_id, content_name)
-            print(f"Challenge '{content_name}' accepted.")
+            db.remove_user_action(user_id,user_message)
         else:
             print(f"Challenge '{content_name}' not found in available actions.")
