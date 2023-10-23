@@ -50,8 +50,10 @@ export default {
 
 <style scoped>
 .about-container {
+  background-color: #0e0c14;
   padding: 20px;
   line-height: 1.6;
+  z-index: 150;
 }
 
 h1,

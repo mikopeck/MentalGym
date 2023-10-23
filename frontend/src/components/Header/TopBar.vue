@@ -2,15 +2,20 @@
 <template>
   <header class="top-bar">
     <img
-      src="@/assets/images/TutorLogo.png"
+      src="@/assets/images/ascendance_logo.png"
       alt="Ascendance Logo"
       width="32"
       height="32"
       class="logo"
+      @click="redirectToHome"
     />
-    <h1 class="app-title">{{ pageTitle }}</h1>
+    <h1 class="app-title" @click="redirectToHome">{{ pageTitle }}</h1>
 
-    <button id="sideMenu" @click="toggleSideMenu" class="menu-btn">
+    <button
+      id="sideMenu"
+      @click="toggleSideMenu"
+      class="menu-btn"
+    >
       <!-- Three line (hamburger) icon -->
       <span class="menu-line"></span>
       <span class="menu-line"></span>
@@ -37,6 +42,9 @@ export default {
     toggleSideMenu() {
       this.$emit("toggleSideMenu");
     },
+    redirectToHome() {
+      this.$router.push("/");
+    },
   },
 };
 </script>
@@ -47,7 +55,7 @@ export default {
   position: sticky;
   top: 0;
   width: 100%;
-  z-index: 99;
+  z-index: 200;
   background-color: #4a148c42;
   color: #f0f8ff;
   padding: 4px;
@@ -71,6 +79,7 @@ export default {
   font-size: 24px;
   text-align: center;
   font-weight: 700;
+  cursor: pointer;
 }
 
 .menu-btn {

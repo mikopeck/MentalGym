@@ -6,7 +6,7 @@
         <input type="text" id="name" v-model="name" placeholder="Enter your name" required>
 
         <label for="email">Email:</label>
-        <input type="email" id="email" v-model="email" placeholder="Enter your email" required>
+        <input type="email" id="contact-email" v-model="email" placeholder="Enter your email" required>
 
         <label for="message">Message:</label>
         <textarea id="message" v-model="message" placeholder="Enter your message" rows="4" required></textarea>
@@ -50,7 +50,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 96;
+  z-index: 150;
 }
 
 .popup-content {
@@ -61,6 +61,7 @@ export default {
   align-items: center;
   padding: 10px;
   border-radius: 8px;
+  max-width: 80%;
 }
 
 .popup-content label {

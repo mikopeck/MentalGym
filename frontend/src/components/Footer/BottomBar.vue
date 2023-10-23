@@ -1,6 +1,10 @@
 <template>
   <div class="app-footer">
     <div class="footer-top">
+      <router-link to="/about" class="text-link">About</router-link>
+      <span class="separator">·</span>
+      <router-link to="/contact" class="text-link">Contact</router-link>
+      <span class="separator">·</span>
       <a
         href="https://twitter.com/AscendanceCloud"
         target="_blank"
@@ -28,10 +32,6 @@
           height="16"
         />
       </a>
-      <span class="separator">·</span>
-      <router-link to="/about" class="text-link">About</router-link>
-      <span class="separator">·</span>
-      <router-link to="/contact" class="text-link">Contact</router-link>
     </div>
     <div class="footer-bottom">
       <p>© 2023 Ascendance. All rights reserved.</p>
@@ -55,7 +55,7 @@ export default {
   flex-direction: column;
   max-width: 1200px;
   margin: 0 auto;
-  z-index: 101;
+  z-index: 200;
 }
 
 .footer-top {

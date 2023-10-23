@@ -149,7 +149,7 @@ export default {
   height: fit-content;
   width: 300px;
   transition: right 0.3s ease;
-  z-index: 99;
+  z-index: 200;
 }
 
 .slide-out {
