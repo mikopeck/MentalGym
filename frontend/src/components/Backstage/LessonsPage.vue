@@ -10,6 +10,7 @@
           :key="lesson.lesson_name"
           :content="lesson.lesson_name"
           :role="lesson.id"
+          :content_type="'lesson'"
           @navigate="navigateToLesson"
         ></ContentButton>
       </div>
@@ -19,8 +20,9 @@
           v-for="lesson in lessons.completed"
           :key="lesson.lesson_name"
           :content="lesson.lesson_name"
-          :role="'?completed'"
-          @navigate="navigateToLesson(lesson.id)"
+          :role="lesson.id+'?completed'"
+          :content_type="'lesson'"
+          @navigate="navigateToLesson"
         ></ContentButton>
       </div>
     </div>

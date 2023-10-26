@@ -15,7 +15,7 @@ def generate_response(messages, functions = None, function_call = "none", model 
     for attempt in range(max_retries):
         try:
             if functions:
-                print("Requesting AI response: ", messages, functions)
+                print(f"Requesting {model} response {tokens}: ", messages, functions)
                 response = openai.ChatCompletion.create(
                     model=model,
                     messages=messages,

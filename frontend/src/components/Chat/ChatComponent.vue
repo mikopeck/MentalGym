@@ -32,11 +32,11 @@ export default {
     updateView() {
       this.$nextTick(() => {
         setTimeout(() => {
-          const inputElement = this.$refs.messageInput.$el;
-          window.scrollTo(
-            0,
-            inputElement.offsetTop +inputElement.clientHeight + 64
-          );
+          // const inputElement = this.$refs.messageInput.$el;
+          // window.scrollTo(
+          //   0,
+          //   inputElement.offsetTop +inputElement.clientHeight
+          // );
         }, 50);
       });
     },

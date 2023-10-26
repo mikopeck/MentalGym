@@ -60,8 +60,12 @@ Lesson = {
                 "type": "string",
                 "description": "A concise but complete description of the lesson to start.",
             },
+            "lesson_emoji": {
+                "type": "string",
+                "description": "One emoji which represents the lesson topic.",
+            },
         },
-        "required": ["lesson_name"],
+        "required": ["lesson_name","lesson_emoji"],
     },
 }
 
@@ -75,8 +79,12 @@ Challenge = {
                 "type": "string",
                 "description": "A concise but complete description of the challenge.",
             },
+            "challenge_emoji": {
+                "type": "string",
+                "description": "One emoji which represents the challenge topic.",
+            }
         },
-        "required": ["challenge_name"],
+        "required": ["challenge_name", "challenge_emoji"],
     },
 }
 
@@ -91,14 +99,14 @@ Content = {
                 "items": {
                     "type": "string"
                 },
-                "description": "Concise but complete descriptions of the lessons offered.",
+                "description": "One emoji and a concise but complete descriptions of the lessons offered.",
             },
             "challenge_names": {
                 "type": "array",
                 "items": {
                     "type": "string"
                 },
-                "description": "Concise but complete descriptions of the challenges offered.",
+                "description": "One emoji and a concise but complete descriptions of the challenges offered.",
             },
         },
         "required": [],

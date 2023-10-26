@@ -3,6 +3,7 @@
   <div class="app-container">
     <LoginSignupPopup v-if="!loggedIn" />
     <TopBar @toggleSideMenu="toggleMenu" />
+    <SubHeader v-if="shouldShowChat" :subheading="subheadingText" />
     <SideMenu
       :isMenuOpen="isMenuOpen"
       @conversationReset="resetConversation"
@@ -34,6 +35,7 @@ import SideMenu from "./components/Header/SideMenu.vue";
 import LoginSignupPopup from "./components/Auth/LoginSignupPopup.vue";
 import ChatComponent from "./components/Chat/ChatComponent.vue";
 import BottomBar from "./components/Footer/BottomBar.vue";
+import SubHeader from "./components/Header/SubHeader.vue";
 
 export default {
   name: "App",
@@ -43,6 +45,7 @@ export default {
     LoginSignupPopup,
     ChatComponent,
     BottomBar,
+    SubHeader,
   },
   mounted() {
     this.fetchRecentMessages();
@@ -53,6 +56,7 @@ export default {
       loggedIn: localStorage.getItem("loggedIn") === "true",
       messages: [],
       actions: [],
+      subheadingText: '',
     };
   },
   computed: {
@@ -134,6 +138,9 @@ export default {
             console.log(response);
             this.messages = response.data.messages;
             this.actions = response.data.actions;
+            if ("subheading" in response.data){
+              this.subheadingText = response.data.subheading;
+            }
           })
           .catch((error) => {
             console.error(`Error fetching recent messages:`, error);

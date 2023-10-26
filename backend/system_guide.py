@@ -67,6 +67,7 @@ def progress(user_id, lesson_id):
     if current_sys_role == roles.AfterContent:
         mh.update_system_role(user_id, roles.SuggestContent)
         current_sys_role = roles.SuggestContent
+        db.add_action(user_id, "Suggest.")
 
     if (current_sys_role == roles.LessonGuide) | (current_sys_role == roles.QuizFeedback):
         db.add_ai_response(user_id, response, current_sys_role, lesson_id=lesson_id)

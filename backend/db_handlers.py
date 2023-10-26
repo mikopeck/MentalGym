@@ -229,7 +229,7 @@ def update_lesson(user_id, lesson_id, completion_date=None, system_role=None):
             set_user_content(user_id, f"completed lesson {lesson.lesson_name}")
             lesson.completion_date = completion_date
         elif system_role:
-            set_user_content(user_id, f"worked lesson {lesson.lesson_name}")
+            set_user_content(user_id, f"worked on but not completed lesson {lesson.lesson_name}")
             lesson.system_role = system_role
     
     db.session.commit()

@@ -16,6 +16,7 @@
         v-if="isContentButton(message.role)"
         :content="message.content"
         :role="message.role"
+        :content_type="getContentType(message.role)"
         @navigate="navigateToContent"
       ></ContentButton>
 
@@ -88,6 +89,14 @@ export default {
     },
     isCompletionMessage(role) {
       return role == "complete";
+    },
+    getContentType(role) {
+      if (role.startsWith("challenge/")) {
+        return "challenge";
+      }
+      else{ // (role.startsWith("lesson/")) 
+        return "lesson";
+      }
     },
   },
 };

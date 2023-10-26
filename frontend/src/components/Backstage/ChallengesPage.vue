@@ -10,6 +10,7 @@
           :key="challenge.challenge_name"
           :content="challenge.challenge_name"
           :role="challenge.id"
+          :content_type="'challenge'"
           @navigate="navigateToChallenge"
         ></ContentButton>
       </div>
@@ -19,8 +20,9 @@
           v-for="challenge in challenges.completed"
           :key="challenge.challenge_name"
           :content="challenge.challenge_name"
-          :role="'?completed'"
-          @navigate="navigateToChallenge(challenge.id)"
+          :role="challenge.id+'?completed'"
+          :content_type="'challenge'"
+          @navigate="navigateToChallenge"
         ></ContentButton>
       </div>
     </div>
