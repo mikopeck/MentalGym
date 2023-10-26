@@ -5,34 +5,37 @@
     <div class="lessons-section">
       <h2 class="section-title">Active Lessons</h2>
       <div class="active-lessons">
-        <button
+        <ContentButton
           v-for="lesson in lessons.active"
           :key="lesson.lesson_name"
-          class="lesson-btn"
-          @click="navigateToLesson(lesson.id)"
-        >
-          {{ lesson.lesson_name }}
-        </button>
+          :content="lesson.lesson_name"
+          :role="lesson.id"
+          @navigate="navigateToLesson"
+        ></ContentButton>
       </div>
       <h2 class="section-title">Completed Lessons</h2>
-      <ul class="list">
-        <li
+      <div class="completed-lessons">
+        <ContentButton
           v-for="lesson in lessons.completed"
           :key="lesson.lesson_name"
-          class="list-item"
-        >
-          {{ lesson.lesson_name }}
-        </li>
-      </ul>
+          :content="lesson.lesson_name"
+          :role="'?completed'"
+          @navigate="navigateToLesson(lesson.id)"
+        ></ContentButton>
+      </div>
     </div>
   </div>
 </template>
-    
+
   <script>
 import axios from "axios";
+import ContentButton from "../Chat/ContentButton.vue";
 
 export default {
   name: "LessonsPage",
+  components: {
+    ContentButton,
+  },
   data() {
     return {
       lessons: {
@@ -75,7 +78,7 @@ export default {
 }
 
 .lessons-container {
-  margin-top: 3em;
+  margin-top: 2em;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -102,18 +105,11 @@ export default {
   gap: 16px;
 }
 
-.lesson-btn {
-  padding: 8px 16px;
-  background-color: #4caf50;
-  color: #f0f8ff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.completed-lessons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.lesson-btn:hover {
-  background-color: #66c75a;
-}
 </style>
   

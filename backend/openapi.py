@@ -5,26 +5,34 @@ import time
 max_retries=10
 delay=10
 
-def generate_response(messages, functions = None, function_call = "none"):
+TOKEN_CAP = 400
+LESSON_TOKENS = 800
+
+GPT3_5 = "gpt-3.5-turbo"
+GPT4 = "gpt-4"
+
+def generate_response(messages, functions = None, function_call = "none", model = GPT3_5, tokens=TOKEN_CAP):
     for attempt in range(max_retries):
         try:
             if functions:
                 print("Requesting AI response: ", messages, functions)
                 response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
+                    model=model,
                     messages=messages,
                     functions=functions,
                     function_call=function_call,
-                    temperature=0.1
+                    temperature=0.1,
+                    max_tokens=tokens
                 )
                 print(response)
                 return response
             else:
                 print("Requesting AI response: ", messages)
                 response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
+                    model=model,
                     messages=messages,
-                    temperature=0.2
+                    temperature=0.2,
+                    max_tokens=tokens
                 )
                 print(response)
                 return response

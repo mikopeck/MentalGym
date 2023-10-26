@@ -5,7 +5,16 @@
 html {
     background-color: #0e0c14;
     color: #f0f8ff;
-    cursor:default;
+    cursor: default;
 }
 
-/*  */
+.code-block {
+    background-color: #00000042;
+    text-align: left;
+    padding: 1rem;
+    border-radius: 5px;
+    font-family: "Courier New", Courier, monospace;
+    overflow-x: auto;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}

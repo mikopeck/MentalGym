@@ -12,7 +12,7 @@ class User(db.Model, UserMixin):
     system_role = db.Column(db.String(100), default='')
     profile = db.Column(db.Text, nullable=True)
     ai_tutor_profile = db.Column(db.Text, nullable=True)
-    current_lesson = db.Column(db.String(500), nullable=True)
+    current_content = db.Column(db.String(500), nullable=True)
     
     achievements = db.relationship('UserAchievement', backref='user')
     actions = db.relationship('UserAction', backref='user')
@@ -20,6 +20,36 @@ class User(db.Model, UserMixin):
     chats = db.relationship('ChatHistory', backref='user')
     challenges = db.relationship('Challenge', backref='user')
     lessons = db.relationship('Lesson', backref='user')
+
+    def as_dict(self):
+        active_challenges = [challenge.challenge_name for challenge in sorted(
+            [c for c in self.challenges if not c.completion_date], 
+            key=lambda x: x.id, reverse=True)[:5]
+        ]
+
+        completed_challenges = [challenge.challenge_name for challenge in sorted(
+            [c for c in self.challenges if c.completion_date], 
+            key=lambda x: x.id, reverse=True)[:5]
+        ]
+
+        active_lessons = [lesson.lesson_name for lesson in sorted(
+            [l for l in self.lessons if not l.completion_date], 
+            key=lambda x: x.id, reverse=True)[:5]
+        ]
+
+        completed_lessons = [lesson.lesson_name for lesson in sorted(
+            [l for l in self.lessons if l.completion_date], 
+            key=lambda x: x.id, reverse=True)[:5]
+        ]
+
+        user_data = {
+            "profile": self.profile,
+            "active_challenges": active_challenges,
+            "completed_challenges": completed_challenges,
+            "active_lessons": active_lessons,
+            "completed_lessons": completed_lessons
+        }
+        return user_data
 
 class Achievement(db.Model):
     id = db.Column(db.Integer, primary_key=True)

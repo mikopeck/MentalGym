@@ -5,34 +5,37 @@
     <div class="challenges-section">
       <h2 class="section-title">Active Challenges</h2>
       <div class="active-challenges">
-        <button
+        <ContentButton
           v-for="challenge in challenges.active"
           :key="challenge.challenge_name"
-          class="challenge-btn"
-          @click="navigateToChallenge(challenge.id)"
-        >
-          {{ challenge.challenge_name }}
-        </button>
+          :content="challenge.challenge_name"
+          :role="challenge.id"
+          @navigate="navigateToChallenge"
+        ></ContentButton>
       </div>
       <h2 class="section-title">Completed Challenges</h2>
-      <ul class="list">
-        <li
+      <div class="completed-challenges">
+        <ContentButton
           v-for="challenge in challenges.completed"
           :key="challenge.challenge_name"
-          class="list-item"
-        >
-          {{ challenge.challenge_name }}
-        </li>
-      </ul>
+          :content="challenge.challenge_name"
+          :role="'?completed'"
+          @navigate="navigateToChallenge(challenge.id)"
+        ></ContentButton>
+      </div>
     </div>
   </div>
 </template>
-  
+
   <script>
 import axios from "axios";
+import ContentButton from "../Chat/ContentButton.vue";
 
 export default {
   name: "ChallengesPage",
+  components: {
+    ContentButton,
+  },
   data() {
     return {
       challenges: {
@@ -53,11 +56,11 @@ export default {
     } catch (error) {
       console.error("Error fetching challenges:", error);
     }
-  },  
+  },
   methods: {
     navigateToChallenge(challengeId) {
       this.$router.push(`/challenge/${challengeId}`);
-    }
+    },
   },
 };
 </script>
@@ -75,7 +78,7 @@ export default {
 }
 
 .challenges-container {
-  margin-top: 3em;
+  margin-top: 2em;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -102,17 +105,9 @@ export default {
   gap: 16px;
 }
 
-.challenge-btn {
-  padding: 8px 16px;
-  background-color: #4caf50;
-  color: #f0f8ff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.challenge-btn:hover {
-  background-color: #66c75a;
+.completed-challenges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 </style>

@@ -33,6 +33,9 @@
       </li>
     </ul>
 
+    <h2>Our Vision</h2>
+    This whole app is inspired by driven by the ideas in <a href="https://arxiv.org/pdf/2302.09248.pdf">this paper</a>.
+
     <h2>Technology Behind the Scenes</h2>
     <p>
       Harnessing the power of the latest AI models, we've created a seamless and

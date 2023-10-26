@@ -41,17 +41,19 @@ export default {
   <style scoped>
 .action-menu {
   padding: 4px;
-  position: fixed;
-  bottom: 72px;
-  left: -310px;
+  position: absolute;
+  bottom: 36px;
+  right: 36px;
   height: fit-content;
   width: 300px;
-  transition: left 0.3s ease;
+  transition: right 0.3s ease;
+  pointer-events: none;
   z-index: 99;
 }
 
 .slide-out {
-  left: 0;
+  right: -280px;
+  pointer-events: auto;
 }
 
 .action-btn {

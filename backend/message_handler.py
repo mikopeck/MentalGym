@@ -1,3 +1,5 @@
+import json
+
 import roles as roles
 import functions as fns
 import db_handlers as db
@@ -45,7 +47,7 @@ def system_message(user_id, file_name:roles = None ):
         system_message = file.read()
 
     if "{user-profile}" in system_message:
-        profile_content = db.get_profile(user_id)
+        profile_content = json.dumps(db.get_user_context(user_id))
         if profile_content:
             system_message = system_message.replace("{user-profile}", profile_content)
 
@@ -54,8 +56,17 @@ def system_message(user_id, file_name:roles = None ):
         if tutor_content:
             system_message = system_message.replace("{tutor-generated}", tutor_content)
 
-    if "{profile}" in system_message:
-        system_message = system_message.replace("{profile}", str(fns.Profile))
+    if "{profile-function}" in system_message:
+        system_message = system_message.replace("{profile-function}", str(fns.Profile))
+
+    if "{base-persona}" in system_message:
+        with open('SystemPrompts/' + file_name + '.txt', 'r') as file:
+            system_message = system_message.replace("{base-persona}", file.read())
+
+    if "{state}" in system_message:
+        state = db.get_user_content(user_id)
+        if state:
+            system_message = system_message.replace("{state}", state)
 
     return system_message
 

@@ -85,12 +85,7 @@ def get_recent_messages(user_id, lesson_id=None, challenge_id=None):
     return [{"role": msg.role, "content": msg.message, "system_role": msg.system_role} for msg in recent_messages]
 
 def get_api_messages(user_id, lesson_id=None, challenge_id=None):
-    query = ChatHistory.query.filter_by(user_id=user_id)
-    
-    if lesson_id is not None:
-        query = query.filter_by(lesson_id=lesson_id)
-    if challenge_id is not None:
-        query = query.filter_by(challenge_id=challenge_id)
+    query = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, challenge_id=challenge_id)
     
     valid_roles = ['system', 'assistant', 'user', 'function']
     query = query.filter(ChatHistory.role.in_(valid_roles))
@@ -180,6 +175,10 @@ def get_profile(user_id):
     user = User.query.get(user_id)
     return user.profile if user else None
 
+def get_user_context(user_id):
+    user = User.query.get(user_id)
+    return user.as_dict() if user else None
+
 def set_tutor(user_id, tutor_data):
     user = User.query.get(user_id)
     if user:
@@ -190,16 +189,29 @@ def get_tutor(user_id):
     user = User.query.get(user_id)
     return user.ai_tutor_profile if user else None
 
+def get_user_content(user_id):
+    user = User.query.get(user_id)
+    return user.current_content if user else None
+
+def set_user_content(user_id, content_description):
+    user = User.query.get(user_id)
+    if user:
+        user.current_content = content_description
+        db.session.commit()
+
 def add_challenge(user_id, challenge_name, completion_date=None):
     challenge = Challenge(user_id=user_id, challenge_name=challenge_name, completion_date=completion_date)
     db.session.add(challenge)
     db.session.commit()
     add_content_message(user_id, challenge_name,challenge_id=challenge.id)
+    add_ai_message(user_id, f"Share your progress 📈\nask for a plan 📆\nor some just guidance 🧭.\n I'm here to help you complete the challenge:\n{challenge_name}", "challenge", challenge.id)
+    set_user_content(user_id, f"started challenge {challenge_name}")
     return challenge.id
 
 def update_challenge(user_id, challenge_id):
     challenge = Challenge.query.filter_by(user_id=user_id, id=challenge_id).first()
     if challenge:
+        set_user_content(user_id, f"completed challenge {challenge.challenge_name}")
         challenge.completion_date = datetime.now
 
 def add_lesson(user_id, lesson_name):
@@ -207,14 +219,17 @@ def add_lesson(user_id, lesson_name):
     db.session.add(lesson)
     db.session.commit()
     add_content_message(user_id, lesson_name,lesson_id=lesson.id)
+    set_user_content(user_id, f"started lesson {lesson_name}")
     return lesson.id
 
 def update_lesson(user_id, lesson_id, completion_date=None, system_role=None):
     lesson = Lesson.query.filter_by(user_id=user_id, id=lesson_id).first()
     if lesson:
         if completion_date:
+            set_user_content(user_id, f"completed lesson {lesson.lesson_name}")
             lesson.completion_date = completion_date
         elif system_role:
+            set_user_content(user_id, f"worked lesson {lesson.lesson_name}")
             lesson.system_role = system_role
     
     db.session.commit()

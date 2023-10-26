@@ -76,9 +76,16 @@ def get_recent_chat(lesson_id, challenge_id):
     if not challenge_id:
         actions=dbh.get_actions(current_user.id, lesson_id)
 
+    subheading = None
+    if lesson_id:
+        subheading = dbh.get_user_lesson_name(current_user.id, lesson_id)
+    if challenge_id:
+        subheading = dbh.get_user_challenge_name(current_user.id, challenge_id)
+
     return jsonify(
         messages=dbh.get_recent_messages(current_user.id, lesson_id, challenge_id),
-        actions=actions
+        actions=actions,
+        subheading=subheading
     )
 
 def post_general_message(userInput):

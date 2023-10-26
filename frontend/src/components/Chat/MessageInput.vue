@@ -1,14 +1,23 @@
 <!-- MessageInput.vue -->
 <template>
   <div class="message-input-container">
-    <button
-      v-if="actionAvailable"
-      @click="toggleMenu"
-      class="action-btn"
-      v-tooltip="'Actions available...'"
-    >
-      <div class="action-icon" :class="actionIconClass">?</div>
-    </button>
+    <div class="action-container">
+      <button
+        v-if="actionAvailable"
+        @click="toggleMenu"
+        class="action-btn"
+        v-tooltip="'Actions available...'"
+      >
+        <div class="action-icon" :class="actionIconClass">?</div>
+      </button>
+
+      <ActionMenu
+        :menuOpen="menuOpen"
+        :actions="actionsList"
+        @actionSelected="handleAction"
+        @availableActions="handleActionAvailable"
+      />
+    </div>
 
     <textarea
       ref="messageInput"
@@ -21,13 +30,6 @@
       :readonly="sending"
     >
     </textarea>
-
-    <ActionMenu
-      :menuOpen="menuOpen"
-      :actions="actionsList"
-      @actionSelected="handleAction"
-      @availableActions="handleActionAvailable"
-    />
 
     <button @click="sendMessage" class="send-btn">
       <div v-if="!sending" class="send-icon">></div>
@@ -59,7 +61,7 @@ export default {
     return {
       message: "",
       sending: false,
-      menuOpen: false,
+      menuOpen: window.innerWidth > 1750,
       actionAvailable: false,
     };
   },
@@ -98,9 +100,9 @@ export default {
       const isChallenge = currentPath.includes("/challenge/");
 
       if (isLesson) {
-        formData.append("lesson_id", currentPath.split('/').pop());
+        formData.append("lesson_id", currentPath.split("/").pop());
       } else if (isChallenge) {
-        formData.append("challenge_id", currentPath.split('/').pop());
+        formData.append("challenge_id", currentPath.split("/").pop());
       }
 
       try {
@@ -153,6 +155,10 @@ export default {
   border: 1px solid #4a148c;
   box-shadow: 0 0 2px 2px #4a148c42;
   z-index: 10;
+}
+
+.action-container {
+  position: relative;
 }
 
 textarea {
@@ -265,7 +271,6 @@ textarea:focus {
   box-sizing: border-box;
   position: absolute;
   top: 50%;
-  left: 16px;
   transform: translateY(-50%);
   color: #f0f8ff;
   border: none;

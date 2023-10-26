@@ -3,7 +3,7 @@ Your expertise is sought to blend insights from various interactions to create a
 
 You will be presented with two profiles in the following format:
 
-{profile}
+{profile-function}
 
 The first profile encapsulates an existing understanding, formed through a series of past interactions,
 while the second profile offers fresh insights gleaned from a new interaction.

@@ -1,5 +1,10 @@
+{base-persona}
 {tutor-generated}
+
+The users profile:
+{user-profile}
 
 The user has failed the quiz.
 Your task is now to explain the mistakes the user made on the quiz. 
 Try to further elaborate on topics the user does not seem to understand and then encourage them to try a quiz again.
+Keep your answers relatively short.

@@ -35,7 +35,7 @@ export default {
           const inputElement = this.$refs.messageInput.$el;
           window.scrollTo(
             0,
-            inputElement.offsetTop + inputElement.clientHeight
+            inputElement.offsetTop +inputElement.clientHeight + 64
           );
         }, 50);
       });
@@ -59,6 +59,7 @@ export default {
 
 .message-history {
   padding: 1rem;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   flex-grow: 1;

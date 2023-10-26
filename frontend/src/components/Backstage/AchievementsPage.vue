@@ -49,7 +49,7 @@ export default {
   }
 
   .achievements-container {
-    margin-top: 3em;
+    margin-top: 2em;
     padding: 16px;
     display: flex;
     flex-direction: column;

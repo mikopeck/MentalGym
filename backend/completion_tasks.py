@@ -6,7 +6,7 @@ import roles as roles
 import db_handlers as db
 import message_handler as mh
 
-from openapi import generate_response
+from openapi import generate_response, GPT4, LESSON_TOKENS
 
 function_max_retries = 5
 passing_grade = 60
@@ -57,19 +57,24 @@ def suggest_content(user_id, set_challenge = True):
             challenge_name = challenge_data.get('challenge_name')
             print("adding challenge", challenge_name)
             db.add_challenge(user_id, challenge_name)
-            return suggest_content(user_id, False)
+            return after_content(user_id)
         
         lesson_data = try_get_object(fns.Lesson, response_message)
         if lesson_data:
             lesson_name = lesson_data.get('lesson_name')
             print("adding lesson", lesson_name)
             lesson_id = db.add_lesson(user_id, lesson_name)
+            db.add_action("Continue...")
             return lesson_create(user_id, lesson_id, lesson_name)
             
     print("ERROR: failed function!! defaulting to no functions...")
     response = generate_response(messages)
     identify_content(user_id, response["choices"][0]["message"]['content'])
     return response, None
+
+def after_content(user_id):
+    mh.update_system_role(user_id, roles.AfterContent)
+    return generate_response(mh.prepare_session_messages(user_id)), None
 
 def challenge_progress(user_id, challenge_id):
     messages = mh.prepare_session_messages(user_id, challenge_id=challenge_id)
@@ -103,7 +108,7 @@ def lesson_create(user_id, lesson_id, lesson_name = None):
     ##### TODO: generate improved tutor #####
     if not db.get_tutor(user_id):
         tutor_create_message = mh.create_message(mh.system_message(user_id, roles.TutorCreate), profile)
-        response = generate_response(tutor_create_message)
+        response = generate_response(tutor_create_message, model=GPT4, tokens=LESSON_TOKENS)
         db.set_tutor(user_id, response['choices'][0]['message']['content'])
 
     mh.update_system_role(user_id, roles.LessonCreate, lesson_id)
@@ -121,7 +126,7 @@ def lesson_guide(user_id, lesson_id):
     return response, lesson_id
 
 def quiz_create(user_id, lesson_id):
-    return generate_response(mh.prepare_session_messages(user_id, lesson_id)), lesson_id
+    return generate_response(mh.prepare_session_messages(user_id, lesson_id), model=GPT4), lesson_id
 
 def quiz_feedback(user_id, lesson_id):
     mh.update_system_role(user_id, roles.QuizGrade, lesson_id)

@@ -49,7 +49,7 @@ export default {
   },
   data() {
     return {
-      isMenuOpen: false,
+      isMenuOpen: window.innerWidth > 1750,
       loggedIn: localStorage.getItem("loggedIn") === "true",
       messages: [],
       actions: [],

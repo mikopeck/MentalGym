@@ -15,3 +15,5 @@ QuizFeedback = "QuizFeedback"
 QuizGrade = "QuizGrade"
 
 ChallengeGuide = "ChallengeGuide"
+
+AfterContent = "AfterContent"
