@@ -1,4 +1,4 @@
-# mental-gym
+# Ascendance·☁️
 
 ## Project setup
 ```
