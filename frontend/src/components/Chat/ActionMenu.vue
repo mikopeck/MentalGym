@@ -1,6 +1,6 @@
 <!-- ActionMenu.vue -->
 <template>
-  <aside :class="{ 'slide-out': actionMenuOpen }" class="action-menu">
+  <aside :class="{ 'slide-out': actionsMenuOpen }" class="action-menu">
     <div
       v-for="action in actions"
       :key="action"
@@ -15,7 +15,7 @@
   <script>
 export default {
   props: {
-    actionMenuOpen: {
+    actionsMenuOpen: {
       type: Boolean,
       default: false,
     },

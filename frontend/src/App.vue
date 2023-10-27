@@ -17,15 +17,16 @@
         v-if="shouldShowChat"
         :messages="messages"
         :actions="actions"
-        :actionMenuOpen="actionMenuOpen"
+        :actionsMenuOpen="actionsMenuOpen"
         @messageSending="handleMessageSending"
         @updateConversation="updateConversation"
+        @toggleActionMenu="toggleActionMenu"
       />
 
       <!-- Routes -->
       <router-view v-if="shouldShowRouterView"></router-view>
     </div>
-    <BottomBar/>
+    <BottomBar />
   </div>
 </template>
 
@@ -54,11 +55,11 @@ export default {
   data() {
     return {
       sideMenuOpen: window.innerWidth > 1750,
-      actionMenuOpen: window.innerWidth > 1750,
+      actionsMenuOpen: window.innerWidth > 1750,
       loggedIn: localStorage.getItem("loggedIn") === "true",
       messages: [],
       actions: [],
-      subheadingText: '',
+      subheadingText: "",
     };
   },
   computed: {
@@ -78,11 +79,10 @@ export default {
     "$route.path": function () {
       if (this.shouldShowChat) {
         this.fetchRecentMessages();
-      }
-      else{
+      } else {
         window.scrollTo(0, 0);
       }
-      if (window.innerWidth < 1750){
+      if (window.innerWidth < 1750) {
         this.hideSideMenu();
         this.hideActionMenu();
       }
@@ -96,10 +96,10 @@ export default {
       this.sideMenuOpen = false;
     },
     toggleActionMenu() {
-        this.actionMenuOpen = !this.actionMenuOpen;
+      this.actionsMenuOpen = !this.actionsMenuOpen;
     },
     hideActionMenu() {
-      this.actionMenuOpen = false;
+      this.actionsMenuOpen = false;
     },
     logoutUser() {
       this.loggedIn = false;
@@ -149,7 +149,7 @@ export default {
             console.log(response);
             this.messages = response.data.messages;
             this.actions = response.data.actions;
-            if ("subheading" in response.data){
+            if ("subheading" in response.data) {
               this.subheadingText = response.data.subheading;
             }
           })

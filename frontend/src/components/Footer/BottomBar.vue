@@ -34,7 +34,7 @@
       </a>
     </div>
     <div class="footer-bottom">
-      <p>© 2023 Ascendance. All rights reserved.</p>
+      <p>© 2023 Ascendance.</p>
     </div>
   </div>
 </template>

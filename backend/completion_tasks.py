@@ -54,14 +54,14 @@ def suggest_content(user_id, set_challenge = True):
         
         challenge_data = try_get_object(fns.Challenge, response_message)
         if challenge_data:
-            challenge_name = challenge_data.get('challenge_emoji') + challenge_data.get('challenge_name')
+            challenge_name = challenge_data.get('challenge_emoji') + " " +challenge_data.get('challenge_name')
             print("adding challenge", challenge_name)
             db.add_challenge(user_id, challenge_name)
             return after_content(user_id)
         
         lesson_data = try_get_object(fns.Lesson, response_message)
         if lesson_data:
-            lesson_name = lesson_data.get('lesson_emoji')+lesson_data.get('lesson_name')
+            lesson_name = lesson_data.get('lesson_emoji')+" " +lesson_data.get('lesson_name')
             print("adding lesson", lesson_name)
             lesson_id = db.add_lesson(user_id, lesson_name)
             db.add_action(user_id, "Continue...")

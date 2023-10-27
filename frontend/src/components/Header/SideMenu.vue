@@ -1,59 +1,51 @@
 <!-- SideMenu.vue -->
 <template>
   <aside :class="{ 'slide-out': sideMenuOpen }" class="side-menu">
-    <button
-      @click="openChat"
-      class="btn-chat"
-      :class="{ selected: isRouteActive('/') }"
-    >
-      Chat
-    </button>
-
-    <button
-      @click="openLessons"
-      class="btn-lessons"
-      :class="{ selected: isRouteActive('/lessons', '^/lesson/\\w+') }"
-    >
-      Lessons
-    </button>
-
-    <button
-      @click="openChallenges"
-      class="btn-challenges"
-      :class="{ selected: isRouteActive('/challenges', '^/challenge/\\w+') }"
-    >
-      Challenges
-    </button>
-
-    <button
-      @click="openAchievements"
-      class="btn-achievements"
-      :class="{ selected: isRouteActive('/achievements') }"
-    >
-      Achievements
-    </button>
-
-    <button
-      @click="openProfile"
-      class="btn-profile"
-      :class="{ selected: isRouteActive('/profile') }"
-    >
-      Profile
-    </button>
-
-    <button @click="resetConversation" class="btn-reset">
-      Reset
-    </button>
-
-    <button @click="logout" class="btn-logout">Logout</button>
+    <MenuButton 
+      label="Chat" 
+      @click="openChat" 
+      :isSelected="isRouteActive('/')"
+    />
+    <MenuButton 
+      label="Lessons" 
+      @click="openLessons" 
+      :isSelected="isRouteActive('/lessons', '^/lesson/\\w+')"
+    />
+    <MenuButton 
+      label="Challenges" 
+      @click="openChallenges" 
+      :isSelected="isRouteActive('/challenges', '^/challenge/\\w+')"
+    />
+    <MenuButton 
+      label="Achievements" 
+      @click="openAchievements" 
+      :isSelected="isRouteActive('/achievements')"
+    />
+    <MenuButton 
+      label="Profile" 
+      @click="openProfile" 
+      :isSelected="isRouteActive('/profile')"
+    />
+    <MenuButton 
+      label="Reset" 
+      @click="resetConversation" 
+    />
+    <MenuButton 
+      label="Logout" 
+      @click="logout" 
+    />
   </aside>
 </template>
-  
+
 <script>
 import axios from "axios";
+import MenuButton from "@/components/Menus/MenuButton.vue";
 
 export default {
   name: "SideMenu",
+  components: {
+    MenuButton
+  },
   props: {
     sideMenuOpen: {
       type: Boolean,
@@ -120,7 +112,7 @@ export default {
       this.hideMenu();
     },
     openAchievements() {
-      this.$router.push("/achievements");
+      this.$router.push("/progress");
       this.hideMenu();
     },
     openChat() {

@@ -158,6 +158,25 @@ def get_achievements_route():
     achievements_data = dbh.get_user_achievements(current_user.id)
     return jsonify(status="success", achievements=achievements_data)
 
+@app.route('/api/user-progress', methods=['GET'])
+@login_required
+def get_user_progress():
+    #example
+    data = {
+        "labels": ["January", "February", "March", "April", "May"],
+        "datasets": [
+            {
+                "label": "Progress",
+                "backgroundColor": "#f87979",
+                "data": [40, 50, 55, 60, 70], 
+            },
+        ],
+    }
+    return jsonify({
+        "status": "success",
+        "progress": data
+    })
+
 @app.route("/reset", methods=["GET"])
 @login_required
 def reset():

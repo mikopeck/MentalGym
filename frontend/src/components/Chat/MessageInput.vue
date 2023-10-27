@@ -12,7 +12,7 @@
       </button>
 
       <ActionMenu
-        :actionMenuOpen="actionMenuOpen"
+        :actionsMenuOpen="actionsMenuOpen"
         :actions="actionsList"
         @actionSelected="handleAction"
         @availableActions="handleActionAvailable"
@@ -58,8 +58,8 @@ export default {
     },
     actionsMenuOpen: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
@@ -71,8 +71,8 @@ export default {
   computed: {
     actionIconClass() {
       return {
-        bounce: !this.actionMenuOpen && !this.sending,
-        active: this.actionMenuOpen,
+        bounce: !this.actionsMenuOpen && !this.sending,
+        active: this.actionsMenuOpen,
       };
     },
   },
@@ -132,7 +132,7 @@ export default {
     },
     handleAction(action) {
       this.changeUserText(action);
-      this.actionMenuOpen = false;
+      this.toggleMenu();
       this.sendMessage();
     },
     changeUserText(desiredText) {

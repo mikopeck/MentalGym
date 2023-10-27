@@ -17,7 +17,7 @@ Profile = {
 # personal
             "prior_knowledge": {
                 "type": "string",
-                "description": "Prior knowledge and level. For example: Basic spanish, intermediate algebra, advanced geometry.",
+                "description": "Prior knowledge and level. For example: Basic spanish, intermediate algebra, advanced geology.",
             },
             "interests": {
                 "type": "string",

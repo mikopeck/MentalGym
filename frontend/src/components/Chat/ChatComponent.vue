@@ -8,7 +8,8 @@
       ref="messageInput"
       @messageSending="handleMessageSending"
       @messageSent="updateConversation"
-      :actionMenuOpen="actionMenuOpen"
+      @toggleActionMenu="toggleActionMenu"
+      :actionsMenuOpen="actionsMenuOpen"
       :actionsList="actions"
       class="message-input"
     />
@@ -24,6 +25,7 @@ export default {
   props: {
     messages: Array,
     actions: Array,
+    actionsMenuOpen: Boolean,
   },
   components: {
     MessageInput,
@@ -33,12 +35,12 @@ export default {
     updateView() {
       this.$nextTick(() => {
         setTimeout(() => {
-          // const inputElement = this.$refs.messageInput.$el;
-          // window.scrollTo(
-          //   0,
-          //   inputElement.offsetTop +inputElement.clientHeight
-          // );
-        }, 50);
+          const inputElement = this.$refs.messageInput.$el;
+          window.scrollTo(
+            0,
+            inputElement.offsetTop +inputElement.clientHeight -100
+          );
+        }, 100);
       });
     },
     handleMessageSending(message) {
@@ -47,6 +49,9 @@ export default {
     updateConversation(data) {
       this.$emit("updateConversation", data);
     },
+    toggleActionMenu(){
+      this.$emit("toggleActionMenu");
+    }
   },
 };
 </script>
