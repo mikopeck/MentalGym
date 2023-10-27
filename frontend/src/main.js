@@ -1,26 +1,18 @@
 // main.js
-import { createApp } from 'vue';
+import { createApp, defineAsyncComponent } from 'vue';
 import App from './App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
-
-import ProfilePage from './components/Backstage/ProfilePage.vue';
-import AchievementsPage from './components/Backstage/AchievementsPage.vue';
-import ProgressPage from './components/Backstage/ProgressPage.vue';
-import LessonsPage from './components/Backstage/LessonsPage.vue';
-import ChallengesPage from './components/Backstage/ChallengesPage.vue';
-import AboutPage from './components/Footer/AboutPage.vue';
-import ContactPage from './components/Footer/ContactPage.vue';
 
 import './assets/styles.css';
 
 const routes = [
-  { path: '/lessons', component: LessonsPage },
-  { path: '/challenges', component: ChallengesPage },
-  { path: '/progress', component: ProgressPage },
-  { path: '/achievements', component: AchievementsPage },
-  { path: '/profile', component: ProfilePage },
-  { path: '/about', component: AboutPage },
-  { path: '/contact', component: ContactPage },
+  { path: '/lessons', component: defineAsyncComponent(() => import('./components/Backstage/LessonsPage.vue')) },
+  { path: '/challenges', component: defineAsyncComponent(() => import('./components/Backstage/ChallengesPage.vue')) },
+  { path: '/progress', component: defineAsyncComponent(() => import('./components/Backstage/ProgressPage.vue')) },
+  { path: '/achievements', component: defineAsyncComponent(() => import('./components/Backstage/AchievementsPage.vue')) },
+  { path: '/profile', component: defineAsyncComponent(() => import('./components/Backstage/ProfilePage.vue')) },
+  { path: '/about', component: defineAsyncComponent(() => import('./components/Footer/AboutPage.vue')) },
+  { path: '/contact', component: defineAsyncComponent(() => import('./components/Footer/ContactPage.vue')) },
 ];
 
 const router = createRouter({

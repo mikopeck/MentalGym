@@ -1,25 +1,35 @@
-<!-- ProgressGraph.vue -->
 <template>
   <div class="progress-graph">
-    <line-chart :chart-data="data"></line-chart>
+    <line-chart :chart-data="chartData"></line-chart>
   </div>
 </template>
 
 <script>
-import { Line, mixins } from "vue-chartjs";
+import { Line } from "vue-chartjs";
 
 export default {
   name: "ProgressGraph",
   extends: Line,
-  mixins: [mixins.reactiveProp],
   props: {
     data: {
       type: Object,
       required: true,
     },
   },
+  data() {
+    return {
+      chartData: null
+    };
+  },
+  watch: {
+    data(newVal) {
+      this.chartData = newVal;
+      this.$data._chart.update();
+    }
+  },
   mounted() {
-    this.renderChart(this.data, {
+    this.chartData = this.data;
+    this.renderChart(this.chartData, {
       responsive: true,
       maintainAspectRatio: false,
     });
