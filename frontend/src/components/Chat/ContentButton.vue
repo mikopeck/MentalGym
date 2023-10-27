@@ -4,9 +4,9 @@
     @click="navigateToContent(role)"
     :class="['content-button', isCompleted ? 'completed-button' : '']"
   >
+    <span v-if="hasContentEmoji" class="emoji-indicator">{{ extractedEmoji }}</span>
+    {{ contentWithoutEmoji }}
     <span class="emoji-indicator">{{ getEmojiForContentType }}</span>
-    {{ content }}
-    <span class="subtext">Take me there ►</span>
   </button>
 </template>
 
@@ -32,6 +32,17 @@ export default {
         case 'challenge': return '🎯';
         default: return '☁️';
       }
+    },
+    hasContentEmoji() {
+      const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u;
+      return emojiRegex.test(this.content);
+    },
+    extractedEmoji() {
+      const match = this.content.match(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u);
+      return match ? match[0] : '';
+    },
+    contentWithoutEmoji() {
+      return this.content.replace(this.extractedEmoji, '').trim();
     }
   },
 };
@@ -43,36 +54,24 @@ export default {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
+  /* margin: 0 auto; */
   padding: 0.5rem 1rem;
-  background-color: #4a148c;
+  background: #4a148c;
   color: #f0f8ff;
-  border: none;
-  border-radius: 5px;
+  border: 2px solid #4a148c42;
+  border-radius: 10px;
   cursor: pointer;
   text-align: center;
-  transition: background-color 0.3s ease;
   position: relative;
+  transition: border-color 0.3s ease;
 }
 
 .content-button .emoji-indicator {
-  font-size: 1.2rem;
-  margin-right: 0.5rem;
-}
-
-.content-button .subtext {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin-left: 0.5rem;
-  transition: color 0.3s ease;
+  font-size: 1.5rem;
 }
 
 .content-button:hover {
-  background-color: #6a2bc2;
-}
-
-.content-button:hover .subtext {
-  color: rgba(255, 255, 255, 0.9);
+  border-color: #6a2bc2b3;
 }
 
 .completed-button {
@@ -82,11 +81,13 @@ export default {
 
 .completed-button::after {
   content: "✓";
-  color: #a7f3c0;
+  color: #50C878;
   font-weight: bold;
+  font-size: 1.2rem;
   position: absolute;
-  right: 5px;
-  top: 80%;
+  right: 10px;
+  top: 70%;
   transform: translateY(-50%);
 }
 </style>
+

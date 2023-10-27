@@ -1,6 +1,6 @@
 <!-- SideMenu.vue -->
 <template>
-  <aside :class="{ 'slide-out': isMenuOpen }" class="side-menu">
+  <aside :class="{ 'slide-out': sideMenuOpen }" class="side-menu">
     <button
       @click="openChat"
       class="btn-chat"
@@ -55,7 +55,7 @@ import axios from "axios";
 export default {
   name: "SideMenu",
   props: {
-    isMenuOpen: {
+    sideMenuOpen: {
       type: Boolean,
       required: true,
     },

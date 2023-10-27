@@ -8,6 +8,7 @@
       ref="messageInput"
       @messageSending="handleMessageSending"
       @messageSent="updateConversation"
+      :actionMenuOpen="actionMenuOpen"
       :actionsList="actions"
       class="message-input"
     />

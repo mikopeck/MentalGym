@@ -2,12 +2,12 @@
 <template>
   <div class="app-container">
     <LoginSignupPopup v-if="!loggedIn" />
-    <TopBar @toggleSideMenu="toggleMenu" />
+    <TopBar @toggleSideMenu="toggleSideMenu" />
     <SubHeader v-if="shouldShowChat" :subheading="subheadingText" />
     <SideMenu
-      :isMenuOpen="isMenuOpen"
+      :sideMenuOpen="sideMenuOpen"
       @conversationReset="resetConversation"
-      @menuHidden="hideMenu"
+      @menuHidden="hideSideMenu"
       @logout="logoutUser"
     />
 
@@ -17,6 +17,7 @@
         v-if="shouldShowChat"
         :messages="messages"
         :actions="actions"
+        :actionMenuOpen="actionMenuOpen"
         @messageSending="handleMessageSending"
         @updateConversation="updateConversation"
       />
@@ -52,7 +53,8 @@ export default {
   },
   data() {
     return {
-      isMenuOpen: window.innerWidth > 1750,
+      sideMenuOpen: window.innerWidth > 1750,
+      actionMenuOpen: window.innerWidth > 1750,
       loggedIn: localStorage.getItem("loggedIn") === "true",
       messages: [],
       actions: [],
@@ -80,15 +82,24 @@ export default {
       else{
         window.scrollTo(0, 0);
       }
-      this.hideMenu();
+      if (window.innerWidth < 1750){
+        this.hideSideMenu();
+        this.hideActionMenu();
+      }
     },
   },
   methods: {
-    toggleMenu() {
-      this.isMenuOpen = !this.isMenuOpen;
+    toggleSideMenu() {
+      this.sideMenuOpen = !this.sideMenuOpen;
     },
-    hideMenu() {
-      this.isMenuOpen = false;
+    hideSideMenu() {
+      this.sideMenuOpen = false;
+    },
+    toggleActionMenu() {
+        this.actionMenuOpen = !this.actionMenuOpen;
+    },
+    hideActionMenu() {
+      this.actionMenuOpen = false;
     },
     logoutUser() {
       this.loggedIn = false;
