@@ -8,7 +8,6 @@ def init_graph_routes(app):
     @app.route('/api/user-progress', methods=['GET'])
     @login_required
     def get_user_progress():
-        print("getting")
         line_graph_data = get_line_graph_data(current_user.id)
         pie_chart_data = get_pie_chart_data(current_user.id)
         stats = get_stats(current_user.id)
@@ -16,13 +15,20 @@ def init_graph_routes(app):
         data = {
             "lineGraph": line_graph_data,
             "pieChart": pie_chart_data,
-            "totalContentCompleted": stats['totalContentCompleted'],
-            "lessonsCompleted": stats['lessonsCompleted'],
-            "challengesCompleted": stats['challengesCompleted'],
+            "totalContent": stats['totalContent'],
+            "totalLessons": stats['totalLessons'],
+            "activeLessons": stats['activeLessons'],
+            "completedLessons": stats['completedLessons'],
+            "totalChallenges": stats['totalChallenges'],
+            "activeChallenges": stats['activeChallenges'],
+            "completedChallenges": stats['completedChallenges'],
+            "percentCompletedLessons": stats['percentCompletedLessons'],
+            "percentCompletedChallenges": stats['percentCompletedChallenges'],
             "topTopics": stats['topTopics']
         }
         print(data)
         return jsonify({
             "status": "success",
             "progress": data
-        })
+        })  
+

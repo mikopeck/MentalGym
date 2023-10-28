@@ -107,21 +107,66 @@ def transform_to_chartjs_format(data):
         }]
     }
 
+from sqlalchemy import func, and_, or_
+from datetime import datetime, timedelta
+
 def get_stats(user_id):
+    # Previous stats
     total_lessons = db.session.query(func.count(Lesson.id)).filter_by(user_id=user_id).scalar()
     total_challenges = db.session.query(func.count(Challenge.id)).filter_by(user_id=user_id).scalar()
-
     pie_data = get_pie_chart_data(user_id)
     combined_data = list(zip(pie_data['labels'], pie_data['datasets'][0]['data']))
     sorted_combined_data = sorted(combined_data, key=lambda x: x[1], reverse=True)[:5]
     top_topics = {label: value for label, value in sorted_combined_data}
 
+    # Active vs Completed
+    active_lessons = db.session.query(func.count(Lesson.id)).filter_by(user_id=user_id, completion_date=None).scalar()
+    completed_lessons = total_lessons - active_lessons
+
+    active_challenges = db.session.query(func.count(Challenge.id)).filter_by(user_id=user_id, completion_date=None).scalar()
+    completed_challenges = total_challenges - active_challenges
+
+    # % Completed
+    percent_completed_lessons = (completed_lessons / total_lessons) * 100 if total_lessons else 0
+    percent_completed_challenges = (completed_challenges / total_challenges) * 100 if total_challenges else 0
+
+    # Content Completed per Day
+    lessons_per_day = db.session.query(Lesson.completion_date, func.count(Lesson.id)).filter_by(user_id=user_id).group_by(Lesson.completion_date).all()
+    challenges_per_day = db.session.query(Challenge.completion_date, func.count(Challenge.id)).filter_by(user_id=user_id).group_by(Challenge.completion_date).all()
+
+    # Streak Calculation
+    streak = 0
+    current_streak = 0
+    today = datetime.now().date()
+    last_date = today
+
+    combined_dates = sorted(list(set([l[0] for l in lessons_per_day if l[0] is not None] + [c[0] for c in challenges_per_day if c[0] is not None])))
+    for date in combined_dates:
+        if date == last_date - timedelta(days=1):
+            current_streak += 1
+        else:
+            current_streak = 1
+        streak = max(streak, current_streak)
+        last_date = date
+
+    # Other stats
+    total_unique_topics = len(pie_data['labels'])
+    
     data = {
-        "totalContentCompleted": total_lessons + total_challenges,
-        "lessonsCompleted": total_lessons,
-        "challengesCompleted": total_challenges,
-        "topTopics": top_topics
+        "totalContent": total_lessons + total_challenges,
+        "topTopics": top_topics,
+        "totalLessons": total_lessons,
+        "activeLessons": active_lessons,
+        "completedLessons": completed_lessons,
+        "totalChallenges": total_challenges,
+        "activeChallenges": active_challenges,
+        "completedChallenges": completed_challenges,
+        "percentCompletedLessons": percent_completed_lessons,
+        "percentCompletedChallenges": percent_completed_challenges,
+        "lessonsPerDay": dict(lessons_per_day),
+        "challengesPerDay": dict(challenges_per_day),
+        "streak": streak,
+        "totalUniqueTopics": total_unique_topics
     }
 
     return data
-

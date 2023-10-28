@@ -7,9 +7,13 @@
       <h2 class="section-title">Progress Overview</h2>
       <ProgressGraph :data="userProgress" />
       <div class="statistics">
-        <div>Total Completed: {{ totalContentCompleted }}</div>
-        <div>Lessons Completed: {{ lessonsCompleted }}</div>
-        <div>Challenges Completed: {{ challengesCompleted }}</div>
+        <div>Total Content: {{ totalContent }}</div>
+        <div>Total Lessons: {{ totalLessons }}</div>
+        <div>Active Lessons: {{ activeLessons }}</div>
+        <div>Completed Lessons: {{ completedLessons }} ({{ percentCompletedLessons }}% completed)</div>
+        <div>Total Challenges: {{ totalChallenges }}</div>
+        <div>Active Challenges: {{ activeChallenges }}</div>
+        <div>Completed Challenges: {{ completedChallenges }} ({{ percentCompletedChallenges }}% completed)</div>
       </div>
     </div>
 
@@ -47,9 +51,15 @@ export default {
         type: Object,
         default: () => ({ labels: [], datasets: [] }),
       },
-      totalContentCompleted: 0,
-      lessonsCompleted: 0,
-      challengesCompleted: 0,
+      totalContent: 0,
+      totalLessons: 0,
+      activeLessons: 0,
+      completedLessons: 0,
+      totalChallenges: 0,
+      activeChallenges: 0,
+      completedChallenges: 0,
+      percentCompletedLessons: 0,
+      percentCompletedChallenges: 0,
       topTopics: {},
       dataLoaded: false,
     };
@@ -60,10 +70,15 @@ export default {
       if (response.data.status === "success") {
         this.userProgress = response.data.progress.lineGraph;
         this.topicDistribution = response.data.progress.pieChart;
-        this.totalContentCompleted =
-          response.data.progress.totalContentCompleted;
-        this.lessonsCompleted = response.data.progress.lessonsCompleted;
-        this.challengesCompleted = response.data.progress.challengesCompleted;
+        this.totalContent = response.data.progress.totalContent;
+        this.totalLessons = response.data.progress.totalLessons;
+        this.activeLessons = response.data.progress.activeLessons;
+        this.completedLessons = response.data.progress.completedLessons;
+        this.totalChallenges = response.data.progress.totalChallenges;
+        this.activeChallenges = response.data.progress.activeChallenges;
+        this.completedChallenges = response.data.progress.completedChallenges;
+        this.percentCompletedLessons = response.data.progress.percentCompletedLessons;
+        this.percentCompletedChallenges = response.data.progress.percentCompletedChallenges;
         this.topTopics = response.data.progress.topTopics;
         console.log(response.data);
         this.dataLoaded = true;
