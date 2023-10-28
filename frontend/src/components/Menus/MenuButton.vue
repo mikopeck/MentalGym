@@ -34,7 +34,7 @@ export default {
   display: inline-block;
   width: 100%;
   backdrop-filter: blur(8px);
-  transition: transform 0.2s, background-color 0.2s;
+  transition: transform 0.1s, background-color 0.1s;
 }
 
 .menu-button:hover {

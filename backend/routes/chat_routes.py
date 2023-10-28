@@ -3,8 +3,8 @@
 from flask import jsonify, request
 from flask_login import login_required, current_user
 
-from .. import db_handlers as dbh
-from ..system_guide import progress_challenge, progress_chat, progress_lesson
+import db_handlers as dbh
+from system_guide import progress_challenge, progress_chat, progress_lesson
 
 def init_chat_routes(app):
 

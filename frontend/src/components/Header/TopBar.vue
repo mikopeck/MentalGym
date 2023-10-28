@@ -9,13 +9,9 @@
       class="logo"
       @click="redirectToHome"
     />
-    <h1 class="app-title" @click="redirectToHome">{{ pageTitle }}</h1>
+    <div class="app-title" @click="redirectToHome">{{ pageTitle }}</div>
 
-    <button
-      id="sideMenu"
-      @click="toggleSideMenu"
-      class="menu-btn"
-    >
+    <button id="sideMenu" @click="toggleSideMenu" class="menu-btn">
       <!-- Three line (hamburger) icon -->
       <span class="menu-line"></span>
       <span class="menu-line"></span>
@@ -33,6 +29,12 @@ export default {
         return "Ascendance·📖";
       } else if (this.$route.path.includes("challenge/")) {
         return "Ascendance·🎯";
+      } else if (this.$route.path.includes("progress/")) {
+        return "Ascendance·📈";
+      } else if (this.$route.path.includes("achievements/")) {
+        return "Ascendance·🏅";
+      } else if (this.$route.path.includes("settings/")) {
+        return "Ascendance·🔧";
       } else {
         return "Ascendance·☁️";
       }
@@ -74,7 +76,8 @@ export default {
 }
 
 .app-title {
-  flex-grow: 1;
+  font-family: "Arial", sans-serif;
+  display: block;
   margin: 0;
   font-size: 24px;
   text-align: center;
@@ -83,14 +86,12 @@ export default {
 }
 
 .menu-btn {
-  background-color: #4a148c;
-  border: none;
-  border-radius: 4px;
-  padding: 4px;
   display: flex;
   flex-direction: column;
   gap: 4px;
   cursor: pointer;
+  padding: 8px !important;
+  border-radius: 50%;
   transition: background-color 0.3s ease;
 }
 

@@ -47,6 +47,7 @@ export default {
 
 <style scoped>
 .app-footer {
+  font-family: "Garamond", sans-serif;
   opacity: 0.8;
   padding: 12px 0;
   text-align: center;

@@ -14,6 +14,7 @@
           @navigate="navigateToLesson"
         ></ContentButton>
       </div>
+      <br/><br/>
       <h2 class="section-title">Completed Lessons</h2>
       <div class="completed-lessons">
         <ContentButton
@@ -68,31 +69,13 @@ export default {
 </script>
   
   <style scoped>
-.list {
-  margin-top: 8px;
-  padding-left: 20px;
-}
-
-.list-item {
-  font-size: 1em;
-  margin-bottom: 4px;
-  color: #f0f8ff;
-}
 
 .lessons-container {
-  margin-top: 2em;
+  margin-top: 1em;
   padding: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.page-title {
-  font-size: 1.5em;
-  color: #f0f8ff;
-  padding: 8px;
-  width: 100%;
-  text-align: center;
 }
 
 .lessons-section {

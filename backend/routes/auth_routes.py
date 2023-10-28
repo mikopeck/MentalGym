@@ -6,8 +6,8 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from sqlalchemy.exc import IntegrityError
 import pymysql.err as pymysql_err
 
-from ..models import db, User
-from ..message_handler import initialize_messages
+from models import db, User
+from message_handler import initialize_messages
 
 def init_auth_routes(app):
 
@@ -46,6 +46,3 @@ def init_auth_routes(app):
         logout_user()
         return jsonify({"status": "success"})
     
-    @LoginManager.unauthorized_handler
-    def unauthorized():
-        return make_response(jsonify({"error": "User not authenticated"}), 401)

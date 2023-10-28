@@ -4,9 +4,9 @@
     @click="navigateToContent(role)"
     :class="['content-button', isCompleted ? 'completed-button' : '']"
   >
-    <span v-if="hasContentEmoji" class="emoji-indicator">{{ extractedEmoji }}</span>
-    {{ contentWithoutEmoji }}
     <span class="emoji-indicator">{{ getEmojiForContentType }}</span>
+     {{ contentWithoutEmoji }} 
+    <span v-if="hasContentEmoji" class="emoji-indicator">{{ extractedEmoji }}</span>
   </button>
 </template>
 
@@ -54,7 +54,6 @@ export default {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  /* margin: 0 auto; */
   padding: 0.5rem 1rem;
   background: #4a148c;
   color: #f0f8ff;

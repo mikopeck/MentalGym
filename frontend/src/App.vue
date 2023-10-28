@@ -50,7 +50,10 @@ export default {
     SubHeader,
   },
   mounted() {
-    this.fetchRecentMessages();
+    // Mount always seems to go through "/"
+    if (this.shouldShowChat) {
+      this.fetchRecentMessages();
+    }
   },
   data() {
     return {
@@ -168,7 +171,6 @@ export default {
 
 <style scoped>
 .app-container {
-  font-family: "Arial", sans-serif;
   display: flex;
   flex-direction: column;
   height: 100vh;

@@ -1,19 +1,19 @@
 <!-- ActionMenu.vue -->
 <template>
   <aside :class="{ 'slide-out': actionsMenuOpen }" class="action-menu">
-    <div
-      v-for="action in actions"
-      :key="action"
-      @click="handleAction(action)"
-      class="action-btn"
-    >
-      {{ action }}
+    <div v-for="action in actions" :key="action" @click="handleAction(action)" class="action-wrapper">
+      <MenuButton :label="action" @navigate="handleAction(action)"/>
     </div>
   </aside>
 </template>
   
   <script>
+import MenuButton from "../Menus/MenuButton.vue";
+
 export default {
+  components: {
+    MenuButton,
+  },
   props: {
     actionsMenuOpen: {
       type: Boolean,
@@ -25,7 +25,7 @@ export default {
     },
   },
   watch: {
-    actions: function() {
+    actions: function () {
       const anyActions = this.actions.length !== 0;
       this.$emit("availableActions", anyActions);
     },
@@ -55,7 +55,7 @@ export default {
   right: -280px;
   pointer-events: auto;
 }
-
+/* 
 .action-btn {
   text-align: center;
   padding: 8px 16px;
@@ -76,6 +76,6 @@ export default {
 
 .action-btn:active {
   transform: scale(0.95);
-}
+} */
 </style>
   

@@ -10,9 +10,7 @@
         @input="autoGrow"
       >
       </textarea>
-      <button class="update-btn" @click="updateProfile('user')">
-        Update User Profile
-      </button>
+      <MenuButton label="Update User Profile" @click="updateProfile('user')"/>
     </div>
     <br />
     <div class="profile-section">
@@ -24,18 +22,25 @@
         @input="autoGrow"
       >
       </textarea>
-      <button class="update-btn" @click="updateProfile('tutor')">
-        Update Tutor Profile
-      </button>
+      <MenuButton label="Update Tutor Profile" @click="updateProfile('tutor')"/>
     </div>
+  </div>
+  <div class="settings-container">
+    <h1>Settings</h1>
+    
+  <div class="settings-buttons">
+    <MenuButton label="Reset" @click="resetConversation" />
+    <MenuButton label="Logout" @click="logout" />
+     </div>
   </div>
 </template>
 
   <script>
 import axios from "axios";
+import MenuButton from "@/components/Menus/MenuButton.vue";
 
 export default {
-  name: "ProfilePage",
+  name: "SettingsPage",
   data() {
     return {
       profile: {
@@ -43,6 +48,9 @@ export default {
         tutor: "",
       },
     };
+  },
+  components: {
+    MenuButton,
   },
   async mounted() {
     try {
@@ -75,6 +83,39 @@ export default {
         console.error(`Error updating ${type} profile:`, error);
       }
     },
+    async logout() {
+      localStorage.setItem("loggedIn", false);
+
+      try {
+        let response = await axios.get("/logout");
+        if (response.data.status === "success") {
+          this.$emit("logout");
+          this.$router.push("/");
+          this.hideMenu();
+        } else {
+          console.error("Failed to logout");
+        }
+      } catch (error) {
+        console.error("Error logging out:", error);
+      }
+    },
+    async resetConversation() {
+      try {
+        let response = await axios.get("/reset");
+        if (response.data.status === "success") {
+          this.$emit("conversationReset", {
+            messages: response.data.messages,
+            actions: response.data.actions,
+          });
+          this.$router.push("/");
+          this.hideMenu();
+        } else {
+          console.error("Failed to reset conversation");
+        }
+      } catch (error) {
+        console.error("Error resetting conversation:", error);
+      }
+    },
     autoGrow(event) {
       const textarea = event.target;
       textarea.style.height = "auto";
@@ -86,19 +127,25 @@ export default {
 
 <style scoped>
 .profile-container {
-  margin-top: 2em;
+  margin-top: 1em;
   padding: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.page-title {
-  font-size: 1.5em;
-  color: #f0f8ff;
-  padding: 8px;
+.settings-container {
+  margin-top: 1em;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.settings-buttons {
+  margin-top: 16px;
   width: 100%;
-  text-align: center;
+  max-width: 720px;
 }
 
 .profile-section {
@@ -108,7 +155,6 @@ export default {
 }
 
 .section-title {
-  font-size: 1.2em;
   margin-bottom: 8px;
 }
 

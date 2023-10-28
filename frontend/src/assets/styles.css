@@ -6,6 +6,7 @@ html {
     background-color: #0e0c14;
     color: #f0f8ff;
     cursor: default;
+    font-family: "Helvetica", sans-serif;
 }
 
 .code-block {
@@ -18,3 +19,30 @@ html {
     word-wrap: break-word;
     white-space: pre-wrap;
 }
+h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    border-bottom: 2px solid #4a148c;
+    padding-bottom: 0.5rem;
+    text-align: center;
+}
+
+h2 {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    border-left: 4px solid #4a148c;
+    padding-left: 1rem;
+}
+
+/* 
+color-palette{
+#0e0c14;
+#4a148c;
+#6a34b9;
+#4a148c42;
+#6a34b942;
+#f0f8ff;
+}
+*/

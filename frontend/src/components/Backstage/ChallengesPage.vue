@@ -14,6 +14,7 @@
           @navigate="navigateToChallenge"
         ></ContentButton>
       </div>
+      <br/><br/>
       <h2 class="section-title">Completed Challenges</h2>
       <div class="completed-challenges">
         <ContentButton
@@ -85,14 +86,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.page-title {
-  font-size: 1.5em;
-  color: #f0f8ff;
-  padding: 8px;
-  width: 100%;
-  text-align: center;
 }
 
 .challenges-section {

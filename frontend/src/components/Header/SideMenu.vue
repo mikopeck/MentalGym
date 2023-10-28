@@ -1,50 +1,46 @@
 <!-- SideMenu.vue -->
 <template>
   <aside :class="{ 'slide-out': sideMenuOpen }" class="side-menu">
-    <MenuButton 
-      label="Chat" 
-      @click="openChat" 
+    <MenuButton
+      label="Chat"
+      @click="openRoute('/')"
       :isSelected="isRouteActive('/')"
     />
-    <MenuButton 
-      label="Lessons" 
-      @click="openLessons" 
+    <MenuButton
+      label="Lessons"
+      @click="openRoute('/lessons')"
       :isSelected="isRouteActive('/lessons', '^/lesson/\\w+')"
     />
-    <MenuButton 
-      label="Challenges" 
-      @click="openChallenges" 
+    <MenuButton
+      label="Challenges"
+      @click="openRoute('/challenges')"
       :isSelected="isRouteActive('/challenges', '^/challenge/\\w+')"
     />
-    <MenuButton 
-      label="Achievements" 
-      @click="openAchievements" 
+    <MenuButton
+      label="Progress"
+      @click="openRoute('/progress')"
+      :isSelected="isRouteActive('/progress')"
+    />
+    <MenuButton
+      label="Achievements"
+      @click="openRoute('/achievements')"
       :isSelected="isRouteActive('/achievements')"
     />
-    <MenuButton 
-      label="Profile" 
-      @click="openProfile" 
-      :isSelected="isRouteActive('/profile')"
-    />
-    <MenuButton 
-      label="Reset" 
-      @click="resetConversation" 
-    />
-    <MenuButton 
-      label="Logout" 
-      @click="logout" 
+    <MenuButton
+      label="Settings"
+      @click="openRoute('/settings')"
+      :isSelected="isRouteActive('/settings')"
     />
   </aside>
 </template>
 
 <script>
-import axios from "axios";
 import MenuButton from "@/components/Menus/MenuButton.vue";
 
 export default {
   name: "SideMenu",
   components: {
-    MenuButton
+    MenuButton,
   },
   props: {
     sideMenuOpen: {
@@ -61,7 +57,7 @@ export default {
         }
         if (pattern) {
           const regex = new RegExp(pattern);
-          if (regex.test(this.$route.path)){
+          if (regex.test(this.$route.path)) {
             return true;
           }
         }
@@ -70,57 +66,8 @@ export default {
     },
   },
   methods: {
-    async logout() {
-      localStorage.setItem("loggedIn", false);
-
-      try {
-        let response = await axios.get("/logout");
-        if (response.data.status === "success") {
-          this.$emit("logout");
-          this.$router.push("/");
-          this.hideMenu();
-        } else {
-          console.error("Failed to logout");
-        }
-      } catch (error) {
-        console.error("Error logging out:", error);
-      }
-    },
-    async resetConversation() {
-      try {
-        let response = await axios.get("/reset");
-        if (response.data.status === "success") {
-          this.$emit("conversationReset", {
-            messages: response.data.messages,
-            actions: response.data.actions,
-          });
-          this.$router.push("/");
-          this.hideMenu();
-        } else {
-          console.error("Failed to reset conversation");
-        }
-      } catch (error) {
-        console.error("Error resetting conversation:", error);
-      }
-    },
-    openProfile() {
-      this.$router.push("/profile");
-      this.hideMenu();
-    },
-    openChallenges() {
-      this.$router.push("/challenges");
-      this.hideMenu();
-    },
-    openAchievements() {
-      this.$router.push("/progress");
-      this.hideMenu();
-    },
-    openChat() {
-      this.$router.push("/");
-      this.hideMenu();
-    },
-    openLessons() {
-      this.$router.push("/lessons");
+    openRoute(route){
+      this.$router.push(route);
       this.hideMenu();
     },
     hideMenu() {

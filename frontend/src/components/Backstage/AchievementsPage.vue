@@ -56,14 +56,6 @@ export default {
     align-items: center;
   }
 
-  .page-title {
-    font-size: 1.5em;
-    color: #f0f8ff;
-    padding: 8px;
-    width: 100%;
-    text-align: center;
-  }
-
   .achievements-section {
     margin-top: 16px;
     width: 100%;

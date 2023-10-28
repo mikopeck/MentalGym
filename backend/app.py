@@ -3,7 +3,7 @@
 import os
 import openai
 from dotenv import load_dotenv
-from flask import Flask, send_from_directory
+from flask import Flask, jsonify, make_response, send_from_directory
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_cors import CORS
@@ -38,11 +38,13 @@ from routes.auth_routes import init_auth_routes
 from routes.profile_routes import init_profile_routes
 from routes.utility_routes import init_utility_routes
 from routes.chat_routes import init_chat_routes
+from routes.graph_routes import init_graph_routes
 
 init_auth_routes(app)
 init_profile_routes(app)
 init_utility_routes(app)
 init_chat_routes(app)
+init_graph_routes(app)
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
@@ -51,6 +53,10 @@ def serve_frontend(path):
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, 'index.html')
+    
+@login_manager.unauthorized_handler
+def unauthorized():
+    return make_response(jsonify({"error": "User not authenticated"}), 401)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
