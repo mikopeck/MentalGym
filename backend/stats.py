@@ -3,6 +3,7 @@ from sqlalchemy import func, extract
 from collections import defaultdict
 
 def get_pie_chart_data(user_id):
+    # Fetch lessons by topic
     lessons_by_topic = db.session.query(
         func.substr(Lesson.lesson_name, 1, 1).label('emoji'),
         func.count(Lesson.id).label('count')
@@ -10,6 +11,7 @@ def get_pie_chart_data(user_id):
         func.substr(Lesson.lesson_name, 1, 1)
     ).all()
 
+    # Fetch challenges by topic
     challenges_by_topic = db.session.query(
         func.substr(Challenge.challenge_name, 1, 1).label('emoji'),
         func.count(Challenge.id).label('count')
@@ -22,10 +24,30 @@ def get_pie_chart_data(user_id):
     for item in lessons_by_topic + challenges_by_topic:
         topic_counts[item.emoji] += item.count
 
-    # Convert to list format
-    data = [{'label': emoji, 'value': count} for emoji, count in topic_counts.items()]
+    # Sort topics by count in descending order and take the top 5
+    sorted_topics = sorted(topic_counts.items(), key=lambda x: x[1], reverse=True)
+    top_5_topics = sorted_topics[:5]
+    other_count = sum([count for _, count in sorted_topics[5:]])
+    
+    # If there are more than 5 topics, add the 6th "Others" category
+    if other_count > 0:
+        top_5_topics.append(('Others', other_count))
 
-    return data
+    labels = [emoji for emoji, _ in top_5_topics]
+    data_values = [count for _, count in top_5_topics]
+    backgroundColors = ['#FF6347', '#FFD700', '#32CD32', '#1E90FF', '#FF4500', '#C71585']
+
+    pie_chart_data = {
+        'labels': labels,
+        'datasets': [{
+            'label': '',
+            'data': data_values,
+            'backgroundColor': backgroundColors[:len(data_values)],
+            'hoverOffset': 4
+        }]
+    }
+
+    return pie_chart_data
 
 def get_line_graph_data(user_id):
     lessons_over_time = db.session.query(
@@ -89,9 +111,10 @@ def get_stats(user_id):
     total_lessons = db.session.query(func.count(Lesson.id)).filter_by(user_id=user_id).scalar()
     total_challenges = db.session.query(func.count(Challenge.id)).filter_by(user_id=user_id).scalar()
 
-    # Using the previous method to get data for top topics
     pie_data = get_pie_chart_data(user_id)
-    top_topics = {item['label']: item['value'] for item in sorted(pie_data, key=lambda x: x['value'], reverse=True)[:5]}
+    combined_data = list(zip(pie_data['labels'], pie_data['datasets'][0]['data']))
+    sorted_combined_data = sorted(combined_data, key=lambda x: x[1], reverse=True)[:5]
+    top_topics = {label: value for label, value in sorted_combined_data}
 
     data = {
         "totalContentCompleted": total_lessons + total_challenges,
@@ -101,3 +124,4 @@ def get_stats(user_id):
     }
 
     return data
+
