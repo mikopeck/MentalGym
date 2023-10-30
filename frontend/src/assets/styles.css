@@ -19,6 +19,7 @@ html {
     word-wrap: break-word;
     white-space: pre-wrap;
 }
+
 h1 {
     font-size: 1.5rem;
     font-weight: 700;
@@ -36,12 +37,22 @@ h2 {
     padding-left: 1rem;
 }
 
-/* 
-color-palette{
-color :#0e0c14;
-color :#4a148c;
-color :#6a34b9;
-color :#4a148c42;
-color :#6a34b942;
-color :#f0f8ff;
-} */
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+
+color-palette {
+    color: #0e0c14;
+    color: #4a148c;
+    color: #6a34b9;
+    color: #4a148c42;
+    color: #6a34b942;
+    color: #f0f8ff;
+}

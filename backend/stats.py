@@ -31,7 +31,7 @@ def get_pie_chart_data(user_id):
 
     labels = [emoji for emoji, _ in top_5_topics]
     data_values = [count for _, count in top_5_topics]
-    backgroundColors = ['#b284e0', '#84e0c1','#9384e0','#d8c58c', '#84e0b2', '#84b2e0']
+    backgroundColors = ['#b284e0', '#84e0c1','#d8c58c','#9384e0', '#84e0b2', '#84b2e0']
 
     pie_chart_data = {
         'labels': labels,
@@ -91,12 +91,17 @@ def get_line_graph_data(user_id):
 
     return {
         "labels": dates,
+        "backgroundColor": '#84b2e0',
         "datasets": [{
             "label": "Lessons",
-            "data": lessons
+            "data": lessons,
+            "backgroundColor": '#84b2e0',
+            "borderColor": '#84b2e0',
         }, {
             "label": "Challenges",
-            "data": challenges
+            "data": challenges,
+            'backgroundColor':'#84e0b2',
+            "borderColor": '#84e0b2',
         }]
     }
 
@@ -161,7 +166,7 @@ def get_stats(user_id):
     max_streak, current_streak = get_streak(lessons_per_day, challenges_per_day)
 
     data = {
-        "totalContent": total_lessons + total_challenges,
+        "totalCompleted": completed_lessons + completed_challenges,
         "totalLessons": total_lessons,
         "activeLessons": active_lessons,
         "completedLessons": completed_lessons,

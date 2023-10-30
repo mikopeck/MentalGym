@@ -15,7 +15,7 @@ def init_graph_routes(app):
         data = {
             "lineGraph": line_graph_data,
             "pieChart": pie_chart_data,
-            "totalContent": stats['totalContent'],
+            "totalCompleted": stats['totalCompleted'],
             "totalLessons": stats['totalLessons'],
             "activeLessons": stats['activeLessons'],
             "completedLessons": stats['completedLessons'],
