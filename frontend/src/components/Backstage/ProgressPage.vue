@@ -14,6 +14,8 @@
         <div>Total Challenges: {{ totalChallenges }}</div>
         <div>Active Challenges: {{ activeChallenges }}</div>
         <div>Completed Challenges: {{ completedChallenges }} ({{ percentCompletedChallenges }}% completed)</div>
+        <div>Current streak: {{ currentStreak }}</div>
+        <div>All-time highest streak: {{ maxStreak }}</div>
       </div>
     </div>
 
@@ -61,6 +63,8 @@ export default {
       percentCompletedLessons: 0,
       percentCompletedChallenges: 0,
       topTopics: {},
+      maxStreak: 0,
+      currentStreak: 0,
       dataLoaded: false,
     };
   },
@@ -80,6 +84,8 @@ export default {
         this.percentCompletedLessons = response.data.progress.percentCompletedLessons;
         this.percentCompletedChallenges = response.data.progress.percentCompletedChallenges;
         this.topTopics = response.data.progress.topTopics;
+        this.maxStreak = response.data.progress.maxStreak;
+        this.currentStreak = response.data.progress.currentStreak;
         console.log(response.data);
         this.dataLoaded = true;
       } else {

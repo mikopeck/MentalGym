@@ -1,9 +1,9 @@
+from datetime import datetime, timedelta
 from models import db, Challenge, Lesson
 from sqlalchemy import func, extract
 from collections import defaultdict
 
 def get_pie_chart_data(user_id):
-    # Fetch lessons by topic
     lessons_by_topic = db.session.query(
         func.substr(Lesson.lesson_name, 1, 1).label('emoji'),
         func.count(Lesson.id).label('count')
@@ -11,7 +11,6 @@ def get_pie_chart_data(user_id):
         func.substr(Lesson.lesson_name, 1, 1)
     ).all()
 
-    # Fetch challenges by topic
     challenges_by_topic = db.session.query(
         func.substr(Challenge.challenge_name, 1, 1).label('emoji'),
         func.count(Challenge.id).label('count')
@@ -19,23 +18,20 @@ def get_pie_chart_data(user_id):
         func.substr(Challenge.challenge_name, 1, 1)
     ).all()
 
-    # Combine lesson and challenge counts by emoji
     topic_counts = defaultdict(int)
     for item in lessons_by_topic + challenges_by_topic:
         topic_counts[item.emoji] += item.count
 
-    # Sort topics by count in descending order and take the top 5
     sorted_topics = sorted(topic_counts.items(), key=lambda x: x[1], reverse=True)
     top_5_topics = sorted_topics[:5]
     other_count = sum([count for _, count in sorted_topics[5:]])
     
-    # If there are more than 5 topics, add the 6th "Others" category
     if other_count > 0:
         top_5_topics.append(('Others', other_count))
 
     labels = [emoji for emoji, _ in top_5_topics]
     data_values = [count for _, count in top_5_topics]
-    backgroundColors = ['#FF6347', '#FFD700', '#32CD32', '#1E90FF', '#FF4500', '#C71585']
+    backgroundColors = ['#b284e0', '#84e0c1','#9384e0','#d8c58c', '#84e0b2', '#84b2e0']
 
     pie_chart_data = {
         'labels': labels,
@@ -89,9 +85,6 @@ def get_line_graph_data(user_id):
 
     data = [{"date": key, "lessons": value["lessons"], "challenges": value["challenges"]} for key, value in merged_data.items()]
     data = sorted(data, key=lambda x: x["date"])
-    return transform_to_chartjs_format(data)
-
-def transform_to_chartjs_format(data):
     dates = [item['date'] for item in data]
     lessons = [item['lessons'] for item in data]
     challenges = [item['challenges'] for item in data]
@@ -107,54 +100,68 @@ def transform_to_chartjs_format(data):
         }]
     }
 
-from sqlalchemy import func, and_, or_
-from datetime import datetime, timedelta
-
-def get_stats(user_id):
-    # Previous stats
-    total_lessons = db.session.query(func.count(Lesson.id)).filter_by(user_id=user_id).scalar()
-    total_challenges = db.session.query(func.count(Challenge.id)).filter_by(user_id=user_id).scalar()
+def get_top_topics(user_id):
     pie_data = get_pie_chart_data(user_id)
     combined_data = list(zip(pie_data['labels'], pie_data['datasets'][0]['data']))
     sorted_combined_data = sorted(combined_data, key=lambda x: x[1], reverse=True)[:5]
-    top_topics = {label: value for label, value in sorted_combined_data}
+    return {label: value for label, value in sorted_combined_data}
 
-    # Active vs Completed
+def get_active_and_completed(user_id, total_lessons, total_challenges):
     active_lessons = db.session.query(func.count(Lesson.id)).filter_by(user_id=user_id, completion_date=None).scalar()
     completed_lessons = total_lessons - active_lessons
 
     active_challenges = db.session.query(func.count(Challenge.id)).filter_by(user_id=user_id, completion_date=None).scalar()
     completed_challenges = total_challenges - active_challenges
 
-    # % Completed
+    return active_lessons, completed_lessons, active_challenges, completed_challenges
+
+def get_percent_completed(completed_lessons, total_lessons, completed_challenges, total_challenges):
     percent_completed_lessons = (completed_lessons / total_lessons) * 100 if total_lessons else 0
     percent_completed_challenges = (completed_challenges / total_challenges) * 100 if total_challenges else 0
 
-    # Content Completed per Day
+    return percent_completed_lessons, percent_completed_challenges
+
+def get_content_per_day(user_id):
     lessons_per_day = db.session.query(Lesson.completion_date, func.count(Lesson.id)).filter_by(user_id=user_id).group_by(Lesson.completion_date).all()
     challenges_per_day = db.session.query(Challenge.completion_date, func.count(Challenge.id)).filter_by(user_id=user_id).group_by(Challenge.completion_date).all()
 
-    # Streak Calculation
+    return dict(lessons_per_day), dict(challenges_per_day)
+
+def get_streak(lessons_per_day, challenges_per_day):
     streak = 0
     current_streak = 0
     today = datetime.now().date()
     last_date = today
 
-    combined_dates = sorted(list(set([l[0] for l in lessons_per_day if l[0] is not None] + [c[0] for c in challenges_per_day if c[0] is not None])))
+    lessons_dates = {k: v for k, v in lessons_per_day.items() if k is not None}
+    challenges_dates = {k: v for k, v in challenges_per_day.items() if k is not None}
+
+    combined_dates = sorted(set(lessons_dates) | set(challenges_dates))
+
     for date in combined_dates:
         if date == last_date - timedelta(days=1):
             current_streak += 1
         else:
-            current_streak = 1
+            if date != today:
+                current_streak = 1
         streak = max(streak, current_streak)
         last_date = date
 
-    # Other stats
-    total_unique_topics = len(pie_data['labels'])
+    return streak, current_streak
+
+def get_stats(user_id):
+    total_lessons = db.session.query(func.count(Lesson.id)).filter_by(user_id=user_id).scalar()
+    total_challenges = db.session.query(func.count(Challenge.id)).filter_by(user_id=user_id).scalar()
+
+    top_topics = get_top_topics(user_id)
     
+    active_lessons, completed_lessons, active_challenges, completed_challenges = get_active_and_completed(user_id, total_lessons, total_challenges)
+    percent_completed_lessons, percent_completed_challenges = get_percent_completed(completed_lessons, total_lessons, completed_challenges, total_challenges)
+    lessons_per_day, challenges_per_day = get_content_per_day(user_id)
+    max_streak, current_streak = get_streak(lessons_per_day, challenges_per_day)
+
     data = {
         "totalContent": total_lessons + total_challenges,
-        "topTopics": top_topics,
         "totalLessons": total_lessons,
         "activeLessons": active_lessons,
         "completedLessons": completed_lessons,
@@ -163,10 +170,11 @@ def get_stats(user_id):
         "completedChallenges": completed_challenges,
         "percentCompletedLessons": percent_completed_lessons,
         "percentCompletedChallenges": percent_completed_challenges,
-        "lessonsPerDay": dict(lessons_per_day),
-        "challengesPerDay": dict(challenges_per_day),
-        "streak": streak,
-        "totalUniqueTopics": total_unique_topics
+        "lessonsPerDay": lessons_per_day,
+        "challengesPerDay": challenges_per_day,
+        "maxStreak": max_streak,
+        "currentStreak": current_streak,
+        "topTopics": top_topics,
     }
 
     return data

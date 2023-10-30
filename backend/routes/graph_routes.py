@@ -24,7 +24,9 @@ def init_graph_routes(app):
             "completedChallenges": stats['completedChallenges'],
             "percentCompletedLessons": stats['percentCompletedLessons'],
             "percentCompletedChallenges": stats['percentCompletedChallenges'],
-            "topTopics": stats['topTopics']
+            "topTopics": stats['topTopics'],
+            "maxStreak": stats['maxStreak'],
+            "currentStreak": stats['currentStreak']
         }
         print(data)
         return jsonify({
