@@ -21,6 +21,10 @@ class User(db.Model, UserMixin):
     challenges = db.relationship('Challenge', backref='user')
     lessons = db.relationship('Lesson', backref='user')
 
+    tier = db.Column(db.String(50), default='free')  # 'free', 'paid', 'pro'
+    daily_request_count = db.Column(db.Integer, default=0)
+    last_request_time = db.Column(db.DateTime, default=datetime.utcnow)
+
     def as_dict(self):
         active_challenges = [challenge.challenge_name for challenge in sorted(
             [c for c in self.challenges if not c.completion_date], 

@@ -2,7 +2,7 @@ import json
 
 import roles as roles
 import functions as fns
-import db_handlers as db
+import database.db_handlers as db
 
 def initialize_messages(user_id):
     update_system_role(user_id, roles.ProfileGather)

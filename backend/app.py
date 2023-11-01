@@ -7,8 +7,10 @@ from flask import Flask, jsonify, make_response, send_from_directory
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
-from models import db, User
+from database.models import db, User
 
 load_dotenv()
 app = Flask(__name__, static_folder='../frontend/dist')

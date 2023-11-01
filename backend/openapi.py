@@ -11,12 +11,13 @@ LESSON_TOKENS = 800
 GPT3_5 = "gpt-3.5-turbo"
 GPT4 = "gpt-4"
 
-def generate_response(messages, functions = None, function_call = "none", model = GPT3_5, tokens=TOKEN_CAP):
+def generate_response(user_id, messages, functions = None, function_call = "none", model = GPT3_5, tokens=TOKEN_CAP):
     for attempt in range(max_retries):
         try:
             if functions:
                 print(f"Requesting {model} response {tokens}: ", messages, functions)
                 response = openai.ChatCompletion.create(
+                    user=user_id,
                     model=model,
                     messages=messages,
                     functions=functions,
@@ -29,6 +30,7 @@ def generate_response(messages, functions = None, function_call = "none", model 
             else:
                 print("Requesting AI response: ", messages)
                 response = openai.ChatCompletion.create(
+                    user=user_id,
                     model=model,
                     messages=messages,
                     temperature=0.2,

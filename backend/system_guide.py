@@ -1,5 +1,5 @@
 # systemGuide.py
-import db_handlers as db
+import database.db_handlers as db
 import roles as roles
 import functions as functions
 import completion_tasks as cts

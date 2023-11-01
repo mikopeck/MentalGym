@@ -3,7 +3,7 @@
 from flask import request, jsonify
 from flask_login import login_required, current_user
 
-import db_handlers as dbh
+import database.db_handlers as dbh
 
 def init_profile_routes(app):
 

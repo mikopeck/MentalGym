@@ -6,7 +6,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from sqlalchemy.exc import IntegrityError
 import pymysql.err as pymysql_err
 
-from models import db, User
+from database.models import db, User
 from message_handler import initialize_messages
 
 def init_auth_routes(app):

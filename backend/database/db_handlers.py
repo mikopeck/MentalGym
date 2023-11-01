@@ -1,4 +1,4 @@
-from models import db, User, ChatHistory, Challenge, Lesson, UserAction, Achievement, UserAchievement
+from database.models import db, User, ChatHistory, Challenge, Lesson, UserAction, Achievement, UserAchievement
 from utils import decode_if_needed
 from datetime import datetime
 
@@ -6,9 +6,9 @@ history_limit = 16
 
 def add_user_message(user_id, message_content, challenge_id=None, lesson_id=None):
     message = ChatHistory(
-        user_id=user_id, 
-        message=message_content, 
-        role="user", 
+        user_id=user_id,
+        message=message_content,
+        role="user",
         system_role="User",
         challenge_id=challenge_id,
         lesson_id=lesson_id

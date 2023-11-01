@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from models import db, Challenge, Lesson
+from database.models import db, Challenge, Lesson
 from sqlalchemy import func, extract
 from collections import defaultdict
 

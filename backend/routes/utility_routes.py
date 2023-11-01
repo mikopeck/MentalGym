@@ -3,7 +3,7 @@
 from flask import jsonify
 from flask_login import login_required, current_user
 
-import db_handlers as dbh
+import database.db_handlers as dbh
 from message_handler import initialize_messages
 
 def init_utility_routes(app):

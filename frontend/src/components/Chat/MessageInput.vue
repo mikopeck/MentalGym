@@ -64,6 +64,7 @@ export default {
   data() {
     return {
       message: "",
+      maxMessageLength: 1000,
       sending: false,
       actionAvailable: false,
     };
@@ -76,9 +77,22 @@ export default {
       };
     },
   },
+  watch: {
+    message(newVal) {
+      if (newVal.length > this.maxMessageLength) {
+        alert("Message is too long.");
+        this.message = newVal.substring(0, this.maxMessageLength);
+      }
+    },
+  },
   methods: {
     handleActionAvailable(available) {
       this.actionAvailable = available;
+    },
+    sanitizeInput(input) {
+      const div = document.createElement("div");
+      div.textContent = input;
+      return div.innerHTML;
     },
     async sendMessage(event) {
       if (event) {
@@ -86,11 +100,12 @@ export default {
         event.preventDefault();
       }
 
-      if (this.message.trim() === "") return;
-
-      const msg = this.message;
-      this.message = "";
-      this.adjustHeight();
+      const msg = this.sanitizeInput(this.message);
+      if (msg.trim() === "") return;
+      if (msg.length > this.maxMessageLength) {
+        alert("Message is too long.");
+        return;
+      }
 
       this.sending = true;
       this.$emit("messageSending", msg);
@@ -111,8 +126,16 @@ export default {
       try {
         const response = await axios.post("/api/chat", formData);
         this.$emit("messageSent", response.data);
+        this.message = "";
+        this.adjustHeight();
       } catch (error) {
-        console.error("Error sending message:", error);
+        if (error.response && error.response.status === 429) {
+          const retryAfterMessage = error.response.data.error;
+          alert(retryAfterMessage);
+        } else {
+          console.error("Error sending message:", error);
+          alert("An error occurred while sending your message.");
+        }
       } finally {
         this.sending = false;
       }

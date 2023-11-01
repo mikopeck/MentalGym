@@ -3,7 +3,7 @@ from datetime import datetime
 
 import functions as fns
 import roles as roles
-import db_handlers as db
+import database.db_handlers as db
 import message_handler as mh
 
 from openapi import generate_response, GPT4, LESSON_TOKENS
@@ -23,7 +23,7 @@ def gather_profile(user_id):
         function_call = {"name": function[0]['name']}
 
     for attempt in range(function_max_retries):
-        response = generate_response(messages, function, function_call)
+        response = generate_response(user_id, messages, function, function_call)
         response_message = response["choices"][0]["message"]
         if not response_message.get("function_call"):
             return response, None
@@ -36,7 +36,7 @@ def gather_profile(user_id):
                  
     print("ERROR: failed function!! defaulting to no functions...")
     mh.update_system_role(user_id, roles.ProfileGather)
-    return generate_response(messages), None
+    return generate_response(user_id, messages), None
 
 def suggest_content(user_id, set_challenge = True):
     messages = mh.prepare_session_messages(user_id)
@@ -46,7 +46,7 @@ def suggest_content(user_id, set_challenge = True):
     function_call = "auto"
 
     for attempt in range(function_max_retries):
-        response = generate_response(messages, functions, function_call)
+        response = generate_response(user_id, messages, functions, function_call)
         response_message = response["choices"][0]["message"]
         if not response_message.get("function_call"):
             identify_content(user_id, response_message['content'])
@@ -68,13 +68,13 @@ def suggest_content(user_id, set_challenge = True):
             return lesson_create(user_id, lesson_id, lesson_name)
             
     print("ERROR: failed function!! defaulting to no functions...")
-    response = generate_response(messages)
+    response = generate_response(user_id, messages)
     identify_content(user_id, response["choices"][0]["message"]['content'])
     return response, None
 
 def after_content(user_id):
     mh.update_system_role(user_id, roles.AfterContent)
-    return generate_response(mh.prepare_session_messages(user_id)), None
+    return generate_response(user_id, mh.prepare_session_messages(user_id)), None
 
 def challenge_progress(user_id, challenge_id):
     messages = mh.prepare_session_messages(user_id, challenge_id=challenge_id)
@@ -82,7 +82,7 @@ def challenge_progress(user_id, challenge_id):
     function_call = "auto"
 
     for attempt in range(function_max_retries):
-        response = generate_response(messages, functions, function_call)
+        response = generate_response(user_id, messages, functions, function_call)
         response_message = response["choices"][0]["message"]
         if response_message.get("function_call"):
             completion = try_get_object(fns.ChallengeCompletion, response_message)
@@ -94,12 +94,12 @@ def challenge_progress(user_id, challenge_id):
                     return suggest_content(user_id, False), None
                 else:
                     print("failed completion- respond without completion function")
-                    return generate_response(messages)
+                    return generate_response(user_id, messages)
         else:
             print("no completion - word response")
             return response
     print("incorrect challenge completion function use, defaulting to no function") 
-    return generate_response(messages)
+    return generate_response(user_id, messages)
 
 def lesson_create(user_id, lesson_id, lesson_name = None):
     if not lesson_name:
@@ -108,25 +108,27 @@ def lesson_create(user_id, lesson_id, lesson_name = None):
     ##### TODO: generate improved tutor #####
     if not db.get_tutor(user_id):
         tutor_create_message = mh.create_message(mh.system_message(user_id, roles.TutorCreate), profile)
-        response = generate_response(tutor_create_message, model=GPT4, tokens=LESSON_TOKENS)
+        # TODO: model=GPT4 for paid users
+        response = generate_response(user_id, tutor_create_message, tokens=LESSON_TOKENS)
         db.set_tutor(user_id, response['choices'][0]['message']['content'])
 
     mh.update_system_role(user_id, roles.LessonCreate, lesson_id)
-    return generate_response(mh.prepare_session_messages(user_id, lesson_id)+mh.user_message("Lesson topic: "+lesson_name), model=GPT4, tokens=LESSON_TOKENS), lesson_id
+    return generate_response(user_id, mh.prepare_session_messages(user_id, lesson_id)+mh.user_message("Lesson topic: "+lesson_name), model=GPT4, tokens=LESSON_TOKENS), lesson_id
 
 def lesson_guide(user_id, lesson_id):
     messages = mh.prepare_session_messages(user_id, lesson_id) 
     functions = [fns.LessonToQuiz]
     function_call = "auto"
 
-    response = generate_response(messages, functions, function_call)
+    response = generate_response(user_id, messages, functions, function_call)
     response_message = response["choices"][0]["message"]
     if response_message.get("function_call"):
         return quiz_create(user_id, lesson_id)
     return response, lesson_id
 
 def quiz_create(user_id, lesson_id):
-    return generate_response(mh.prepare_session_messages(user_id, lesson_id), model=GPT4), lesson_id
+    # TODO: model=GPT4 for paid users
+    return generate_response(user_id, mh.prepare_session_messages(user_id, lesson_id)), lesson_id
 
 def quiz_feedback(user_id, lesson_id):
     mh.update_system_role(user_id, roles.QuizGrade, lesson_id)
@@ -135,7 +137,7 @@ def quiz_feedback(user_id, lesson_id):
     function_call = {"name": function[0]['name']}
 
     for attempt in range(function_max_retries):
-        response = generate_response(messages, function, function_call)
+        response = generate_response(user_id, messages, function, function_call)
         response_message = response["choices"][0]["message"]
         if not response_message.get("function_call"):
             continue
@@ -151,7 +153,7 @@ def quiz_feedback(user_id, lesson_id):
             else:
                 print("quiz failed")
                 mh.update_system_role(user_id, roles.QuizFeedback, lesson_id)
-                return generate_response(messages), lesson_id
+                return generate_response(user_id, messages), lesson_id
                     
     print("ERROR: failed grading function!! defaulting to quiz create again...")
     mh.update_system_role(user_id, roles.QuizCreate, lesson_id)
@@ -175,7 +177,7 @@ def identify_content(user_id, message):
     function = [fns.Content]
     function_call = {"name": function[0]['name']}
 
-    response = generate_response(messages, function, function_call)
+    response = generate_response(user_id, messages, function, function_call)
     response_message = response["choices"][0]["message"]
     if not response_message.get("function_call"):
         print("No content suggested...")

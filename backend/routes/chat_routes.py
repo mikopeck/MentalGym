@@ -2,9 +2,11 @@
 
 from flask import jsonify, request
 from flask_login import login_required, current_user
+from bleach import clean 
 
-import db_handlers as dbh
+import database.db_handlers as dbh
 from system_guide import progress_challenge, progress_chat, progress_lesson
+from database.user_handler import is_within_limit
 
 def init_chat_routes(app):
 
@@ -17,9 +19,21 @@ def init_chat_routes(app):
             return get_recent_chat(lesson_id, challenge_id)
 
         elif request.method == "POST":
+            # rates
+            within_limit, message = is_within_limit(current_user)
+            if not within_limit:
+                return jsonify({"error": message}), 429
+            
+            # sanitize & length
+            userInput = request.form.get("message", "")
+            userInput = clean(userInput)
+            if len(userInput) > 1000:
+                return jsonify({"error": "Message is too long. Maximum 1000 characters allowed."}), 400
+            if len(userInput) < 1:
+                return jsonify({"error": "No message."}), 400
+
             lesson_id = request.form.get("lesson_id", None)
             challenge_id = request.form.get("challenge_id", None)
-            userInput = request.form.get("message", "")
 
             if lesson_id:
                 return post_lesson_message(userInput, lesson_id)
