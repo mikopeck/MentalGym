@@ -2,32 +2,32 @@
 <template>
   <aside :class="{ 'slide-out': sideMenuOpen }" class="side-menu">
     <MenuButton
-      label="Chat"
+      label="Chat💬"
       @click="openRoute('/')"
       :isSelected="isRouteActive('/')"
     />
     <MenuButton
-      label="Lessons"
+      label="Lessons📖"
       @click="openRoute('/lessons')"
       :isSelected="isRouteActive('/lessons', '^/lesson/\\w+')"
     />
     <MenuButton
-      label="Challenges"
+      label="Challenges🎯"
       @click="openRoute('/challenges')"
       :isSelected="isRouteActive('/challenges', '^/challenge/\\w+')"
     />
     <MenuButton
-      label="Progress"
+      label="Progress📈"
       @click="openRoute('/progress')"
       :isSelected="isRouteActive('/progress')"
     />
     <MenuButton
-      label="Achievements"
+      label="Achievements🏅"
       @click="openRoute('/achievements')"
       :isSelected="isRouteActive('/achievements')"
     />
     <MenuButton
-      label="Settings"
+      label="Settings🔧"
       @click="openRoute('/settings')"
       :isSelected="isRouteActive('/settings')"
     />

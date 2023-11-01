@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { Line } from "vue-chartjs";
+import { Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,
   Title,
@@ -15,8 +15,8 @@ import {
   LineElement,
   PointElement,
   CategoryScale,
-  LinearScale,
-} from "chart.js";
+  LinearScale
+} from 'chart.js';
 
 ChartJS.register(
   Title,
@@ -29,14 +29,43 @@ ChartJS.register(
 );
 
 export default {
-  name: "ProgressGraph",
+  name: 'ProgressGraph',
   components: { Line },
   props: {
     data: {
       type: Object,
       default: () => ({ labels: [], datasets: [] }),
     },
-    options: Object,
-  },
+    options: {
+      type: Object,
+      default: () => ({
+        scales: {
+          x: {
+            ticks: {
+              color: '#f0f8ff22'
+            },
+            grid: {
+              color: '#f0f8ff42'
+            }
+          },
+          y: {
+            ticks: {
+              color: '#f0f8ff22'
+            },
+            grid: {
+              color: '#f0f8ff42'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#f0f8ff'
+            }
+          }
+        }
+      })
+    }
+  }
 };
 </script>

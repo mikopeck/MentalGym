@@ -39,3 +39,15 @@ export default {
 };
 
 </script>
+
+<style scoped>
+.pie-chart-container{
+  padding: 8px;
+  max-width: 480px;
+  max-height: 480px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+</style>

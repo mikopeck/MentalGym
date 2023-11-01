@@ -35,6 +35,12 @@ with app.app_context():
 migrate = Migrate(app, db)
 CORS(app)
 
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["6000 per day", "1200 per hour"]
+)
+limiter.init_app(app)
+
 # Routes
 from routes.auth_routes import init_auth_routes
 from routes.profile_routes import init_profile_routes

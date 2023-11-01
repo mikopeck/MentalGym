@@ -93,12 +93,12 @@ def get_line_graph_data(user_id):
         "labels": dates,
         "backgroundColor": '#84b2e0',
         "datasets": [{
-            "label": "Lessons",
+            "label": "Lessons📖",
             "data": lessons,
             "backgroundColor": '#84b2e0',
             "borderColor": '#84b2e0',
         }, {
-            "label": "Challenges",
+            "label": "Challenges🎯",
             "data": challenges,
             'backgroundColor':'#84e0b2',
             "borderColor": '#84e0b2',
