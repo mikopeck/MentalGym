@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 import pymysql.err as pymysql_err
 
 from database.models import db, User
+from database.user_handler import set_user_tier, get_user_tier
 from message_handler import initialize_messages
 
 def init_auth_routes(app):

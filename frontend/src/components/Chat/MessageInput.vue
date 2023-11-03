@@ -133,7 +133,7 @@ export default {
           const retryAfterMessage = error.response.data.error;
           alert(retryAfterMessage);
         } else {
-          console.error("Error sending message:", error);
+          console.error("Error sending message:", error.response.data.error);
           alert("An error occurred while sending your message.");
         }
       } finally {

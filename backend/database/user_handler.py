@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from database.models import db
+from database.models import db, User
 
 # Rate limiting parameters
 DAILY_LIMITS = {
@@ -24,7 +24,7 @@ def is_within_limit(user):
         minutes = divmod(remainder, 60)
         return False, f"Daily limit ({daily_limit}) exceeded. Please wait {hours} hours and {minutes} minutes before you send another message."
 
-    if user.last_request_time and (now - user.last_request_time) <= timedelta(seconds=20):
+    if user.last_request_time and (now - user.last_request_time) <= timedelta(seconds=10):
         return False, f"Request limit exceeded. Please take some time to think before you send another message."
     
     user.daily_request_count += 1
@@ -32,3 +32,19 @@ def is_within_limit(user):
     db.session.commit()
 
     return True, ""
+
+def set_user_tier(user_id, tier):
+    user = User.query.get(user_id)
+    if user:
+        user.tier = tier
+        db.session.commit()
+
+def get_user_tier(user_id):
+    user = User.query.get(user_id)
+    return user.tier if user else None
+
+def increment_violations(user_id):
+    user = User.query.get(user_id)
+    if user:
+        user.violation_count += 1
+        db.session.commit()

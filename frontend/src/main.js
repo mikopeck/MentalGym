@@ -13,6 +13,8 @@ const routes = [
   { path: '/about', component: defineAsyncComponent(() => import('./components/Footer/AboutPage.vue')) },
   { path: '/contact', component: defineAsyncComponent(() => import('./components/Footer/ContactPage.vue')) },
   { path: '/settings', component: defineAsyncComponent(() => import('./components/Backstage/SettingsPage.vue')) },
+  { path: '/terms', component: defineAsyncComponent(() => import('./components/Footer/TermsAndPoliciesPage.vue')) },
+  { path: '/plan', component: defineAsyncComponent(() => import('./components/Monetization/PlanPage.vue')) },
 ];
 
 const router = createRouter({

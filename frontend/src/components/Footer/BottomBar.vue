@@ -34,6 +34,8 @@
       </a>
     </div>
     <div class="footer-bottom">
+      <router-link to="/terms" class="text-link">Terms and Policies</router-link>
+      <span class="separator">·</span>
       <p>© 2023 Ascendance.</p>
     </div>
   </div>
@@ -59,7 +61,8 @@ export default {
   z-index: 200;
 }
 
-.footer-top {
+.footer-top,
+.footer-bottom {
   display: flex;
   justify-content: center;
   align-items: center;

@@ -64,13 +64,8 @@ h2 {
   margin-top: 20px;
 }
 
-p,
-li {
+p {
   margin: 10px 0;
 }
 
-ul {
-  list-style-type: disc;
-  padding-left: 40px;
-}
 </style>

@@ -5,7 +5,7 @@
     :class="['content-button', isCompleted ? 'completed-button' : '']"
   >
     <span class="emoji-indicator">{{ getEmojiForContentType }}</span>
-     {{ contentWithoutEmoji }} 
+    <div class="content-name"> {{ contentWithoutEmoji }}  </div>
     <span v-if="hasContentEmoji" class="emoji-indicator">{{ extractedEmoji }}</span>
   </button>
 </template>
@@ -63,6 +63,10 @@ export default {
   text-align: center;
   position: relative;
   transition: border-color 0.3s ease;
+}
+
+.content-name {
+  padding: 8px;
 }
 
 .content-button .emoji-indicator {

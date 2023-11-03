@@ -17,7 +17,7 @@ def generate_response(user_id, messages, functions = None, function_call = "none
             if functions:
                 print(f"Requesting {model} response {tokens}: ", messages, functions)
                 response = openai.ChatCompletion.create(
-                    user=user_id,
+                    user=str(user_id),
                     model=model,
                     messages=messages,
                     functions=functions,
@@ -30,7 +30,7 @@ def generate_response(user_id, messages, functions = None, function_call = "none
             else:
                 print("Requesting AI response: ", messages)
                 response = openai.ChatCompletion.create(
-                    user=user_id,
+                    user=str(user_id),
                     model=model,
                     messages=messages,
                     temperature=0.2,
@@ -44,3 +44,9 @@ def generate_response(user_id, messages, functions = None, function_call = "none
     else:
         print("Max retries reached. Unable to generate response.")
         return None
+
+def moderate(user_input):
+    response = openai.Moderation.create(input=user_input)
+    output = response["results"][0]
+    violation = output["flagged"]
+    return violation, output

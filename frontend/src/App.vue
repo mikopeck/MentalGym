@@ -6,6 +6,7 @@
     <SubHeader v-if="shouldShowChat" :subheading="subheadingText" />
     <SideMenu
       :sideMenuOpen="sideMenuOpen"
+      :userTier="userTier"
       @conversationReset="resetConversation"
       @menuHidden="hideSideMenu"
       @logout="logoutUser"
@@ -63,6 +64,7 @@ export default {
       messages: [],
       actions: [],
       subheadingText: "",
+      userTier: "free",
     };
   },
   computed: {
@@ -152,6 +154,7 @@ export default {
             console.log(response);
             this.messages = response.data.messages;
             this.actions = response.data.actions;
+            this.userTier = response.data.userTier;
             if ("subheading" in response.data) {
               this.subheadingText = response.data.subheading;
             }

@@ -25,6 +25,8 @@ class User(db.Model, UserMixin):
     daily_request_count = db.Column(db.Integer, default=0)
     last_request_time = db.Column(db.DateTime, default=datetime.utcnow)
 
+    violation_count = db.Column(db.Integer, default=0)
+
     def as_dict(self):
         active_challenges = [challenge.challenge_name for challenge in sorted(
             [c for c in self.challenges if not c.completion_date], 

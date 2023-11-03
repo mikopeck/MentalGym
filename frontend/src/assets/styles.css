@@ -23,6 +23,7 @@ html {
 h1 {
     font-size: 1.5rem;
     font-weight: 700;
+    margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     border-bottom: 2px solid #4a148c;
     padding-bottom: 0.5rem;
@@ -32,6 +33,7 @@ h1 {
 h2 {
     font-size: 1.3rem;
     font-weight: 500;
+    margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     border-left: 4px solid #4a148c;
     padding-left: 1rem;
@@ -45,6 +47,17 @@ h2 {
 .flex-col {
     display: flex;
     flex-direction: column;
+}
+
+li {
+    margin: 4px;
+}
+
+ul {
+    list-style-type: square;
+    padding-left: 20px;
+    margin-left: 0;
+    color: #f0f8ff;
 }
 
 

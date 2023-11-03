@@ -10,10 +10,11 @@ def progress_chat(user_id, user_message):
     return progress(user_id, detect_content_actions(user_id, user_message))
 
 def progress_lesson(user_id, user_message, lesson_id):
-    db.add_user_message(user_id, user_message, lesson_id=lesson_id)
     if user_message == "Leave lesson.":
         return None
-    elif user_message == "Continue to quiz.":
+    
+    db.add_user_message(user_id, user_message, lesson_id=lesson_id)
+    if user_message == "Continue to quiz.":
         mh.update_system_role(user_id, roles.QuizCreate, lesson_id)
     return progress(user_id, lesson_id)
 

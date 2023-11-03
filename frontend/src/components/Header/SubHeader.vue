@@ -27,8 +27,8 @@ export default {
 .subheading-container {
   text-align: center;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.7);
-  background-color: rgba(0, 0, 0, 0.1);
+  color: #ffffffb3;
+  background-color: #0000001a;
   padding: 5px 0;
   backdrop-filter: blur(8px);
 }
@@ -37,7 +37,7 @@ export default {
 .slide-fade-leave-active {
   transition: opacity 0.5s;
 }
-.slide-fade-enter, .slide-fade-leave-to /* .slide-fade-leave-active in <2.6 */ {
+.slide-fade-enter, .slide-fade-leave-to {
   opacity: 0;
 }
 </style>

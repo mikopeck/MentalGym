@@ -31,22 +31,31 @@
       @click="openRoute('/settings')"
       :isSelected="isRouteActive('/settings')"
     />
+    <TierButton
+      :tier="userTier"
+    />
   </aside>
 </template>
 
 <script>
 import MenuButton from "@/components/Menus/MenuButton.vue";
+import TierButton from "@/components/Menus/TierButton.vue";
 
 export default {
   name: "SideMenu",
   components: {
     MenuButton,
+    TierButton,
   },
   props: {
     sideMenuOpen: {
       type: Boolean,
       required: true,
     },
+    userTier: {
+      type: String,
+      default: "free",
+    }
   },
   computed: {
     isRouteActive() {

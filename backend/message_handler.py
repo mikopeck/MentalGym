@@ -61,7 +61,8 @@ def system_message(user_id, file_name:roles = None ):
 
     if "{base-persona}" in system_message:
         with open('SystemPrompts/' + file_name + '.txt', 'r') as file:
-            system_message = system_message.replace("{base-persona}", file.read())
+            persona = file.read()
+            system_message = system_message.replace("{base-persona}", persona)
 
     if "{state}" in system_message:
         state = db.get_user_content(user_id)
