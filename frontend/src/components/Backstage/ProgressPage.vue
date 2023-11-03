@@ -59,12 +59,12 @@
 
         <div class="spread flex-row">
           <div class="stat-item">
-            <span class="stat-value">{{ completedChallenges }}</span>
-            <span class="stat-label">Completed Challenges</span>
-          </div>
-          <div class="stat-item">
             <span class="stat-value">{{ completedLessons }}</span>
             <span class="stat-label">Completed Lessons</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">{{ completedChallenges }}</span>
+            <span class="stat-label">Completed Challenges</span>
           </div>
         </div>
 

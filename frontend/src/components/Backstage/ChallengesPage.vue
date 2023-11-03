@@ -4,28 +4,53 @@
     <h1 class="page-title">Your Challenges</h1>
     <div class="challenges-section">
       <h2 class="section-title">Active Challenges</h2>
-      <div class="active-challenges">
-        <ContentButton
-          v-for="challenge in challenges.active"
-          :key="challenge.challenge_name"
-          :content="challenge.challenge_name"
-          :role="challenge.id"
-          :content_type="'challenge'"
-          @navigate="navigateToChallenge"
-        ></ContentButton>
-      </div>
-      <br/><br/>
+      <table class="challenges-table" v-if="challenges.active.length > 0">
+        <tbody>
+          <tr v-for="challenge in challenges.active" :key="challenge.id">
+            <td>
+              <ContentButton
+                :content="challenge.challenge_name"
+                :role="challenge.id"
+                :content_type="'challenge'"
+                @navigate="navigateToChallenge"
+              ></ContentButton>
+            </td>
+            <td>
+              <button class="share-button" @click="shareChallenge(challenge.id)">Share</button>
+            </td>
+            <td>
+              <button class="delete-button" @click="deleteChallenge(challenge.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else>No active challenges...</p>
+      <br /><br />
       <h2 class="section-title">Completed Challenges</h2>
-      <div class="completed-challenges">
-        <ContentButton
-          v-for="challenge in challenges.completed"
-          :key="challenge.challenge_name"
-          :content="challenge.challenge_name"
-          :role="challenge.id+'?completed'"
-          :content_type="'challenge'"
-          @navigate="navigateToChallenge"
-        ></ContentButton>
-      </div>
+      <table class="challenges-table" v-if="challenges.completed.length > 0">
+        <tbody>
+          <tr
+            v-for="challenge in challenges.completed"
+            :key="challenge.id + '?completed'"
+          >
+            <td>
+              <ContentButton
+                :content="challenge.challenge_name"
+                :role="challenge.id + '?completed'"
+                :content_type="'challenge'"
+                @navigate="navigateToChallenge"
+              ></ContentButton>
+            </td>
+            <td>
+              <button @click="shareChallenge(challenge.id)">Share</button>
+            </td>
+            <td>
+              <button @click="deleteChallenge(challenge.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else>No completed challenges... yet.</p>
     </div>
   </div>
 </template>
@@ -63,6 +88,12 @@ export default {
   methods: {
     navigateToChallenge(challengeId) {
       this.$router.push(`/challenge/${challengeId}`);
+    },
+    shareChallenge(challengeId) {
+      alert(challengeId);
+    },
+    deleteChallenge(challengeId) {
+      alert(challengeId);
     },
   },
 };
@@ -105,4 +136,33 @@ export default {
   flex-wrap: wrap;
   gap: 16px;
 }
+
+.share-button {
+  background-color: #4a148c;
+}
+
+.delete-button {
+  background-color: #e53935;
+}
+
+.delete-button, .share-button {
+  padding: 0.5rem 1rem;
+  border: 2px solid #4a148c42;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.3s ease;
+}
+
+.delete-button:hover{
+  border-color: #0e0c14;
+} 
+.share-button:hover {
+  border-color: #6a2bc2b3;
+}
+
+.section-title {
+  margin-bottom: 10px;
+}
+
 </style>

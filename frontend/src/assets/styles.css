@@ -60,12 +60,29 @@ ul {
     color: #f0f8ff;
 }
 
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    text-align: left;
+}
+
+tr{
+    background-color: #00000000;
+    transition: background-color 0.2s;
+}
+tr:hover {
+    background-color: #4a148c22;
+}
 
 color-palette {
-    color: #0e0c14;
+    color: #0e0c14;    /*background*/
     color: #4a148c;
     color: #6a34b9;
     color: #4a148c42;
     color: #6a34b942;
-    color: #f0f8ff;
+    color: #f0f8ff;    /*text*/
 }

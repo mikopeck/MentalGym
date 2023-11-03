@@ -56,7 +56,6 @@ export default {
   justify-content: center;
   padding: 0.5rem 1rem;
   background: #4a148c;
-  color: #f0f8ff;
   border: 2px solid #4a148c42;
   border-radius: 10px;
   cursor: pointer;

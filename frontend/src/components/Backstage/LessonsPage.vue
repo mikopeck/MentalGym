@@ -4,28 +4,53 @@
     <h1 class="page-title">Your Lessons</h1>
     <div class="lessons-section">
       <h2 class="section-title">Active Lessons</h2>
-      <div class="active-lessons">
-        <ContentButton
-          v-for="lesson in lessons.active"
-          :key="lesson.lesson_name"
-          :content="lesson.lesson_name"
-          :role="lesson.id"
-          :content_type="'lesson'"
-          @navigate="navigateToLesson"
-        ></ContentButton>
-      </div>
-      <br/><br/>
+      <table class="lessons-table" v-if="lessons.active.length > 0">
+        <tbody>
+          <tr v-for="lesson in lessons.active" :key="lesson.id">
+            <td>
+              <ContentButton
+                :content="lesson.lesson_name"
+                :role="lesson.id"
+                :content_type="'lesson'"
+                @navigate="navigateToLesson"
+              ></ContentButton>
+            </td>
+            <td>
+              <button class="share-button" @click="shareLesson(lesson.id)">Share</button>
+            </td>
+            <td>
+              <button class="delete-button" @click="deleteLesson(lesson.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else>No active lessons...</p>
+      <br /><br />
       <h2 class="section-title">Completed Lessons</h2>
-      <div class="completed-lessons">
-        <ContentButton
-          v-for="lesson in lessons.completed"
-          :key="lesson.lesson_name"
-          :content="lesson.lesson_name"
-          :role="lesson.id+'?completed'"
-          :content_type="'lesson'"
-          @navigate="navigateToLesson"
-        ></ContentButton>
-      </div>
+      <table class="lessons-table" v-if="lessons.completed.length > 0">
+        <tbody>
+          <tr
+            v-for="lesson in lessons.completed"
+            :key="lesson.id + '?completed'"
+          >
+            <td>
+              <ContentButton
+                :content="lesson.lesson_name"
+                :role="lesson.id + '?completed'"
+                :content_type="'lesson'"
+                @navigate="navigateToLesson"
+              ></ContentButton>
+            </td>
+            <td>
+              <button @click="shareLesson(lesson.id)">Share</button>
+            </td>
+            <td>
+              <button @click="deleteLesson(lesson.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else>No completed lessons... yet.</p>
     </div>
   </div>
 </template>
@@ -64,12 +89,17 @@ export default {
     navigateToLesson(lessonId) {
       this.$router.push(`/lesson/${lessonId}`);
     },
+    shareLesson(lessonId){
+      alert(lessonId);
+    },
+    deleteLesson(lessonId){
+      alert(lessonId);
+    },
   },
 };
 </script>
   
   <style scoped>
-
 .lessons-container {
   margin-top: 1em;
   padding: 16px;
@@ -94,6 +124,35 @@ export default {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
+}
+
+.share-button {
+    background-color: #4a148c;
+}
+
+.delete-button {
+    background-color: #e53935;
+}
+
+.delete-button, .share-button {
+  padding: 0.5rem 1rem;
+  border: 2px solid #4a148c42;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.3s ease;
+}
+
+.delete-button:hover{
+  border-color: #0e0c14;
+} 
+.share-button:hover {
+  border-color: #6a2bc2b3;
+}
+
+
+.section-title {
+    margin-bottom: 10px;
 }
 
 </style>
