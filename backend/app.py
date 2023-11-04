@@ -2,6 +2,7 @@
 
 import os
 import openai
+import resend
 from dotenv import load_dotenv
 from flask import Flask, jsonify, make_response, send_from_directory
 from flask_login import LoginManager
@@ -16,6 +17,7 @@ load_dotenv()
 app = Flask(__name__, static_folder='../frontend/dist')
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
 openai.api_key = os.getenv("OPENAI_API_KEY")
+resend.api_key = os.getenv('RESEND_API_KEY')
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -37,7 +39,7 @@ CORS(app)
 
 limiter = Limiter(
     key_func=get_remote_address,
-    default_limits=["6000 per day", "1200 per hour"]
+    default_limits=["6000 per day", "1200 per hour"],
 )
 limiter.init_app(app)
 

@@ -48,6 +48,27 @@
 <script>
 export default {
   name: "AboutPage",
+  data() {
+    return {
+      popupMessage: '',
+    };
+  },
+  created() {
+    const messageCode = this.$route.query.message;
+    this.handleMessageCode(messageCode);
+  },
+  methods: {
+    handleMessageCode(code) {
+      const messages = {
+        expired_registration_token: 'This registration token was expired. A new one has been sent to your email.',
+        invalid_registration_token: 'The registration token you provided is invalid. Please check your email for the correct link or contact support.',
+      };
+      this.popupMessage = messages[code] || '';
+      if (this.popupMessage != ''){
+        alert(this.popupMessage);
+      }
+    },
+  },
 };
 </script>
 

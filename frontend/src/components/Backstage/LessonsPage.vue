@@ -42,10 +42,10 @@
               ></ContentButton>
             </td>
             <td>
-              <button @click="shareLesson(lesson.id)">Share</button>
+              <button class="share-button" @click="shareLesson(lesson.id)">Share</button>
             </td>
             <td>
-              <button @click="deleteLesson(lesson.id)">Delete</button>
+              <button class="delete-button" @click="deleteLesson(lesson.id)">Delete</button>
             </td>
           </tr>
         </tbody>

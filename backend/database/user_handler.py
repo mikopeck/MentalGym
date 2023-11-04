@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+from itsdangerous import URLSafeSerializer as Serializer
+from flask import current_app
 
 from database.models import db, User
 
@@ -48,3 +50,21 @@ def increment_violations(user_id):
     if user:
         user.violation_count += 1
         db.session.commit()
+
+def generate_confirmation_token(user_id):
+    s = Serializer(current_app.config['SECRET_KEY'])
+    return s.dumps({'confirm': str(user_id)})
+
+def confirm(user_id, token):
+    user = User.query.get(user_id)
+    s = Serializer(current_app.config['SECRET_KEY'])
+    try:
+        data = s.loads(token)
+    except:
+        return False
+    if str(data.get('confirm')) != str(user_id):
+        return False
+    user.confirmed = True
+    user.confirmation_token = None
+    db.session.commit()
+    return True

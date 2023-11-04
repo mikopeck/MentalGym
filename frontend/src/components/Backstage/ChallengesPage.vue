@@ -42,10 +42,10 @@
               ></ContentButton>
             </td>
             <td>
-              <button @click="shareChallenge(challenge.id)">Share</button>
+              <button class="share-button" @click="shareChallenge(challenge.id)">Share</button>
             </td>
             <td>
-              <button @click="deleteChallenge(challenge.id)">Delete</button>
+              <button class="delete-button" @click="deleteChallenge(challenge.id)">Delete</button>
             </td>
           </tr>
         </tbody>

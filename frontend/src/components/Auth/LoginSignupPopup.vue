@@ -49,9 +49,10 @@ export default {
       location.reload();
     },
     handleSignupSuccess() {
-      this.loggedIn = true;
-      localStorage.setItem("loggedIn", true);
-      location.reload();
+      //this.loggedIn = true;
+      //localStorage.setItem("loggedIn", true);
+      //location.reload();
+      alert("'Registration email sent!\n Please click the link in the email to start.");
     },
   },
 };
@@ -79,7 +80,6 @@ export default {
   align-items: center;
   padding: 10px;
   border-radius: 8px;
-  /* width: 60%; */
 }
 
 .popup-content label {
@@ -96,7 +96,6 @@ export default {
   box-sizing: border-box;
 }
 
-/* Styling for buttons */
 .popup-content :deep(input[type="submit"]) {
   margin-top: 8px;
   padding: 10px 15px;
@@ -130,7 +129,6 @@ export default {
     0 0 20px #bb86fc;
 }
 
-/* Fade transition styles */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;

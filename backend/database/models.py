@@ -9,6 +9,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
+    
     system_role = db.Column(db.String(100), default='')
     profile = db.Column(db.Text, nullable=True)
     ai_tutor_profile = db.Column(db.Text, nullable=True)
@@ -26,6 +27,10 @@ class User(db.Model, UserMixin):
     last_request_time = db.Column(db.DateTime, default=datetime.utcnow)
 
     violation_count = db.Column(db.Integer, default=0)
+
+    confirmed = db.Column(db.Boolean, default=False)
+    confirmation_token = db.Column(db.String(100), nullable=True)
+    confirm_sent_at = db.Column(db.DateTime, nullable=True)
 
     def as_dict(self):
         active_challenges = [challenge.challenge_name for challenge in sorted(
