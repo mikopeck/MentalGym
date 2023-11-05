@@ -39,7 +39,6 @@ export default {
 
 .menu-button:hover {
   background-color: #4a148c;
-  border-color: #e0e0e0;
 }
 
 .menu-button:active {
@@ -48,6 +47,5 @@ export default {
 
 .menu-button.selected {
   background-color: #4a148c;
-  border-color: #e0e0e0;
 }
 </style>

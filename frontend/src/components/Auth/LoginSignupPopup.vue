@@ -1,3 +1,4 @@
+<!-- LoginSignupPopup.vue -->
 <template>
   <div v-if="!loggedIn" class="popup-overlay">
     <div class="popup-content">
@@ -27,6 +28,8 @@
   <script>
 import LoginForm from "./LoginForm.vue";
 import SignupForm from "./SignupForm.vue";
+import { usePopupStore } from "@/store/popupStore";
+import { useAuthStore } from "@/store/authStore";
 
 export default {
   components: {
@@ -35,24 +38,30 @@ export default {
   },
   data() {
     return {
-      loggedIn: localStorage.getItem("loggedIn") === "true",
       showLoginForm: true,
     };
+  },
+  computed: {
+    loggedIn() {
+      const authStore = useAuthStore();
+      return authStore.loggedIn;
+    },
   },
   methods: {
     toggleForms() {
       this.showLoginForm = !this.showLoginForm;
     },
     handleLoginSuccess() {
-      this.loggedIn = true;
-      localStorage.setItem("loggedIn", true);
+      const authStore = useAuthStore();
+      authStore.login;
       location.reload();
     },
     handleSignupSuccess() {
-      //this.loggedIn = true;
-      //localStorage.setItem("loggedIn", true);
-      //location.reload();
-      alert("'Registration email sent!\n Please click the link in the email to start.");
+      const popupStore = usePopupStore();
+      popupStore.showPopup(
+        "Registration email sent!\n Please click the link in the email to start."
+      );
+      this.$router.push("/about");
     },
   },
 };
@@ -65,7 +74,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #0e0c14;
+  background-color: #0e0c14fd;
   display: flex;
   justify-content: center;
   align-items: center;

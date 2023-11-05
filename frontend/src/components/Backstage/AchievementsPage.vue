@@ -1,11 +1,12 @@
 <template>
-  <div class="achievements-container">
+  <div class="page-main-container">
     <h1 class="page-title">Your Achievements</h1>
     <div class="achievements-section">
-      <ul class="list">
-        <li v-for="achievement in achievements" :key="achievement.id" class="list-item">
+      <ul>
+        <li v-for="achievement in achievements" :key="achievement.id">
           {{ achievement.name }}
         </li>
+        <li>Coming soon..</li>
       </ul>
     </div>
   </div>
@@ -37,28 +38,5 @@ export default {
 </script>
   
 <style scoped>
-  .list {
-    margin-top: 8px;
-    padding-left: 20px;
-  }
 
-  .list-item {
-    font-size: 1em;
-    margin-bottom: 4px;
-    color: #f0f8ff;
-  }
-
-  .achievements-container {
-    margin-top: 2em;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .achievements-section {
-    margin-top: 16px;
-    width: 100%;
-    max-width: 720px;
-  }
 </style>

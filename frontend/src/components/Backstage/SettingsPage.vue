@@ -1,7 +1,7 @@
 <template>
-  <div class="profile-container">
+  <div class="page-main-container">
     <h1 class="page-title">Profile</h1>
-    <div class="profile-section">
+    <div class="page-main-section">
       <h2 class="section-title">User Profile</h2>
       <textarea
         ref="userTextarea"
@@ -10,10 +10,10 @@
         @input="autoGrow"
       >
       </textarea>
-      <MenuButton label="Update User Profile" @click="updateProfile('user')"/>
+      <MenuButton label="Update User Profile" @click="updateProfile('user')" />
     </div>
     <br />
-    <div class="profile-section">
+    <div class="page-main-section">
       <h2 class="section-title">Tutor Profile</h2>
       <textarea
         ref="tutorTextarea"
@@ -22,22 +22,26 @@
         @input="autoGrow"
       >
       </textarea>
-      <MenuButton label="Update Tutor Profile" @click="updateProfile('tutor')"/>
+      <MenuButton
+        label="Update Tutor Profile"
+        @click="updateProfile('tutor')"
+      />
     </div>
   </div>
   <div class="settings-container">
     <h1>Settings</h1>
-    
-  <div class="settings-buttons">
-    <MenuButton label="Reset" @click="resetConversation" />
-    <MenuButton label="Logout" @click="logout" />
-     </div>
+
+    <div class="settings-buttons">
+      <MenuButton label="Reset" @click="resetConversation" />
+      <MenuButton label="Logout" @click="logout" />
+    </div>
   </div>
 </template>
 
   <script>
 import axios from "axios";
 import MenuButton from "@/components/Menus/MenuButton.vue";
+import { useAuthStore } from "@/store/authStore";
 
 export default {
   name: "SettingsPage",
@@ -84,14 +88,13 @@ export default {
       }
     },
     async logout() {
-      localStorage.setItem("loggedIn", false);
-
       try {
         let response = await axios.get("/logout");
         if (response.data.status === "success") {
-          this.$emit("logout");
-          this.$router.push("/");
+          const authStore = useAuthStore();
+          authStore.logout;
           this.hideMenu();
+          this.$router.push("/");
         } else {
           console.error("Failed to logout");
         }
@@ -126,22 +129,6 @@ export default {
 </script>
 
 <style scoped>
-.profile-container {
-  margin-top: 1em;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.settings-container {
-  margin-top: 1em;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .settings-buttons {
   margin-top: 16px;
   width: 100%;

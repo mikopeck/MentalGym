@@ -1,8 +1,8 @@
 <!-- ChallengesPage.vue -->
 <template>
-  <div class="challenges-container">
+  <div class="page-main-container">
     <h1 class="page-title">Your Challenges</h1>
-    <div class="challenges-section">
+    <div class="page-main-section">
       <h2 class="section-title">Active Challenges</h2>
       <table class="challenges-table" v-if="challenges.active.length > 0">
         <tbody>
@@ -16,10 +16,20 @@
               ></ContentButton>
             </td>
             <td>
-              <button class="share-button" @click="shareChallenge(challenge.id)">Share</button>
+              <button
+                class="share-button"
+                @click="shareChallenge(challenge.id)"
+              >
+                Share
+              </button>
             </td>
             <td>
-              <button class="delete-button" @click="deleteChallenge(challenge.id)">Delete</button>
+              <button
+                class="delete-button"
+                @click="deleteChallenge(challenge.id)"
+              >
+                Delete
+              </button>
             </td>
           </tr>
         </tbody>
@@ -42,10 +52,20 @@
               ></ContentButton>
             </td>
             <td>
-              <button class="share-button" @click="shareChallenge(challenge.id)">Share</button>
+              <button
+                class="share-button"
+                @click="shareChallenge(challenge.id)"
+              >
+                Share
+              </button>
             </td>
             <td>
-              <button class="delete-button" @click="deleteChallenge(challenge.id)">Delete</button>
+              <button
+                class="delete-button"
+                @click="deleteChallenge(challenge.id)"
+              >
+                Delete
+              </button>
             </td>
           </tr>
         </tbody>
@@ -56,6 +76,7 @@
 </template>
 
   <script>
+import { usePopupStore } from "@/store/popupStore";
 import axios from "axios";
 import ContentButton from "../Chat/ContentButton.vue";
 
@@ -90,41 +111,20 @@ export default {
       this.$router.push(`/challenge/${challengeId}`);
     },
     shareChallenge(challengeId) {
-      alert(challengeId);
+      console.log(challengeId)
+      const popupStore = usePopupStore();
+      popupStore.showPopup("Coming soon..");
     },
     deleteChallenge(challengeId) {
-      alert(challengeId);
+      console.log(challengeId)
+      const popupStore = usePopupStore();
+      popupStore.showPopup("Coming soon..");
     },
   },
 };
 </script>
 
 <style scoped>
-.list {
-  margin-top: 8px;
-  padding-left: 20px;
-}
-
-.list-item {
-  font-size: 1em;
-  margin-bottom: 4px;
-  color: #f0f8ff;
-}
-
-.challenges-container {
-  margin-top: 2em;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.challenges-section {
-  margin-top: 16px;
-  width: 100%;
-  max-width: 720px;
-}
-
 .active-challenges {
   display: flex;
   flex-wrap: wrap;
@@ -145,7 +145,8 @@ export default {
   background-color: #e53935;
 }
 
-.delete-button, .share-button {
+.delete-button,
+.share-button {
   padding: 0.5rem 1rem;
   border: 2px solid #4a148c42;
   border-radius: 10px;
@@ -154,9 +155,9 @@ export default {
   transition: border-color 0.3s ease;
 }
 
-.delete-button:hover{
+.delete-button:hover {
   border-color: #0e0c14;
-} 
+}
 .share-button:hover {
   border-color: #6a2bc2b3;
 }
@@ -164,5 +165,4 @@ export default {
 .section-title {
   margin-bottom: 10px;
 }
-
 </style>

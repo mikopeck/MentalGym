@@ -1,8 +1,8 @@
 # routes/auth_routes.py
 from datetime import datetime
-from flask import request, make_response, jsonify, url_for, redirect
+from flask import request, jsonify, url_for, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_login import login_user, login_required, logout_user
 from sqlalchemy.exc import IntegrityError
 import pymysql.err as pymysql_err
 
@@ -52,7 +52,7 @@ def init_auth_routes(app):
         if user and confirm(user.id, token):
             login_user(user)
             initialize_messages(user.id)
-            return redirect('/')
+            return redirect('/?awake')
         else:
             if user is not None and not user.confirmed:
                 user.confirmation_token = generate_confirmation_token(user.id)

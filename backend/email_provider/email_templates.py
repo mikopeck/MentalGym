@@ -9,30 +9,31 @@ Registration = {
             <style>
                 .email-container {
                     font-family: 'Arial', sans-serif;
-                    color: #333;
+                    color: #f0f8ff;
                     line-height: 1.6;
+                    background-color: #0e0c14;
                 }
                 .header {
-                    background-color: #f4f4f4;
+                    background-color: #4a148c;
                     padding: 20px;
                     text-align: center;
-                    border-bottom: 3px solid #e2e2e2;
+                    border-bottom: 3px solid #6a34b9;
                 }
                 .content {
                     padding: 20px;
                 }
                 .footer {
-                    background-color: #f4f4f4;
+                    background-color: #4a148c;
                     padding: 10px;
                     text-align: center;
-                    border-top: 3px solid #e2e2e2;
+                    border-top: 3px solid #6a34b9;
                 }
                 .button {
                     display: inline-block;
                     padding: 10px 20px;
                     margin-top: 20px;
-                    background-color: #4CAF50;
-                    color: white;
+                    background-color: #6a34b9;
+                    color: f0f8ff;
                     text-decoration: none;
                     border-radius: 5px;
                 }
@@ -41,7 +42,7 @@ Registration = {
         <body>
             <div class="email-container">
                 <div class="header">
-                    <h1>Welcome to Ascendance.cloud</h1>
+                    <h1>Welcome to Ascendance·☁️</h1>
                 </div>
                 <div class="content">
                     <p>Dear Ascendant,</p>

@@ -1,8 +1,8 @@
 <!-- LessonsPage.vue -->
 <template>
-  <div class="lessons-container">
+  <div class="page-main-container">
     <h1 class="page-title">Your Lessons</h1>
-    <div class="lessons-section">
+    <div class="page-main-section">
       <h2 class="section-title">Active Lessons</h2>
       <table class="lessons-table" v-if="lessons.active.length > 0">
         <tbody>
@@ -16,10 +16,14 @@
               ></ContentButton>
             </td>
             <td>
-              <button class="share-button" @click="shareLesson(lesson.id)">Share</button>
+              <button class="share-button" @click="shareLesson(lesson.id)">
+                Share
+              </button>
             </td>
             <td>
-              <button class="delete-button" @click="deleteLesson(lesson.id)">Delete</button>
+              <button class="delete-button" @click="deleteLesson(lesson.id)">
+                Delete
+              </button>
             </td>
           </tr>
         </tbody>
@@ -42,10 +46,14 @@
               ></ContentButton>
             </td>
             <td>
-              <button class="share-button" @click="shareLesson(lesson.id)">Share</button>
+              <button class="share-button" @click="shareLesson(lesson.id)">
+                Share
+              </button>
             </td>
             <td>
-              <button class="delete-button" @click="deleteLesson(lesson.id)">Delete</button>
+              <button class="delete-button" @click="deleteLesson(lesson.id)">
+                Delete
+              </button>
             </td>
           </tr>
         </tbody>
@@ -58,6 +66,7 @@
   <script>
 import axios from "axios";
 import ContentButton from "../Chat/ContentButton.vue";
+import { usePopupStore } from "@/store/popupStore";
 
 export default {
   name: "LessonsPage",
@@ -89,31 +98,21 @@ export default {
     navigateToLesson(lessonId) {
       this.$router.push(`/lesson/${lessonId}`);
     },
-    shareLesson(lessonId){
-      alert(lessonId);
+    shareLesson(lessonId) {
+      console.log(lessonId)
+      const popupStore = usePopupStore();
+      popupStore.showPopup("Coming soon..");
     },
-    deleteLesson(lessonId){
-      alert(lessonId);
+    deleteLesson(lessonId) {
+      console.log(lessonId)
+      const popupStore = usePopupStore();
+      popupStore.showPopup("Coming soon..");
     },
   },
 };
 </script>
   
   <style scoped>
-.lessons-container {
-  margin-top: 1em;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.lessons-section {
-  margin-top: 16px;
-  width: 100%;
-  max-width: 720px;
-}
-
 .active-lessons {
   display: flex;
   flex-wrap: wrap;
@@ -127,14 +126,15 @@ export default {
 }
 
 .share-button {
-    background-color: #4a148c;
+  background-color: #4a148c;
 }
 
 .delete-button {
-    background-color: #e53935;
+  background-color: #e53935;
 }
 
-.delete-button, .share-button {
+.delete-button,
+.share-button {
   padding: 0.5rem 1rem;
   border: 2px solid #4a148c42;
   border-radius: 10px;
@@ -143,17 +143,15 @@ export default {
   transition: border-color 0.3s ease;
 }
 
-.delete-button:hover{
+.delete-button:hover {
   border-color: #0e0c14;
-} 
+}
 .share-button:hover {
   border-color: #6a2bc2b3;
 }
 
-
 .section-title {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
-
 </style>
   

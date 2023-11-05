@@ -20,10 +20,6 @@
     </p>
     <ul>
       <li>Illegal activity of any kind.</li>
-      <li>
-        Content that exploits or harms children, including Child Sexual Abuse
-        Material.
-      </li>
       <li>Generation of hateful, harassing, or violent content.</li>
       <li>
         Generation of malware or any code that disrupts, damages, or gains
@@ -32,6 +28,10 @@
       <li>
         Activities with a high risk of physical harm, including weapons
         development, military and warfare.
+      </li>
+      <li>
+        Content that exploits or harms children, including Child Sexual Abuse
+        Material.
       </li>
       <li>
         Activities with a high risk of economic harm, including multi-level
@@ -205,6 +205,7 @@ export default {
   padding: 20px;
   line-height: 1.6;
   z-index: 150;
+  max-width: 720px;
 }
 
 </style>

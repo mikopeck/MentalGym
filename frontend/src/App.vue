@@ -1,7 +1,7 @@
 <!-- App.vue -->
 <template>
   <div class="app-container">
-    <LoginSignupPopup v-if="!loggedIn" />
+    <LoginSignupPopup v-if="!loggedIn & shouldShowChat" />
     <TopBar @toggleSideMenu="toggleSideMenu" />
     <SubHeader v-if="shouldShowChat" :subheading="subheadingText" />
     <SideMenu
@@ -26,6 +26,8 @@
 
       <!-- Routes -->
       <router-view v-if="shouldShowRouterView"></router-view>
+      <InfoPopup />
+      <AdPopup />
     </div>
     <BottomBar />
   </div>
@@ -39,6 +41,9 @@ import LoginSignupPopup from "./components/Auth/LoginSignupPopup.vue";
 import ChatComponent from "./components/Chat/ChatComponent.vue";
 import BottomBar from "./components/Footer/BottomBar.vue";
 import SubHeader from "./components/Header/SubHeader.vue";
+import InfoPopup from "./components/Menus/InfoPopup.vue";
+import { useAuthStore } from "@/store/authStore";
+import AdPopup from './components/Monetization/AdPopup.vue';
 
 export default {
   name: "App",
@@ -49,25 +54,34 @@ export default {
     ChatComponent,
     BottomBar,
     SubHeader,
-  },
-  mounted() {
-    // Mount always seems to go through "/"
-    if (this.shouldShowChat) {
-      this.fetchRecentMessages();
-    }
+    InfoPopup,
+    AdPopup,
   },
   data() {
     return {
       sideMenuOpen: window.innerWidth > 1750,
       actionsMenuOpen: window.innerWidth > 1750,
-      loggedIn: localStorage.getItem("loggedIn") === "true",
       messages: [],
       actions: [],
       subheadingText: "",
       userTier: "free",
     };
   },
+  mounted() {
+    if (this.$route.query.login) {
+      const authStore = useAuthStore();
+      authStore.login(true);
+    }
+    // Mount always seems to go through "/"
+    if (this.shouldShowChat) {
+      this.fetchRecentMessages();
+    }
+  },
   computed: {
+    loggedIn() {
+      const authStore = useAuthStore();
+      return authStore.loggedIn;
+    },
     shouldShowChat() {
       const path = this.$route.path;
       return (
@@ -107,7 +121,8 @@ export default {
       this.actionsMenuOpen = false;
     },
     logoutUser() {
-      this.loggedIn = false;
+      const authStore = useAuthStore();
+      authStore.logout();
     },
     resetConversation(data) {
       this.updateConversation(data);
@@ -124,13 +139,6 @@ export default {
           this.$router.push(`/lesson/${data.redirect}`);
         }
       }
-    },
-    handleMessageSending(message) {
-      const tempMessage = {
-        role: "user",
-        content: message,
-      };
-      this.messages.push(tempMessage);
     },
     fetchRecentMessages() {
       if (this.loggedIn) {
@@ -162,8 +170,8 @@ export default {
           .catch((error) => {
             console.error(`Error fetching recent messages:`, error);
             if (error.response && error.response.status === 401) {
-              this.loggedIn = false;
-              localStorage.setItem("loggedIn", false);
+              const authStore = useAuthStore();
+              authStore.logout();
             }
           });
       }

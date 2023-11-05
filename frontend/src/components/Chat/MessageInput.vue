@@ -45,6 +45,8 @@
 <script>
 import axios from "axios";
 import ActionMenu from "./ActionMenu.vue";
+import { usePopupStore } from "@/store/popupStore";
+import { useAdsStore } from "@/store/adsStore";
 
 export default {
   name: "MessageInput",
@@ -80,7 +82,8 @@ export default {
   watch: {
     message(newVal) {
       if (newVal.length > this.maxMessageLength) {
-        alert("Message is too long.");
+        const popupStore = usePopupStore();
+        popupStore.showPopup("Message is too long.");
         this.message = newVal.substring(0, this.maxMessageLength);
       }
     },
@@ -103,12 +106,14 @@ export default {
       const msg = this.sanitizeInput(this.message);
       if (msg.trim() === "") return;
       if (msg.length > this.maxMessageLength) {
-        alert("Message is too long.");
+        const popupStore = usePopupStore();
+        popupStore.showPopup("Message is too long.");
         return;
       }
 
       this.sending = true;
-      this.$emit("messageSending", msg);
+      const adStore = useAdsStore();
+      adStore.show();
 
       let formData = new FormData();
       formData.append("message", msg);
@@ -131,12 +136,15 @@ export default {
       } catch (error) {
         if (error.response && error.response.status === 429) {
           const retryAfterMessage = error.response.data.error;
-          alert(retryAfterMessage);
+          const popupStore = usePopupStore();
+          popupStore.showPopup(retryAfterMessage);
         } else {
           console.error("Error sending message:", error.response.data.error);
-          alert("An error occurred while sending your message.");
+          const popupStore = usePopupStore();
+          popupStore.showPopup("An error occurred while sending your message.");
         }
       } finally {
+        adStore.loaded();
         this.sending = false;
       }
     },

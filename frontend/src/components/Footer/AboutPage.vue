@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import { usePopupStore } from '@/store/popupStore'
 export default {
   name: "AboutPage",
   data() {
@@ -65,7 +66,8 @@ export default {
       };
       this.popupMessage = messages[code] || '';
       if (this.popupMessage != ''){
-        alert(this.popupMessage);
+        const popupStore = usePopupStore();
+        popupStore.showPopup(this.popupMessage);
       }
     },
   },
@@ -78,6 +80,7 @@ export default {
   padding: 20px;
   line-height: 1.6;
   z-index: 150;
+  max-width: 720px;
 }
 
 h1,
