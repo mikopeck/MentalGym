@@ -28,7 +28,7 @@
       />
     </div>
   </div>
-  <div class="settings-container">
+  <div class="page-main-container">
     <h1>Settings</h1>
 
     <div class="settings-buttons">
@@ -93,7 +93,6 @@ export default {
         if (response.data.status === "success") {
           const authStore = useAuthStore();
           authStore.logout;
-          this.hideMenu();
           this.$router.push("/");
         } else {
           console.error("Failed to logout");

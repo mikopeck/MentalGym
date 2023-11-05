@@ -53,7 +53,7 @@ export default {
     },
     handleLoginSuccess() {
       const authStore = useAuthStore();
-      authStore.login;
+      authStore.login();
       location.reload();
     },
     handleSignupSuccess() {

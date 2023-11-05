@@ -13,7 +13,7 @@
             >Loading response<span class="dots">.</span></span
           >
           <span v-else class="response-message" @click="handleResponseClick"
-            >Response received!</span
+            >Response received▶️</span
           >
         </div>
       </div>
@@ -162,16 +162,16 @@ export default {
 
 .dots {
   display: inline-block;
-  margin-left: 5px;
-  animation: dot1 1.5s infinite;
-  color: white;
+  margin-left: 10px;
+  animation: dot 1.5s infinite;
+  color: #f0f8ff;
 }
 
 .dots::before,
 .dots::after {
   content: '.';
   animation: dot 1.5s infinite;
-  color: white;
+  color: #f0f8ff;
 }
 
 .dots::before {
@@ -183,20 +183,14 @@ export default {
 }
 
 @keyframes dot {
-  0%, 20%, 80%, 100% {
+  0%, 20% {
     opacity: 0;
   }
-  40% {
+  20.01%, 40% {
     opacity: 1;
   }
-}
-
-@keyframes dot1 {
-  0%, 20%, 80%, 100% {
+  40.01%, 100% {
     opacity: 0;
-  }
-  60% {
-    opacity: 1;
   }
 }
 

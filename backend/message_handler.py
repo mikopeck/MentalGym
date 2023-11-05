@@ -38,7 +38,7 @@ def update_system_role(user_id, role: roles, lesson_id=None):
     db.remove_latest_system_message(user_id, lesson_id)
     db.add_system_message(user_id, system_message(user_id, role), lesson_id)
 
-def system_message(user_id, file_name:roles = None ):
+def system_message(user_id, file_name = None ):
     if not file_name:
         file_name = db.get_system_role(user_id)
 
@@ -60,7 +60,7 @@ def system_message(user_id, file_name:roles = None ):
         system_message = system_message.replace("{profile-function}", str(fns.Profile))
 
     if "{base-persona}" in system_message:
-        with open('SystemPrompts/' + file_name + '.txt', 'r') as file:
+        with open('SystemPrompts/BaseAzalea.txt', 'r') as file:
             persona = file.read()
             system_message = system_message.replace("{base-persona}", persona)
 
