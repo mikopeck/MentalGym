@@ -20,23 +20,21 @@
         @navigate="navigateToContent"
       ></ContentButton>
 
-      <button
+      <CompleteButton
         v-if="isCompletionMessage(message.role)"
-        @click="navigateToContent()"
-        class="celebratory-message"
-      >
-        🎉 Congratulations! 🎉 You've completed this! Return to chat.
-      </button>
+      ></CompleteButton>
     </div>
   </div>
 </template>
 
 <script>
 import ContentButton from "./ContentButton.vue";
+import CompleteButton from "./CompleteButton.vue";
 
 export default {
   components: {
     ContentButton,
+    CompleteButton,
   },
   props: {
     messages: Array,
@@ -93,8 +91,8 @@ export default {
     getContentType(role) {
       if (role.startsWith("challenge/")) {
         return "challenge";
-      }
-      else{ // (role.startsWith("lesson/")) 
+      } else {
+        // (role.startsWith("lesson/"))
         return "lesson";
       }
     },
@@ -103,7 +101,6 @@ export default {
 </script>
 
 <style scoped>
-
 #conversation {
   width: 100%;
   align-items: center;
@@ -138,13 +135,6 @@ export default {
   box-shadow: 0 0 2px 2px #a7f3d066;
   border-bottom-right-radius: 10px;
   align-self: flex-start;
-}
-
-.celebratory-message {
-  color: #4a148c;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 0.5rem;
 }
 
 .assistant {

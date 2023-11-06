@@ -5,7 +5,7 @@ import functions as fns
 import roles as roles
 import database.db_handlers as db
 import message_handler as mh
-
+from utils import extract_single_emoji, remove_emojis
 from openapi import generate_response, GPT4, LESSON_TOKENS
 
 function_max_retries = 5
@@ -54,15 +54,15 @@ def suggest_content(user_id, set_challenge = True):
         
         challenge_data = try_get_object(fns.Challenge, response_message)
         if challenge_data:
-            challenge_name = challenge_data.get('challenge_emoji') + " " +challenge_data.get('challenge_name')
-            print("adding challenge", challenge_name)
+            challenge_emoji = extract_single_emoji(challenge_data.get('challenge_emoji'))
+            challenge_name = (challenge_emoji + " " if challenge_emoji else "") + challenge_data.get('challenge_name')
             db.add_challenge(user_id, challenge_name)
             return after_content(user_id)
-        
+
         lesson_data = try_get_object(fns.Lesson, response_message)
         if lesson_data:
-            lesson_name = lesson_data.get('lesson_emoji')+" " +lesson_data.get('lesson_name')
-            print("adding lesson", lesson_name)
+            lesson_emoji = extract_single_emoji(lesson_data.get('lesson_emoji'))
+            lesson_name = (lesson_emoji + " " if lesson_emoji else "") + lesson_data.get('lesson_name')
             lesson_id = db.add_lesson(user_id, lesson_name)
             db.add_action(user_id, "Continue...")
             return lesson_create(user_id, lesson_id, lesson_name)
@@ -123,6 +123,7 @@ def lesson_guide(user_id, lesson_id):
     response = generate_response(user_id, messages, functions, function_call)
     response_message = response["choices"][0]["message"]
     if response_message.get("function_call"):
+        mh.update_system_role(user_id, roles.QuizCreate, lesson_id)
         return quiz_create(user_id, lesson_id)
     return response, lesson_id
 
@@ -185,9 +186,17 @@ def identify_content(user_id, message):
 
     content_data = try_get_object(fns.Content, response_message)
     if content_data:
-        lessons = content_data.get("lesson_names", [])
-        challenges = content_data.get("challenge_names", [])
-        for lesson in lessons:
-            db.add_action(user_id, "Start lesson: " + lesson)
-        for challenge in challenges:
-            db.add_action(user_id, "Accept challenge: " + challenge)
+        lesson_descriptions = content_data.get("lesson_descriptions", [])
+        challenge_descriptions = content_data.get("challenge_descriptions", [])
+
+        for lesson_obj in lesson_descriptions:
+            lesson_name = remove_emojis(lesson_obj.get("lesson_name", "")).strip()
+            lesson_emoji = lesson_obj.get("lesson_emoji", "")
+            action_text = f"Start lesson: {lesson_emoji}{lesson_name}"
+            db.add_action(user_id, action_text)
+
+        for challenge_obj in challenge_descriptions:
+            challenge_name = remove_emojis(challenge_obj.get("challenge_name", "")).strip()
+            challenge_emoji = challenge_obj.get("challenge_emoji", "")
+            action_text = f"Accept challenge: {challenge_emoji}{challenge_name}"
+            db.add_action(user_id, action_text)

@@ -70,10 +70,11 @@ td {
     text-align: left;
 }
 
-tr{
+tr {
     background-color: #00000000;
     transition: background-color 0.2s;
 }
+
 tr:hover {
     background-color: #4a148c22;
 }
@@ -92,19 +93,20 @@ a:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
+}
 
-  .page-main-section {
+.page-main-section {
     margin-top: 16px;
     width: 100%;
     max-width: 720px;
-  }
+}
 
 color-palette {
-    color: #0e0c14;    /*background*/
-    color: #4a148c;
-    color: #6a34b9;
+    color: #0e0c14;/*background*/
     color: #4a148c42;
     color: #6a34b942;
-    color: #f0f8ff;    /*text*/
+    color: #4a148c;
+    color: #6a34b9;
+    color: #cea8fc;
+    color: #f0f8ff;/*text*/
 }

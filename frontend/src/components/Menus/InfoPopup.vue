@@ -47,6 +47,7 @@ export default {
   background-color: #4a148c42;
   border: 1px solid #f0f8ff;
   max-width: 80%;
+  min-width: 40%;
   display: flex;
   justify-content: center;
   flex-direction: column;

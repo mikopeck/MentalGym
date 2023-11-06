@@ -92,6 +92,20 @@ class ChatHistory(db.Model):
     
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+    
+class Feedback(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    content = db.Column(db.Text, nullable=False)
+    rating = db.Column(db.Integer, nullable=True)  # 1-5 scale
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+    status = db.Column(db.String(50), default='new')  # e.g., new, reviewed, resolved
+
+    challenge_id = db.Column(db.Integer, db.ForeignKey('challenge.id'), nullable=True)
+    lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), nullable=True)
+
+    user = db.relationship('User', backref=db.backref('feedback', lazy=True))
 
 class Challenge(db.Model):
     id = db.Column(db.Integer, primary_key=True)

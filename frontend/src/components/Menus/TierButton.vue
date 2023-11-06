@@ -60,12 +60,13 @@ export default {
 }
 
 .tier-button.pro {
-  color: #ffd70098;
-  border-color: #ffd70098;
+  color: #ffc107;
+  border-color: #ffc107;
+  background-color: #00000000;
 }
 
 .tier-button:hover {
-  border-color: #ffffff33;
+  border-color: #ffc107;
 }
 
 .tier-button.paid:hover {

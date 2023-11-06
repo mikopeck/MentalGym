@@ -1,41 +1,80 @@
+<!-- ContactPage.vue -->
 <template>
   <div class="contact-overlay">
     <div class="popup-content">
-      <form @submit.prevent="handleSubmit">
-        <label for="name">Name:</label>
-        <input type="text" id="name" v-model="name" placeholder="Enter your name" required>
+      <h1>Submit feedback</h1>
+      <form v-if="loggedIn" @submit.prevent="handleSubmit">
+        <textarea
+          id="message"
+          v-model="message"
+          placeholder="Share your thoughts here"
+          rows="4"
+          required
+        ></textarea>
 
-        <label for="email">Email:</label>
-        <input type="email" id="contact-email" v-model="email" placeholder="Enter your email" required>
-
-        <label for="message">Message:</label>
-        <textarea id="message" v-model="message" placeholder="Enter your message" rows="4" required></textarea>
-
-        <input type="submit" value="Submit">
+        <input type="submit" value="Submit" />
       </form>
+      <div v-else>Please log in to submit feedback and bugs.</div>
+      <div>
+        To reach us, join the Discord community at the bottom of the page or
+        email ascendance.cloud@proton.me.
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+import { useAuthStore } from "@/store/authStore";
+import { usePopupStore } from "@/store/popupStore";
+
 export default {
   data() {
     return {
-      name: '',
-      email: '',
-      message: ''
+      message: "",
     };
+  },
+  computed: {
+    loggedIn() {
+      const authStore = useAuthStore();
+      return authStore.loggedIn;
+    },
   },
   methods: {
     handleSubmit() {
-      console.log({
-        name: this.name,
-        email: this.email,
-        message: this.message
-      });
-      this.$router.push("/");
-    }
-  }
+      const payload = new FormData();
+      payload.append("message", this.message);
+
+      axios
+        .post("/api/feedback", payload)
+        .then((response) => {
+          const popupStore = usePopupStore();
+          if (
+            response.data &&
+            response.data.message &&
+            response.data.feedback_id
+          ) {
+            const successMessage = `${response.data.message} Your feedback ID is ${response.data.feedback_id}.`;
+            popupStore.showPopup(successMessage);
+          } else {
+            popupStore.showPopup("Feedback submitted.");
+          }
+          this.message = "";
+        })
+        .catch((error) => {
+          const popupStore = usePopupStore();
+          let message = "An error occurred while submitting feedback.";
+          if (
+            error.response &&
+            error.response.data &&
+            error.response.data.error
+          ) {
+            message = error.response.data.error;
+          }
+          popupStore.showPopup(message);
+        });
+    },
+  },
 };
 </script>
 
@@ -59,17 +98,27 @@ export default {
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   padding: 10px;
   border-radius: 8px;
   max-width: 80%;
+}
+
+.popup-content div,
+.popup-content form {
+  width: 100%;
+}
+
+.popup-content form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .popup-content label {
   margin-bottom: 8px;
 }
 
-.popup-content :deep(input[type="text"]),
-.popup-content :deep(input[type="email"]),
 .popup-content :deep(textarea) {
   background-color: #00000000;
   padding: 10px;
@@ -86,6 +135,7 @@ export default {
 
 .popup-content :deep(input[type="submit"]) {
   margin-top: 8px;
+  margin-bottom: 8px;
   padding: 10px 15px;
   background-color: #4a148c;
   color: #f0f8ff;
@@ -94,6 +144,8 @@ export default {
   cursor: pointer;
   transition: background-color 0.3s ease, text-shadow 0.3s ease;
   text-align: center;
+  width: auto;
+  align-self: center;
 }
 
 .popup-content :deep(input[type="submit"]):hover {

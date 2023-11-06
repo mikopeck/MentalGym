@@ -7,10 +7,10 @@
           <span class="emoji-indicator">💳</span>
           <button class="close-button" @click="ads.hide">✖</button>
         </div>
-        <p class="popup-message">{{ message }}</p>
+        <p class="popup-message">{{ randomMessage }}</p>
         <div class="popup-footer">
           <span v-if="ads.isLoading" class="loading-message"
-            >Loading response<span class="dots">.</span></span
+            >Loading response<span class="dots">...</span></span
           >
           <span v-else class="response-message" @click="handleResponseClick"
             >Response received▶️</span
@@ -23,21 +23,33 @@
 
 <script>
 import { useAdsStore } from "@/store/adsStore";
+import { ref, computed } from "vue";
 
 export default {
   name: "AdPopup",
   setup() {
     const ads = useAdsStore();
-    const message =
-      "Please consider donating:\nBTC - bc1qxpzep6ym99h5qecsm6kfmf8smaz32tn07zssvx"; // Replace with dynamic content if needed
-
+    const messages = ref([
+      "Please consider donating:\nBTC - bc1qxpzep6ym99h5qecsm6kfmf8smaz32tn07zssvx",
+      "Paid plans use more accurate and powerful models",
+      "Your ad could appear here",
+      "Exclusive offer: Click now to find out more!",
+      "Thank you for your support! Every contribution helps.",
+      "Hurry up! Limited time offer available for premium subscribers.",
+      "Interested in our services? Contact us for a special deal!",
+      "Join our community and stay up-to-date with the latest features.",
+    ]);
+    const randomMessage = computed(() => {
+      const randomIndex = Math.floor(Math.random() * messages.value.length);
+      return messages.value[randomIndex];
+    });
     function handleResponseClick() {
       ads.hide();
     }
 
     return {
       ads,
-      message,
+      randomMessage,
       handleResponseClick,
     };
   },
@@ -93,29 +105,6 @@ export default {
   text-align: center;
 }
 
-.popup-button {
-  padding: 8px 16px;
-  margin: 4px;
-  background-color: #4a148c42;
-  border: 2px solid #f0f8ff;
-  border-radius: 8px;
-  display: inline-block;
-  backdrop-filter: blur(8px);
-  transition: transform 0.1s, background-color 0.1s;
-}
-
-.popup-button:hover {
-  background-color: #4a148c;
-}
-
-.popup-button:active {
-  transform: scale(0.95);
-}
-
-.popup-button.selected {
-  background-color: #4a148c;
-}
-
 .close-button {
   position: absolute;
   top: 0px;
@@ -150,6 +139,12 @@ export default {
   padding: 8px;
   display: flex;
   justify-content: center;
+  color: #f0f8ff;
+  transition: color 0.2s;
+}
+
+.popup-footer:hover {
+  color: #cea8fc;
 }
 
 .response-message {
@@ -159,39 +154,4 @@ export default {
 .loading-message {
   font-size: 0.9rem;
 }
-
-.dots {
-  display: inline-block;
-  margin-left: 10px;
-  animation: dot 1.5s infinite;
-  color: #f0f8ff;
-}
-
-.dots::before,
-.dots::after {
-  content: '.';
-  animation: dot 1.5s infinite;
-  color: #f0f8ff;
-}
-
-.dots::before {
-  animation-delay: 0.5s;
-}
-
-.dots::after {
-  animation-delay: 1s;
-}
-
-@keyframes dot {
-  0%, 20% {
-    opacity: 0;
-  }
-  20.01%, 40% {
-    opacity: 1;
-  }
-  40.01%, 100% {
-    opacity: 0;
-  }
-}
-
 </style>

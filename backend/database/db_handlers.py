@@ -1,4 +1,4 @@
-from database.models import db, User, ChatHistory, Challenge, Lesson, UserAction, Achievement, UserAchievement
+from database.models import db, User, ChatHistory, Challenge, Lesson, UserAction, Achievement, UserAchievement, Feedback
 from utils import decode_if_needed
 from datetime import datetime
 
@@ -261,6 +261,17 @@ def get_completed_lessons(user_id):
 def get_active_lessons(user_id):
     active_lessons = Lesson.query.filter_by(user_id=user_id).filter(Lesson.completion_date.is_(None)).all()
     return [lesson.as_dict() for lesson in active_lessons]
+
+def add_feedback(user_id, content, lesson_id=None, challenge_id=None, rating=None):
+    new_feedback = Feedback(
+        user_id=user_id,
+        content=content,
+        lesson_id=lesson_id,
+        challenge_id=challenge_id,
+        rating=rating
+    )
+    db.session.add(new_feedback)
+    db.session.commit()
 
 ### CLEAR ###
 

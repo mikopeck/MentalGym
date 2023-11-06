@@ -49,12 +49,14 @@ from routes.profile_routes import init_profile_routes
 from routes.utility_routes import init_utility_routes
 from routes.chat_routes import init_chat_routes
 from routes.graph_routes import init_graph_routes
+from routes.feedback_routes import init_feedback_routes
 
 init_auth_routes(app)
 init_profile_routes(app)
 init_utility_routes(app)
 init_chat_routes(app)
 init_graph_routes(app)
+init_feedback_routes(app)
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

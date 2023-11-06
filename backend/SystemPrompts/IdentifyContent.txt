@@ -1,2 +1,3 @@
-Your task is to identify any lessons or challenges presented in the message. 
+Your task is to identify any lessons or challenges presented in the message.
+Start with an emoji depicting the general topic and then a short summary.
 Use only the functions provided.
