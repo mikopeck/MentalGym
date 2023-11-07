@@ -31,12 +31,9 @@ export default {
     const ads = useAdsStore();
     const messages = ref([
       "Please consider donating:\nBTC - bc1qxpzep6ym99h5qecsm6kfmf8smaz32tn07zssvx",
-      "Paid plans use more accurate and powerful models",
-      "Your ad could appear here",
-      "Exclusive offer: Click now to find out more!",
+      "Paid plans use more accurate and powerful models.",
+      "Your ad could appear here...",
       "Thank you for your support! Every contribution helps.",
-      "Hurry up! Limited time offer available for premium subscribers.",
-      "Interested in our services? Contact us for a special deal!",
       "Join our community and stay up-to-date with the latest features.",
     ]);
     const randomMessage = computed(() => {

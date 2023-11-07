@@ -5,8 +5,8 @@ import time
 max_retries=10
 delay=10
 
-TOKEN_CAP = 400
-LESSON_TOKENS = 800
+TOKEN_CAP = 500
+LESSON_TOKENS = 1000
 
 GPT3_5 = "gpt-3.5-turbo"
 GPT4 = "gpt-4"

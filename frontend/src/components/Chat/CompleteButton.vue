@@ -125,8 +125,9 @@ export default {
   border-radius: 16px;
   color: #f0f8ff;
   font-weight: bold;
-  margin: 1.5rem;
-  font-size: 1.5em;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.4em;
 }
 
 .what-next-container {

@@ -212,7 +212,7 @@ def update_challenge(user_id, challenge_id):
     challenge = Challenge.query.filter_by(user_id=user_id, id=challenge_id).first()
     if challenge:
         set_user_content(user_id, f"completed challenge {challenge.challenge_name}")
-        challenge.completion_date = datetime.now
+        challenge.completion_date = datetime.now()
 
 def add_lesson(user_id, lesson_name):
     lesson = Lesson(user_id=user_id, lesson_name=lesson_name, completion_date=None, system_role=None)

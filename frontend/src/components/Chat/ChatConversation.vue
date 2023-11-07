@@ -2,9 +2,9 @@
 <template>
   <div id="conversation">
     <div
-      v-for="message in filteredMessages"
+      v-for="(message, index) in filteredMessages"
       :key="message.id"
-      :class="message.role"
+      :class="[message.role, { 'first-chat-bubble': index === 0 && $route.path.includes('lesson')}]"
       class="chat-bubble"
     >
       <p
@@ -143,5 +143,15 @@ export default {
   box-shadow: 0 0 2px 2px #4a148c42;
   border-bottom-left-radius: 10px;
   align-self: flex-end;
+}
+
+.first-chat-bubble {
+  width: 100%;
+  max-width: 100%;
+}
+
+.complete {
+  width: auto;
+  max-width: 100%;
 }
 </style>

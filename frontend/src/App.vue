@@ -74,7 +74,7 @@ export default {
     }
     // Mount always seems to go through "/"
     if (this.shouldShowChat) {
-      this.fetchRecentMessages();
+      // this.fetchRecentMessages();
     }
   },
   computed: {
