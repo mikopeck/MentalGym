@@ -124,7 +124,7 @@ export default {
 .app {
   width: 100%;
   text-align: center;
-  color: #f0f8ff69;
+  /* color: var(--text-color)69; */
   background-color: transparent;
   padding-top: 1rem;
 }
@@ -139,8 +139,8 @@ export default {
 
 .assistant {
   text-align: right;
-  background-color: #4a148c42;
-  box-shadow: 0 0 2px 2px #4a148c42;
+  background-color: var(--background-color-1t);
+  box-shadow: 0 0 2px 2px var(--background-color-1t);
   border-bottom-left-radius: 10px;
   align-self: flex-end;
 }

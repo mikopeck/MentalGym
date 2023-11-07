@@ -265,7 +265,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 8px;
-  border-bottom: 1px solid #f0f8ff;
+  border-bottom: 1px solid var(--text-color);
 }
 
 .stat-value {
@@ -276,6 +276,7 @@ export default {
 .stat-label {
   font-size: 0.9em;
   padding-left: 8px;
-  color: #f0f8ffa2;
+  color: var(--text-color);
+  opacity: 0.8;
 }
 </style>

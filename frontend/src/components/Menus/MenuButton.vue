@@ -28,8 +28,8 @@ export default {
 .menu-button {
   padding: 8px 16px;
   margin: 4px;
-  background-color: #4a148c42;
-  border: 2px solid #f0f8ff;
+  background-color: var(--background-color-1t);
+  border: 2px solid var(--text-color);
   border-radius: 8px;
   display: inline-block;
   width: 100%;
@@ -38,7 +38,7 @@ export default {
 }
 
 .menu-button:hover {
-  background-color: #4a148c;
+  background-color: var(--element-color-1);
 }
 
 .menu-button:active {
@@ -46,6 +46,6 @@ export default {
 }
 
 .menu-button.selected {
-  background-color: #4a148c;
+  background-color: var(--element-color-1);
 }
 </style>

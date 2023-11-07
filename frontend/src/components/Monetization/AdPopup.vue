@@ -10,8 +10,12 @@
         <p class="popup-message">{{ randomMessage }}</p>
         <div class="popup-footer">
           <span v-if="ads.isLoading" class="loading-message"
-            >Loading response<span class="dots">...</span></span
-          >
+            >Loading response
+            <div class="loading-dots">
+              <span></span>
+              <span></span>
+              <span></span></div
+          ></span>
           <span v-else class="response-message" @click="handleResponseClick"
             >Response received▶️</span
           >
@@ -32,7 +36,7 @@ export default {
     const messages = ref([
       "Please consider donating:\nBTC - bc1qxpzep6ym99h5qecsm6kfmf8smaz32tn07zssvx",
       "Paid plans use more accurate and powerful models.",
-      "Your ad could appear here...",
+      "Your ad could appear here..",
       "Thank you for your support! Every contribution helps.",
       "Join our community and stay up-to-date with the latest features.",
     ]);
@@ -62,15 +66,15 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #0e0c14fd;
+  background-color: var(--background-haze);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .popup-content {
-  background-color: #4a148c42;
-  border: 1px solid #f0f8ff;
+  background-color: var(--background-color-1t);
+  border: 1px solid var(--text-color);
   max-width: 80%;
   display: flex;
   justify-content: center;
@@ -81,7 +85,7 @@ export default {
 }
 
 .popup-header {
-  background-color: #0e0c14;
+  background-color: var(--background-color);
   border-top-right-radius: 8px;
   border-top-left-radius: 8px;
   width: 100%;
@@ -116,7 +120,7 @@ export default {
 }
 
 .close-button:hover {
-  background-color: #4a148c;
+  background-color: var(--element-color-1);
 }
 
 .fade-enter-active,
@@ -130,25 +134,85 @@ export default {
 
 .popup-footer {
   width: 100%;
-  background-color: #0e0c14;
+  background-color: var(--background-color);
   border-bottom-right-radius: 8px;
   border-bottom-left-radius: 8px;
   padding: 8px;
   display: flex;
   justify-content: center;
-  color: #f0f8ff;
-  transition: color 0.2s;
 }
 
-.popup-footer:hover {
-  color: #cea8fc;
+.response-message:hover {
+  color: var(--highlight-color);
 }
 
 .response-message {
+  color: var(--text-color);
   cursor: pointer;
+  transition: color 0.2s;
 }
 
 .loading-message {
-  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.loading-dots {
+  margin-left: 0.75em;
+  display: flex;
+  gap: 5px;
+}
+
+.loading-dots span {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background-color: var(--text-color);
+  border-radius: 50%;
+}
+
+.loading-dots span:nth-child(1) {
+  animation: bounce 0.9s infinite;
+  animation-delay: 0.1s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation: bounce 1s infinite;
+  animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation: bounce 1.1s infinite;
+  animation-delay: 0.3s;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  10% {
+    transform: translateY(-5px);
+  }
+  20% {
+    transform: translateY(0);
+  }
+  27% {
+    transform: translateY(-3px);
+  }
+  35% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-1.5px);
+  }
+  45% {
+    transform: translateY(0);
+  }
+  48% {
+    transform: translateY(-0.75px);
+  }
+  52% {
+    transform: translateY(0);
+  }
 }
 </style>

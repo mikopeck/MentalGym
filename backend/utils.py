@@ -18,3 +18,10 @@ def extract_single_emoji(text):
 
 def remove_emojis(text):
     return emoji_pattern.sub(r'', text)
+
+def remove_emojis_except_first(text):
+    first_char = text[0] if text else ''
+    if emoji_pattern.fullmatch(first_char):
+        return first_char + emoji_pattern.sub(r'', text[1:])
+    else:
+        return emoji_pattern.sub(r'', text)

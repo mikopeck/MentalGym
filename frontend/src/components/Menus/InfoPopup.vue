@@ -37,15 +37,15 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #0e0c14fd;
+  background-color: var(--background-haze);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .popup-content {
-  background-color: #4a148c42;
-  border: 1px solid #f0f8ff;
+  background-color: var(--background-color-1t);
+  border: 1px solid var(--text-color);
   max-width: 80%;
   min-width: 40%;
   display: flex;
@@ -58,7 +58,7 @@ export default {
 }
 
 .popup-header {
-  background-color: #0e0c14;
+  background-color: var(--background-color);
   border-top-right-radius: 8px;
   border-top-left-radius: 8px;
   width: 100%;
@@ -82,8 +82,8 @@ export default {
 .popup-button {
   padding: 8px 16px;
   margin: 4px;
-  background-color: #4a148c42;
-  border: 2px solid #f0f8ff;
+  background-color: var(--background-color-1t);
+  border: 2px solid var(--text-color);
   border-radius: 8px;
   display: inline-block;
   backdrop-filter: blur(8px);
@@ -91,7 +91,7 @@ export default {
 }
 
 .popup-button:hover {
-  background-color: #4a148c;
+  background-color: var(--element-color-1);
 }
 
 .popup-button:active {
@@ -99,7 +99,7 @@ export default {
 }
 
 .popup-button.selected {
-  background-color: #4a148c;
+  background-color: var(--element-color-1);
 }
 
 .close-button {
@@ -116,7 +116,7 @@ export default {
 }
 
 .close-button:hover {
-  background-color: #4a148c;
+  background-color: var(--element-color-1);
 }
 
 .fade-enter-active,

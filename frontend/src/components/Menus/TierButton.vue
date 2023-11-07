@@ -74,7 +74,7 @@ export default {
 }
 
 .tier-button.pro:hover {
-  background-color: #0e0c14;
+  background-color: var(--background-color);
 }
 
 </style>

@@ -138,7 +138,7 @@ export default {
 }
 
 .share-button {
-  background-color: #4a148c;
+  background-color: var(--element-color-1);
 }
 
 .delete-button {
@@ -148,7 +148,7 @@ export default {
 .delete-button,
 .share-button {
   padding: 0.5rem 1rem;
-  border: 2px solid #4a148c42;
+  border: 2px solid var(--background-color-1t);
   border-radius: 10px;
   cursor: pointer;
   text-align: center;
@@ -156,7 +156,7 @@ export default {
 }
 
 .delete-button:hover {
-  border-color: #0e0c14;
+  border-color: var(--background-color);
 }
 .share-button:hover {
   border-color: #6a2bc2b3;

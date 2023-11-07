@@ -123,7 +123,7 @@ export default {
 }
 
 .text-link {
-  color: #f0f8ff;
+  color: var(--text-color);
   text-decoration: none;
 }
 

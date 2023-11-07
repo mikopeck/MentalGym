@@ -1,10 +1,10 @@
 <!-- App.vue -->
 <template>
-  <div class="app-container">
+  <div class="app-container" :class="themeClass">
     <LoginSignupPopup v-if="!loggedIn & shouldShowChat" />
     <TopBar />
     <SubHeader v-if="shouldShowChat" :subheading="subheadingText" />
-    <SideMenu :userTier="userTier"/>
+    <SideMenu :userTier="userTier" />
 
     <div class="main-content">
       <!-- Main chat -->
@@ -37,6 +37,7 @@ import InfoPopup from "./components/Menus/InfoPopup.vue";
 import AdPopup from "./components/Monetization/AdPopup.vue";
 import { useAuthStore } from "@/store/authStore";
 import { useMenuStore } from "@/store/menuStore";
+import { useThemeStore } from "@/store/themeStore";
 
 export default {
   name: "App",
@@ -69,6 +70,10 @@ export default {
     }
   },
   computed: {
+    themeClass() {
+      const themeStore = useThemeStore();
+      return themeStore.darkMode ? "light-theme" : "";
+    },
     loggedIn() {
       const authStore = useAuthStore();
       return authStore.loggedIn;
@@ -158,6 +163,8 @@ export default {
 
 <style scoped>
 .app-container {
+  background-color: var(--background-color);
+  color: var(--text-color);
   display: flex;
   flex-direction: column;
   height: 100vh;

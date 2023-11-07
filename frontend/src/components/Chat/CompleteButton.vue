@@ -120,10 +120,10 @@ export default {
 
 .celebratory-message {
   padding: 0.5em;
-  background-color: #4a148c42;
-  box-shadow: 0 0 16px 16px #4a148c42;
+  background-color: var(--background-color-1t);
+  box-shadow: 0 0 16px 16px var(--background-color-1t);
   border-radius: 16px;
-  color: #f0f8ff;
+  color: var(--text-color);
   font-weight: bold;
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
@@ -143,7 +143,7 @@ export default {
 
 .star {
   cursor: pointer;
-  color: #f0f8ff;
+  color: var(--text-color);
   font-size: 1.5rem;
   transition: color 0.2s ease-in-out;
 }
@@ -154,19 +154,19 @@ export default {
 }
 
 .next-button {
-  color: #f0f8ff;
+  color: var(--text-color);
   transition: color 0.2s;
 }
 
 .next-button:hover {
-  color: #cea8fc;
+  color: var(--highlight-color);
 }
 
 .feedback-form {
-  background-color: #0e0c14;
+  background-color: var(--background-color);
   margin-top: 0.5rem;
   padding: 0.5rem;
-  border: 1px solid #f0f8ff;
+  border: 1px solid var(--text-color);
   border-radius: 4px;
 }
 
@@ -175,8 +175,8 @@ export default {
 }
 
 .rating-feedback textarea {
-  background-color: #0e0c14;
-  color: #f0f8ff;
+  background-color: var(--background-color);
+  color: var(--text-color);
   display: block;
   width: calc(100% - 1rem);
   height: 5rem;
@@ -186,8 +186,8 @@ export default {
 }
 
 .submit-btn {
-  background-color: #4a148c;
-  color: #f0f8ff;
+  background-color: var(--element-color-1);
+  color: var(--text-color);
   border: none;
   padding: 0.5rem 1rem;
   font-size: 1rem;

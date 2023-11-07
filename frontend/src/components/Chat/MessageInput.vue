@@ -182,14 +182,14 @@ export default {
   border-width: 1px;
   padding: 0.5rem;
   border-radius: 0.375rem;
-  background-color: #00000042;
+  background-color: #69696911;
   position: relative;
   margin-top: auto;
   width: 100%;
   padding-left: 16px;
   padding-right: 16px;
-  border: 1px solid #4a148c;
-  box-shadow: 0 0 2px 2px #4a148c42;
+  border: 1px solid var(--element-color-1);
+  box-shadow: 0 0 2px 2px var(--background-color-1t);
   z-index: 10;
 }
 
@@ -203,7 +203,6 @@ textarea {
   outline: none;
   padding: 0.5rem;
   box-sizing: border-box;
-  background-color: #00000000;
   width: 100%;
   padding: 15px 60px;
   font-size: 16px;
@@ -217,14 +216,14 @@ textarea:focus {
 .send-btn {
   width: 50px;
   height: 50px;
-  background-color: #4a148c42;
+  background-color: var(--background-color-1t);
   border-radius: 50%;
   box-sizing: border-box;
   position: absolute;
   top: 50%;
   right: 16px;
   transform: translateY(-50%);
-  color: #f0f8ff;
+  color: var(--text-color);
   border: none;
   font-size: 16px;
   cursor: pointer;
@@ -232,7 +231,7 @@ textarea:focus {
 }
 
 .send-btn:hover {
-  background-color: #6c1eb1;
+  background-color: var(--element-color-1);;
 }
 
 .send-icon {
@@ -249,7 +248,7 @@ textarea:focus {
   display: inline-block;
   width: 6px;
   height: 6px;
-  background-color: #f0f8ff;
+  background-color: var(--text-color);
   border-radius: 50%;
 }
 
@@ -302,13 +301,13 @@ textarea:focus {
 .action-btn {
   width: 50px;
   height: 50px;
-  background-color: #4a148c42;
+  background-color: var(--background-color-1t);
   border-radius: 50%;
   box-sizing: border-box;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  color: #f0f8ff;
+  color: var(--text-color);
   border: none;
   font-size: 16px;
   cursor: pointer;

@@ -5,7 +5,7 @@ import functions as fns
 import roles as roles
 import database.db_handlers as db
 import message_handler as mh
-from utils import extract_single_emoji, remove_emojis
+from utils import extract_single_emoji, remove_emojis, remove_emojis_except_first
 from openapi import generate_response, GPT4, LESSON_TOKENS
 
 function_max_retries = 5
@@ -55,14 +55,14 @@ def suggest_content(user_id, set_challenge = True):
         challenge_data = try_get_object(fns.Challenge, response_message)
         if challenge_data:
             challenge_emoji = extract_single_emoji(challenge_data.get('challenge_emoji'))
-            challenge_name = (challenge_emoji + " " if challenge_emoji else "") + challenge_data.get('challenge_name')
+            challenge_name = remove_emojis_except_first(challenge_emoji + challenge_data.get('challenge_name'))
             db.add_challenge(user_id, challenge_name)
             return after_content(user_id)
 
         lesson_data = try_get_object(fns.Lesson, response_message)
         if lesson_data:
             lesson_emoji = extract_single_emoji(lesson_data.get('lesson_emoji'))
-            lesson_name = (lesson_emoji + " " if lesson_emoji else "") + lesson_data.get('lesson_name')
+            lesson_name = remove_emojis_except_first(lesson_emoji + lesson_data.get('lesson_name'))
             lesson_id = db.add_lesson(user_id, lesson_name)
             db.add_action(user_id, "Continue...")
             return lesson_create(user_id, lesson_id, lesson_name)
@@ -190,13 +190,15 @@ def identify_content(user_id, message):
         challenge_descriptions = content_data.get("challenge_descriptions", [])
 
         for lesson_obj in lesson_descriptions:
-            lesson_name = remove_emojis(lesson_obj.get("lesson_name", "")).strip()
+            lesson_text = remove_emojis(lesson_obj.get("lesson_name", "")).strip()
             lesson_emoji = lesson_obj.get("lesson_emoji", "")
-            action_text = f"Start lesson: {lesson_emoji}{lesson_name}"
+            lesson_name = remove_emojis_except_first(lesson_emoji+lesson_text)
+            action_text = f"Start lesson: {lesson_name}"
             db.add_action(user_id, action_text)
 
         for challenge_obj in challenge_descriptions:
-            challenge_name = remove_emojis(challenge_obj.get("challenge_name", "")).strip()
+            challenge_text = remove_emojis(challenge_obj.get("challenge_name", "")).strip()
             challenge_emoji = challenge_obj.get("challenge_emoji", "")
-            action_text = f"Accept challenge: {challenge_emoji}{challenge_name}"
+            challenge_name = remove_emojis_except_first(challenge_emoji+challenge_text)
+            action_text = f"Accept challenge: {challenge_name}"
             db.add_action(user_id, action_text)

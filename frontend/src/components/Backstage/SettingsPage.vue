@@ -147,14 +147,14 @@ export default {
   width: 100%;
   padding: 8px;
   border-radius: 4px;
-  border: 1px solid #f0f8ff;
+  border: 1px solid var(--text-color);
 }
 
 .update-btn {
   margin-top: 8px;
   padding: 8px 16px;
-  background-color: #4a148c;
-  color: #f0f8ff;
+  background-color: var(--element-color-1);
+  color: var(--text-color);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -162,6 +162,6 @@ export default {
 }
 
 .update-btn:hover {
-  background-color: #6a34b9;
+  background-color: var(--element-color-2);
 }
 </style>

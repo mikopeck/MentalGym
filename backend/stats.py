@@ -70,6 +70,8 @@ def get_line_graph_data(user_id):
     
     merged_data = defaultdict(lambda: {"lessons": 0, "challenges": 0})
 
+
+
     for day, month, year, count in lessons_over_time:
         if day is None or month is None or year is None:
             continue
@@ -88,18 +90,21 @@ def get_line_graph_data(user_id):
     dates = [item['date'] for item in data]
     lessons = [item['lessons'] for item in data]
     challenges = [item['challenges'] for item in data]
+    cumulative_lessons = [sum(lessons[:i+1]) for i in range(len(lessons))]
+    cumulative_challenges = [sum(challenges[:i+1]) for i in range(len(challenges))]
+
 
     return {
         "labels": dates,
         "backgroundColor": '#84b2e0',
         "datasets": [{
             "label": "Lessons📖",
-            "data": lessons,
+            "data": cumulative_lessons,
             "backgroundColor": '#84b2e0',
             "borderColor": '#84b2e0',
         }, {
             "label": "Challenges🎯",
-            "data": challenges,
+            "data": cumulative_challenges,
             'backgroundColor':'#84e0b2',
             "borderColor": '#84e0b2',
         }]
@@ -121,8 +126,8 @@ def get_active_and_completed(user_id, total_lessons, total_challenges):
     return active_lessons, completed_lessons, active_challenges, completed_challenges
 
 def get_percent_completed(completed_lessons, total_lessons, completed_challenges, total_challenges):
-    percent_completed_lessons = (completed_lessons / total_lessons) * 100 if total_lessons else 0
-    percent_completed_challenges = (completed_challenges / total_challenges) * 100 if total_challenges else 0
+    percent_completed_lessons = round((completed_lessons / total_lessons) * 100, 2) if total_lessons else 0
+    percent_completed_challenges = round((completed_challenges / total_challenges) * 100, 2) if total_challenges else 0
 
     return percent_completed_lessons, percent_completed_challenges
 

@@ -42,25 +42,25 @@ export default {
         scales: {
           x: {
             ticks: {
-              color: '#f0f8ff22'
+              color: 'var(--text-color)'
             },
             grid: {
-              color: '#f0f8ff42'
+              color: 'var(--text-color)'
             }
           },
           y: {
             ticks: {
-              color: '#f0f8ff22'
+              color: 'var(--text-color)'
             },
             grid: {
-              color: '#f0f8ff42'
+              color: 'var(--text-color)'
             }
           }
         },
         plugins: {
           legend: {
             labels: {
-              color: '#f0f8ff'
+              color: 'var(--text-color)'
             }
           }
         }

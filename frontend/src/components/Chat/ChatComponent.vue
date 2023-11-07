@@ -94,19 +94,19 @@ export default {
 }
 
 .message-history:hover {
-  scrollbar-color: #4a148c #4a148c42;
+  scrollbar-color: var(--element-color-1) var(--background-color-1t);
 }
 
 .message-history:hover::-webkit-scrollbar-track {
-  background: #4a148c42;
+  background: var(--background-color-1t);
 }
 
 .message-history:hover::-webkit-scrollbar-thumb {
-  background-color: #4a148c;
+  background-color: var(--element-color-1);
 }
 
 .message-history::-webkit-scrollbar-thumb:hover {
-  background-color: #6a34b9;
+  background-color: var(--element-color-2);
 }
 </style>
   

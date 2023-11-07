@@ -107,8 +107,8 @@ export default {
 button {
   padding: 8px 16px;
   margin: 4px;
-  background-color: #4a148c42;
-  border: 2px solid #f0f8ff;
+  background-color: var(--background-color-1t);
+  border: 2px solid var(--text-color);
   border-radius: 8px;
   display: inline-block;
   width: 100%;
@@ -117,7 +117,7 @@ button {
 }
 
 button:hover {
-  background-color: #4a148c;
+  background-color: var(--element-color-1);
   border-color: #e0e0e0;
 }
 
@@ -126,7 +126,7 @@ button:active {
 }
 
 button.selected {
-  background-color: #4a148c;
+  background-color: var(--element-color-1);
   border-color: #e0e0e0;
 }
 </style>

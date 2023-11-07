@@ -74,7 +74,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #0e0c14fd;
+  background-color: var(--background-haze);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -82,7 +82,7 @@ export default {
 }
 
 .popup-content {
-  background-color: #4a148c42;
+  background-color: var(--background-color-1t);
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -99,7 +99,7 @@ export default {
 .popup-content :deep(input[type="password"]) {
   background-color: #00000000;
   padding: 10px;
-  border: 1px solid #f0f8ff;
+  border: 1px solid var(--text-color);
   border-radius: 4px;
   width: 100%;
   box-sizing: border-box;
@@ -108,8 +108,8 @@ export default {
 .popup-content :deep(input[type="submit"]) {
   margin-top: 8px;
   padding: 10px 15px;
-  background-color: #4a148c;
-  color: #f0f8ff;
+  background-color: var(--element-color-1);
+  color: var(--text-color);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -118,7 +118,7 @@ export default {
 }
 
 .popup-content :deep(input[type="submit"]):hover {
-  background-color: #6a34b9;
+  background-color: var(--element-color-2);
   text-shadow: 0 0 5px #bb86fc, 0 0 10px #bb86fc, 0 0 15px #bb86fc,
     0 0 20px #bb86fc;
 }
@@ -126,7 +126,7 @@ export default {
 .popup-content button {
   margin-top: 8px;
   padding: 10px 15px;
-  color: #f0f8ff;
+  color: var(--text-color);
   border: none;
   border-radius: 4px;
   cursor: pointer;

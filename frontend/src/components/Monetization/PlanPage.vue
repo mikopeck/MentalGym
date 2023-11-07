@@ -44,8 +44,8 @@ export default {
             "Custom Lessons & Challenges.",
             "20 Daily Messages.",
           ],
-          color: "#4a148c42",
-          buttonColor: "#6a34b942",
+          color: "var(--background-color-1t)",
+          buttonColor: "var(--background-color-2t)",
         },
         {
           title: "Awakened",
@@ -56,8 +56,8 @@ export default {
             "200 daily messages.",
             "Priority Support.",
           ],
-          color: "#4a148c82",
-          buttonColor: "#4a148c",
+          color: "var(--element-color-1)",
+          buttonColor: "var(--element-color-1)",
         },
         {
           title: "Ascendant",
@@ -68,8 +68,8 @@ export default {
             "2000 daily messages",
             "Early access to new features.",
           ],
-          color: "#6a34b982",
-          buttonColor: "#6a34b9",
+          color: "var(--element-color-2)",
+          buttonColor: "var(--element-color-2)",
         },
       ],
       userTier: "Aspirant",
@@ -133,8 +133,8 @@ export default {
 
 <style scoped>
 .plan-page {
-  color: #f0f8ff;
-  background-color: #0e0c14;
+  color: var(--text-color);
+  background-color: var(--background-color);
   padding: 20px;
 }
 
@@ -150,29 +150,31 @@ export default {
 }
 
 .plan-header h1 {
-  border-bottom: 2px solid #0e0c14;
+  border-bottom: 2px solid var(--background-color);
 }
 
 .plan {
-  border: 2px solid #4a148c;
+  border: 2px solid var(--element-color-1);
   border-radius: 10px;
   overflow: hidden;
   width: 300px;
-  transition: background-color 0.3s;
+  opacity: 1;
+  transition: background-color opacity 0.3s;
 }
 
 .plan-header {
   padding: 20px;
-  color: #f0f8ff;
+  color: var(--text-color);
   text-align: center;
 }
 
 .plan:hover {
-  background-color: #4a148c82;
+  background-color: var(--element-color-1);
+  opacity: 0.8;
 }
 
 .plan-body {
-  background-color: #4a148c42;
+  background-color: var(--background-color-1t);
   padding: 12px;
   height: 200px;
 }
@@ -180,7 +182,7 @@ export default {
 .plan-footer {
   padding: 20px;
   text-align: center;
-  background-color: #6a34b942;
+  background-color: var(--background-color-2t);
 }
 
 .price {
@@ -191,14 +193,14 @@ button {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  color: #f0f8ff;
+  color: var(--text-color);
   cursor: pointer;
-  border: 2px solid #4a148c42;
+  border: 2px solid var(--background-color-1t);
   transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #6a34b942;
+  background-color: var(--background-color-2t);
 }
 
 li {

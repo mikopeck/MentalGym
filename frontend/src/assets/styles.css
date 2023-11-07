@@ -3,8 +3,6 @@
 @import 'tailwindcss/utilities';
 
 html {
-    background-color: #0e0c14;
-    color: #f0f8ff;
     cursor: default;
     font-family: "Helvetica", sans-serif;
 }
@@ -25,7 +23,7 @@ h1 {
     font-weight: 700;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
-    border-bottom: 2px solid #4a148c;
+    border-bottom: 2px solid var(--element-color-1);
     padding-bottom: 0.5rem;
     text-align: center;
 }
@@ -35,7 +33,7 @@ h2 {
     font-weight: 500;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
-    border-left: 4px solid #4a148c;
+    border-left: 4px solid var(--element-color-1);
     padding-left: 1rem;
 }
 
@@ -57,7 +55,7 @@ ul {
     list-style-type: square;
     padding-left: 20px;
     margin-left: 0;
-    color: #f0f8ff;
+    color: var(--text-color);
 }
 
 table {
@@ -72,11 +70,7 @@ td {
 
 tr {
     background-color: #00000000;
-    transition: background-color 0.2s;
-}
-
-tr:hover {
-    background-color: #4a148c22;
+    transition: background-color opacity 0.2s;
 }
 
 a {
@@ -101,12 +95,3 @@ a:hover {
     max-width: 720px;
 }
 
-color-palette {
-    color: #0e0c14;/*background*/
-    color: #4a148c42;
-    color: #6a34b942;
-    color: #4a148c;
-    color: #6a34b9;
-    color: #cea8fc;
-    color: #f0f8ff;/*text*/
-}

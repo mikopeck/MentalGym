@@ -2,7 +2,7 @@
 <template>
   <header class="top-bar">
     <img
-      src="@/assets/images/ascendance_logo.png"
+      :src="logoPath"
       alt="Ascendance Logo"
       width="32"
       height="32"
@@ -22,10 +22,17 @@
   
 <script>
 import { useMenuStore } from "@/store/menuStore";
+import { useThemeStore } from "@/store/themeStore";
 
 export default {
   name: "TopBar",
   computed: {
+    logoPath() {
+      const themeStore = useThemeStore();
+      return themeStore.darkMode
+        ? require("@/assets/images/ascendance_logo-black.png")
+        : require("@/assets/images/ascendance_logo.png");
+    },
     pageTitle() {
       if (this.$route.path.includes("lesson/")) {
         return "Ascendance·📖";
@@ -61,8 +68,8 @@ export default {
   top: 0;
   width: 100%;
   z-index: 200;
-  background-color: #4a148c42;
-  color: #f0f8ff;
+  background-color: var(--background-color-1t);
+  color: var(--text-color);
   padding: 4px;
   padding-left: 8px;
   padding-right: 8px;
@@ -70,7 +77,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   backdrop-filter: blur(8px);
-  box-shadow: 0 0 2px 2px #4a148c42;
+  box-shadow: 0 0 2px 2px var(--background-color-1t);
 }
 
 .logo {
@@ -99,11 +106,11 @@ export default {
 }
 
 .menu-btn:hover {
-  background-color: #6a34b9;
+  background-color: var(--element-color-2);
 }
 
 .menu-line {
-  background-color: #f0f8ff;
+  background-color: var(--text-color);
   height: 4px;
   width: 24px;
 }

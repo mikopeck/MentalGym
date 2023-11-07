@@ -55,8 +55,8 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 0.5rem 1rem;
-  background: #4a148c;
-  border: 2px solid #4a148c42;
+  background: var(--element-color-1);
+  border: 2px solid var(--background-color-1t);
   border-radius: 10px;
   cursor: pointer;
   text-align: center;
