@@ -29,7 +29,7 @@ export default {
   padding: 8px 16px;
   margin: 4px;
   background-color: var(--background-color-1t);
-  border: 2px solid var(--text-color);
+  border: 1px solid var(--text-color);
   border-radius: 8px;
   display: inline-block;
   width: 100%;

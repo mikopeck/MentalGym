@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import { useThemeStore } from "@/store/themeStore";
 import { Pie } from "vue-chartjs";
 import {
   Chart as ChartJS,
@@ -34,14 +35,29 @@ export default {
       type: Object,
       default: () => ({ labels: [], datasets: [] }),
     },
-    options: Object,
+  },
+  computed: {
+    options() {
+      return {
+        plugins: {
+          legend: {
+            labels: {
+              color: this.textColor,
+            },
+          },
+        },
+      };
+    },
+    textColor() {
+      const themeStore = useThemeStore();
+      return !themeStore.darkMode ? "#f0f8ff" : "#0e0c14";
+    },
   },
 };
-
 </script>
 
 <style scoped>
-.pie-chart-container{
+.pie-chart-container {
   padding: 8px;
   max-width: 480px;
   max-height: 480px;

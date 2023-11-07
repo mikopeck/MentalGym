@@ -6,7 +6,8 @@
 </template>
 
 <script>
-import { Line } from 'vue-chartjs';
+import { useThemeStore } from "@/store/themeStore";
+import { Line } from "vue-chartjs";
 import {
   Chart as ChartJS,
   Title,
@@ -15,8 +16,8 @@ import {
   LineElement,
   PointElement,
   CategoryScale,
-  LinearScale
-} from 'chart.js';
+  LinearScale,
+} from "chart.js";
 
 ChartJS.register(
   Title,
@@ -29,43 +30,48 @@ ChartJS.register(
 );
 
 export default {
-  name: 'ProgressGraph',
+  name: "ProgressGraph",
   components: { Line },
   props: {
     data: {
       type: Object,
       default: () => ({ labels: [], datasets: [] }),
     },
-    options: {
-      type: Object,
-      default: () => ({
+  },
+  computed: {
+    options() {
+      return {
         scales: {
           x: {
             ticks: {
-              color: 'var(--text-color)'
+              color: this.textColor,
             },
             grid: {
-              color: 'var(--text-color)'
-            }
+              color: this.textColor,
+            },
           },
           y: {
             ticks: {
-              color: 'var(--text-color)'
+              color: this.textColor,
             },
             grid: {
-              color: 'var(--text-color)'
-            }
-          }
+              color: this.textColor,
+            },
+          },
         },
         plugins: {
           legend: {
             labels: {
-              color: 'var(--text-color)'
-            }
-          }
-        }
-      })
-    }
-  }
+              color: this.textColor,
+            },
+          },
+        },
+      };
+    },
+    textColor() {
+      const themeStore = useThemeStore();
+      return !themeStore.darkMode ? "#f0f8ff" : "#0e0c14";
+    },
+  },
 };
 </script>
