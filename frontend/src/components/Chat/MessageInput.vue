@@ -12,7 +12,6 @@
       </button>
 
       <ActionMenu
-        :actionsMenuOpen="actionsMenuOpen"
         :actions="actionsList"
         @actionSelected="handleAction"
         @availableActions="handleActionAvailable"
@@ -47,6 +46,7 @@ import axios from "axios";
 import ActionMenu from "./ActionMenu.vue";
 import { usePopupStore } from "@/store/popupStore";
 import { useAdsStore } from "@/store/adsStore";
+import { useMenuStore } from "@/store/menuStore";
 
 export default {
   name: "MessageInput",
@@ -58,10 +58,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    actionsMenuOpen: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
@@ -72,6 +68,10 @@ export default {
     };
   },
   computed: {
+    actionsMenuOpen() {
+      const menuStore = useMenuStore();
+      return menuStore.actionsMenuOpen;
+    },
     actionIconClass() {
       return {
         bounce: !this.actionsMenuOpen && !this.sending,
@@ -159,11 +159,13 @@ export default {
       this.$refs.messageInput.focus();
     },
     toggleMenu() {
-      this.$emit("toggleActionMenu");
+      const menuStore = useMenuStore();
+      menuStore.toggleActionMenu();
     },
     handleAction(action) {
+      const menuStore = useMenuStore();
+      menuStore.hideActionMenu();
       this.changeUserText(action);
-      this.toggleMenu();
       this.sendMessage();
     },
     changeUserText(desiredText) {

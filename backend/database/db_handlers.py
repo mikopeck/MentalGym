@@ -199,13 +199,16 @@ def set_user_content(user_id, content_description):
         user.current_content = content_description
         db.session.commit()
 
-def add_challenge(user_id, challenge_name, completion_date=None):
-    challenge = Challenge(user_id=user_id, challenge_name=challenge_name, completion_date=completion_date)
+def add_challenge(user_id, challenge_name, user_started = True):
+    challenge = Challenge(user_id=user_id, challenge_name=challenge_name, completion_date=None)
     db.session.add(challenge)
     db.session.commit()
     add_content_message(user_id, challenge_name,challenge_id=challenge.id)
-    add_ai_message(user_id, f"Share your progress 📈\nask for a plan 📆\nor some just guidance 🧭.\n I'm here to help you complete the challenge:\n{challenge_name}", "challenge", challenge.id)
-    set_user_content(user_id, f"started challenge {challenge_name}")
+    add_ai_message(user_id, f"Share your progress 📈, ask for a plan 📆, or some just guidance 🧭.\n\n I'm here to help you complete the challenge:\n{challenge_name}", "challenge", challenge.id)
+    if user_started:
+        set_user_content(user_id, f"started challenge {challenge_name}")
+    else:
+        set_user_content(user_id, f"was given (by you) challenge {challenge_name}")
     return challenge.id
 
 def update_challenge(user_id, challenge_id):
@@ -214,12 +217,15 @@ def update_challenge(user_id, challenge_id):
         set_user_content(user_id, f"completed challenge {challenge.challenge_name}")
         challenge.completion_date = datetime.now()
 
-def add_lesson(user_id, lesson_name):
+def add_lesson(user_id, lesson_name, user_started = True):
     lesson = Lesson(user_id=user_id, lesson_name=lesson_name, completion_date=None, system_role=None)
     db.session.add(lesson)
     db.session.commit()
     add_content_message(user_id, lesson_name,lesson_id=lesson.id)
-    set_user_content(user_id, f"started lesson {lesson_name}")
+    if user_started:
+        set_user_content(user_id, f"started lesson {lesson_name}")
+    else:
+        set_user_content(user_id, f"was given (by you) lesson {lesson_name}")
     return lesson.id
 
 def update_lesson(user_id, lesson_id, completion_date=None, system_role=None):

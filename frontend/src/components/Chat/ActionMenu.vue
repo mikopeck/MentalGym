@@ -9,19 +9,22 @@
   
   <script>
 import MenuButton from "../Menus/MenuButton.vue";
+import { useMenuStore } from "@/store/menuStore";
 
 export default {
   components: {
     MenuButton,
   },
   props: {
-    actionsMenuOpen: {
-      type: Boolean,
-      default: false,
-    },
     actions: {
       type: Array,
       default: () => [],
+    },
+  },
+  computed: {
+    actionsMenuOpen() {
+      const menuStore = useMenuStore();
+      return menuStore.actionsMenuOpen;
     },
   },
   watch: {
@@ -55,27 +58,5 @@ export default {
   right: -280px;
   pointer-events: auto;
 }
-/* 
-.action-btn {
-  text-align: center;
-  padding: 8px 16px;
-  margin: 4px;
-  background-color: #4a148c42;
-  border: 2px solid #f0f8ff;
-  border-radius: 8px;
-  display: block;
-  width: 100%;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  transition: transform 0.2s, background-color 0.2s;
-}
-
-.action-btn:hover {
-  background-color: #4a148c;
-}
-
-.action-btn:active {
-  transform: scale(0.95);
-} */
 </style>
   

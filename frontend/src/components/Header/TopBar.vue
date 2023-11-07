@@ -21,6 +21,8 @@
 </template>
   
 <script>
+import { useMenuStore } from "@/store/menuStore";
+
 export default {
   name: "TopBar",
   computed: {
@@ -42,7 +44,8 @@ export default {
   },
   methods: {
     toggleSideMenu() {
-      this.$emit("toggleSideMenu");
+      const menuStore = useMenuStore();
+      menuStore.toggleSideMenu();
     },
     redirectToHome() {
       this.$router.push("/");

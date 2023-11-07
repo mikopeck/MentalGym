@@ -1,3 +1,4 @@
+<!-- BottomBar.vue -->
 <template>
   <div class="app-footer">
     <div class="footer-top">
@@ -5,13 +6,23 @@
       <span class="separator">·</span>
       <router-link to="/contact" class="text-link">Contact</router-link>
       <span class="separator">·</span>
+      <button @click="toggleTheme" class="dark-mode-btn">
+        <img
+          :src="themeIcon"
+          :alt="themeIconAlt"
+          class="link-icon"
+          width="16"
+          height="16"
+        />
+      </button>
+      <span class="separator">·</span>
       <a
         href="https://twitter.com/AscendanceCloud"
         target="_blank"
         rel="noopener noreferrer"
       >
         <img
-          src="@/assets/images/x-logo-white.png"
+          :src="xIcon"
           alt="X account"
           class="link-icon"
           width="12"
@@ -25,7 +36,7 @@
         rel="noopener noreferrer"
       >
         <img
-          src="@/assets/images/discord-mark-white.png"
+          :src="discordIcon"
           alt="Discord server"
           class="link-icon"
           width="16"
@@ -34,7 +45,9 @@
       </a>
     </div>
     <div class="footer-bottom">
-      <router-link to="/terms" class="text-link">Terms and Policies</router-link>
+      <router-link to="/terms" class="text-link"
+        >Terms and Policies</router-link
+      >
       <span class="separator">·</span>
       <p>© 2023 Ascendance.</p>
     </div>
@@ -42,8 +55,41 @@
 </template>
 
 <script>
+import { useThemeStore } from "@/store/themeStore";
+
 export default {
   name: "BottomBar",
+  computed: {
+    themeIcon() {
+      return this.darkMode
+        ? require("@/assets/images/darkmode.png")
+        : require("@/assets/images/lightmode.png");
+    },
+    xIcon() {
+      return this.darkMode
+        ? require("@/assets/images/x-logo-black.png")
+        : require("@/assets/images/x-logo-white.png");
+    },
+    discordIcon() {
+      return this.darkMode
+        ? require("@/assets/images/discord-mark-black.png")
+        : require("@/assets/images/discord-mark-white.png");
+    },
+    themeIconAlt() {
+      return this.darkMode ? "Light Mode" : "Dark Mode";
+    },
+    darkMode() {
+      const themeStore = useThemeStore();
+      return themeStore.darkMode;
+    },
+  },
+  methods: {
+    // Method to toggle dark mode
+    toggleTheme() {
+      const themeStore = useThemeStore();
+      themeStore.toggleDarkMode();
+    },
+  },
 };
 </script>
 

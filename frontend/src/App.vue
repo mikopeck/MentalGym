@@ -2,15 +2,9 @@
 <template>
   <div class="app-container">
     <LoginSignupPopup v-if="!loggedIn & shouldShowChat" />
-    <TopBar @toggleSideMenu="toggleSideMenu" />
+    <TopBar />
     <SubHeader v-if="shouldShowChat" :subheading="subheadingText" />
-    <SideMenu
-      :sideMenuOpen="sideMenuOpen"
-      :userTier="userTier"
-      @conversationReset="resetConversation"
-      @menuHidden="hideSideMenu"
-      @logout="logoutUser"
-    />
+    <SideMenu :userTier="userTier"/>
 
     <div class="main-content">
       <!-- Main chat -->
@@ -18,10 +12,8 @@
         v-if="shouldShowChat"
         :messages="messages"
         :actions="actions"
-        :actionsMenuOpen="actionsMenuOpen"
         @messageSending="handleMessageSending"
         @updateConversation="updateConversation"
-        @toggleActionMenu="toggleActionMenu"
       />
 
       <!-- Routes -->
@@ -42,8 +34,9 @@ import ChatComponent from "./components/Chat/ChatComponent.vue";
 import BottomBar from "./components/Footer/BottomBar.vue";
 import SubHeader from "./components/Header/SubHeader.vue";
 import InfoPopup from "./components/Menus/InfoPopup.vue";
+import AdPopup from "./components/Monetization/AdPopup.vue";
 import { useAuthStore } from "@/store/authStore";
-import AdPopup from './components/Monetization/AdPopup.vue';
+import { useMenuStore } from "@/store/menuStore";
 
 export default {
   name: "App",
@@ -59,8 +52,6 @@ export default {
   },
   data() {
     return {
-      sideMenuOpen: window.innerWidth > 1750,
-      actionsMenuOpen: window.innerWidth > 1750,
       messages: [],
       actions: [],
       subheadingText: "",
@@ -74,7 +65,7 @@ export default {
     }
     // Mount always seems to go through "/"
     if (this.shouldShowChat) {
-      // this.fetchRecentMessages();
+      this.fetchRecentMessages();
     }
   },
   computed: {
@@ -102,28 +93,13 @@ export default {
         window.scrollTo(0, 0);
       }
       if (window.innerWidth < 1750) {
-        this.hideSideMenu();
-        this.hideActionMenu();
+        const menuStore = useMenuStore();
+        menuStore.hideSideMenu();
+        menuStore.hideActionMenu();
       }
     },
   },
   methods: {
-    toggleSideMenu() {
-      this.sideMenuOpen = !this.sideMenuOpen;
-    },
-    hideSideMenu() {
-      this.sideMenuOpen = false;
-    },
-    toggleActionMenu() {
-      this.actionsMenuOpen = !this.actionsMenuOpen;
-    },
-    hideActionMenu() {
-      this.actionsMenuOpen = false;
-    },
-    logoutUser() {
-      const authStore = useAuthStore();
-      authStore.logout();
-    },
     resetConversation(data) {
       this.updateConversation(data);
     },

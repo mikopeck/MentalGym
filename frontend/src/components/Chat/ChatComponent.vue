@@ -8,8 +8,6 @@
       ref="messageInput"
       @messageSending="handleMessageSending"
       @messageSent="updateConversation"
-      @toggleActionMenu="toggleActionMenu"
-      :actionsMenuOpen="actionsMenuOpen"
       :actionsList="actions"
       class="message-input"
     />
@@ -38,7 +36,7 @@ export default {
           const inputElement = this.$refs.messageInput.$el;
           window.scrollTo(
             0,
-            inputElement.offsetTop +inputElement.clientHeight -100
+            inputElement.offsetTop +inputElement.clientHeight -200
           );
         }, 100);
       });
@@ -49,9 +47,6 @@ export default {
     updateConversation(data) {
       this.$emit("updateConversation", data);
     },
-    toggleActionMenu(){
-      this.$emit("toggleActionMenu");
-    }
   },
 };
 </script>

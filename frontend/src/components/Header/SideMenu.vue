@@ -31,15 +31,14 @@
       @click="openRoute('/settings')"
       :isSelected="isRouteActive('/settings')"
     />
-    <TierButton
-      :tier="userTier"
-    />
+    <TierButton :tier="userTier" />
   </aside>
 </template>
 
 <script>
 import MenuButton from "@/components/Menus/MenuButton.vue";
 import TierButton from "@/components/Menus/TierButton.vue";
+import { useMenuStore } from "@/store/menuStore";
 
 export default {
   name: "SideMenu",
@@ -48,16 +47,16 @@ export default {
     TierButton,
   },
   props: {
-    sideMenuOpen: {
-      type: Boolean,
-      required: true,
-    },
     userTier: {
       type: String,
       default: "free",
-    }
+    },
   },
   computed: {
+    sideMenuOpen() {
+      const menuStore = useMenuStore();
+      return menuStore.sideMenuOpen;
+    },
     isRouteActive() {
       return (route, pattern = null) => {
         // Special handling for root route to prevent it from matching all paths
@@ -75,12 +74,13 @@ export default {
     },
   },
   methods: {
-    openRoute(route){
+    openRoute(route) {
       this.$router.push(route);
       this.hideMenu();
     },
     hideMenu() {
-      this.$emit("menuHidden");
+      const menuStore = useMenuStore();
+      menuStore.hideSideMenu();
     },
   },
 };

@@ -105,12 +105,7 @@ export default {
       try {
         let response = await axios.get("/reset");
         if (response.data.status === "success") {
-          this.$emit("conversationReset", {
-            messages: response.data.messages,
-            actions: response.data.actions,
-          });
           this.$router.push("/");
-          this.hideMenu();
         } else {
           console.error("Failed to reset conversation");
         }
