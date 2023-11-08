@@ -104,7 +104,7 @@
       </p>
     </div>
 
-    <div class="text-container">
+    <div class="page-main-section">
       <h1>Privacy Policy</h1>
       <p>
         At Ascendance.cloud, your privacy is important to us. This Privacy

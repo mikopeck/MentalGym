@@ -47,15 +47,16 @@ export default {
               color: this.textColor,
             },
             grid: {
-              color: this.textColor,
+              color: "#00000000",
             },
           },
           y: {
             ticks: {
+              stepSize: 1,
               color: this.textColor,
             },
             grid: {
-              color: this.textColor,
+              color: "#00000000",
             },
           },
         },

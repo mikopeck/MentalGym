@@ -5,7 +5,7 @@
 
     <div class="button-container">
       <MenuButton class="square-button" label="<" @click="changePage(-1)" />
-      <p class="section-title">{{pageTitle}}</p>
+      <p class="section-title">{{ pageTitle }}</p>
       <MenuButton class="square-button" label=">" @click="changePage(1)" />
     </div>
 
@@ -29,55 +29,55 @@
     </div>
 
     <div class="progress-section" v-if="dataLoaded && currentPageIndex === 1">
-      <div class="statistics flex-col">
-        <div class="spread flex-row">
-          <h1>📖</h1>
-          <h1>🎯</h1>
-        </div>
-
-        <div class="spread flex-row">
-          <div class="stat-item">
-            <span class="stat-value">{{ totalLessons }}</span>
-            <span class="stat-label">Total Lessons</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">{{ totalChallenges }}</span>
-            <span class="stat-label">Total Challenges</span>
-          </div>
-        </div>
-
-        <div class="spread flex-row">
-          <div class="stat-item">
-            <span class="stat-value">{{ percentCompletedLessons }}%</span>
-            <span class="stat-label">Lessons Completed</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">{{ percentCompletedChallenges }}%</span>
-            <span class="stat-label">Challenges Completed</span>
-          </div>
-        </div>
-
-        <div class="spread flex-row">
-          <div class="stat-item">
-            <span class="stat-value">{{ completedLessons }}</span>
-            <span class="stat-label">Completed Lessons</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">{{ completedChallenges }}</span>
-            <span class="stat-label">Completed Challenges</span>
-          </div>
-        </div>
-
-        <div class="spread flex-row">
-          <div class="stat-item">
-            <span class="stat-value">{{ activeLessons }}</span>
-            <span class="stat-label">Active Lessons</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">{{ activeChallenges }}</span>
-            <span class="stat-label">Active Challenges</span>
-          </div>
-        </div>
+      <div class="statistics">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>📖</th>
+              <th>🎯</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="stat-label">Total</span></td>
+              <td>
+                <span class="stat-value">{{ totalLessons }}</span>
+              </td>
+              <td>
+                <span class="stat-value">{{ totalChallenges }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="stat-label">Percentage Completed</span></td>
+              <td>
+                <span class="stat-value">{{ percentCompletedLessons }}%</span>
+              </td>
+              <td>
+                <span class="stat-value">{{ percentCompletedChallenges }}%</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td><span class="stat-label">Completed</span></td>
+              <td>
+                <span class="stat-value">{{ completedLessons }}</span>
+              </td>
+              <td>
+                <span class="stat-value">{{ completedChallenges }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="stat-label">Active</span></td>
+              <td>
+                <span class="stat-value">{{ activeLessons }}</span>
+              </td>
+              <td>
+                <span class="stat-value">{{ activeChallenges }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -213,7 +213,7 @@ export default {
   margin-top: 16px;
   width: 100%;
   max-width: 720px;
-  background-color: #ffffff13;
+  background-color: #77777713;
   border-radius: 8px;
 }
 
@@ -277,6 +277,19 @@ export default {
   font-size: 0.9em;
   padding-left: 8px;
   color: var(--text-color);
-  opacity: 0.8;
+  opacity: 0.9;
+}
+
+th {
+  font-size: 1.5em;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+th, td {
+  text-align: center;
 }
 </style>
