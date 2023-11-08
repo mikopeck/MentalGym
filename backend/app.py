@@ -27,7 +27,15 @@ def load_user(user_id):
     session = db.session
     return session.get(User, int(user_id))
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI') or 'mysql+pymysql://root:password@localhost/mind_forge_ai'
+host = os.environ.get('AZURE_MYSQL_HOST')
+name = os.environ.get('AZURE_MYSQL_NAME')
+password = os.environ.get('AZURE_MYSQL_PASSWORD')
+user = os.environ.get('AZURE_MYSQL_USER')
+if host and name and password and user:
+    uri = f'mysql+pymysql://{user}:{password}@{host}/{name}'
+else:
+    uri = os.environ.get('SQLALCHEMY_DATABASE_URI', 'mysql+pymysql://root:password@localhost/mind_forge_ai')
+app.config['SQLALCHEMY_DATABASE_URI'] = uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
