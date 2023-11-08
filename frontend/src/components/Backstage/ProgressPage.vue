@@ -85,8 +85,8 @@
       <PieChart :data="topicDistribution" />
       <div class="statistics topic-distribution-statistics">
         <div v-for="(value, topic) in topTopics" :key="topic" class="stat-item">
-          <span class="stat-label">{{ topic }}</span>
           <span class="stat-value">{{ value }}</span>
+          <span class="stat-label">{{ topic }}</span>
         </div>
       </div>
     </div>
@@ -289,7 +289,7 @@ table {
   table-layout: fixed;
 }
 
-th, td {
+/* th, td {
   text-align: center;
-}
+} */
 </style>

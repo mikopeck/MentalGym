@@ -72,7 +72,7 @@ export default {
           buttonColor: "var(--element-color-2)",
         },
       ],
-      userTier: "Aspirant",
+      userTier: "free",
       userTierMapping: {
         Aspirant: "free",
         Awakened: "paid",
@@ -84,24 +84,23 @@ export default {
     this.fetchUserPlan();
   },
   computed: {
-    // Computed property to generate the button labels
     planButtonLabels() {
       return this.plans.map((plan) => {
-          if (this.userTierMapping[plan.title] === this.userTier) {
-              return "Active";
+        if (this.userTierMapping[plan.title] === this.userTier) {
+          return "Active";
         } else if (this.isUpgrade(plan.title)) {
-            return "Upgrade";
+          return "Upgrade";
         }
         return "Subscribe";
       });
     },
   },
   methods: {
-      fetchUserPlan() {
-          axios
+    fetchUserPlan() {
+      axios
         .get("/api/plan")
         .then((response) => {
-            console.log(response.data)
+          console.log(response.data);
           this.userTier = response.data.tier;
         })
         .catch((error) => {
@@ -111,22 +110,24 @@ export default {
     isUpgrade(planTitle) {
       const tierOrder = ["Aspirant", "Awakened", "Ascendant"];
       const currentUserTierIndex = tierOrder.indexOf(
-        this.userTierMapping[this.userTier]
+        Object.keys(this.userTierMapping).find(
+          (key) => this.userTierMapping[key] === this.userTier)
       );
       const planTierIndex = tierOrder.indexOf(planTitle);
       return planTierIndex > currentUserTierIndex;
     },
     updateUserPlan(planTitle) {
-    axios.post('/api/plan', { tier: this.userTierMapping[planTitle] })
-      .then(response => {
-        if (response.data.status === 'success') {
-          this.userTier = this.userTierMapping[planTitle];
-        }
-      })
-      .catch(error => {
-        console.error('Error updating user plan:', error);
-      });
-  },
+      axios
+        .post("/api/plan", { tier: this.userTierMapping[planTitle] })
+        .then((response) => {
+          if (response.data.status === "success") {
+            this.userTier = this.userTierMapping[planTitle];
+          }
+        })
+        .catch((error) => {
+          console.error("Error updating user plan:", error);
+        });
+    },
   },
 };
 </script>
@@ -159,6 +160,7 @@ export default {
   overflow: hidden;
   width: 300px;
   opacity: 1;
+  background-color: #00000000;
   transition: background-color opacity 0.3s;
 }
 
