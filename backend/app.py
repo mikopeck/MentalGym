@@ -31,10 +31,12 @@ host = os.environ.get('AZURE_MYSQL_HOST')
 name = os.environ.get('AZURE_MYSQL_NAME')
 password = os.environ.get('AZURE_MYSQL_PASSWORD')
 user = os.environ.get('AZURE_MYSQL_USER')
+ssl_ca = os.path.join(os.path.dirname(os.getcwd()), 'BaltimoreCyberTrustRootCA.crt.pem')
 if host and name and password and user:
-    uri = f'mysql+pymysql://{user}:{password}@{host}/{name}'
+    uri = f'mysql+pymysql://{user}:{password}@{host}/{name}?ssl_ca={ssl_ca}'
 else:
     uri = os.environ.get('SQLALCHEMY_DATABASE_URI', 'mysql+pymysql://root:password@localhost/mind_forge_ai')
+
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
