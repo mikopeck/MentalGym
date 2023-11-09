@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: cbd3a4557484
+Revision ID: b181e191204f
 Revises: 
-Create Date: 2023-11-09 18:09:10.366601
+Create Date: 2023-11-09 19:51:10.364463
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'cbd3a4557484'
+revision = 'b181e191204f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -25,7 +25,7 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
     )
-    op.create_table('ascendance_user',
+    op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=50), nullable=False),
     sa.Column('password', sa.String(length=200), nullable=False),
@@ -50,7 +50,7 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('challenge_name', sa.String(length=100), nullable=False),
     sa.Column('completion_date', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['ascendance_user.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('lesson',
@@ -59,7 +59,7 @@ def upgrade():
     sa.Column('lesson_name', sa.String(length=100), nullable=False),
     sa.Column('completion_date', sa.DateTime(), nullable=True),
     sa.Column('system_role', sa.String(length=100), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['ascendance_user.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user_achievement',
@@ -68,7 +68,7 @@ def upgrade():
     sa.Column('achievement_id', sa.Integer(), nullable=False),
     sa.Column('completion_date', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['achievement_id'], ['achievement.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['ascendance_user.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('chat_history',
@@ -82,7 +82,7 @@ def upgrade():
     sa.Column('lesson_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['challenge_id'], ['challenge.id'], ),
     sa.ForeignKeyConstraint(['lesson_id'], ['lesson.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['ascendance_user.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('feedback',
@@ -97,7 +97,7 @@ def upgrade():
     sa.Column('lesson_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['challenge_id'], ['challenge.id'], ),
     sa.ForeignKeyConstraint(['lesson_id'], ['lesson.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['ascendance_user.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user_action',
@@ -106,7 +106,7 @@ def upgrade():
     sa.Column('lesson_id', sa.Integer(), nullable=True),
     sa.Column('action', sa.String(length=100), nullable=False),
     sa.ForeignKeyConstraint(['lesson_id'], ['lesson.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['ascendance_user.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
@@ -120,6 +120,6 @@ def downgrade():
     op.drop_table('user_achievement')
     op.drop_table('lesson')
     op.drop_table('challenge')
-    op.drop_table('ascendance_user')
+    op.drop_table('user')
     op.drop_table('achievement')
     # ### end Alembic commands ###
