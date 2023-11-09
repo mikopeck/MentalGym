@@ -153,6 +153,8 @@ export default {
 }
 
 .loading-message {
+  display: flex;
+  align-items: center;
   opacity: 0.9;
 }
 
