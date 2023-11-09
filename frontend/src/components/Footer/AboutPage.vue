@@ -1,6 +1,6 @@
 <template>
   <div class="page-main-container">
-    <h1>Discover Your Potential with Ascendance.cloud</h1>
+    <h1>Discover Your Potential with Ascendance·☁️</h1>
     <div class="page-main-section">
       <p>
         At Ascendance.cloud, we believe in the limitless potential of every
@@ -8,37 +8,37 @@
         ascend to new heights in their personal and professional endeavors.
       </p>
 
-      <h2>How We Work</h2>
+      <h2>🛠How We Work</h2>
       <ul>
         <li>
-          <strong>Intelligent Tutoring:</strong> Our platform features a
+          <strong>📖Intelligent Tutoring:</strong> Our platform features a
           sophisticated AI chat interface that learns about you — your
           strengths, weaknesses, goals, and aspirations. It tailors lessons and
           challenges uniquely suited to your pace and learning style.
         </li>
         <li>
-          <strong>Diverse Learning Topics:</strong> Whether you're diving into
+          <strong>📚Diverse Learning Topics:</strong> Whether you're diving into
           quantum physics, exploring the world of digital art, or brushing up on
           ancient history, we've got you covered. Our AI curates lessons on
           virtually any topic you're passionate about.
         </li>
         <li>
-          <strong>Personalized Challenges:</strong> Beyond lessons, we present
+          <strong>🎯Personalized Challenges:</strong> Beyond lessons, we present
           challenges that push your boundaries and test your understanding,
           ensuring you're always growing and progressing.
         </li>
         <li>
-          <strong>Mentorship:</strong> More than just a tutor, our AI acts as a
+          <strong>🌱Mentorship:</strong> More than just a tutor, our AI acts as a
           mentor, guiding you, motivating you, and celebrating your achievements
           with you.
         </li>
       </ul>
 
-      <h2>Our Vision</h2>
+      <h2>👀Our Vision</h2>
       This whole app is inspired by driven by the ideas in
       <a href="https://arxiv.org/pdf/2302.09248.pdf">this paper</a>.
 
-      <h2>Technology Behind the Scenes</h2>
+      <h2>🤖Technology Behind the Scenes</h2>
       <p>
         Harnessing the power of the latest AI models, we've created a seamless
         and adaptive learning experience. Our algorithms are constantly

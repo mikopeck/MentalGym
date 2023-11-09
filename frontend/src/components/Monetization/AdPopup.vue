@@ -10,7 +10,7 @@
         <p class="popup-message">{{ randomMessage }}</p>
         <div class="popup-footer">
           <span v-if="ads.isLoading" class="loading-message"
-            >Loading response
+            ><div>Loading response</div>
             <div class="loading-dots">
               <span></span>
               <span></span>

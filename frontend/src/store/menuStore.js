@@ -5,54 +5,88 @@ export const useMenuStore = defineStore('menu', {
     state: () => ({
         sideMenuOpen: false,
         actionsMenuOpen: false,
+        sideMenuClickListener: null,
+        actionMenuClickListener: null,
     }),
     actions: {
         toggleSideMenu() {
             this.sideMenuOpen = !this.sideMenuOpen;
-            this.manageClickAwayListener('side');
+            if (this.sideMenuOpen) {
+                this.setupClickAwayListenerSideMenu();
+            } else {
+                this.removeClickAwayListenerSideMenu();
+            }
         },
         hideSideMenu() {
+            if (this.sideMenuClickListener) {
+                document.removeEventListener('click', this.sideMenuClickListener);
+                this.sideMenuClickListener = null;
+            }
             this.sideMenuOpen = false;
-            this.removeClickAwayListener();
         },
         openSideMenu() {
             this.sideMenuOpen = true;
-            this.manageClickAwayListener('side');
+            this.setupClickAwayListenerSideMenu();
         },
 
         toggleActionMenu() {
             this.actionsMenuOpen = !this.actionsMenuOpen;
-            this.manageClickAwayListener('action');
+            if (this.actionsMenuOpen) {
+                this.setupClickAwayListenerActionMenu();
+            } else {
+                this.removeClickAwayListenerActionMenu();
+            }
         },
         hideActionMenu() {
+            if (this.actionMenuClickListener) {
+                document.removeEventListener('click', this.actionMenuClickListener);
+                this.actionMenuClickListener = null;
+            }
             this.actionsMenuOpen = false;
-            this.removeClickAwayListener();
         },
         openActionMenu() {
             this.actionsMenuOpen = true;
-            this.manageClickAwayListener('action');
+            this.setupClickAwayListenerActionMenu();
         },
 
-        manageClickAwayListener(menuType) {
-            const clickAwayListener = (event) => {
-                const menuElement = document.querySelector(menuType === 'side' ? '.side-menu' : '.action-menu');
-                if (!menuElement.contains(event.target)) {
-                    this[menuType === 'side' ? 'hideSideMenu' : 'hideActionMenu']();
-                    this.removeClickAwayListener();
-                }
-            };
+        setupClickAwayListenerActionMenu() {
+            setTimeout(() => {
+                const clickAwayListener = (event) => {
+                    const menuElement = document.querySelector('.action-menu');
+                    if (!menuElement.contains(event.target)) {
+                        this.hideActionMenu();
+                    }
+                };
+                this.actionMenuClickListener = clickAwayListener;
+                document.addEventListener('click', clickAwayListener);
+            }, 0);
+        },
 
-            if (this[menuType === 'side' ? 'sideMenuOpen' : 'actionsMenuOpen']) {
-                setTimeout(() => {
-                    document.addEventListener('click', clickAwayListener);
-                }, 0);
-            } else {
-                this.removeClickAwayListener();
+        setupClickAwayListenerSideMenu() {
+            setTimeout(() => {
+                const clickAwayListener = (event) => {
+                    const sideMenuElement = document.querySelector('.side-menu');
+                    if (!sideMenuElement.contains(event.target)) {
+                        this.hideSideMenu();
+                    }
+                };
+                this.sideMenuClickListener = clickAwayListener;
+                document.addEventListener('click', clickAwayListener);
+            }, 0);
+        },
+
+        removeClickAwayListenerActionMenu() {
+            if (this.actionMenuClickListener) {
+                document.removeEventListener('click', this.actionMenuClickListener);
+                this.actionMenuClickListener = null;
             }
         },
 
-        removeClickAwayListener() {
-            document.removeEventListener('click', this.manageClickAwayListener);
+        removeClickAwayListenerSideMenu() {
+            if (this.sideMenuClickListener) {
+                document.removeEventListener('click', this.sideMenuClickListener);
+                this.sideMenuClickListener = null;
+            }
         }
     },
 });
