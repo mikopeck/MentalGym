@@ -1,9 +1,9 @@
 <!-- App.vue -->
 <template>
   <div class="app-container" :class="themeClass">
-    <LoginSignupPopup v-if="!loggedIn & shouldShowChat" />
+    <LoginSignupPopup v-if="!loggedIn & shouldShowLogin" />
     <TopBar />
-    <SubHeader v-if="shouldShowChat" :subheading="subheadingText" />
+    <SubHeader v-if="loggedIn & shouldShowChat" :subheading="subheadingText" />
     <SideMenu :userTier="userTier" />
 
     <div class="main-content">
@@ -38,6 +38,7 @@ import AdPopup from "./components/Monetization/AdPopup.vue";
 import { useAuthStore } from "@/store/authStore";
 import { useMenuStore } from "@/store/menuStore";
 import { useThemeStore } from "@/store/themeStore";
+import { usePopupStore } from "@/store/popupStore";
 
 export default {
   name: "App",
@@ -64,6 +65,10 @@ export default {
       const authStore = useAuthStore();
       authStore.login(true);
     }
+    if (this.$route.path === "/?awake") {
+      const popupStore = usePopupStore();
+      popupStore.showWelcomePopup();
+    }
     // Mount always seems to go through "/"
     if (this.shouldShowChat) {
       this.fetchRecentMessages();
@@ -86,6 +91,10 @@ export default {
         path.includes("/challenge/")
       );
     },
+    shouldShowLogin() {
+      const path = this.$route.path;
+      return !(path === "/terms" || path === "/about" || path === "/contact");
+    },
     shouldShowRouterView() {
       return this.$route.path !== "/";
     },
@@ -97,10 +106,10 @@ export default {
       } else {
         window.scrollTo(0, 0);
       }
+      const menuStore = useMenuStore();
+      menuStore.hideActionMenu();
       if (window.innerWidth < 1750) {
-        const menuStore = useMenuStore();
         menuStore.hideSideMenu();
-        menuStore.hideActionMenu();
       }
     },
   },

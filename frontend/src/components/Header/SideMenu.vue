@@ -2,36 +2,64 @@
 <template>
   <aside :class="{ 'slide-out': sideMenuOpen }" class="side-menu">
     <MenuButton
+      v-if="!loggedIn"
+      label="Log in🔏"
+      @click="openRoute('/')"
+      :isSelected="isRouteActive('/')"
+    />
+    <MenuButton
+      v-if="loggedIn"
       label="Chat💬"
       @click="openRoute('/')"
       :isSelected="isRouteActive('/')"
     />
     <MenuButton
+      v-if="loggedIn"
       label="Lessons📖"
       @click="openRoute('/lessons')"
       :isSelected="isRouteActive('/lessons', '^/lesson/\\w+')"
     />
     <MenuButton
+      v-if="loggedIn"
       label="Challenges🎯"
       @click="openRoute('/challenges')"
       :isSelected="isRouteActive('/challenges', '^/challenge/\\w+')"
     />
     <MenuButton
+      v-if="loggedIn"
       label="Progress📈"
       @click="openRoute('/progress')"
       :isSelected="isRouteActive('/progress')"
     />
     <MenuButton
+      v-if="loggedIn"
       label="Achievements🏅"
       @click="openRoute('/achievements')"
       :isSelected="isRouteActive('/achievements')"
     />
     <MenuButton
+      v-if="loggedIn"
       label="Settings🔧"
       @click="openRoute('/settings')"
       :isSelected="isRouteActive('/settings')"
     />
-    <TierButton :tier="userTier" />
+    <TierButton v-if="loggedIn" :tier="userTier" />
+    <br />
+    <MenuButton
+      label="About👀"
+      @click="openRoute('/about')"
+      :isSelected="isRouteActive('/about')"
+    />
+    <MenuButton
+      label="Contact📧"
+      @click="openRoute('/contact')"
+      :isSelected="isRouteActive('/contact')"
+    />
+    <MenuButton
+      label="Terms & Policies🤝"
+      @click="openRoute('/terms')"
+      :isSelected="isRouteActive('/terms')"
+    />
   </aside>
 </template>
 
@@ -39,6 +67,7 @@
 import MenuButton from "@/components/Menus/MenuButton.vue";
 import TierButton from "@/components/Menus/TierButton.vue";
 import { useMenuStore } from "@/store/menuStore";
+import { useAuthStore } from "@/store/authStore";
 
 export default {
   name: "SideMenu",
@@ -56,6 +85,10 @@ export default {
     sideMenuOpen() {
       const menuStore = useMenuStore();
       return menuStore.sideMenuOpen;
+    },
+    loggedIn() {
+      const authStore = useAuthStore();
+      return authStore.loggedIn;
     },
     isRouteActive() {
       return (route, pattern = null) => {
