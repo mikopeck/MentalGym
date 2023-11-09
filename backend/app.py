@@ -19,14 +19,6 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY')
 openai.api_key = os.getenv("OPENAI_API_KEY")
 resend.api_key = os.getenv('RESEND_API_KEY')
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
-@login_manager.user_loader
-def load_user(user_id):
-    session = db.session
-    return session.get(AscendanceUser, int(user_id))
-
 host = os.environ.get('AZURE_MYSQL_HOST')
 name = os.environ.get('AZURE_MYSQL_NAME')
 password = os.environ.get('AZURE_MYSQL_PASSWORD')
@@ -34,16 +26,24 @@ user = os.environ.get('AZURE_MYSQL_USER')
 if host and name and password and user:
     uri = f'mysql+pymysql://{user}:{password}@{host}/{name}'
 else:
-    uri = os.environ.get('SQLALCHEMY_DATABASE_URI', 'mysql+pymysql://root:password@localhost/mind_forge_ai')
+    uri = os.environ.get('SQLALCHEMY_DATABASE_URI', 'mysql+pymysql://root:password@localhost/ascendance')
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
-with app.app_context():
-    db.create_all()
-
 migrate = Migrate(app, db)
 CORS(app)
+
+# with app.app_context():
+#     db.create_all()
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+@login_manager.user_loader
+def load_user(user_id):
+    session = db.session
+    return session.get(AscendanceUser, int(user_id))
 
 limiter = Limiter(
     key_func=get_remote_address,
