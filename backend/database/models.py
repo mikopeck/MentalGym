@@ -15,12 +15,12 @@ class AscendanceUser(db.Model, UserMixin):
     ai_tutor_profile = db.Column(db.Text, nullable=True)
     current_content = db.Column(db.String(500), nullable=True)
     
-    achievements = db.relationship('UserAchievement', backref='AscendanceUser')
-    actions = db.relationship('UserAction', backref='AscendanceUser')
+    achievements = db.relationship('UserAchievement', backref='user')
+    actions = db.relationship('UserAction', backref='user')
 
-    chats = db.relationship('ChatHistory', backref='AscendanceUser')
-    challenges = db.relationship('Challenge', backref='AscendanceUser')
-    lessons = db.relationship('Lesson', backref='AscendanceUser')
+    chats = db.relationship('ChatHistory', backref='user')
+    challenges = db.relationship('Challenge', backref='user')
+    lessons = db.relationship('Lesson', backref='user')
 
     tier = db.Column(db.String(50), default='free')  # 'free', 'paid', 'pro'
     daily_request_count = db.Column(db.Integer, default=0)
@@ -69,19 +69,19 @@ class Achievement(db.Model):
 
 class UserAchievement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('ascendance_user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     achievement_id = db.Column(db.Integer, db.ForeignKey('achievement.id'), nullable=False)
     completion_date = db.Column(db.DateTime, default=datetime.utcnow())
 
 class UserAction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('ascendance_user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), nullable=True)
     action = db.Column(db.String(100), nullable=False)
 
 class ChatHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('ascendance_user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     message = db.Column(db.Text, nullable=False)
     role = db.Column(db.String(50), nullable=False)
     system_role = db.Column(db.String(100), nullable=False)
@@ -95,7 +95,7 @@ class ChatHistory(db.Model):
     
 class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('ascendance_user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     content = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=True)  # 1-5 scale
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -105,11 +105,11 @@ class Feedback(db.Model):
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenge.id'), nullable=True)
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), nullable=True)
 
-    user = db.relationship('AscendanceUser', backref=db.backref('feedback', lazy=True))
+    user = db.relationship('User', backref=db.backref('feedback', lazy=True))
 
 class Challenge(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('ascendance_user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     challenge_name = db.Column(db.String(100), nullable=False)
     completion_date = db.Column(db.DateTime, nullable=True)
 
@@ -118,7 +118,7 @@ class Challenge(db.Model):
 
 class Lesson(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('ascendance_user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     lesson_name = db.Column(db.String(100), nullable=False)
     completion_date = db.Column(db.DateTime, nullable=True)
     system_role = db.Column(db.String(100), default='')
