@@ -11,7 +11,7 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-from database.models import db, AscendanceUser
+from database.models import db, User
 
 load_dotenv()
 app = Flask(__name__, static_folder='../frontend/dist')
@@ -43,7 +43,7 @@ login_manager.login_view = 'login'
 @login_manager.user_loader
 def load_user(user_id):
     session = db.session
-    return session.get(AscendanceUser, int(user_id))
+    return session.get(User, int(user_id))
 
 limiter = Limiter(
     key_func=get_remote_address,

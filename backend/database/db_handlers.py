@@ -1,4 +1,4 @@
-from database.models import db, AscendanceUser, ChatHistory, Challenge, Lesson, UserAction, Achievement, UserAchievement, Feedback
+from database.models import db, User, ChatHistory, Challenge, Lesson, UserAction, Achievement, UserAchievement, Feedback
 from utils import decode_if_needed
 from datetime import datetime
 
@@ -96,7 +96,7 @@ def get_api_messages(user_id, lesson_id=None, challenge_id=None):
 
 
 def set_system_role(user_id, role):
-    user = AscendanceUser.query.get(user_id)
+    user = User.query.get(user_id)
     if user:
         user.system_role = role
         db.session.commit()
@@ -105,7 +105,7 @@ def get_system_role(user_id, lesson_id=None):
     if lesson_id:
         lesson = Lesson.query.filter_by(user_id=user_id, id=lesson_id).first()
         return lesson.system_role if lesson else None
-    user = AscendanceUser.query.get(user_id)
+    user = User.query.get(user_id)
     return user.system_role if user else None
 
 def remove_latest_system_message(user_id, lesson_id=None):
@@ -166,35 +166,35 @@ def get_user_achievements(user_id):
     return [achievement.name for achievement in achievements]
 
 def set_profile(user_id, profile_data):
-    user = AscendanceUser.query.get(user_id)
+    user = User.query.get(user_id)
     if user:
         user.profile = profile_data
         db.session.commit()
 
 def get_profile(user_id):
-    user = AscendanceUser.query.get(user_id)
+    user = User.query.get(user_id)
     return user.profile if user else None
 
 def get_user_context(user_id):
-    user = AscendanceUser.query.get(user_id)
+    user = User.query.get(user_id)
     return user.as_dict() if user else None
 
 def set_tutor(user_id, tutor_data):
-    user = AscendanceUser.query.get(user_id)
+    user = User.query.get(user_id)
     if user:
         user.ai_tutor_profile = tutor_data
         db.session.commit()
 
 def get_tutor(user_id):
-    user = AscendanceUser.query.get(user_id)
+    user = User.query.get(user_id)
     return user.ai_tutor_profile if user else None
 
 def get_user_content(user_id):
-    user = AscendanceUser.query.get(user_id)
+    user = User.query.get(user_id)
     return user.current_content if user else None
 
 def set_user_content(user_id, content_description):
-    user = AscendanceUser.query.get(user_id)
+    user = User.query.get(user_id)
     if user:
         user.current_content = content_description
         db.session.commit()
@@ -307,7 +307,7 @@ def clear_user_achievements(user_id):
     db.session.commit()
 
 def clear_user_profile(user_id):
-    user = AscendanceUser.query.get(user_id)
+    user = User.query.get(user_id)
     if user:
         user.profile = None
         user.ai_tutor_profile = None

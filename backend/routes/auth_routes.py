@@ -6,7 +6,7 @@ from flask_login import login_user, login_required, logout_user
 from sqlalchemy.exc import IntegrityError
 import pymysql.err as pymysql_err
 
-from database.models import db, AscendanceUser
+from database.models import db, User
 from database.user_handler import confirm, generate_confirmation_token
 from message_handler import initialize_messages
 from email_provider.resend_api import send_registration_email
@@ -18,7 +18,7 @@ def init_auth_routes(app):
     def login():
         email = request.form['email']
         password = request.form['password']
-        user = AscendanceUser.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
             login_user(user)
             return jsonify({'status': 'success'})
@@ -31,7 +31,7 @@ def init_auth_routes(app):
             email = request.form['new-email']
             password = request.form['new-password']
             hashed_password = generate_password_hash(password)
-            new_user = AscendanceUser(email=email, password=hashed_password, username=email)
+            new_user = User(email=email, password=hashed_password, username=email)
             new_user.confirmation_token = generate_confirmation_token(new_user.id)
             new_user.confirm_sent_at = datetime.utcnow()
             db.session.add(new_user)
@@ -48,7 +48,7 @@ def init_auth_routes(app):
 
     @app.route('/confirm/<token>')
     def confirm_email(token):
-        user = AscendanceUser.query.filter_by(confirmation_token=token).first()
+        user = User.query.filter_by(confirmation_token=token).first()
         if user and confirm(user.id, token):
             login_user(user)
             initialize_messages(user.id)
