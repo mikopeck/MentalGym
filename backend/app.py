@@ -10,8 +10,6 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from sqlalchemy import create_engine
-from sqlalchemy_utils import database_exists, create_database, drop_database
 
 from database.models import db, User
 
@@ -40,13 +38,9 @@ else:
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-engine = create_engine(uri)
-if database_exists(engine.url):
-    drop_database(engine.url)
-create_database(engine.url)
-
 db.init_app(app)
 with app.app_context():
+    db.drop_all()
     db.create_all()
 
 migrate = Migrate(app, db)
