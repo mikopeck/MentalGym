@@ -11,7 +11,7 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-from database.models import db, User
+from database.models import db, AscendanceUser
 
 load_dotenv()
 app = Flask(__name__, static_folder='../frontend/dist')
@@ -25,7 +25,7 @@ login_manager.login_view = 'login'
 @login_manager.user_loader
 def load_user(user_id):
     session = db.session
-    return session.get(User, int(user_id))
+    return session.get(AscendanceUser, int(user_id))
 
 host = os.environ.get('AZURE_MYSQL_HOST')
 name = os.environ.get('AZURE_MYSQL_NAME')
@@ -40,7 +40,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 with app.app_context():
-    db.drop_all()
     db.create_all()
 
 migrate = Migrate(app, db)

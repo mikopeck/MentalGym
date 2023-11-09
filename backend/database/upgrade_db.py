@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
-from models import User  # Import your User model
+from models import AscendanceUser  # Import your User model
 
 # Replace 'sqlite:///your_database.db' with your actual database URI
 DATABASE_URI = 'mysql+pymysql://root:password@localhost/mind_forge_ai'
@@ -12,7 +12,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # Query all users
-users = session.query(User).all()
+users = session.query(AscendanceUser).all()
 
 # Apply default values to users if they are None
 for user in users:

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from itsdangerous import URLSafeSerializer as Serializer
 from flask import current_app
 
-from database.models import db, User
+from database.models import db, AscendanceUser
 
 # Rate limiting parameters
 DAILY_LIMITS = {
@@ -36,17 +36,17 @@ def is_within_limit(user):
     return True, ""
 
 def set_user_tier(user_id, tier):
-    user = User.query.get(user_id)
+    user = AscendanceUser.query.get(user_id)
     if user:
         user.tier = tier
         db.session.commit()
 
 def get_user_tier(user_id):
-    user = User.query.get(user_id)
+    user = AscendanceUser.query.get(user_id)
     return user.tier if user else None
 
 def increment_violations(user_id):
-    user = User.query.get(user_id)
+    user = AscendanceUser.query.get(user_id)
     if user:
         user.violation_count += 1
         db.session.commit()
@@ -56,7 +56,7 @@ def generate_confirmation_token(user_id):
     return s.dumps({'confirm': str(user_id)})
 
 def confirm(user_id, token):
-    user = User.query.get(user_id)
+    user = AscendanceUser.query.get(user_id)
     s = Serializer(current_app.config['SECRET_KEY'])
     try:
         data = s.loads(token)
