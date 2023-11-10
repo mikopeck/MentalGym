@@ -65,10 +65,6 @@ export default {
       const authStore = useAuthStore();
       authStore.login(true);
     }
-    if (this.$route.path === "/?awake") {
-      const popupStore = usePopupStore();
-      popupStore.showWelcomePopup();
-    }
     // Mount always seems to go through "/"
     if (this.shouldShowChat) {
       this.fetchRecentMessages();
@@ -106,10 +102,19 @@ export default {
       } else {
         window.scrollTo(0, 0);
       }
+
       const menuStore = useMenuStore();
       menuStore.hideActionMenu();
       if (window.innerWidth < 1750) {
         menuStore.hideSideMenu();
+      }
+
+      if (this.$route.path === "/?awake") {
+        console.log("waking");
+        const authStore = useAuthStore();
+        authStore.login();
+        const popupStore = usePopupStore();
+        popupStore.showWelcomePopup();
       }
     },
   },

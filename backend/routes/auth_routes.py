@@ -32,9 +32,10 @@ def init_auth_routes(app):
             password = request.form['new-password']
             hashed_password = generate_password_hash(password)
             new_user = User(email=email, password=hashed_password, username=email)
+            db.session.add(new_user)
+            db.session.commit()
             new_user.confirmation_token = generate_confirmation_token(new_user.id)
             new_user.confirm_sent_at = datetime.utcnow()
-            db.session.add(new_user)
             db.session.commit()
             
             confirmation_link = url_for('confirm_email', token=new_user.confirmation_token, _external=True)
