@@ -69,6 +69,12 @@ export default {
     if (this.shouldShowChat) {
       this.fetchRecentMessages();
     }
+    if (window.location.search === "?awake") {
+      const authStore = useAuthStore();
+      authStore.login();
+      const popupStore = usePopupStore();
+      popupStore.showWelcomePopup();
+    }
   },
   computed: {
     themeClass() {
@@ -107,14 +113,6 @@ export default {
       menuStore.hideActionMenu();
       if (window.innerWidth < 1750) {
         menuStore.hideSideMenu();
-      }
-
-      if (this.$route.path === "/?awake") {
-        console.log("waking");
-        const authStore = useAuthStore();
-        authStore.login();
-        const popupStore = usePopupStore();
-        popupStore.showWelcomePopup();
       }
     },
   },
