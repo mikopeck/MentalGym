@@ -21,7 +21,7 @@
             : "Already have an account? Log in"
         }}
       </button>
-        <div ref="googleButton"></div>
+      <div ref="googleButton"></div>
     </div>
   </div>
 </template>  
@@ -84,7 +84,8 @@ export default {
 
     initializeGoogleSignIn() {
       window.google.accounts.id.initialize({
-        client_id: "529262341360-9sq10od3qkro19jaavhgachkpviugfv3.apps.googleusercontent.com",
+        client_id:
+          "529262341360-9sq10od3qkro19jaavhgachkpviugfv3.apps.googleusercontent.com",
         callback: this.handleCredentialResponse,
       });
       window.google.accounts.id.renderButton(this.$refs.googleButton, {
@@ -102,6 +103,8 @@ export default {
         .post("/auth/google/callback", { id_token })
         .then((response) => {
           console.log("Authentication successful", response);
+          const authStore = useAuthStore();
+          authStore.login();
           if (response.data.message === "new_user") {
             this.$router.push("/?awake");
           } else {
@@ -168,8 +171,7 @@ export default {
 
 .popup-content :deep(input[type="submit"]):hover {
   background-color: var(--element-color-2);
-  text-shadow: 0 0 5px #bb86fc, 0 0 10px #bb86fc, 0 0 15px #bb86fc,
-    0 0 20px #bb86fc;
+  text-shadow: 0 0 5px #bb86fc, 0 0 10px #bb86fc, 0 0 15px #bb86fc;
 }
 
 .popup-content button {
@@ -183,8 +185,7 @@ export default {
 }
 
 .popup-content button:hover {
-  text-shadow: 0 0 5px #bb86fc, 0 0 10px #bb86fc, 0 0 15px #bb86fc,
-    0 0 20px #bb86fc;
+  text-shadow: 0 0 5px #bb86fc, 0 0 10px #bb86fc, 0 0 15px #bb86fc;
 }
 
 .fade-enter-active,

@@ -95,3 +95,35 @@ a:hover {
     max-width: 720px;
 }
 
+/* Webkit browsers (e.g., Chrome, Safari) scrollbar styles */
+::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+    transition: background 0.3s ease;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Apply hover effect globally */
+  *:hover {
+    scrollbar-color: var(--element-color-1) var(--background-color-1t);
+  }
+  
+  *:hover::-webkit-scrollbar-track {
+    background: var(--background-color-1t);
+  }
+  
+  *:hover::-webkit-scrollbar-thumb {
+    background-color: var(--element-color-1);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--element-color-2);
+  }

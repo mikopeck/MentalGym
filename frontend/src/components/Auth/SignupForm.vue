@@ -30,7 +30,9 @@
       required
     />
     <br />
-    <input type="submit" id="submit" value="Sign Up" />
+    <div class="button-container">
+      <input type="submit" id="submit" :value="buttonText" />
+    </div>
   </form>
 </template>
   
@@ -42,10 +44,12 @@ export default {
       email: "",
       password: "",
       confirmPassword: "",
+      buttonText: "Sign up",
     };
   },
   methods: {
     handleSubmit() {
+      this.buttonText = "Loading...";
       if (this.password !== this.confirmPassword) {
         const popupStore = usePopupStore();
         popupStore.showPopup("Passwords do not match!");
@@ -72,6 +76,7 @@ export default {
             popupStore.showPopup(
               data.message || "Signup failed. Please try again."
             );
+            this.buttonText = "Sign up";
           }
         });
     },
@@ -79,3 +84,8 @@ export default {
 };
 </script>
   
+<style>
+.button-container {
+  text-align: center;
+}
+</style>

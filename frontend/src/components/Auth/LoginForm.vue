@@ -20,7 +20,9 @@
       required
     />
     <br />
-    <input type="submit" id="submit" value="Login" />
+    <div class="button-container">
+      <input type="submit" id="submit" :value="buttonText" />
+    </div>
   </form>
 </template>
   
@@ -33,10 +35,12 @@ export default {
     return {
       email: "",
       password: "",
+      buttonText: "Log in",
     };
   },
   methods: {
     handleSubmit() {
+      this.buttonText = "Loading...";
       const formData = new URLSearchParams();
       formData.append("email", this.email);
       formData.append("password", this.password);
@@ -57,6 +61,7 @@ export default {
           } else {
             const popupStore = usePopupStore();
             popupStore.showPopup("Login failed. Please try again.");
+            this.buttonText = "Log in";
           }
         });
     },
@@ -64,3 +69,8 @@ export default {
 };
 </script>
   
+  <style>
+.button-container {
+  text-align: center;
+}
+</style>

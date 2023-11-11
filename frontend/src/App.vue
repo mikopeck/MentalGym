@@ -3,7 +3,7 @@
   <div class="app-container" :class="themeClass">
     <LoginSignupPopup v-if="!loggedIn & shouldShowLogin" />
     <TopBar />
-    <SubHeader v-if="loggedIn & shouldShowChat" :subheading="subheadingText" />
+    <SubHeader v-if="loggedIn & shouldShowChat & subheaderExists" :subheading="subheadingText" />
     <SideMenu :userTier="userTier" />
 
     <div class="main-content">
@@ -105,6 +105,9 @@ export default {
     shouldShowRouterView() {
       return this.$route.path !== "/";
     },
+    subheaderExists(){
+      return !(this.subheadingText === "");
+    }
   },
   watch: {
     "$route.path": function () {
