@@ -21,11 +21,14 @@
             : "Already have an account? Log in"
         }}
       </button>
+        <div ref="googleButton"></div>
     </div>
   </div>
 </template>  
   
   <script>
+import axios from "axios";
+
 import LoginForm from "./LoginForm.vue";
 import SignupForm from "./SignupForm.vue";
 import { usePopupStore } from "@/store/popupStore";
@@ -40,6 +43,9 @@ export default {
     return {
       showLoginForm: true,
     };
+  },
+  mounted() {
+    this.loadGoogleIdentityServices();
   },
   computed: {
     loggedIn() {
@@ -59,9 +65,52 @@ export default {
     handleSignupSuccess() {
       const popupStore = usePopupStore();
       popupStore.showPopup(
-        "Registration email sent!\n Please click the link in the email to start."
+        "Registration email sent!\n Please click the link in the email to start your ascent."
       );
       this.$router.push("/about");
+    },
+    loadGoogleIdentityServices() {
+      if (window.google && window.google.accounts) {
+        this.initializeGoogleSignIn();
+      } else {
+        const script = document.createElement("script");
+        script.src = "https://accounts.google.com/gsi/client";
+        script.onload = this.initializeGoogleSignIn;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+      }
+    },
+
+    initializeGoogleSignIn() {
+      window.google.accounts.id.initialize({
+        client_id: "529262341360-9sq10od3qkro19jaavhgachkpviugfv3.apps.googleusercontent.com",
+        callback: this.handleCredentialResponse,
+      });
+      window.google.accounts.id.renderButton(this.$refs.googleButton, {
+        theme: "outline",
+        size: "large",
+      });
+    },
+
+    handleCredentialResponse(response) {
+      console.log("ID token:", response.credential);
+      this.sendTokenToBackend(response.credential);
+    },
+    sendTokenToBackend(id_token) {
+      axios
+        .post("/auth/google/callback", { id_token })
+        .then((response) => {
+          console.log("Authentication successful", response);
+          if (response.data.message === "new_user") {
+            this.$router.push("/?awake");
+          } else {
+            this.$router.push("/");
+          }
+        })
+        .catch((error) => {
+          console.error("Error authenticating", error);
+        });
     },
   },
 };

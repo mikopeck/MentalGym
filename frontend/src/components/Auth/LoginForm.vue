@@ -26,6 +26,8 @@
   
   <script>
 import { usePopupStore } from "@/store/popupStore";
+import { useAuthStore } from "@/store/authStore";
+
 export default {
   data() {
     return {
@@ -49,7 +51,9 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           if (data.status === "success") {
-            this.$emit("loginSuccess");
+            const authStore = useAuthStore();
+            authStore.login();
+            location.reload();
           } else {
             const popupStore = usePopupStore();
             popupStore.showPopup("Login failed. Please try again.");

@@ -61,9 +61,13 @@ export default {
     };
   },
   mounted() {
+    const authStore = useAuthStore();
     if (this.$route.query.login) {
-      const authStore = useAuthStore();
-      authStore.login(true);
+      console.log("doing something")
+      authStore.login();
+    }
+    if (!authStore.loggedIn) {
+      this.$router.push("/about");
     }
     // Mount always seems to go through "/"
     if (this.shouldShowChat) {
@@ -74,6 +78,7 @@ export default {
       authStore.login();
       const popupStore = usePopupStore();
       popupStore.showWelcomePopup();
+      this.fetchRecentMessages();
     }
   },
   computed: {
