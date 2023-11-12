@@ -26,28 +26,26 @@
           <ul>
             <li>
               <div class="reactive-subtitle">📖Intelligent Tutoring</div>
-              <br />Our platform features a sophisticated AI chat interface that
+              Our platform features a sophisticated AI chat interface that
               learns about you — your strengths, weaknesses, goals, and
               aspirations. It then suggests and tailors lessons and challenges
               uniquely suited to your style.
             </li>
             <li>
               <div class="reactive-subtitle">📚Diverse Learning Topics</div>
-              <br />Whether you're diving into quantum physics, exploring the
+              Whether you're diving into quantum physics, exploring the
               world of digital art, or brushing up on ancient history, we've got
               you covered. Our AI curates lessons on virtually any topic you're
               passionate about.
             </li>
             <li>
               <div class="reactive-subtitle">🎯Personalized Challenges</div>
-              <br />
               Beyond lessons, we present challenges that push your boundaries
               and test your understanding, ensuring you're always growing and
               progressing.
             </li>
             <li>
               <div class="reactive-subtitle">🌱Mentorship</div>
-              <br />
               More than just a tutor, our AI acts as a mentor, guiding you,
               motivating you, and celebrating your achievements with you.
             </li>
@@ -100,6 +98,9 @@ export default {
         popupStore.showPopup(this.popupMessage);
       }
     },
+    redirectHome(){
+      this.$router.push("/");
+    },
   },
 };
 </script>
@@ -140,7 +141,7 @@ export default {
   position: relative;
   background: radial-gradient(
     ellipse at center,
-    #bb86fc42 20%,
+    #bb86fcb8 20%,
     transparent 80%
   );
   font-size: 1.4em;
@@ -225,11 +226,7 @@ export default {
 }
 
 .reactive-subtitle {
-  position: relative;
-  transition: opacity 0.3s ease;
-}
-
-.reactive-subtitle {
+  font-weight: 700;
   position: relative;
   transition: opacity 0.3s ease;
 }
