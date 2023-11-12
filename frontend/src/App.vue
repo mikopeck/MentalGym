@@ -3,7 +3,10 @@
   <div class="app-container" :class="themeClass">
     <LoginSignupPopup v-if="!loggedIn & shouldShowLogin" />
     <TopBar />
-    <SubHeader v-if="loggedIn & shouldShowChat & subheaderExists" :subheading="subheadingText" />
+    <SubHeader
+      v-if="loggedIn & shouldShowChat & subheaderExists"
+      :subheading="subheadingText"
+    />
     <SideMenu :userTier="userTier" />
 
     <div class="main-content">
@@ -20,8 +23,8 @@
       <router-view v-if="shouldShowRouterView"></router-view>
       <InfoPopup />
       <AdPopup />
+      <BottomBar />
     </div>
-    <BottomBar />
   </div>
 </template>
 
@@ -63,7 +66,7 @@ export default {
   mounted() {
     const authStore = useAuthStore();
     if (this.$route.query.login) {
-      console.log("doing something")
+      console.log("doing something");
       authStore.login();
     }
     if (!authStore.loggedIn) {
@@ -105,11 +108,16 @@ export default {
     shouldShowRouterView() {
       return this.$route.path !== "/";
     },
-    subheaderExists(){
+    subheaderExists() {
       return !(this.subheadingText === "");
-    }
+    },
   },
   watch: {
+    loggedIn(newValue) {
+      if (newValue && this.shouldShowChat) {
+        this.fetchRecentMessages();
+      }
+    },
     "$route.path": function () {
       if (this.shouldShowChat) {
         this.fetchRecentMessages();

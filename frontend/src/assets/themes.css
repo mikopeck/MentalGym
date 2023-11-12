@@ -2,6 +2,7 @@
 
 :root {
     --background-color: #0e0c14;
+    --background-color-rgb: 14, 12, 20;
     --background-haze: #0e0c14fd;
     --background-color-1t: #4a148c42;
     --background-color-2t: #6a34b942;
@@ -13,6 +14,7 @@
 
 .light-theme {
     --background-color: #f0f8ff;
+    --background-color-rgb: 240, 248, 255;
     --background-haze: #f0f8fffd;
     --background-color-1t: #7e14ff42;
     --background-color-2t: #c8a0ff42;

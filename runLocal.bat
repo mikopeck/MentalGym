@@ -6,5 +6,4 @@ cd ..
 echo Activating virtual environment...
 call venv\scripts\activate
 echo Starting Flask...
-set FLASK_APP=backend/app.py
-flask run
+python backend\app.py

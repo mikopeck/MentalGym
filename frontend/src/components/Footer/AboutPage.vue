@@ -1,11 +1,11 @@
 <template>
   <div class="center-content">
     <div class="background-gradient-container">
-      <div class="page-main-container">
+      <div class="about-main-container">
         <div class="reactive-subtitle">
           <h1>Discover Your Potential with Ascendance·☁️</h1>
         </div>
-        <div class="page-main-section">
+        <div class="about-main-section">
           <p>
             As sentient civilizations uncover more laws of the universe and
             escape the gravity wells of their planets, the astonishing abundance
@@ -33,9 +33,9 @@
             </li>
             <li>
               <div class="reactive-subtitle">📚Diverse Learning Topics</div>
-              Whether you're diving into quantum physics, exploring the
-              world of digital art, or brushing up on ancient history, we've got
-              you covered. Our AI curates lessons on virtually any topic you're
+              Whether you're diving into quantum physics, exploring the world of
+              digital art, or brushing up on ancient history, we've got you
+              covered. Our AI curates lessons on virtually any topic you're
               passionate about.
             </li>
             <li>
@@ -98,7 +98,7 @@ export default {
         popupStore.showPopup(this.popupMessage);
       }
     },
-    redirectHome(){
+    redirectHome() {
       this.$router.push("/");
     },
   },
@@ -106,33 +106,60 @@ export default {
 </script>
 
 <style scoped>
+.about-main-container {
+  font-weight: 500;
+    margin-top: 1em;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .center-content {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 1024px;
+  margin: auto;
+  position: relative;
   display: flex;
   justify-content: center;
-  margin: 0px;
+  align-items: center;
 }
 
 .background-gradient-container {
-  background-image: 
-    linear-gradient(to right,#00000000 90%,var(--background-color) 100%),
+  position: relative;
+  background-image: linear-gradient(
+      to right,
+      #00000000 90%,
+      var(--background-color) 100%
+    ),
     linear-gradient(to left, #00000000 90%, var(--background-color) 100%),
     linear-gradient(to bottom, #00000000 60%, var(--background-color) 100%),
     linear-gradient(to top, #00000000 90%, var(--background-color) 100%),
     url("~@/assets/images/background_hued_web.png");
-  background-size: auto;
-  max-height: 100%;
-  background-repeat: no-repeat;
-  background-position: center center;
-  width: auto;
+  background-position: center top;
+  background-size: cover;
   max-width: 1024px;
-  margin: 0px;
+  width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
+}
+.background-gradient-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(var(--background-color-rgb), 0.4);
+  z-index: 0;
 }
 
-.page-main-container {
+@media (max-width: 768px) {
+  .center-content, .background-gradient-container {
+    max-width: 100%;
+  }}
+.about-main-container {
+  z-index: 1;
   text-shadow: 0px 0px 5px var(--background-color),
     0px 0px 10px var(--background-color), 0px 0px 15px var(--background-color);
 }
