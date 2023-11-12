@@ -98,7 +98,6 @@ export default {
       const response = await axios.get("/api/challenges");
       if (response.data.status === "success") {
         this.challenges = response.data.challenges;
-        console.log(this.challenges);
       } else {
         console.error("Failed to fetch challenges");
       }

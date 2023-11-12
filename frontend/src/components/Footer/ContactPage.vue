@@ -16,7 +16,7 @@
 
             <input type="submit" value="Submit" />
           </form>
-          <div v-else>Please log in to submit feedback and bugs.</div>
+          <div v-else>Please <a href="/">log in</a> to submit feedback and bugs.</div>
           <br />
           <div>
             To reach us, join the Discord community at the bottom of the page or

@@ -10,20 +10,22 @@
     <SideMenu :userTier="userTier" />
 
     <div class="main-content">
-      <!-- Main chat -->
-      <ChatComponent
-        v-if="shouldShowChat"
-        :messages="messages"
-        :actions="actions"
-        @messageSending="handleMessageSending"
-        @updateConversation="updateConversation"
-      />
+      <div class="another">
+        <!-- Main chat -->
+        <ChatComponent
+          v-if="shouldShowChat"
+          :messages="messages"
+          :actions="actions"
+          @messageSending="handleMessageSending"
+          @updateConversation="updateConversation"
+        />
 
-      <!-- Routes -->
-      <router-view v-if="shouldShowRouterView"></router-view>
-      <InfoPopup />
-      <AdPopup />
-      <BottomBar />
+        <!-- Routes -->
+        <router-view v-if="shouldShowRouterView"></router-view>
+        <InfoPopup />
+        <AdPopup />
+      </div>
+      <BottomBar v-if="!loggedIn | !shouldShowChat" />
     </div>
   </div>
 </template>
@@ -64,18 +66,6 @@ export default {
     };
   },
   mounted() {
-    const authStore = useAuthStore();
-    if (this.$route.query.login) {
-      console.log("doing something");
-      authStore.login();
-    }
-    if (!authStore.loggedIn) {
-      this.$router.push("/about");
-    }
-    // Mount always seems to go through "/"
-    if (this.shouldShowChat) {
-      this.fetchRecentMessages();
-    }
     if (window.location.search === "?awake") {
       const authStore = useAuthStore();
       authStore.login();
@@ -125,10 +115,22 @@ export default {
         window.scrollTo(0, 0);
       }
 
+      if (!this.loggedIn & this.shouldShowChat) {
+        this.$router.push("/about");
+      }
+
       const menuStore = useMenuStore();
       menuStore.hideActionMenu();
       if (window.innerWidth < 1750) {
         menuStore.hideSideMenu();
+      }
+
+      if (this.$route.query.awake) {
+        const authStore = useAuthStore();
+        authStore.login();
+        const popupStore = usePopupStore();
+        popupStore.showWelcomePopup();
+        this.fetchRecentMessages();
       }
     },
   },
@@ -137,7 +139,6 @@ export default {
       this.updateConversation(data);
     },
     updateConversation(data) {
-      console.log("updating convo:" + data);
       this.messages = data.messages;
       this.actions = data.actions;
 
@@ -163,12 +164,9 @@ export default {
         } else if (isChallenge) {
           params.challenge_id = currentPath.split("/").pop();
         }
-
-        console.log("Sending params:", params);
         axios
           .get(apiEndpoint, { params })
           .then((response) => {
-            console.log(response);
             this.messages = response.data.messages;
             this.actions = response.data.actions;
             this.userTier = response.data.userTier;
@@ -203,5 +201,10 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+.another {
+  height: 100%;
+  overflow: auto;
 }
 </style>

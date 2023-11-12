@@ -159,7 +159,8 @@ export default {
 }
 
 .loading-dots {
-  margin-top: 4px;
+  margin-top: 5px;
+  margin-left: 2px;
   display: flex;
   gap: 5px;
 }

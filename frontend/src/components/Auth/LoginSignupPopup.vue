@@ -95,14 +95,12 @@ export default {
     },
 
     handleCredentialResponse(response) {
-      console.log("ID token:", response.credential);
       this.sendTokenToBackend(response.credential);
     },
     sendTokenToBackend(id_token) {
       axios
         .post("/auth/google/callback", { id_token })
         .then((response) => {
-          console.log("Authentication successful", response);
           const authStore = useAuthStore();
           authStore.login();
           if (response.data.message === "new_user") {

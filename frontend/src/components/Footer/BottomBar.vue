@@ -94,18 +94,23 @@ export default {
 </script>
 
 <style scoped>
-.app-footer {position: sticky;
-  bottom: 0;
+.app-footer {
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: -1px;
   font-family: "Garamond", sans-serif;
-  opacity: 0.8;
+  color: rgba(var(--text-color-rgb), 0.8);
   padding: 12px 0;
   text-align: center;
   font-size: 14px;
   display: flex;
   flex-direction: column;
-  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   z-index: 200;
+  background-color: var(--background-color-1t);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 2px 2px var(--background-color-1t);
 }
 
 .footer-top,

@@ -86,7 +86,6 @@ export default {
       const response = await axios.get("/api/lessons");
       if (response.data.status === "success") {
         this.lessons = response.data.lessons;
-        console.log(this.lessons);
       } else {
         console.error("Failed to fetch lessons");
       }
