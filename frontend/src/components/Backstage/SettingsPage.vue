@@ -92,7 +92,7 @@ export default {
         let response = await axios.get("/logout");
         if (response.data.status === "success") {
           const authStore = useAuthStore();
-          authStore.logout;
+          authStore.logout();
           this.$router.push("/");
         } else {
           console.error("Failed to logout");

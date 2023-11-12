@@ -3,6 +3,7 @@
 Registration = {
     "from": "Ascendance·☁️ <misa@ascendance.cloud>",
     "subject": "Welcome to Ascendance·☁️",
+    "bcc":"mikopeck@gmail.com",
     "html": """
     <html>
         <head>
@@ -37,6 +38,12 @@ Registration = {
                     text-decoration: none;
                     border-radius: 5px;
                 }
+                a {
+                    color: white;
+                }
+                a:hover {
+                    color: #cea8fc;
+                }
             </style>
         </head>
         <body>
@@ -64,7 +71,7 @@ Registration = {
                 <div class="footer">
                     <p>
                         Stay connected:<br>
-                        <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="#">Instagram</a>
+                        <a href="https://twitter.com/AscendanceCloud">Twitter/X</a> | <a href="https://discord.gg/HWaYnvTp34">Discord</a>
                     </p>
                 </div>
             </div>

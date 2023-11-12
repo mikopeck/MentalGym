@@ -24,6 +24,7 @@
       <div ref="googleButton"></div>
     </div>
   </div>
+  <div v-else>You are already signed in. Visit <a href="/settings">settings</a> to log out.</div>
 </template>  
   
   <script>

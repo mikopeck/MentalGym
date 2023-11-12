@@ -17,6 +17,7 @@ const routes = [
   { path: '/settings', component: defineAsyncComponent(() => import('./components/Backstage/SettingsPage.vue')) },
   { path: '/terms', component: defineAsyncComponent(() => import('./components/Footer/TermsAndPoliciesPage.vue')) },
   { path: '/plan', component: defineAsyncComponent(() => import('./components/Monetization/PlanPage.vue')) },
+  { path: '/login', component: defineAsyncComponent(() => import('./components/Auth/LoginSignupPopup.vue')) },
 ];
 
 const router = createRouter({

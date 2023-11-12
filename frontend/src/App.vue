@@ -1,7 +1,6 @@
 <!-- App.vue -->
 <template>
   <div class="app-container" :class="themeClass">
-    <LoginSignupPopup v-if="!loggedIn & shouldShowLogin" />
     <TopBar />
     <SubHeader
       v-if="loggedIn & shouldShowChat & subheaderExists"
@@ -34,7 +33,6 @@
 import axios from "axios";
 import TopBar from "./components/Header/TopBar.vue";
 import SideMenu from "./components/Header/SideMenu.vue";
-import LoginSignupPopup from "./components/Auth/LoginSignupPopup.vue";
 import ChatComponent from "./components/Chat/ChatComponent.vue";
 import BottomBar from "./components/Footer/BottomBar.vue";
 import SubHeader from "./components/Header/SubHeader.vue";
@@ -50,7 +48,6 @@ export default {
   components: {
     TopBar,
     SideMenu,
-    LoginSignupPopup,
     ChatComponent,
     BottomBar,
     SubHeader,
@@ -116,8 +113,8 @@ export default {
         window.scrollTo(0, 0);
       }
 
-      if (!this.loggedIn & this.shouldShowChat) {
-        this.$router.push("/about");
+      if (!this.loggedIn & this.shouldShowLogin) {
+        this.$router.push("/login");
       }
 
       const menuStore = useMenuStore();
