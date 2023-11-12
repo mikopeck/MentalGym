@@ -15,6 +15,11 @@
           </ul>
         </div>
         <div class="plan-footer">
+          <stripe-buy-button
+            :buy-button-id="getBuyButtonId(plan.title)"
+            publishable-key="pk_live_51O5GhFKNh8ktDFRTvdUvrTJKY0VFPdPVH0tT0phlWmvUoywIPtOxY0QHuYFFYc7bxcVFVA5mbubGkE6GLTdeYztm00EUXOILOn"
+          >
+          </stripe-buy-button>
           <button
             :style="{ backgroundColor: plan.buttonColor }"
             :disabled="userTierMapping[plan.title] === userTier"
@@ -30,6 +35,7 @@
 
 <script>
 import axios from "axios";
+import { loadStripe } from "@stripe/stripe-js";
 
 export default {
   name: "PlanPage",
@@ -80,8 +86,17 @@ export default {
       },
     };
   },
-  mounted() {
+  async mounted() {
     this.fetchUserPlan();
+    this.loadStripeScript()
+      .then(async () => {
+        this.stripe = await loadStripe(
+          "pk_live_51O5GhFKNh8ktDFRTvdUvrTJKY0VFPdPVH0tT0phlWmvUoywIPtOxY0QHuYFFYc7bxcVFVA5mbubGkE6GLTdeYztm00EUXOILOn"
+        );
+      })
+      .catch((error) => {
+        console.error("Error loading Stripe:", error);
+      });
   },
   computed: {
     planButtonLabels() {
@@ -111,7 +126,8 @@ export default {
       const tierOrder = ["Aspirant", "Awakened", "Ascendant"];
       const currentUserTierIndex = tierOrder.indexOf(
         Object.keys(this.userTierMapping).find(
-          (key) => this.userTierMapping[key] === this.userTier)
+          (key) => this.userTierMapping[key] === this.userTier
+        )
       );
       const planTierIndex = tierOrder.indexOf(planTitle);
       return planTierIndex > currentUserTierIndex;
@@ -127,6 +143,30 @@ export default {
         .catch((error) => {
           console.error("Error updating user plan:", error);
         });
+    },
+    loadStripeScript() {
+      return new Promise((resolve, reject) => {
+        if (document.querySelector("#stripe-js")) {
+          resolve();
+          return;
+        }
+
+        const script = document.createElement("script");
+        script.id = "stripe-js";
+        script.src = "https://js.stripe.com/v3/";
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error("Stripe JS failed to load"));
+        document.head.appendChild(script);
+      });
+    },
+    getBuyButtonId(planTitle) {
+      const buyButtonIds = {
+        Aspirant: "",
+        Awakened: "buy_btn_1OBTI8KNh8ktDFRTxt85Y4fG",
+        Ascendant: "buy_btn_1OBcsAKNh8ktDFRT3RQpIdo2",
+      };
+
+      return buyButtonIds[planTitle] || "";
     },
   },
 };

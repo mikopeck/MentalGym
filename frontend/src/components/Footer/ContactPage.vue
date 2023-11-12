@@ -1,23 +1,28 @@
 <!-- ContactPage.vue -->
 <template>
-  <div class="contact-overlay">
-    <div class="popup-content">
-      <h1>Submit feedback</h1>
-      <form v-if="loggedIn" @submit.prevent="handleSubmit">
-        <textarea
-          id="message"
-          v-model="message"
-          placeholder="Share your thoughts here"
-          rows="4"
-          required
-        ></textarea>
+  <div class="page-main-container">
+    <div class="page-main-section">
+      <div class="contact-overlay">
+        <div class="popup-content">
+          <h1>Submit feedback</h1>
+          <form v-if="loggedIn" @submit.prevent="handleSubmit">
+            <textarea
+              id="message"
+              v-model="message"
+              placeholder="Share your thoughts here"
+              rows="4"
+              required
+            ></textarea>
 
-        <input type="submit" value="Submit" />
-      </form>
-      <div v-else>Please log in to submit feedback and bugs.</div>
-      <div>
-        To reach us, join the Discord community at the bottom of the page or
-        email ascendance.cloud@proton.me.
+            <input type="submit" value="Submit" />
+          </form>
+          <div v-else>Please log in to submit feedback and bugs.</div>
+          <br />
+          <div>
+            To reach us, join the Discord community at the bottom of the page or
+            email ascendance.cloud@proton.me.
+          </div>
+        </div>
       </div>
     </div>
   </div>

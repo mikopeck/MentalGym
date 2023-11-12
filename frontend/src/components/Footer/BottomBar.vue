@@ -94,7 +94,8 @@ export default {
 </script>
 
 <style scoped>
-.app-footer {
+.app-footer {position: sticky;
+  bottom: 0;
   font-family: "Garamond", sans-serif;
   opacity: 0.8;
   padding: 12px 0;
