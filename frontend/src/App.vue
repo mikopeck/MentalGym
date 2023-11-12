@@ -109,6 +109,7 @@ export default {
       }
     },
     "$route.path": function () {
+      console.log(this.$route.path)
       if (this.shouldShowChat) {
         this.fetchRecentMessages();
       } else {
@@ -152,6 +153,7 @@ export default {
     },
     fetchRecentMessages() {
       if (this.loggedIn) {
+        console.log("fetching...")
         let apiEndpoint = "/api/chat";
         const params = {};
 
