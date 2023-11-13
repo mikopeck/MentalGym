@@ -15,11 +15,6 @@
           </ul>
         </div>
         <div class="plan-footer">
-          <stripe-buy-button
-            :buy-button-id="getBuyButtonId(plan.title)"
-            publishable-key="pk_live_51O5GhFKNh8ktDFRTvdUvrTJKY0VFPdPVH0tT0phlWmvUoywIPtOxY0QHuYFFYc7bxcVFVA5mbubGkE6GLTdeYztm00EUXOILOn"
-          >
-          </stripe-buy-button>
           <button
             :style="{ backgroundColor: plan.buttonColor }"
             :disabled="userTierMapping[plan.title] === userTier"
@@ -35,7 +30,6 @@
 
 <script>
 import axios from "axios";
-import { loadStripe } from "@stripe/stripe-js";
 
 export default {
   name: "PlanPage",
@@ -84,19 +78,15 @@ export default {
         Awakened: "paid",
         Ascendant: "pro",
       },
+      planUrls: {
+        Aspirant: "https://buy.stripe.com/bIY6sg5154ZmaXu4gi",
+        Awakened: "https://buy.stripe.com/9AQaIw0KPdvS0iQ6oo",
+        Ascendant: "https://buy.stripe.com/aEU9Es8dhdvSe9G6op",
+      },
     };
   },
   async mounted() {
     this.fetchUserPlan();
-    this.loadStripeScript()
-      .then(async () => {
-        this.stripe = await loadStripe(
-          "pk_live_51O5GhFKNh8ktDFRTvdUvrTJKY0VFPdPVH0tT0phlWmvUoywIPtOxY0QHuYFFYc7bxcVFVA5mbubGkE6GLTdeYztm00EUXOILOn"
-        );
-      })
-      .catch((error) => {
-        console.error("Error loading Stripe:", error);
-      });
   },
   computed: {
     planButtonLabels() {
@@ -133,6 +123,8 @@ export default {
       return planTierIndex > currentUserTierIndex;
     },
     updateUserPlan(planTitle) {
+      const paymentUrl = this.planUrls[planTitle];
+      window.open(paymentUrl, "_blank");
       axios
         .post("/api/plan", { tier: this.userTierMapping[planTitle] })
         .then((response) => {
@@ -143,30 +135,6 @@ export default {
         .catch((error) => {
           console.error("Error updating user plan:", error);
         });
-    },
-    loadStripeScript() {
-      return new Promise((resolve, reject) => {
-        if (document.querySelector("#stripe-js")) {
-          resolve();
-          return;
-        }
-
-        const script = document.createElement("script");
-        script.id = "stripe-js";
-        script.src = "https://js.stripe.com/v3/";
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error("Stripe JS failed to load"));
-        document.head.appendChild(script);
-      });
-    },
-    getBuyButtonId(planTitle) {
-      const buyButtonIds = {
-        Aspirant: "",
-        Awakened: "buy_btn_1OBTI8KNh8ktDFRTxt85Y4fG",
-        Ascendant: "buy_btn_1OBcsAKNh8ktDFRT3RQpIdo2",
-      };
-
-      return buyButtonIds[planTitle] || "";
     },
   },
 };

@@ -7,7 +7,7 @@
           <span class="emoji-indicator">💳</span>
           <button class="close-button" @click="ads.hide">✖</button>
         </div>
-        <p class="popup-message">{{ randomMessage }}</p>
+        <p class="popup-message" v-html="randomMessage"></p>
         <div class="popup-footer">
           <span v-if="ads.isLoading" class="loading-message"
             ><div>Loading response</div>
@@ -34,11 +34,12 @@ export default {
   setup() {
     const ads = useAdsStore();
     const messages = ref([
-      "Please consider donating:\nBTC - bc1qxpzep6ym99h5qecsm6kfmf8smaz32tn07zssvx",
-      "Paid plans use more accurate and powerful models.",
-      "Your ad could appear here..",
-      "Thank you for your support! Every contribution helps.",
-      "Join our community and stay up-to-date with the latest features.",
+      // 'Please consider donating:<br><a href="bitcoin:bc1qxpzep6ym99h5qecsm6kfmf8smaz32tn07zssvx">BTC - bc1qxpzep6ym99h5qecsm6kfmf8smaz32tn07zssvx</a>',
+      '<a href="/plans">Paid plans use more accurate and powerful models.</a>',
+      'Your ad could appear here.. <a href="/contact">get in touch.</a>',
+      'Would you recommend us to a friend? <br><a href="/contact">What could we do to make that happen?</a>',
+      'Join our community on <a href="https://twitter.com/AscendanceCloud">X</a> and <a href="https://discord.gg/SSGygda5DX">discord</a> stay up-to-date with the latest features.',
+      'Please consider <a href="https://buy.stripe.com/bIY6sg5154ZmaXu4gi">donating</a> to help this app grow faster!'
     ]);
     const randomMessage = computed(() => {
       const randomIndex = Math.floor(Math.random() * messages.value.length);

@@ -1,5 +1,6 @@
 // store/authStore.js
 import { defineStore } from 'pinia';
+import axios from 'axios';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -7,6 +8,7 @@ export const useAuthStore = defineStore('auth', {
   }),
   actions: {
     async checkAuth() {
+      
       try {
         const response = await axios.get('/check-auth');
         this.loggedIn = response.data.loggedIn;
