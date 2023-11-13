@@ -6,6 +6,15 @@ export const useAuthStore = defineStore('auth', {
     loggedIn: localStorage.getItem('loggedIn') === 'true',
   }),
   actions: {
+    async checkAuth() {
+      try {
+        const response = await axios.get('/check-auth');
+        this.loggedIn = response.data.loggedIn;
+      } catch (error) {
+        console.error('Error checking auth status:', error);
+        this.loggedIn = false;
+      }
+    },
     login() {
       this.loggedIn = true;
       localStorage.setItem('loggedIn', 'true');
@@ -13,9 +22,6 @@ export const useAuthStore = defineStore('auth', {
     logout() {
       this.loggedIn = false;
       localStorage.setItem('loggedIn', 'false');
-    },
-    register() {
-        
     },
   },
 });

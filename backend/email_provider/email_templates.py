@@ -33,16 +33,10 @@ Registration = {
                     display: inline-block;
                     padding: 10px 20px;
                     margin-top: 20px;
-                    background-color: #6a34b9;
                     color: f0f8ff;
                     text-decoration: none;
                     border-radius: 5px;
-                }
-                a {
-                    color: white;
-                }
-                a:hover {
-                    color: #cea8fc;
+                    border: 1px solid #6a34b9;
                 }
             </style>
         </head>

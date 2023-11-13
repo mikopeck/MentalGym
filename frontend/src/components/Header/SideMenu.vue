@@ -4,8 +4,8 @@
     <MenuButton
       v-if="!loggedIn"
       label="Log in🔏"
-      @click="openRoute('/')"
-      :isSelected="isRouteActive('/')"
+      @click="openRoute('/login')"
+      :isSelected="isRouteActive('/login')"
     />
     <MenuButton
       v-if="loggedIn"

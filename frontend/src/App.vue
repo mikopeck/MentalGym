@@ -78,6 +78,7 @@ export default {
     },
     loggedIn() {
       const authStore = useAuthStore();
+      authStore.checkAuth();
       return authStore.loggedIn;
     },
     shouldShowChat() {
@@ -90,7 +91,7 @@ export default {
     },
     shouldShowLogin() {
       const path = this.$route.path;
-      return !(path === "/terms" || path === "/about" || path === "/contact");
+      return !(path === "/terms" || path === "/about" || path === "/contact" || path === "/login");
     },
     shouldShowRouterView() {
       return this.$route.path !== "/";
@@ -101,6 +102,9 @@ export default {
   },
   watch: {
     loggedIn(newValue) {
+      if (!newValue){
+        this.$router.push("/login");
+      }
       if (newValue && this.shouldShowChat) {
         this.fetchRecentMessages();
       }
@@ -114,7 +118,9 @@ export default {
       }
 
       if (!this.loggedIn & this.shouldShowLogin) {
-        this.$router.push("/login");
+        if (this.$route.path === "/"){
+          this.$router.push("/about");
+        } else {this.$router.push("/login");}
       }
 
       const menuStore = useMenuStore();

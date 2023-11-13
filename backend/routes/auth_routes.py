@@ -2,7 +2,7 @@
 from datetime import datetime
 from flask import request, jsonify, url_for, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
 from sqlalchemy.exc import IntegrityError
 import pymysql.err as pymysql_err
 from oauth2client import client, crypt
@@ -27,6 +27,16 @@ def init_auth_routes(app):
             return jsonify({'status': 'success'})
         else:
             return jsonify({'status': 'fail'})
+
+    @app.route("/logout", methods=["GET"])
+    @login_required
+    def logout_route():
+        logout_user()
+        return jsonify({"status": "success"})
+
+    @app.route('/check-auth', methods=['GET'])
+    def check_auth():
+        return jsonify({'loggedIn': current_user.is_authenticated})
 
     @app.route('/signup', methods=['POST'])
     def signup():
@@ -68,12 +78,6 @@ def init_auth_routes(app):
                 send_registration_email(user.email, Registration, confirmation_link)
                 return redirect('/about?message=expired_registration_token')
             return redirect('/about?message=invalid_registration_token')
-
-    @app.route("/logout", methods=["GET"])
-    @login_required
-    def logout_route():
-        logout_user()
-        return jsonify({"status": "success"})
     
     @app.route('/auth/google/callback', methods=['POST'])
     def google_auth_callback():

@@ -37,6 +37,7 @@
 </template>
   
   <script>
+import axios from 'axios';
 import { usePopupStore } from "@/store/popupStore";
 export default {
   data() {
@@ -53,31 +54,28 @@ export default {
       if (this.password !== this.confirmPassword) {
         const popupStore = usePopupStore();
         popupStore.showPopup("Passwords do not match!");
+        this.buttonText = "Sign up";
         return;
       }
 
-      const formData = new URLSearchParams();
+      const formData = new FormData();
       formData.append("new-email", this.email);
       formData.append("new-password", this.password);
 
-      fetch("/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
+      axios.post("/signup", formData)
+        .then(response => {
+          const data = response.data;
           if (data.status === "success") {
             this.$emit("signupSuccess");
           } else {
-            const popupStore = usePopupStore();
-            popupStore.showPopup(
-              data.message || "Signup failed. Please try again."
-            );
-            this.buttonText = "Sign up";
+            throw new Error(data.message || "Signup failed. Please try again.");
           }
+        })
+        .catch(error => {
+          console.error('Error during signup:', error);
+          const popupStore = usePopupStore();
+          popupStore.showPopup(error.message || "Signup failed. Please try again.");
+          this.buttonText = "Sign up";
         });
     },
   },

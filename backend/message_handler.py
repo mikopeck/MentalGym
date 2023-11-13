@@ -1,5 +1,5 @@
+import os
 import json
-
 import roles as roles
 import functions as fns
 import database.db_handlers as db
@@ -39,11 +39,16 @@ def update_system_role(user_id, role: roles, lesson_id=None):
     db.add_system_message(user_id, system_message(user_id, role), lesson_id)
 
 def system_message(user_id, file_name = None ):
+    current_script_directory = os.path.dirname(os.path.abspath(__file__))
+
     if not file_name:
         file_name = db.get_system_role(user_id)
 
-    system_message = ""
-    with open('SystemPrompts/' + file_name + '.txt', 'r') as file:
+    system_prompts_path = os.path.join(current_script_directory, 'SystemPrompts')
+
+    # Read the system message template
+    system_message_path = os.path.join(system_prompts_path, f'{file_name}.txt')
+    with open(system_message_path, 'r') as file:
         system_message = file.read()
 
     if "{user-profile}" in system_message:
@@ -60,7 +65,8 @@ def system_message(user_id, file_name = None ):
         system_message = system_message.replace("{profile-function}", str(fns.Profile))
 
     if "{base-persona}" in system_message:
-        with open('SystemPrompts/BaseAzalea.txt', 'r') as file:
+        base_persona_path = os.path.join(system_prompts_path, 'BaseAzalea.txt')
+        with open(base_persona_path, 'r') as file:
             persona = file.read()
             system_message = system_message.replace("{base-persona}", persona)
 

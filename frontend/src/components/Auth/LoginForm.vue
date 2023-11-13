@@ -27,6 +27,7 @@
 </template>
   
   <script>
+  import axios from 'axios';
 import { usePopupStore } from "@/store/popupStore";
 import { useAuthStore } from "@/store/authStore";
 
@@ -41,28 +42,26 @@ export default {
   methods: {
     handleSubmit() {
       this.buttonText = "Loading...";
-      const formData = new URLSearchParams();
+      const formData = new FormData();
       formData.append("email", this.email);
       formData.append("password", this.password);
 
-      fetch("/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
+      axios.post("/login", formData)
+        .then(response => {
+          const data = response.data;
           if (data.status === "success") {
             const authStore = useAuthStore();
             authStore.login();
-            location.reload();
+            this.$router.push("/");
           } else {
-            const popupStore = usePopupStore();
-            popupStore.showPopup("Login failed. Please try again.");
-            this.buttonText = "Log in";
+            throw new Error("Login failed. Please try again.");
           }
+        })
+        .catch(error => {
+          console.error("Error during login:", error);
+          const popupStore = usePopupStore();
+          popupStore.showPopup(error.message || "Login failed. Please try again.");
+          this.buttonText = "Log in";
         });
     },
   },

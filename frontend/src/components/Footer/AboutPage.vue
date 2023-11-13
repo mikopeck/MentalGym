@@ -14,11 +14,11 @@
             ascend to new heights in your personal and professional endeavors.
             Make your life meaningful. Create memories. The AI in this app is
             designed to help you succeed if you know exactly what you want to
-            achieve, but also to offer guidance and suggest a path when you are
-            feeling lost in life.
+            achieve, but also to offer guidance and suggest a path when you
+            feel lost in life.
           </p>
           <div class="ascent-container">
-            <button class="ascent-button" @click="redirectHome">
+            <button class="ascent-button" @click="redirectLogin">
               Begin your ascent
             </button>
           </div>
@@ -98,8 +98,8 @@ export default {
         popupStore.showPopup(this.popupMessage);
       }
     },
-    redirectHome() {
-      this.$router.push("/");
+    redirectLogin() {
+      this.$router.push("/login");
     },
   },
 };
@@ -133,7 +133,6 @@ export default {
     ),
     linear-gradient(to left, #00000000 90%, var(--background-color) 100%),
     linear-gradient(to bottom, #00000000 60%, var(--background-color) 100%),
-    linear-gradient(to top, #00000000 90%, var(--background-color) 100%),
     url("~@/assets/images/background_hued_web.png");
   background-position: center top;
   background-size: cover;
