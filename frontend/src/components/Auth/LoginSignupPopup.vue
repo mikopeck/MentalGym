@@ -24,7 +24,6 @@
       <div ref="googleButton"></div>
     </div>
   </div>
-  <div v-else>You are already signed in. Visit <a href="/">chat</a> to start or <a href="/settings">settings</a> to log out.</div>
 </template>  
   
   <script>
@@ -47,6 +46,13 @@ export default {
   },
   mounted() {
     this.loadGoogleIdentityServices();
+    if (this.loggedIn) {
+      const popupStore = usePopupStore();
+      popupStore.showPopup(
+        "You are already signed in. Visit settings to log out."
+      );
+      this.$router.push("/");
+    }
   },
   computed: {
     loggedIn() {

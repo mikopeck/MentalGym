@@ -27,28 +27,41 @@
 
 <script>
 import { useAdsStore } from "@/store/adsStore";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 
 export default {
   name: "AdPopup",
   setup() {
     const ads = useAdsStore();
     const messages = ref([
-      // 'Please consider donating:<br><a href="bitcoin:bc1qxpzep6ym99h5qecsm6kfmf8smaz32tn07zssvx">BTC - bc1qxpzep6ym99h5qecsm6kfmf8smaz32tn07zssvx</a>',
-      '<a href="/plans">Paid plans use more accurate and powerful models.</a>',
+      '<a href="/plans">Paid plans</a> use more accurate and powerful models.',
       'Your ad could appear here.. <a href="/contact">get in touch.</a>',
       'Would you recommend us to a friend? <br><a href="/contact">What could we do to make that happen?</a>',
-      'Join our community on <a href="https://twitter.com/AscendanceCloud">X</a> and <a href="https://discord.gg/SSGygda5DX">discord</a> stay up-to-date with the latest features.',
-      'Please consider <a href="https://buy.stripe.com/bIY6sg5154ZmaXu4gi">donating</a> to help this app grow faster!'
+      'Join our community on <a target="_blank" href="https://twitter.com/AscendanceCloud">X</a> and <a target="_blank" href="https://discord.gg/SSGygda5DX">discord</a> stay up-to-date with the latest features.',
+      'Please consider <a target="_blank" href="https://donate.stripe.com/fZe8Ao9hl63qe9GeUX">donating</a> to help this app grow faster!',
     ]);
     const randomMessage = computed(() => {
       const randomIndex = Math.floor(Math.random() * messages.value.length);
       return messages.value[randomIndex];
     });
-    function handleResponseClick() {
-      ads.hide();
-    }
 
+    const handleKeyPress = (event) => {
+      if (event.key === "Enter" && !ads.isLoading) {
+        handleResponseClick();
+      }
+    };
+
+    const handleResponseClick = () => {
+      ads.hide();
+    };
+
+    onMounted(() => {
+      window.addEventListener("keydown", handleKeyPress);
+    });
+
+    onUnmounted(() => {
+      window.removeEventListener("keydown", handleKeyPress);
+    });
     return {
       ads,
       randomMessage,
@@ -57,7 +70,6 @@ export default {
   },
 };
 </script>
-
 
 <style>
 .popup {

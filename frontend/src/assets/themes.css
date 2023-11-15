@@ -11,13 +11,14 @@
     --highlight-color: #cea8fc;
     --text-color: #f0f8ff;
     --text-color-rgb: 240, 248, 255;
+    --glow-color: #bb86fc;
 }
 
 .light-theme {
     --background-color: #f0f8ff;
     --background-color-rgb: 240, 248, 255;
     --background-haze: #f0f8fffd;
-    --background-color-1t: #7e14ff42;
+    --background-color-1t: #2a14ff42;
     --background-color-2t: #c8a0ff42;
     --element-color-1: #5503d169;
     --element-color-2: #6507d869;

@@ -8,14 +8,18 @@ export const useAuthStore = defineStore('auth', {
   }),
   actions: {
     async checkAuth() {
-      
+      console.log("Checking authentication");
       try {
         const response = await axios.get('/check-auth');
-        this.loggedIn = response.data.loggedIn;
+        if (response.data.loggedIn) {
+          this.login();
+        }
+        else { this.logout(); }
       } catch (error) {
         console.error('Error checking auth status:', error);
-        this.loggedIn = false;
+        this.logout();
       }
+      console.log("Auth:" + this.loggedIn);
     },
     login() {
       this.loggedIn = true;

@@ -2,9 +2,14 @@
 import { defineStore } from 'pinia';
 
 export const useThemeStore = defineStore('theme', {
-    state: () => ({
-        darkMode: JSON.parse(window.localStorage.getItem('darkMode')) || !(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    }),
+    state: () => {
+        //darkMode: JSON.parse(window.localStorage.getItem('darkMode')) || !(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        const storedDarkMode = window.localStorage.getItem('darkMode');
+
+        return {
+            darkMode: storedDarkMode !== null ? JSON.parse(storedDarkMode) : true
+        };
+    },
     actions: {
         toggleDarkMode() {
             this.darkMode = !this.darkMode;

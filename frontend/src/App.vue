@@ -63,12 +63,18 @@ export default {
     };
   },
   mounted() {
+    const authStore = useAuthStore();
     if (window.location.search === "?awake") {
-      const authStore = useAuthStore();
       authStore.login();
       const popupStore = usePopupStore();
       popupStore.showWelcomePopup();
       this.fetchRecentMessages();
+    }
+    const path = window.location.pathname;
+    if (path === "/" ||
+        path.includes("/lesson/") ||
+        path.includes("/challenge/")){
+          this.fetchRecentMessages();
     }
   },
   computed: {
@@ -186,6 +192,10 @@ export default {
               authStore.logout();
             }
           });
+      }
+      else{
+        console.log("Not logged in but tried to fetch messages...")
+        this.$router.push("/login");
       }
     },
   },

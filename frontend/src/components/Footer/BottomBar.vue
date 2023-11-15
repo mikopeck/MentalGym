@@ -6,6 +6,8 @@
       <span class="separator">·</span>
       <router-link to="/contact" class="text-link">Contact</router-link>
       <span class="separator">·</span>
+      <div class="text-link" @click="donateRedirect">Donate</div>
+      <span class="separator">·</span>
       <button @click="toggleTheme" class="dark-mode-btn">
         <img
           :src="themeIcon"
@@ -84,11 +86,13 @@ export default {
     },
   },
   methods: {
-    // Method to toggle dark mode
     toggleTheme() {
       const themeStore = useThemeStore();
       themeStore.toggleDarkMode();
     },
+    donateRedirect() {
+      window.open("https://donate.stripe.com/fZe8Ao9hl63qe9GeUX", '_blank');
+    }
   },
 };
 </script>
@@ -111,6 +115,7 @@ export default {
   background-color: var(--background-color-1t);
   backdrop-filter: blur(8px);
   box-shadow: 0 0 2px 2px var(--background-color-1t);
+  opacity: 0.8;
 }
 
 .footer-top,
@@ -136,4 +141,5 @@ export default {
 .text-link:hover {
   opacity: 0.6;
 }
+
 </style>
