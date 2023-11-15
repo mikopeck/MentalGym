@@ -139,7 +139,12 @@ export default {
           const retryAfterMessage = error.response.data?.error;
           popupStore.showPopup(retryAfterMessage);
         } else {
-          popupStore.showPopup("Error sending message:", error.response?.data?.error || error.message);
+          try{
+            popupStore.showPopup("Error sending message:", error.response?.data?.error || error.message);
+          }
+          catch (error){
+            popupStore.showPopup(error);
+          }
         }
       } finally {
         adStore.loaded();

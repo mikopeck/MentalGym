@@ -3,9 +3,15 @@
     <div class="background-gradient-container">
       <div class="about-main-container">
         <div class="reactive-subtitle">
-          <h1>Discover Your Potential with Ascendance·☁️</h1>
+          <h1>Unlock Your Potential with Ascendance·☁️</h1>
         </div>
         <div class="about-main-section">
+          <h3>Discover, Experience, Grow</h3>
+          <div class="ascent-container">
+            <button class="ascent-button" @click="redirectLogin">
+              Begin your ascent
+            </button>
+          </div>
           <p>
             As sentient civilizations uncover more laws of the universe and
             escape the gravity wells of their planets, the astonishing abundance
@@ -17,11 +23,6 @@
             achieve, but also to offer guidance and suggest a path when you
             feel lost in life.
           </p>
-          <div class="ascent-container">
-            <button class="ascent-button" @click="redirectLogin">
-              Begin your ascent
-            </button>
-          </div>
           <div class="reactive-subtitle"><h2>🛠How We Work</h2></div>
           <ul>
             <li>

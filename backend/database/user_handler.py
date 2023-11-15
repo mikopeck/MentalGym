@@ -6,9 +6,9 @@ from database.models import db, User
 
 # Rate limiting parameters
 DAILY_LIMITS = {
-    'free': 10,
-    'paid': 100,
-    'pro': 1000,
+    'free': 20,
+    'paid': 200,
+    'pro': 2000,
 }
 
 def is_within_limit(user):
@@ -30,6 +30,7 @@ def is_within_limit(user):
         return False, f"Request limit exceeded. Please take some time to think before you send another message."
     
     user.daily_request_count += 1
+    print(f"Requests: {user.daily_request_count}")
     user.last_request_time = now
     db.session.commit()
 

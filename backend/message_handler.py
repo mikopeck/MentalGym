@@ -34,7 +34,7 @@ def update_system_role(user_id, role: roles, lesson_id=None):
         db.update_lesson(user_id, lesson_id,system_role=role)
     else:
         db.set_system_role(user_id, role)
-    print("Updating system role: ", role)
+    print(f"Updating system role{lesson_id}: {role}")
     db.remove_latest_system_message(user_id, lesson_id)
     db.add_system_message(user_id, system_message(user_id, role), lesson_id)
 

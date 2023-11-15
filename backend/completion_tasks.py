@@ -20,6 +20,7 @@ def gather_profile(user_id):
     # Force profile if message limit
     if len(db.get_recent_messages(user_id)) == db.history_limit:
         mh.update_system_role(user_id, roles.ProfileCreate)
+        messages = mh.prepare_session_messages(user_id)
         function_call = {"name": function[0]['name']}
 
     for attempt in range(function_max_retries):
@@ -32,14 +33,20 @@ def gather_profile(user_id):
         if profile_data:
             db.set_profile(user_id, json.dumps(profile_data))
             mh.update_system_role(user_id, roles.SuggestContent)
-            return suggest_content(user_id)
+            return suggest_content(user_id, False, False)
                  
     print("ERROR: failed function!! defaulting to no functions...")
     mh.update_system_role(user_id, roles.ProfileGather)
+    messages = mh.prepare_session_messages(user_id)
     return generate_response(user_id, messages), None
 
-def suggest_content(user_id, set_challenge = True):
+def suggest_content(user_id, set_challenge = True, set_lesson = True):
     messages = mh.prepare_session_messages(user_id)
+    if not set_challenge and not set_lesson:
+        response = generate_response(user_id, messages)
+        identify_content(user_id, response["choices"][0]["message"]['content'])
+        return response, None
+
     functions = [fns.Lesson]
     if set_challenge:
         functions += [fns.Challenge]
@@ -60,6 +67,7 @@ def suggest_content(user_id, set_challenge = True):
             else:
                 challenge_name = remove_emojis_except_first(challenge_data.get('challenge_name'))
             db.add_challenge(user_id, challenge_name)
+            mh.update_system_role(user_id, roles.AfterContent)
             return after_content(user_id)
 
         lesson_data = try_get_object(fns.Lesson, response_message)
@@ -79,7 +87,6 @@ def suggest_content(user_id, set_challenge = True):
     return response, None
 
 def after_content(user_id):
-    mh.update_system_role(user_id, roles.AfterContent)
     return generate_response(user_id, mh.prepare_session_messages(user_id)), None
 
 def challenge_progress(user_id, challenge_id):
@@ -96,8 +103,8 @@ def challenge_progress(user_id, challenge_id):
                 if completion.get('completion') == True:
                     db.update_challenge(user_id, challenge_id)
                     db.add_completion_message(user_id, challenge_id=challenge_id)
-                    mh.update_system_role(user_id, roles.SuggestContent)
-                    return suggest_content(user_id, False), None
+                    mh.update_system_role(user_id, roles.AfterContent)
+                    return None
                 else:
                     print("failed completion- respond without completion function")
                     return generate_response(user_id, messages)
@@ -160,11 +167,13 @@ def quiz_feedback(user_id, lesson_id):
             else:
                 print("quiz failed")
                 mh.update_system_role(user_id, roles.QuizFeedback, lesson_id)
+                messages = mh.prepare_session_messages(user_id, lesson_id) 
                 return generate_response(user_id, messages), lesson_id
                     
-    print("ERROR: failed grading function!! defaulting to quiz create again...")
-    mh.update_system_role(user_id, roles.QuizCreate, lesson_id)
-    return quiz_create(user_id, lesson_id)
+    print("ERROR: failed grading function!! defaulting to word feedback...")
+    mh.update_system_role(user_id, roles.QuizFeedback, lesson_id)
+    messages = mh.prepare_session_messages(user_id, lesson_id) 
+    return generate_response(user_id, messages), lesson_id
 
 #### private ####
 
@@ -176,7 +185,7 @@ def try_get_object(fcn, response_message):
         required_keys = fcn['parameters']['required']
 
         # Check if all required keys are present and have non-empty values
-        all_required_present = all(key in profile_args and profile_args[key] for key in required_keys)
+        all_required_present = all(key in profile_args and (profile_args[key] is not None and (profile_args[key] or profile_args[key] == 0)) for key in required_keys)
 
         if all_required_present:
             # Extract all keys (both required and optional) for parameters

@@ -7,7 +7,8 @@ import message_handler as mh
 
 def progress_chat(user_id, user_message):
     db.add_user_message(user_id, user_message)
-    return progress(user_id, detect_content_actions(user_id, user_message))
+    lesson_id, no_redirect = detect_content_actions(user_id, user_message)
+    return progress(user_id, lesson_id, no_redirect)
 
 def progress_lesson(user_id, user_message, lesson_id):
     if user_message == "Leave lesson.":
@@ -23,7 +24,7 @@ def progress_challenge(user_id, user_message, challenge_id):
     response = cts.challenge_progress(user_id, challenge_id)
     db.add_ai_response(user_id, response, roles.ChallengeGuide, challenge_id=challenge_id)
 
-def progress(user_id, lesson_id):
+def progress(user_id, lesson_id, no_redirect = False):
     db.clear_user_actions(user_id, lesson_id)
 
     # Progress chat
@@ -32,7 +33,10 @@ def progress(user_id, lesson_id):
     if current_sys_role == roles.ProfileGather:
         response, lesson_id = cts.gather_profile(user_id)
     elif current_sys_role == roles.SuggestContent:
-        response, lesson_id = cts.suggest_content(user_id)
+        if no_redirect:
+            response, lesson_id = cts.suggest_content(user_id, False, False)
+        else:
+            response, lesson_id = cts.suggest_content(user_id)
     elif current_sys_role == roles.AfterContent:
         response, lesson_id = cts.after_content(user_id)
     elif current_sys_role == roles.LessonCreate:
@@ -52,13 +56,18 @@ def progress(user_id, lesson_id):
 
     # Progress roles and add actions
     current_sys_role = db.get_system_role(user_id, lesson_id)
-    if (current_sys_role == roles.LessonCreate) | (current_sys_role == roles.QuizFeedback):
-        mh.update_system_role(user_id, roles.LessonGuide, lesson_id)
-        current_sys_role = roles.LessonGuide
-
     if current_sys_role == roles.LessonGuide:
         db.add_action(user_id, "Continue to quiz.", lesson_id)
         db.add_action(user_id, "Leave lesson.", lesson_id)
+        
+    if (current_sys_role == roles.LessonCreate) | (current_sys_role == roles.QuizFeedback):
+        if current_sys_role == roles.LessonCreate:
+            db.add_action(user_id, "Quiz me!", lesson_id)
+        else:
+            db.add_action(user_id, "Try a new quiz.", lesson_id)
+        db.add_action(user_id, "Leave lesson.", lesson_id)
+        mh.update_system_role(user_id, roles.LessonGuide, lesson_id)
+        current_sys_role = roles.LessonGuide
 
     if current_sys_role == roles.QuizCreate:
         mh.update_system_role(user_id, roles.QuizFeedback, lesson_id)
@@ -79,10 +88,13 @@ def progress(user_id, lesson_id):
 def detect_content_actions(user_id, user_message):
     if (user_message == "Continue...") & ("Continue..." in db.get_actions(user_id)):
         mh.update_system_role(user_id, roles.AfterContent)
-        return None
+        return None, False
+    
+    if (user_message == "Suggest.") & ("Suggest." in db.get_actions(user_id)):
+        return None, True
 
     if ':' not in user_message:
-        return None
+        return None, False
     
     action, content_name = user_message.split(':', 1)
     action = action.strip()
@@ -94,14 +106,16 @@ def detect_content_actions(user_id, user_message):
             db.remove_user_action(user_id,user_message)
             db.add_action(user_id, "Continue...")
             mh.update_system_role(user_id, roles.LessonCreate, lesson_id)
-            return lesson_id
+            return lesson_id, False
         else:
             print(f"Lesson '{content_name}' not found in available actions.")
-
     elif action.lower() == "accept challenge":
         if user_message in current_actions:
             db.add_challenge(user_id, content_name)
             db.remove_user_action(user_id,user_message)
             mh.update_system_role(user_id, roles.AfterContent)
+            return None, True
         else:
             print(f"Challenge '{content_name}' not found in available actions.")
+
+    return None, False

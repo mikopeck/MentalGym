@@ -7,7 +7,7 @@
       width="32"
       height="32"
       class="logo"
-      @click="redirectToHome"
+      @click="redirectToAbout"
     />
     <div class="app-title" @click="redirectToHome">{{ pageTitle }}</div>
 
@@ -56,6 +56,9 @@ export default {
     },
     redirectToHome() {
       this.$router.push("/");
+    },
+    redirectToAbout() {
+      this.$router.push("/about");
     },
   },
 };
