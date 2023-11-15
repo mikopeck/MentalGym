@@ -55,14 +55,20 @@ def suggest_content(user_id, set_challenge = True):
         challenge_data = try_get_object(fns.Challenge, response_message)
         if challenge_data:
             challenge_emoji = extract_single_emoji(challenge_data.get('challenge_emoji'))
-            challenge_name = remove_emojis_except_first(challenge_emoji + challenge_data.get('challenge_name'))
+            if challenge_emoji:
+                challenge_name = remove_emojis_except_first(challenge_emoji + challenge_data.get('challenge_name'))
+            else:
+                challenge_name = remove_emojis_except_first(challenge_data.get('challenge_name'))
             db.add_challenge(user_id, challenge_name)
             return after_content(user_id)
 
         lesson_data = try_get_object(fns.Lesson, response_message)
         if lesson_data:
             lesson_emoji = extract_single_emoji(lesson_data.get('lesson_emoji'))
-            lesson_name = remove_emojis_except_first(lesson_emoji + lesson_data.get('lesson_name'))
+            if lesson_emoji:
+                lesson_name = remove_emojis_except_first(lesson_emoji + lesson_data.get('lesson_name'))
+            else:
+                lesson_name = remove_emojis_except_first(lesson_data.get('lesson_name'))
             lesson_id = db.add_lesson(user_id, lesson_name)
             db.add_action(user_id, "Continue...")
             return lesson_create(user_id, lesson_id, lesson_name)
@@ -162,15 +168,27 @@ def quiz_feedback(user_id, lesson_id):
 
 #### private ####
 
-def try_get_object(fcn: fns,response_message):
+def try_get_object(fcn, response_message):
     if response_message["function_call"]["name"] == fcn['name']:
         profile_args = json.loads(response_message["function_call"]["arguments"])
         
-        # Extract keys for parameters
-        keys = list(fcn['parameters']['properties'].keys())
-        
-        # Filter profile arguments to only include valid keys
-        return {k: profile_args.get(k) for k in keys if profile_args.get(k) is not None}
+        # Extract required keys from the function definition
+        required_keys = fcn['parameters']['required']
+
+        # Check if all required keys are present and have non-empty values
+        all_required_present = all(key in profile_args and profile_args[key] for key in required_keys)
+
+        if all_required_present:
+            # Extract all keys (both required and optional) for parameters
+            all_keys = list(fcn['parameters']['properties'].keys())
+
+            # Filter profile arguments to only include valid keys
+            return {k: profile_args.get(k) for k in all_keys if profile_args.get(k) is not None}
+        else:
+            return None
+
+    return None
+
     
 def identify_content(user_id, message):
     system_msg = mh.system_message(user_id, roles.IdentifyContent)

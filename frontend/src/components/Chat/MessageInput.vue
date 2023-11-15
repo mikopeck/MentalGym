@@ -134,14 +134,12 @@ export default {
         this.message = "";
         this.adjustHeight();
       } catch (error) {
+        const popupStore = usePopupStore();
         if (error.response && error.response.status === 429) {
-          const retryAfterMessage = error.response.data.error;
-          const popupStore = usePopupStore();
+          const retryAfterMessage = error.response.data?.error;
           popupStore.showPopup(retryAfterMessage);
         } else {
-          console.error("Error sending message:", error.response.data.error);
-          const popupStore = usePopupStore();
-          popupStore.showPopup("An error occurred while sending your message.");
+          popupStore.showPopup("Error sending message:", error.response?.data?.error || error.message);
         }
       } finally {
         adStore.loaded();

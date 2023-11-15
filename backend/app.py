@@ -34,9 +34,6 @@ db.init_app(app)
 migrate = Migrate(app, db)
 CORS(app)
 
-# with app.app_context():
-#     db.create_all()
-
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -44,12 +41,6 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     session = db.session
     return session.get(User, int(user_id))
-
-limiter = Limiter(
-    key_func=get_remote_address,
-    default_limits=["6000 per day", "1200 per hour"],
-)
-limiter.init_app(app)
 
 # Routes
 from routes.auth_routes import init_auth_routes
