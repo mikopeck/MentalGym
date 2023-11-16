@@ -112,6 +112,7 @@ export default {
         this.$router.push("/login");
       }
       if (newValue && this.shouldShowChat) {
+        console.log("login fetch");
         this.fetchRecentMessages();
       }
     },

@@ -110,6 +110,18 @@ export default {
         popupStore.showPopup("Message is too long.");
         return;
       }
+      if ((msg == "Leave challenge.") & isChallenge) {
+        this.message = "";
+        this.adjustHeight();
+        this.$router.push("/");
+        return;
+      }
+      if ((msg == "Leave lesson.") & isLesson) {
+        this.message = "";
+        this.adjustHeight();
+        this.$router.push("/");
+        return;
+      }
 
       this.sending = true;
       const adStore = useAdsStore();
@@ -139,10 +151,12 @@ export default {
           const retryAfterMessage = error.response.data?.error;
           popupStore.showPopup(retryAfterMessage);
         } else {
-          try{
-            popupStore.showPopup("Error sending message:", error.response?.data?.error || error.message);
-          }
-          catch (error){
+          try {
+            popupStore.showPopup(
+              "Error sending message:",
+              error.response?.data?.error || error.message
+            );
+          } catch (error) {
             popupStore.showPopup(error);
           }
         }
@@ -234,7 +248,7 @@ textarea:focus {
 }
 
 .send-btn:hover {
-  background-color: var(--element-color-1);;
+  background-color: var(--element-color-1);
 }
 
 .send-icon {

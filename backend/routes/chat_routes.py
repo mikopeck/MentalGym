@@ -53,6 +53,8 @@ def init_chat_routes(app):
         actions = []
         if not challenge_id:
             actions=dbh.get_actions(current_user.id, lesson_id)
+        else:
+            actions=["Leave challenge."]
 
         subheading = None
         if lesson_id:
@@ -87,5 +89,5 @@ def init_chat_routes(app):
         progress_challenge(current_user.id, userInput, challenge_id)
         return jsonify(
             messages=dbh.get_recent_messages(current_user.id, challenge_id=challenge_id),
-            actions=[]
+            actions=["Leave challenge."]
         )

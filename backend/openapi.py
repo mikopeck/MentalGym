@@ -1,9 +1,12 @@
 import openai
 import time
+import requests
+import json
 
 #### settings ####
-max_retries=10
-delay=10
+max_retries = 5
+delay = 10
+request_timeout = 20  # Timeout for API requests in seconds
 
 TOKEN_CAP = 500
 LESSON_TOKENS = 1000
@@ -11,33 +14,47 @@ LESSON_TOKENS = 1000
 GPT3_5 = "gpt-3.5-turbo-1106"
 GPT4 = "gpt-4"
 
-def generate_response(user_id, messages, functions = None, function_call = "none", model = GPT3_5, tokens=TOKEN_CAP):
+def generate_response(user_id, messages, functions=None, function_call="none", model=GPT3_5, tokens=TOKEN_CAP):
+    headers = {
+        "Authorization": f"Bearer {openai.api_key}",
+        "Content-Type": "application/json"
+    }
+
     for attempt in range(max_retries):
         try:
+            data = {
+                "user": str(user_id),
+                "model": model,
+                "messages": messages,
+                "temperature": 0.1 if functions else 0.2,
+                "max_tokens": tokens
+            }
+
             if functions:
-                print(f"Requesting {model} response {tokens}: \n{messages}\n--FNS:{functions}")
-                response = openai.ChatCompletion.create(
-                    user=str(user_id),
-                    model=model,
-                    messages=messages,
-                    functions=functions,
-                    function_call=function_call,
-                    temperature=0.1,
-                    max_tokens=tokens
-                )
-                print(response)
-                return response
+                data["functions"] = functions
+                data["function_call"] = function_call
+                print(f"Requesting {model} response with {functions} mode {function_call}: \n{messages}")
             else:
                 print("Requesting AI response: ", messages)
-                response = openai.ChatCompletion.create(
-                    user=str(user_id),
-                    model=model,
-                    messages=messages,
-                    temperature=0.2,
-                    max_tokens=tokens
-                )
-                print(response)
-                return response
+
+            response = requests.post(
+                "https://api.openai.com/v1/chat/completions",
+                headers=headers,
+                data=json.dumps(data),
+                timeout=request_timeout
+            )
+
+            if response.status_code == 200:
+                response_data = response.json()
+                print(response_data)
+                return response_data
+            else:
+                print(f"Request failed with status code {response.status_code}")
+                time.sleep(delay)
+
+        except requests.exceptions.Timeout:
+            print(f"Request timed out after {request_timeout} seconds. Retrying...")
+            time.sleep(delay)
         except Exception as e:
             print(f"An error occurred: {e}. Retrying in {delay} seconds...")
             time.sleep(delay)
@@ -46,7 +63,41 @@ def generate_response(user_id, messages, functions = None, function_call = "none
         return None
 
 def moderate(user_input):
-    response = openai.Moderation.create(input=user_input)
-    output = response["results"][0]
-    violation = output["flagged"]
-    return violation, output
+    headers = {
+        "Authorization": f"Bearer {openai.api_key}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "input": user_input
+    }
+
+    print(f"Attempting moderation of {user_input}")
+    for attempt in range(max_retries):
+        try:
+            print(f"(Attempt {attempt + 1}/{max_retries})...")
+            response = requests.post(
+                "https://api.openai.com/v1/moderations",
+                headers=headers,
+                data=json.dumps(data),
+                timeout=request_timeout
+            )
+
+            if response.status_code == 200:
+                response_data = response.json()
+                output = response_data["results"][0]
+                violation = output["flagged"]
+                print("Moderation completed successfully.")
+                return violation, output
+            else:
+                print(f"Request failed with status code {response.status_code}. Retrying...")
+                time.sleep(delay)
+
+        except requests.exceptions.Timeout:
+            print(f"Request timed out after {request_timeout} seconds. Retrying...")
+            time.sleep(delay)
+        except Exception as e:
+            print(f"An error occurred: {e}. Retrying in {delay} seconds...")
+            time.sleep(delay)
+    else:
+        print("Max retries reached. Unable to complete moderation.")
+        return None, None

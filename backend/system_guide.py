@@ -11,9 +11,6 @@ def progress_chat(user_id, user_message):
     return progress(user_id, lesson_id, no_redirect)
 
 def progress_lesson(user_id, user_message, lesson_id):
-    if user_message == "Leave lesson.":
-        return None
-    
     db.add_user_message(user_id, user_message, lesson_id=lesson_id)
     if user_message == "Continue to quiz.":
         mh.update_system_role(user_id, roles.QuizCreate, lesson_id)

@@ -37,7 +37,7 @@ export default {
       '<a href="/plans">Paid plans</a> use more accurate and powerful models.',
       'Your ad could appear here.. <a href="/contact">get in touch.</a>',
       'Would you recommend us to a friend? <br><a href="/contact">What could we do to make that happen?</a>',
-      'Join our community on <a target="_blank" href="https://twitter.com/AscendanceCloud">X</a> and <a target="_blank" href="https://discord.gg/SSGygda5DX">discord</a> stay up-to-date with the latest features.',
+      'Join our community on <a target="_blank" href="https://twitter.com/AscendanceCloud">X</a> and <a target="_blank" href="https://discord.gg/SSGygda5DX">Discord</a> to stay up-to-date with the latest features.',
       'Please consider <a target="_blank" href="https://donate.stripe.com/fZe8Ao9hl63qe9GeUX">donating</a> to help this app grow faster!',
     ]);
     const randomMessage = computed(() => {
