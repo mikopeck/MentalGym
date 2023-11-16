@@ -110,13 +110,13 @@ export default {
         popupStore.showPopup("Message is too long.");
         return;
       }
-      if ((msg == "Leave challenge.") & isChallenge) {
+      if ((msg === "Leave challenge.") && isChallenge) {
         this.message = "";
         this.adjustHeight();
         this.$router.push("/");
         return;
       }
-      if ((msg == "Leave lesson.") & isLesson) {
+      if ((msg === "Leave lesson.") && isLesson) {
         this.message = "";
         this.adjustHeight();
         this.$router.push("/");
