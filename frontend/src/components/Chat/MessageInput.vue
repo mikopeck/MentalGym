@@ -110,6 +110,9 @@ export default {
         popupStore.showPopup("Message is too long.");
         return;
       }
+      const currentPath = this.$route.path;
+      const isLesson = currentPath.includes("/lesson/");
+      const isChallenge = currentPath.includes("/challenge/");
       if ((msg === "Leave challenge.") && isChallenge) {
         this.message = "";
         this.adjustHeight();
@@ -130,9 +133,6 @@ export default {
       let formData = new FormData();
       formData.append("message", msg);
 
-      const currentPath = this.$route.path;
-      const isLesson = currentPath.includes("/lesson/");
-      const isChallenge = currentPath.includes("/challenge/");
 
       if (isLesson) {
         formData.append("lesson_id", currentPath.split("/").pop());
