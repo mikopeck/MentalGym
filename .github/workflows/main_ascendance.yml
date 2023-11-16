@@ -77,8 +77,3 @@ jobs:
           app-name: 'Ascendance'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_BD124C33D43E4C2C93D969352D2EDF91 }}
-
-      - name: Delete artifact
-        uses: actions/delete-artifact@v1
-        with:
-          name: python-app
