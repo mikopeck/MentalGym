@@ -89,6 +89,7 @@ class ChatHistory(db.Model):
 
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenge.id'), nullable=True)
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), nullable=True)
+    message_type = db.Column(db.String(50), default='message')
     
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

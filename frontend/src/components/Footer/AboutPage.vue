@@ -125,6 +125,12 @@ export default {
   align-items: center;
 }
 
+h3 {
+  text-align: center;
+  font-weight: 700;
+  text-shadow: 0 0 5px #bb86fc, 0 0 10px #bb86fc;
+}
+
 .background-gradient-container {
   position: relative;
   background-image: linear-gradient(

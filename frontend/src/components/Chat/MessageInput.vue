@@ -113,13 +113,13 @@ export default {
       const currentPath = this.$route.path;
       const isLesson = currentPath.includes("/lesson/");
       const isChallenge = currentPath.includes("/challenge/");
-      if ((msg === "Leave challenge.") && isChallenge) {
+      if (msg === "Leave challenge." && isChallenge) {
         this.message = "";
         this.adjustHeight();
         this.$router.push("/");
         return;
       }
-      if ((msg === "Leave lesson.") && isLesson) {
+      if (msg === "Leave lesson." && isLesson) {
         this.message = "";
         this.adjustHeight();
         this.$router.push("/");
@@ -132,7 +132,6 @@ export default {
 
       let formData = new FormData();
       formData.append("message", msg);
-
 
       if (isLesson) {
         formData.append("lesson_id", currentPath.split("/").pop());
@@ -147,19 +146,16 @@ export default {
         this.adjustHeight();
       } catch (error) {
         const popupStore = usePopupStore();
-        if (error.response && error.response.status === 429) {
-          const retryAfterMessage = error.response.data?.error;
-          popupStore.showPopup(retryAfterMessage);
+        let errorMessage = "Error sending message: ";
+
+        if (error.response) {
+          errorMessage += error.response.data?.error || `Server responded with status code ${error.response.status}`;
+        } else if (error.request) {
+          errorMessage += "No response received from server. Please check your network connection.";
         } else {
-          try {
-            popupStore.showPopup(
-              "Error sending message:",
-              error.response?.data?.error || error.message
-            );
-          } catch (error) {
-            popupStore.showPopup(error);
-          }
+          errorMessage += error.message;
         }
+        popupStore.showPopup(errorMessage);
       } finally {
         adStore.loaded();
         this.sending = false;

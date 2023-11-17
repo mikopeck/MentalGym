@@ -1,5 +1,5 @@
 from database.models import db, User, ChatHistory, Challenge, Lesson, UserAction, Achievement, UserAchievement, Feedback
-from utils import decode_if_needed
+from utils import decode_if_needed, extract_single_emoji
 from datetime import datetime
 
 history_limit = 16
@@ -16,18 +16,19 @@ def add_user_message(user_id, message_content, challenge_id=None, lesson_id=None
     db.session.add(message)
     db.session.commit()
 
-def add_ai_response(user_id, response, sys_role, challenge_id=None, lesson_id=None):
+def add_ai_response(user_id, response, sys_role, challenge_id=None, lesson_id=None, message_type="message"):
     ai_message = response['choices'][0]['message']['content']
-    add_ai_message(user_id, ai_message, sys_role, challenge_id, lesson_id)
+    add_ai_message(user_id, ai_message, sys_role, challenge_id, lesson_id, message_type)
 
-def add_ai_message(user_id, message_content, sys_role, challenge_id=None, lesson_id=None):
+def add_ai_message(user_id, message_content, sys_role, challenge_id=None, lesson_id=None, message_type="message"):
     message = ChatHistory(
         user_id=user_id, 
         message=decode_if_needed(message_content), 
         role="assistant", 
         system_role=sys_role,
         challenge_id=challenge_id,
-        lesson_id=lesson_id
+        lesson_id=lesson_id,
+        message_type=message_type
     )
     db.session.add(message)
     db.session.commit()
@@ -84,6 +85,10 @@ def get_recent_messages(user_id, lesson_id=None, challenge_id=None):
     recent_messages = recent_messages[::-1]
     return [{"role": msg.role, "content": msg.message, "system_role": msg.system_role} for msg in recent_messages]
 
+def get_lesson_message(user_id, lesson_id):
+    message = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, message_type="lesson").first()
+    return message.message if message else None
+
 def get_api_messages(user_id, lesson_id=None, challenge_id=None):
     query = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, challenge_id=challenge_id)
     
@@ -93,7 +98,6 @@ def get_api_messages(user_id, lesson_id=None, challenge_id=None):
     recent_messages = query.order_by(ChatHistory.id.desc()).limit(history_limit).all()
     recent_messages = recent_messages[::-1]
     return [{"role": msg.role, "content": msg.message} for msg in recent_messages]
-
 
 def set_system_role(user_id, role):
     user = User.query.get(user_id)
@@ -165,6 +169,20 @@ def get_user_achievements(user_id):
     achievements = db.session.query(Achievement.name).join(UserAchievement).filter(UserAchievement.user_id == user_id).all()
     return [achievement.name for achievement in achievements]
 
+# Profile
+def get_complete_user_data(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return None
+
+    user_data = {
+        "email": user.email,
+        "tier": user.tier,
+        "user": user.profile,
+        "tutor": user.ai_tutor_profile,
+    }
+    return user_data
+
 def set_profile(user_id, profile_data):
     user = User.query.get(user_id)
     if user:
@@ -200,6 +218,8 @@ def set_user_content(user_id, content_description):
         db.session.commit()
 
 def add_challenge(user_id, challenge_name, user_started = True):
+    if not extract_single_emoji(challenge_name):
+        challenge_name = f"❔{challenge_name}"
     challenge = Challenge(user_id=user_id, challenge_name=challenge_name, completion_date=None)
     db.session.add(challenge)
     db.session.commit()
@@ -218,6 +238,8 @@ def update_challenge(user_id, challenge_id):
         challenge.completion_date = datetime.now()
 
 def add_lesson(user_id, lesson_name, user_started = True):
+    if not extract_single_emoji(lesson_name):
+        lesson_name = f"❓{lesson_name}"
     lesson = Lesson(user_id=user_id, lesson_name=lesson_name, completion_date=None, system_role=None)
     db.session.add(lesson)
     db.session.commit()

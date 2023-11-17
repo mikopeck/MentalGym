@@ -53,12 +53,14 @@ def progress(user_id, lesson_id, no_redirect = False):
 
     # Progress roles and add actions
     current_sys_role = db.get_system_role(user_id, lesson_id)
+    message_type = "message"
     if current_sys_role == roles.LessonGuide:
         db.add_action(user_id, "Continue to quiz.", lesson_id)
         db.add_action(user_id, "Leave lesson.", lesson_id)
         
     if (current_sys_role == roles.LessonCreate) | (current_sys_role == roles.QuizFeedback):
         if current_sys_role == roles.LessonCreate:
+            message_type = "lesson"
             db.add_action(user_id, "Quiz me!", lesson_id)
         else:
             db.add_action(user_id, "Try a new quiz.", lesson_id)
@@ -67,6 +69,7 @@ def progress(user_id, lesson_id, no_redirect = False):
         current_sys_role = roles.LessonGuide
 
     if current_sys_role == roles.QuizCreate:
+        message_type = "quiz"
         mh.update_system_role(user_id, roles.QuizFeedback, lesson_id)
         current_sys_role = roles.QuizFeedback
         db.add_action(user_id, "Leave lesson.", lesson_id)
@@ -77,10 +80,10 @@ def progress(user_id, lesson_id, no_redirect = False):
         db.add_action(user_id, "Suggest.")
 
     if (current_sys_role == roles.LessonGuide) | (current_sys_role == roles.QuizFeedback):
-        db.add_ai_response(user_id, response, current_sys_role, lesson_id=lesson_id)
+        db.add_ai_response(user_id, response, current_sys_role, lesson_id=lesson_id, message_type=message_type)
         return lesson_id
-    else: 
-        db.add_ai_response(user_id, response, current_sys_role)
+    else:
+        db.add_ai_response(user_id, response, current_sys_role, message_type=message_type)
 
 def detect_content_actions(user_id, user_message):
     if (user_message == "Continue...") & ("Continue..." in db.get_actions(user_id)):

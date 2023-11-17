@@ -79,6 +79,7 @@ def suggest_content(user_id, set_challenge = True, set_lesson = True):
                 lesson_name = remove_emojis_except_first(lesson_data.get('lesson_name'))
             lesson_id = db.add_lesson(user_id, lesson_name)
             db.add_action(user_id, "Continue...")
+            mh.update_system_role(user_id, roles.LessonCreate, lesson_id)
             return lesson_create(user_id, lesson_id, lesson_name)
             
     print("ERROR: failed function!! defaulting to no functions...")
@@ -125,7 +126,6 @@ def lesson_create(user_id, lesson_id, lesson_name = None):
         response = generate_response(user_id, tutor_create_message, tokens=LESSON_TOKENS)
         db.set_tutor(user_id, response['choices'][0]['message']['content'])
 
-    mh.update_system_role(user_id, roles.LessonCreate, lesson_id)
     return generate_response(user_id, mh.prepare_session_messages(user_id, lesson_id)+mh.user_message("Lesson topic: "+lesson_name), tokens=LESSON_TOKENS), lesson_id # TODO: for paid model=GPT4
 
 def lesson_guide(user_id, lesson_id):
@@ -141,8 +141,23 @@ def lesson_guide(user_id, lesson_id):
     return response, lesson_id
 
 def quiz_create(user_id, lesson_id):
-    # TODO: model=GPT4 for paid users
-    return generate_response(user_id, mh.prepare_session_messages(user_id, lesson_id)), lesson_id
+    messages = mh.prepare_quiz_messages(user_id, lesson_id) 
+    function = [fns.CreateQuiz]
+    function_call = {"name": function[0]['name']}
+
+    for attempt in range(function_max_retries):
+        response = generate_response(user_id, messages, function, function_call)
+        response_message = response["choices"][0]["message"]
+        if not response_message.get("function_call"):
+            continue
+        
+        quiz_data = extract_valid_quiz_questions(response_message)
+        if quiz_data:
+            print(quiz_data)
+            return response, lesson_id
+
+    # Couldn't create json quiz, default wildquiz
+    return generate_response(user_id, messages), lesson_id
 
 def quiz_feedback(user_id, lesson_id):
     mh.update_system_role(user_id, roles.QuizGrade, lesson_id)
@@ -198,6 +213,36 @@ def try_get_object(fcn, response_message):
 
     return None
 
+def extract_valid_quiz_questions(quiz_response):
+    try:
+        quiz_data = json.loads(quiz_response["function_call"]["arguments"])
+        valid_questions = {}
+        valid_count = 0
+
+        # Validate and add each question if valid
+        for i in range(1, 6):
+            question_key = f"question_{i}"
+            
+            # Check if the question object exists and is a dictionary
+            if question_key in quiz_data and isinstance(quiz_data[question_key], dict):
+                question = quiz_data[question_key]
+
+                if i <= 3:  # For the first three questions
+                    required_props = ["text", "correct_choice", "wrong_choices"]
+                    if all(prop in question and question[prop] for prop in required_props) and \
+                       isinstance(question["wrong_choices"], list) and len(question["wrong_choices"]) == 3:
+                        valid_questions[question_key] = question
+                        valid_count += 1
+                else:  # For the last two questions
+                    required_props = ["text", "answer"]
+                    if all(prop in question and question[prop] is not None for prop in required_props) and \
+                       isinstance(question["answer"], bool):
+                        valid_questions[question_key] = question
+                        valid_count += 1
+
+        return valid_questions if valid_count >= 3 else None
+    except (json.JSONDecodeError, KeyError):
+        return None
     
 def identify_content(user_id, message):
     system_msg = mh.system_message(user_id, roles.IdentifyContent)

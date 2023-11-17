@@ -2,6 +2,16 @@
   <div class="page-main-container">
     <h1 class="page-title">Profile</h1>
     <div class="page-main-section">
+          <div class="profile-section">
+      <h2 class="section-title">Email</h2>
+      <p class="profile-info">{{ profile.email }}</p>
+    </div>
+
+    <div class="profile-section">
+      <h2 class="section-title">Subscription Tier</h2>
+      <p class="profile-info">{{ profile.tier }}</p>
+    </div>
+    <br>
       <h2 class="section-title">User Profile</h2>
       <textarea
         ref="userTextarea"
@@ -50,6 +60,8 @@ export default {
       profile: {
         user: "",
         tutor: "",
+        email: "",
+        tier: "",
       },
     };
   },
@@ -133,6 +145,11 @@ export default {
   margin-top: 16px;
   width: 100%;
   max-width: 720px;
+}
+
+.profile-info {
+  font-size: 16px;
+  color: var(--text-color);
 }
 
 .section-title {

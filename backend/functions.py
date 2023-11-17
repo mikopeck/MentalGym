@@ -181,3 +181,111 @@ LessonToQuiz = {
         "required": ["continue"],
     },
 }
+
+CreateQuiz = {
+    "name": "create_quiz",
+    "description": "Create a quiz with a set of questions. The first three questions will each have one correct choice and three wrong choices, followed by two true/false questions.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "question_1": {
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "description": "The text of the first question."
+                    },
+                    "correct_choice": {
+                        "type": "string",
+                        "description": "The correct choice for the first question."
+                    },
+                    "wrong_choices": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 3,
+                        "maxItems": 3,
+                        "description": "The three wrong choices for the first question."
+                    }
+                },
+                "required": ["text", "correct_choice", "wrong_choices"]
+            },
+            "question_2": {
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "description": "The text of the second question."
+                    },
+                    "correct_choice": {
+                        "type": "string",
+                        "description": "The correct choice for the second question."
+                    },
+                    "wrong_choices": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 3,
+                        "maxItems": 3,
+                        "description": "The three wrong choices for the second question."
+                    }
+                },
+                "required": ["text", "correct_choice", "wrong_choices"]
+            },
+            "question_3": {
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "description": "The text of the third question."
+                    },
+                    "correct_choice": {
+                        "type": "string",
+                        "description": "The correct choice for the third question."
+                    },
+                    "wrong_choices": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 3,
+                        "maxItems": 3,
+                        "description": "The three wrong choices for the third question."
+                    }
+                },
+                "required": ["text", "correct_choice", "wrong_choices"]
+            },
+            "question_4": {
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "description": "The text of the fourth question, which is a true/false question."
+                    },
+                    "answer": {
+                        "type": "boolean",
+                        "description": "The correct answer to the fourth question. True for 'True', False for 'False'."
+                    }
+                },
+                "required": ["text", "answer"]
+            },
+            "question_5": {
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "description": "The text of the fifth question, which is a true/false question."
+                    },
+                    "answer": {
+                        "type": "boolean",
+                        "description": "The correct answer to the fifth question. True for 'True', False for 'False'."
+                    }
+                },
+                "required": ["text", "answer"]
+            },
+        },
+        "required": ["question_1", "question_2", "question_3", "question_4", "question_5"]
+    },
+}
