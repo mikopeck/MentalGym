@@ -10,36 +10,56 @@
         <label
           v-for="(choice, choiceIndex) in question.choices"
           :key="`q-${index}-choice-${choiceIndex}`"
+          :class="{
+            'selected-choice': userAnswers[index] === choice,
+            'unselected-choice': userAnswers[index] !== choice,
+          }"
         >
           <input
             type="radio"
             :name="`question-${index}`"
             :value="choice"
             v-model="userAnswers[index]"
+            class="quiz-radio"
             @change="onChoiceSelected(index, choice)"
           />
+          <span class="radio-dot"></span>
           {{ choice }}
         </label>
       </div>
       <div v-else class="true-false">
-        <label>
+        <label
+          :class="{
+            'selected-choice': userAnswers[index] === 'True',
+            'unselected-choice': userAnswers[index] !== 'True',
+          }"
+        >
           <input
             type="radio"
             :name="`question-${index}`"
             value="True"
             v-model="userAnswers[index]"
-            @change="onChoiceSelected(index, choice)"
+            class="quiz-radio"
+            @change="onChoiceSelected(index, 'True')"
           />
+          <span class="radio-dot"></span>
           True
         </label>
-        <label>
+        <label
+          :class="{
+            'selected-choice': userAnswers[index] === 'False',
+            'unselected-choice': userAnswers[index] !== 'False',
+          }"
+        >
           <input
             type="radio"
             :name="`question-${index}`"
             value="False"
             v-model="userAnswers[index]"
-            @change="onChoiceSelected(index, choice)"
+            class="quiz-radio"
+            @change="onChoiceSelected(index, 'False')"
           />
+          <span class="radio-dot"></span>
           False
         </label>
       </div>
@@ -57,6 +77,11 @@ export default {
       userAnswers: [],
     };
   },
+  computed: {
+    isAnyOptionSelected() {
+      return this.userAnswers.some((answer) => answer !== null);
+    },
+  },
   watch: {
     rawQuizData: {
       immediate: true,
@@ -65,32 +90,18 @@ export default {
         this.userAnswers = Array(this.questions.length).fill(null);
       },
     },
-    userAnswers: {
-      deep: true,
-      handler(newValue, oldValue) {
-        console.log('userAnswers changed from', oldValue, 'to', newValue);
-      }
-    },
   },
   methods: {
-        onChoiceSelected(index, choice) {
-      console.log(`Question ${index} selected choice:`, choice);
+    onChoiceSelected(index, choice) {
       this.userAnswers[index] = choice;
     },
     isMultipleChoice(question) {
       return Object.prototype.hasOwnProperty.call(question, "choices");
     },
-    submitQuiz() {
-      console.log("kok");
-    },
-    initializeAnswers() {
-      return Array(this.questions.length).fill(null);
-    },
     isFormValid() {
       return this.userAnswers.every((answer) => answer !== null);
     },
     parseQuizQuestions(content) {
-      console.log(content);
       let quizData;
       try {
         quizData = JSON.parse(content);
@@ -98,7 +109,6 @@ export default {
         console.error("Error parsing quiz content:", e);
         return [];
       }
-      console.log(quizData);
       return Object.keys(quizData).map((key) => {
         const questionObj = quizData[key];
         const isMultipleChoice = Object.prototype.hasOwnProperty.call(
@@ -107,9 +117,15 @@ export default {
         );
 
         if (isMultipleChoice) {
+          let choices = [
+            questionObj.correct_choice,
+            ...questionObj.wrong_choices,
+          ];
+          this.shuffleArray(choices);
           return {
             text: questionObj.text,
-            choices: [questionObj.correct_choice, ...questionObj.wrong_choices],
+            choices: choices,
+            correctAnswer: questionObj.correct_choice,
             type: "multiple-choice",
           };
         } else {
@@ -121,6 +137,42 @@ export default {
           };
         }
       });
+    },
+    checkAnswers() {
+      let correctCount = 0;
+      console.log(this.userAnswers);
+      this.questions.forEach((question, index) => {
+        let userAnswer =
+          typeof this.userAnswers[index] === "boolean"
+            ? this.userAnswers[index].toString()
+            : this.userAnswers[index];
+        let correctAnswer =
+          typeof question.correctAnswer === "boolean"
+            ? question.correctAnswer.toString()
+            : question.correctAnswer;
+
+        if (question.type === "true-false") {
+          userAnswer = userAnswer.toLowerCase();
+          correctAnswer = correctAnswer.toLowerCase();
+        }
+
+        if (userAnswer === correctAnswer) {
+          correctCount++;
+        }
+      });
+      console.log(
+        `You got ${correctCount} out of ${this.questions.length} correct.`
+      );
+    },
+    submitQuiz() {
+      this.checkAnswers();
+      console.log("Quiz submitted with answers:", this.userAnswers);
+    },
+    shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
     },
   },
 };
@@ -149,7 +201,6 @@ export default {
   margin-bottom: 10px;
   font-weight: 700;
 }
-
 .choices label,
 .true-false label {
   display: block;
@@ -159,50 +210,42 @@ export default {
   cursor: pointer;
   font-size: 0.9rem;
   user-select: none;
-  opacity: 1;
-  transition: opacity 0.3s;
 }
 
-.choices input[type="radio"],
-.true-false input[type="radio"] {
+.quiz-radio {
   position: absolute;
   opacity: 0;
   cursor: pointer;
 }
 
-.choices label::before,
-.true-false label::before {
+.radio-dot {
   position: absolute;
   top: 0;
   left: 0;
   height: 25px;
   width: 25px;
-  background-color: #eee;
+  background-color: var(--text-color);
   border-radius: 50%;
-  content: "";
-  transition: background-color 0.3s;
+  transition: box-shadow 0.3s;
 }
 
-.choices input[type="radio"]:checked + label::before,
-.true-false input[type="radio"]:checked + label::before {
-  background-color: #2196f3;
+.quiz-radio:checked + .radio-dot {
+  box-shadow: inset 0 0 0 10px black;
 }
 
-.choices input[type="radio"]:not(:checked) + label,
-.true-false input[type="radio"]:not(:checked) + label {
-  opacity: 0.7;
-}
-
-.choices input[type="radio"]:checked + label,
-.true-false input[type="radio"]:checked + label {
+.selected-choice {
+  transition: opacity 0.3s;
   opacity: 1;
-  font-weight: bold;
-  color: #2196f3;
+}
+
+.unselected-choice {
+  transition: opacity 0.3s;
+  opacity: 0.8;
 }
 
 button {
   background-color: #4caf50;
-  color: white;
+  color: var(--text-color);
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
@@ -219,5 +262,4 @@ button:disabled {
 button:hover:not(:disabled) {
   background-color: #45a049;
 }
-
 </style>
