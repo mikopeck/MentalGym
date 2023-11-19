@@ -153,8 +153,7 @@ def quiz_create(user_id, lesson_id):
         
         quiz_data = extract_valid_quiz_questions(response_message)
         if quiz_data:
-            print(quiz_data)
-            return response, lesson_id
+            return mh.quiz_to_message(quiz_data), lesson_id
 
     # Couldn't create json quiz, default wildquiz
     return generate_response(user_id, messages), lesson_id

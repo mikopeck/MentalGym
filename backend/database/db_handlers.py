@@ -83,7 +83,7 @@ def get_recent_messages(user_id, lesson_id=None, challenge_id=None):
     query = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, challenge_id=challenge_id)
     recent_messages = query.order_by(ChatHistory.id.desc()).limit(history_limit).all()
     recent_messages = recent_messages[::-1]
-    return [{"role": msg.role, "content": msg.message, "system_role": msg.system_role} for msg in recent_messages]
+    return [{"role": msg.role, "content": msg.message, "type": msg.message_type} for msg in recent_messages]
 
 def get_lesson_message(user_id, lesson_id):
     message = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, message_type="lesson").first()

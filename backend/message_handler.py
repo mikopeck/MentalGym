@@ -95,3 +95,9 @@ def prepare_session_messages(user_id, lesson_id=None, challenge_id=None):
 
 def prepare_quiz_messages(user_id, lesson_id):
     return create_message(system_message(user_id, roles.QuizCreate), db.get_lesson_message(user_id, lesson_id))
+
+def quiz_to_message(quiz):
+    response = {}
+    response["choices"] = [{}]
+    response["choices"][0]["message"] = {"content": json.dumps(quiz)}
+    return response

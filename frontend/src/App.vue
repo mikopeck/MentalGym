@@ -163,7 +163,7 @@ export default {
     },
     fetchRecentMessages() {
       if (this.loggedIn) {
-        console.log("fetching...")
+        console.log("fetching for "+this.$route.path)
         let apiEndpoint = "/api/chat";
         const params = {};
 

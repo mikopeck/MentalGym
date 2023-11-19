@@ -6,7 +6,7 @@
           <h1>Unlock Your Potential with Ascendance·☁️</h1>
         </div>
         <div class="about-main-section">
-          <h3>Discover, Experience, Grow</h3>
+          <h3>Discover. Experience. Grow.</h3>
           <div class="ascent-container">
             <button class="ascent-button" @click="redirectLogin">
               Begin your ascent

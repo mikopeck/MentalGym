@@ -4,13 +4,22 @@
     <div
       v-for="(message, index) in filteredMessages"
       :key="message.id"
-      :class="[message.role, { 'first-chat-bubble': index === 0 && $route.path.includes('lesson')}]"
+      :class="[
+        message.role,
+        { 'first-chat-bubble': index === 0 && $route.path.includes('lesson') },
+        { 'quiz-bubble': message.type === 'quiz'},
+      ]"
       class="chat-bubble"
     >
       <p
-        v-if="isChatMessage(message.role)"
+        v-if="isChatMessage(message.role, message.type)"
         v-html="formatMessageContent(message.content)"
       ></p>
+
+      <QuizComponent
+        v-if="isQuizMessage(message)"
+        :rawQuizData="message.content"
+      />
 
       <ContentButton
         v-if="isContentButton(message.role)"
@@ -20,14 +29,13 @@
         @navigate="navigateToContent"
       ></ContentButton>
 
-      <CompleteButton
-        v-if="isCompletionMessage(message.role)"
-      ></CompleteButton>
+      <CompleteButton v-if="isCompletionMessage(message.role)"></CompleteButton>
     </div>
   </div>
 </template>
 
 <script>
+import QuizComponent from './QuizComponent.vue';
 import ContentButton from "./ContentButton.vue";
 import CompleteButton from "./CompleteButton.vue";
 
@@ -35,6 +43,7 @@ export default {
   components: {
     ContentButton,
     CompleteButton,
+    QuizComponent,
   },
   props: {
     messages: Array,
@@ -64,6 +73,10 @@ export default {
     formatMessageContent(content) {
       let regex = /```([\s\S]*?)```/g;
       content = content.replace(regex, '<div class="code-block">$1</div>');
+
+      let boldRegex = /\*\*([\s\S]*?)\*\*/g;
+      content = content.replace(boldRegex, "<strong>$1</strong>");
+
       return content.replace(/\n/g, "<br />");
     },
     navigateToContent(role) {
@@ -72,10 +85,15 @@ export default {
       }
       this.$router.push(`/${role}`);
     },
-    isChatMessage(role) {
+    isQuizMessage(msg) {
+      let role = msg.role;
+      let type = msg.type;
+      return role === 'assistant' && type === 'quiz'
+    },
+    isChatMessage(role, type) {
       return (
         role.startsWith("user") ||
-        role.startsWith("assistant") ||
+        (role.startsWith("assistant") && type !== 'quiz') ||
         role.startsWith("app")
       );
     },
@@ -145,7 +163,7 @@ export default {
   align-self: flex-end;
 }
 
-.first-chat-bubble {
+.first-chat-bubble, .quiz-bubble {
   width: 100%;
   max-width: 100%;
 }

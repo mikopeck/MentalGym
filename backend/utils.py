@@ -14,7 +14,9 @@ def decode_if_needed(s):
     return s
     
 def extract_single_emoji(text):
+    print(text)
     emojis = emoji_pattern.findall(text)
+    print(emojis)
     return emojis[0] if emojis else None
 
 def remove_emojis(text):
