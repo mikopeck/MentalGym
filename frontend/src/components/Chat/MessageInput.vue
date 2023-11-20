@@ -1,6 +1,6 @@
 <!-- MessageInput.vue -->
 <template>
-  <div class="message-input-container">
+  <div class="message-input-container" v-if="inputVisible">
     <div class="action-container">
       <button
         v-if="actionAvailable"
@@ -47,6 +47,8 @@ import ActionMenu from "./ActionMenu.vue";
 import { usePopupStore } from "@/store/popupStore";
 import { useAdsStore } from "@/store/adsStore";
 import { useMenuStore } from "@/store/menuStore";
+import { useInputStore } from "@/store/inputStore";
+import { useMessageStore } from "@/store/messageStore";
 
 export default {
   name: "MessageInput",
@@ -71,6 +73,10 @@ export default {
     actionsMenuOpen() {
       const menuStore = useMenuStore();
       return menuStore.actionsMenuOpen;
+    },
+    inputVisible() {
+      const inputStore = useInputStore();
+      return inputStore.isInputFieldVisible;
     },
     actionIconClass() {
       return {
@@ -125,6 +131,10 @@ export default {
         this.$router.push("/");
         return;
       }
+
+      // NEW SEND
+      const messageStore = useMessageStore();
+      messageStore.sendMessage(msg, this.$route.path);
 
       this.sending = true;
       const adStore = useAdsStore();
@@ -190,6 +200,7 @@ export default {
   
 <style scoped>
 .message-input-container {
+  transition: all 0.3s ease-in-out;
   display: flex;
   align-items: center;
   border-width: 1px;

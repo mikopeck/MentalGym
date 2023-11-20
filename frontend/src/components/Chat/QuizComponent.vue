@@ -69,6 +69,8 @@
 </template>
 
 <script>
+import { useInputStore } from "@/store/inputStore";
+
 export default {
   props: ["rawQuizData"],
   data() {
@@ -76,6 +78,14 @@ export default {
       questions: [],
       userAnswers: [],
     };
+  },
+  mounted() {
+    const inputStore = useInputStore();
+    inputStore.hide();
+  },
+  unmounted() {
+    const inputStore = useInputStore();
+    inputStore.show();
   },
   computed: {
     isAnyOptionSelected() {
@@ -160,12 +170,12 @@ export default {
           correctCount++;
         }
       });
-      console.log(
-        `You got ${correctCount} out of ${this.questions.length} correct.`
-      );
+      this.$emit("quiz", this.userAnswers);
     },
     submitQuiz() {
       this.checkAnswers();
+      const inputStore = useInputStore();
+      inputStore.show();
       console.log("Quiz submitted with answers:", this.userAnswers);
     },
     shuffleArray(array) {

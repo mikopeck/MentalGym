@@ -36,7 +36,7 @@ export default {
           const inputElement = this.$refs.messageInput.$el;
           window.scrollTo(
             0,
-            inputElement.offsetTop +inputElement.clientHeight -200
+            inputElement.offsetTop +inputElement.clientHeight -2000
           );
         }, 100);
       });
