@@ -135,23 +135,6 @@ Content = {
     },
 }
 
-Grade = {
-    "name": "grade_quiz",
-    "description": "Give the user a score based on their answers to the quiz. A score of 0 would mean the user has answered every question incorrectly.",
-    "parameters": {
-        "type": "object",
-        "properties": {
-            "score": {
-                "type": "integer",
-                "description": "A score between 0 and 100 where 100 means all questions were answered correctly.",
-                "minimum": 0,
-                "maximum": 100
-            }
-        },
-        "required": ["score"],
-    },
-}
-
 ChallengeCompletion = {
     "name": "complete_challenge",
     "description": "Used when a user has completed the challenge.",

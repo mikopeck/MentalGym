@@ -2,54 +2,56 @@
 <template>
   <div class="main-container">
     <div class="message-history">
-      <ChatConversation :messages="messages" @messagesChanged="updateView" />
+      <ChatConversation/>
     </div>
     <MessageInput
-      ref="messageInput"
-      @messageSending="handleMessageSending"
-      @messageSent="updateConversation"
-      :actionsList="actions"
+      ref="messageInputRef"
       class="message-input"
     />
   </div>
 </template>
-  
-  <script>
+
+<script>
+import { watch, nextTick, ref } from 'vue';
 import MessageInput from "./MessageInput.vue";
 import ChatConversation from "./ChatConversation.vue";
+import { useMessageStore } from "@/store/messageStore";
 
 export default {
   name: "ChatComponent",
-  props: {
-    messages: Array,
-    actions: Array,
-    actionsMenuOpen: Boolean,
-  },
   components: {
     MessageInput,
     ChatConversation,
   },
-  methods: {
-    updateView() {
-      this.$nextTick(() => {
+  setup() {
+    const messageStore = useMessageStore();
+    const messageInputRef = ref(null);
+
+    watch(() => messageStore.messages, () => {
+      updateView();
+    });
+
+    const updateView = () => {
+      nextTick(() => {
         setTimeout(() => {
-          const inputElement = this.$refs.messageInput.$el;
-          window.scrollTo(
-            0,
-            inputElement.offsetTop +inputElement.clientHeight -2000
-          );
+          if (messageInputRef.value) {
+            const inputElement = messageInputRef.value.$el;
+            window.scrollTo(
+              0,
+              inputElement.offsetTop + inputElement.clientHeight - 2000
+            );
+          }
         }, 100);
       });
-    },
-    handleMessageSending(message) {
-      this.$emit("messageSending", message);
-    },
-    updateConversation(data) {
-      this.$emit("updateConversation", data);
-    },
+    };
+
+    return {
+      messageInputRef, 
+    };
   },
 };
 </script>
+
   
   <style scoped>
 .main-container {

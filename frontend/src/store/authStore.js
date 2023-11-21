@@ -5,6 +5,7 @@ import axios from 'axios';
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     loggedIn: localStorage.getItem('loggedIn') === 'true',
+    userTier: "free",
   }),
   actions: {
     async checkAuth() {
@@ -14,7 +15,10 @@ export const useAuthStore = defineStore('auth', {
         if (response.data.loggedIn) {
           this.login();
         }
-        else { this.logout(); }
+        else { this.logout();
+        
+        this.userTier = response.data.userTier;
+        }
       } catch (error) {
         console.error('Error checking auth status:', error);
         this.logout();

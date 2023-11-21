@@ -3,7 +3,7 @@
     <div
       v-for="(question, index) in questions"
       :key="index"
-      class="quiz-question"
+      :class="['quiz-question', { 'disabled-question': quizSubmitted }]"
     >
       <p>{{ question.text }}</p>
       <div v-if="isMultipleChoice(question)" class="choices">
@@ -13,6 +13,7 @@
           :class="{
             'selected-choice': userAnswers[index] === choice,
             'unselected-choice': userAnswers[index] !== choice,
+            'disabled-choice': quizSubmitted
           }"
         >
           <input
@@ -21,7 +22,7 @@
             :value="choice"
             v-model="userAnswers[index]"
             class="quiz-radio"
-            @change="onChoiceSelected(index, choice)"
+            :disabled="quizSubmitted"
           />
           <span class="radio-dot"></span>
           {{ choice }}
@@ -29,47 +30,36 @@
       </div>
       <div v-else class="true-false">
         <label
+          v-for="choice in ['True', 'False']"
+          :key="`q-${index}-${choice}`"
           :class="{
-            'selected-choice': userAnswers[index] === 'True',
-            'unselected-choice': userAnswers[index] !== 'True',
+            'selected-choice': userAnswers[index] === choice,
+            'unselected-choice': userAnswers[index] !== choice,
+            'disabled-choice': quizSubmitted
           }"
         >
           <input
             type="radio"
             :name="`question-${index}`"
-            value="True"
+            :value="choice"
             v-model="userAnswers[index]"
             class="quiz-radio"
-            @change="onChoiceSelected(index, 'True')"
+            :disabled="quizSubmitted"
           />
           <span class="radio-dot"></span>
-          True
-        </label>
-        <label
-          :class="{
-            'selected-choice': userAnswers[index] === 'False',
-            'unselected-choice': userAnswers[index] !== 'False',
-          }"
-        >
-          <input
-            type="radio"
-            :name="`question-${index}`"
-            value="False"
-            v-model="userAnswers[index]"
-            class="quiz-radio"
-            @change="onChoiceSelected(index, 'False')"
-          />
-          <span class="radio-dot"></span>
-          False
+          {{ choice }}
         </label>
       </div>
     </div>
-    <button @click="submitQuiz" :disabled="!isFormValid()">Submit</button>
+    <button @click="submitQuiz" :disabled="!isFormValid() || quizSubmitted">
+      {{ submitText }}
+    </button>
   </div>
 </template>
 
 <script>
 import { useInputStore } from "@/store/inputStore";
+import { useMessageStore } from "@/store/messageStore";
 
 export default {
   props: ["rawQuizData"],
@@ -77,6 +67,8 @@ export default {
     return {
       questions: [],
       userAnswers: [],
+      submitText: "Submit",
+      quizSubmitted: false,
     };
   },
   mounted() {
@@ -90,6 +82,10 @@ export default {
   computed: {
     isAnyOptionSelected() {
       return this.userAnswers.some((answer) => answer !== null);
+    },
+    sending() {
+      const messageStore = useMessageStore();
+      return messageStore.sending;
     },
   },
   watch: {
@@ -148,7 +144,7 @@ export default {
         }
       });
     },
-    checkAnswers() {
+    async checkAnswers() {
       let correctCount = 0;
       console.log(this.userAnswers);
       this.questions.forEach((question, index) => {
@@ -170,7 +166,26 @@ export default {
           correctCount++;
         }
       });
-      this.$emit("quiz", this.userAnswers);
+      const messageStore = useMessageStore();
+      let response;
+      if (correctCount === this.questions.length) {
+        response = await messageStore.sendMessage(
+          "aced",
+          this.$route.path
+        );
+      } else {
+        response = await messageStore.sendMessage(
+          this.userAnswers,
+          this.$route.path
+        );
+      }
+
+      if (response === "not sent") {
+        return;
+      } else {
+        this.submitText = "Finished";
+        this.quizSubmitted = true;
+      }
     },
     submitQuiz() {
       this.checkAnswers();
@@ -271,5 +286,14 @@ button:disabled {
 
 button:hover:not(:disabled) {
   background-color: #45a049;
+}
+
+.disabled-question {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.disabled-choice {
+  cursor: not-allowed;
 }
 </style>

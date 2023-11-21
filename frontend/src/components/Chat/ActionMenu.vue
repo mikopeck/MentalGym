@@ -10,28 +10,21 @@
   <script>
 import MenuButton from "../Menus/MenuButton.vue";
 import { useMenuStore } from "@/store/menuStore";
+import { useMessageStore } from "@/store/messageStore";
 
 export default {
   components: {
     MenuButton,
-  },
-  props: {
-    actions: {
-      type: Array,
-      default: () => [],
-    },
   },
   computed: {
     actionsMenuOpen() {
       const menuStore = useMenuStore();
       return menuStore.actionsMenuOpen;
     },
-  },
-  watch: {
-    actions: function () {
-      const anyActions = this.actions.length !== 0;
-      this.$emit("availableActions", anyActions);
-    },
+    actions() {
+      const messageStore = useMessageStore();
+      return messageStore.actions;
+    }
   },
   methods: {
     handleAction(action) {

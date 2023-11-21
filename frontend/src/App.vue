@@ -2,22 +2,13 @@
 <template>
   <div class="app-container" :class="themeClass">
     <TopBar />
-    <SubHeader
-      v-if="loggedIn & shouldShowChat & subheaderExists"
-      :subheading="subheadingText"
-    />
-    <SideMenu :userTier="userTier" />
+    <SubHeader v-if="loggedIn & shouldShowChat & subheaderExists" />
+    <SideMenu />
 
     <div class="main-content">
       <div class="another">
         <!-- Main chat -->
-        <ChatComponent
-          v-if="shouldShowChat"
-          :messages="messages"
-          :actions="actions"
-          @messageSending="handleMessageSending"
-          @updateConversation="updateConversation"
-        />
+        <ChatComponent v-if="shouldShowChat" />
 
         <!-- Routes -->
         <router-view v-if="shouldShowRouterView"></router-view>
@@ -30,7 +21,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import TopBar from "./components/Header/TopBar.vue";
 import SideMenu from "./components/Header/SideMenu.vue";
 import ChatComponent from "./components/Chat/ChatComponent.vue";
@@ -42,6 +32,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useMenuStore } from "@/store/menuStore";
 import { useThemeStore } from "@/store/themeStore";
 import { usePopupStore } from "@/store/popupStore";
+import { useMessageStore } from "@/store/messageStore";
 
 export default {
   name: "App",
@@ -54,27 +45,23 @@ export default {
     InfoPopup,
     AdPopup,
   },
-  data() {
-    return {
-      messages: [],
-      actions: [],
-      subheadingText: "",
-      userTier: "free",
-    };
-  },
   mounted() {
     const authStore = useAuthStore();
     if (window.location.search === "?awake") {
       authStore.login();
       const popupStore = usePopupStore();
       popupStore.showWelcomePopup();
-      this.fetchRecentMessages();
+      const messageStore = useMessageStore();
+      messageStore.fetchRecentMessages("/");
     }
     const path = window.location.pathname;
-    if (path === "/" ||
-        path.includes("/lesson/") ||
-        path.includes("/challenge/")){
-          this.fetchRecentMessages();
+    if (
+      path === "/" ||
+      path.includes("/lesson/") ||
+      path.includes("/challenge/")
+    ) {
+      const messageStore = useMessageStore();
+      messageStore.fetchRecentMessages(path);
     }
   },
   computed: {
@@ -97,37 +84,48 @@ export default {
     },
     shouldShowLogin() {
       const path = this.$route.path;
-      return !(path === "/terms" || path === "/about" || path === "/contact" || path === "/login");
+      return !(
+        path === "/terms" ||
+        path === "/about" ||
+        path === "/contact" ||
+        path === "/login"
+      );
     },
     shouldShowRouterView() {
       return this.$route.path !== "/";
     },
     subheaderExists() {
-      return !(this.subheadingText === "");
+      const messageStore = useMessageStore();
+      return !(messageStore.subheading === "");
     },
   },
   watch: {
     loggedIn(newValue) {
-      if (!newValue){
+      if (!newValue) {
         this.$router.push("/login");
       }
       if (newValue && this.shouldShowChat) {
         console.log("login fetch");
-        this.fetchRecentMessages();
+
+        const messageStore = useMessageStore();
+        messageStore.fetchRecentMessages(this.$route.path);
       }
     },
     "$route.path": function () {
-      console.log(this.$route.path)
+      console.log(this.$route.path);
       if (this.shouldShowChat) {
-        this.fetchRecentMessages();
+        const messageStore = useMessageStore();
+        messageStore.fetchRecentMessages(this.$route.path);
       } else {
         window.scrollTo(0, 0);
       }
 
       if (!this.loggedIn & this.shouldShowLogin) {
-        if (this.$route.path === "/"){
+        if (this.$route.path === "/") {
           this.$router.push("/about");
-        } else {this.$router.push("/login");}
+        } else {
+          this.$router.push("/login");
+        }
       }
 
       const menuStore = useMenuStore();
@@ -141,65 +139,12 @@ export default {
         authStore.login();
         const popupStore = usePopupStore();
         popupStore.showWelcomePopup();
-        this.fetchRecentMessages();
+        const messageStore = useMessageStore();
+        messageStore.fetchRecentMessages(this.$route.path);
       }
     },
   },
-  methods: {
-    resetConversation(data) {
-      this.updateConversation(data);
-    },
-    updateConversation(data) {
-      this.messages = data.messages;
-      this.actions = data.actions;
-
-      if ("redirect" in data) {
-        if (data.redirect === null) {
-          this.$router.push("/");
-        } else {
-          this.$router.push(`/lesson/${data.redirect}`);
-        }
-      }
-    },
-    fetchRecentMessages() {
-      if (this.loggedIn) {
-        console.log("fetching for "+this.$route.path)
-        let apiEndpoint = "/api/chat";
-        const params = {};
-
-        const currentPath = this.$route.path;
-        const isLesson = currentPath.includes("/lesson/");
-        const isChallenge = currentPath.includes("/challenge/");
-
-        if (isLesson) {
-          params.lesson_id = currentPath.split("/").pop();
-        } else if (isChallenge) {
-          params.challenge_id = currentPath.split("/").pop();
-        }
-        axios
-          .get(apiEndpoint, { params })
-          .then((response) => {
-            this.messages = response.data.messages;
-            this.actions = response.data.actions;
-            this.userTier = response.data.userTier;
-            if ("subheading" in response.data) {
-              this.subheadingText = response.data.subheading;
-            }
-          })
-          .catch((error) => {
-            console.error(`Error fetching recent messages:`, error);
-            if (error.response && error.response.status === 401) {
-              const authStore = useAuthStore();
-              authStore.logout();
-            }
-          });
-      }
-      else{
-        console.log("Not logged in but tried to fetch messages...")
-        this.$router.push("/login");
-      }
-    },
-  },
+  methods: {},
 };
 </script>
 

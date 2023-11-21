@@ -6,14 +6,10 @@
 </template>
 
 <script>
+import { useAuthStore } from "@/store/authStore";
+
 export default {
   name: "TierButton",
-  props: {
-    tier: {
-      type: String,
-      default: "free",
-    },
-  },
   computed: {
     title() {
       switch (this.tier) {
@@ -24,6 +20,10 @@ export default {
         default: //'free'
           return "Upgrade";
       }
+    },
+    tier() {
+      const authStore = useAuthStore();
+      return authStore.userTier;
     },
   },
   methods: {
@@ -76,5 +76,4 @@ export default {
 .tier-button.pro:hover {
   background-color: var(--background-color);
 }
-
 </style>

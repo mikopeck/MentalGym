@@ -140,6 +140,10 @@ def remove_latest_message_by_role(user_id, role):
         db.session.delete(latest_message)
         db.session.commit()
 
+def get_latest_message_by_role(user_id, role):
+    latest_message = ChatHistory.query.filter_by(user_id=user_id, role=role).order_by(ChatHistory.timestamp.desc()).first()
+    return latest_message.message if latest_message else None
+
 def add_action(user_id, action_name, lesson_id=None):
     action = UserAction(user_id=user_id, action=action_name, lesson_id=lesson_id)
     db.session.add(action)

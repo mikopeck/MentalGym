@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 from bleach import clean 
 
 import database.db_handlers as dbh
-from database.user_handler import increment_violations, is_within_limit, get_user_tier
+from database.user_handler import increment_violations, is_within_limit
 from system_guide import progress_challenge, progress_chat, progress_lesson
 from openapi import moderate
 
@@ -65,8 +65,7 @@ def init_chat_routes(app):
         return jsonify(
             messages=dbh.get_recent_messages(current_user.id, lesson_id, challenge_id),
             actions=actions,
-            subheading=subheading,
-            userTier=get_user_tier(current_user.id)
+            subheading=subheading
         )
 
     def post_general_message(userInput):

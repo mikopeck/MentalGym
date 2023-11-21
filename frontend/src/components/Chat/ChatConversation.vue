@@ -38,6 +38,7 @@
 import QuizComponent from './QuizComponent.vue';
 import ContentButton from "./ContentButton.vue";
 import CompleteButton from "./CompleteButton.vue";
+import { useMessageStore } from "@/store/messageStore";
 
 export default {
   components: {
@@ -45,21 +46,15 @@ export default {
     CompleteButton,
     QuizComponent,
   },
-  props: {
-    messages: Array,
-  },
-  watch: {
-    messages: function () {
-      this.$emit("messagesChanged");
-    },
-  },
   computed: {
     filteredMessages() {
-      if (!this.messages) {
+    const messageStore = useMessageStore();
+
+      if (!messageStore.messages) {
         console.log("No messages!");
         return [];
       }
-      var msgs = this.messages.filter((message) => message.role !== "system");
+      var msgs = messageStore.messages.filter((message) => message.role !== "system");
       msgs = msgs.filter((message) => message.role !== "app");
       const tempMessage = {
         role: "app",

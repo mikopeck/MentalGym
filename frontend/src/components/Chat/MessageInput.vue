@@ -11,11 +11,7 @@
         <div class="action-icon" :class="actionIconClass">?</div>
       </button>
 
-      <ActionMenu
-        :actions="actionsList"
-        @actionSelected="handleAction"
-        @availableActions="handleActionAvailable"
-      />
+      <ActionMenu @actionSelected="handleAction" />
     </div>
 
     <textarea
@@ -42,10 +38,8 @@
 </template>
 
 <script>
-import axios from "axios";
 import ActionMenu from "./ActionMenu.vue";
 import { usePopupStore } from "@/store/popupStore";
-import { useAdsStore } from "@/store/adsStore";
 import { useMenuStore } from "@/store/menuStore";
 import { useInputStore } from "@/store/inputStore";
 import { useMessageStore } from "@/store/messageStore";
@@ -55,18 +49,10 @@ export default {
   components: {
     ActionMenu,
   },
-  props: {
-    actionsList: {
-      type: Array,
-      default: () => [],
-    },
-  },
   data() {
     return {
       message: "",
       maxMessageLength: 1000,
-      sending: false,
-      actionAvailable: false,
     };
   },
   computed: {
@@ -84,6 +70,14 @@ export default {
         active: this.actionsMenuOpen,
       };
     },
+    actionAvailable() {
+      const messageStore = useMessageStore();
+      return messageStore.actions.length !== 0;
+    },
+    sending() {
+      const messageStore = useMessageStore();
+      return messageStore.sending;
+    }
   },
   watch: {
     message(newVal) {
@@ -95,80 +89,26 @@ export default {
     },
   },
   methods: {
-    handleActionAvailable(available) {
-      this.actionAvailable = available;
-    },
-    sanitizeInput(input) {
-      const div = document.createElement("div");
-      div.textContent = input;
-      return div.innerHTML;
-    },
     async sendMessage(event) {
       if (event) {
-        if (event.shiftKey || this.sending) return;
+        if (event.shiftKey) return;
         event.preventDefault();
       }
 
-      const msg = this.sanitizeInput(this.message);
-      if (msg.trim() === "") return;
-      if (msg.length > this.maxMessageLength) {
-        const popupStore = usePopupStore();
-        popupStore.showPopup("Message is too long.");
-        return;
-      }
-      const currentPath = this.$route.path;
-      const isLesson = currentPath.includes("/lesson/");
-      const isChallenge = currentPath.includes("/challenge/");
-      if (msg === "Leave challenge." && isChallenge) {
-        this.message = "";
-        this.adjustHeight();
-        this.$router.push("/");
-        return;
-      }
-      if (msg === "Leave lesson." && isLesson) {
-        this.message = "";
-        this.adjustHeight();
-        this.$router.push("/");
-        return;
-      }
-
-      // NEW SEND
       const messageStore = useMessageStore();
-      messageStore.sendMessage(msg, this.$route.path);
+      const response = await messageStore.sendMessage(
+        this.message,
+        this.$route.path
+      );
 
-      this.sending = true;
-      const adStore = useAdsStore();
-      adStore.show();
-
-      let formData = new FormData();
-      formData.append("message", msg);
-
-      if (isLesson) {
-        formData.append("lesson_id", currentPath.split("/").pop());
-      } else if (isChallenge) {
-        formData.append("challenge_id", currentPath.split("/").pop());
+      if (response === "not sent") {
+        return;
       }
 
-      try {
-        const response = await axios.post("/api/chat", formData);
-        this.$emit("messageSent", response.data);
-        this.message = "";
-        this.adjustHeight();
-      } catch (error) {
-        const popupStore = usePopupStore();
-        let errorMessage = "Error sending message: ";
-
-        if (error.response) {
-          errorMessage += error.response.data?.error || `Server responded with status code ${error.response.status}`;
-        } else if (error.request) {
-          errorMessage += "No response received from server. Please check your network connection.";
-        } else {
-          errorMessage += error.message;
-        }
-        popupStore.showPopup(errorMessage);
-      } finally {
-        adStore.loaded();
-        this.sending = false;
+      this.message = "";
+      this.adjustHeight();
+      if (response) {
+        this.$router.push(response);
       }
     },
     adjustHeight() {

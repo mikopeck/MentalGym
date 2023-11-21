@@ -159,35 +159,17 @@ def quiz_create(user_id, lesson_id):
     return generate_response(user_id, messages), lesson_id
 
 def quiz_feedback(user_id, lesson_id):
-    mh.update_system_role(user_id, roles.QuizGrade, lesson_id)
-    messages = mh.prepare_session_messages(user_id, lesson_id) 
-    function = [fns.Grade]
-    function_call = {"name": function[0]['name']}
+    # Frontend quiz passed.
+    if db.get_latest_message_by_role(user_id, "user") == "aced":
+        db.remove_latest_message_by_role(user_id, "user")
+        db.update_lesson(user_id, lesson_id, datetime.utcnow())
+        db.add_completion_message(user_id, lesson_id=lesson_id)
+        return None, lesson_id
 
-    for attempt in range(function_max_retries):
-        response = generate_response(user_id, messages, function, function_call)
-        response_message = response["choices"][0]["message"]
-        if not response_message.get("function_call"):
-            continue
-        
-        grade_data = try_get_object(fns.Grade, response_message)
-        if grade_data:
-            score = grade_data.get("score")
-            if score > passing_grade:
-                print("lesson success")
-                db.update_lesson(user_id, lesson_id, datetime.utcnow())
-                db.add_completion_message(user_id, lesson_id=lesson_id)
-                return None, lesson_id
-            else:
-                print("quiz failed")
-                mh.update_system_role(user_id, roles.QuizFeedback, lesson_id)
-                messages = mh.prepare_session_messages(user_id, lesson_id) 
-                return generate_response(user_id, messages), lesson_id
-                    
-    print("ERROR: failed grading function!! defaulting to word feedback...")
-    mh.update_system_role(user_id, roles.QuizFeedback, lesson_id)
     messages = mh.prepare_session_messages(user_id, lesson_id) 
-    return generate_response(user_id, messages), lesson_id
+    response = generate_response(user_id, messages)
+    db.remove_latest_message_by_role(user_id, "user")
+    return response, lesson_id
 
 #### private ####
 

@@ -43,7 +43,7 @@
       @click="openRoute('/settings')"
       :isSelected="isRouteActive('/settings')"
     />
-    <TierButton v-if="loggedIn" :tier="userTier" />
+    <TierButton v-if="loggedIn" />
     <br />
     <MenuButton
       label="About👀"
@@ -74,12 +74,6 @@ export default {
   components: {
     MenuButton,
     TierButton,
-  },
-  props: {
-    userTier: {
-      type: String,
-      default: "free",
-    },
   },
   computed: {
     sideMenuOpen() {
