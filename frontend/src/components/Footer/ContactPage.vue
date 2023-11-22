@@ -20,7 +20,7 @@
           <br />
           <div>
             To reach us, join the Discord community at the bottom of the page or
-            email ascendance.cloud@proton.me.
+            email miko@ascendance.cloud.
           </div>
         </div>
       </div>

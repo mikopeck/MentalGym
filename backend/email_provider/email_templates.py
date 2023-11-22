@@ -1,9 +1,9 @@
 # email_templates.py
 
 Registration = {
-    "from": "Ascendance·☁️ <misa@ascendance.cloud>",
+    "from": "Ascendance·☁️ <miko@ascendance.cloud>",
     "subject": "Welcome to Ascendance·☁️",
-    "bcc":"mikopeck@gmail.com",
+    "bcc":"miko@ascendance.cloud",
     "html": """
     <html>
         <head>
