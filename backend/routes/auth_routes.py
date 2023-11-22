@@ -36,7 +36,11 @@ def init_auth_routes(app):
 
     @app.route('/check-auth', methods=['GET'])
     def check_auth():
-        return jsonify({'loggedIn': current_user.is_authenticated, 'userTier': get_user_tier(current_user.id)})
+        if current_user.is_authenticated:
+            return jsonify({'loggedIn': True, 'userTier': get_user_tier(current_user.id)})
+        else:
+            return jsonify({'loggedIn': True, 'userTier': None})
+        
 
     @app.route('/signup', methods=['POST'])
     def signup():
