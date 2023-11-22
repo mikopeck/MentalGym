@@ -13,7 +13,7 @@
           :class="{
             'selected-choice': userAnswers[index] === choice,
             'unselected-choice': userAnswers[index] !== choice,
-            'disabled-choice': quizSubmitted
+            'disabled-choice': quizSubmitted,
           }"
         >
           <input
@@ -35,7 +35,7 @@
           :class="{
             'selected-choice': userAnswers[index] === choice,
             'unselected-choice': userAnswers[index] !== choice,
-            'disabled-choice': quizSubmitted
+            'disabled-choice': quizSubmitted,
           }"
         >
           <input
@@ -51,10 +51,17 @@
         </label>
       </div>
     </div>
-    <button @click="submitQuiz" :disabled="!isFormValid() || quizSubmitted">
-      {{ submitText }}
-    </button>
   </div>
+  <div v-if="isScore" class="score-display">
+    <p class="centered-score">Quiz score: {{ scoreText }}</p>
+  </div>
+  <button
+    v-else
+    @click="submitQuiz"
+    :disabled="!isFormValid() || quizSubmitted"
+  >
+    {{ submitText }}
+  </button>
 </template>
 
 <script>
@@ -69,11 +76,9 @@ export default {
       userAnswers: [],
       submitText: "Submit",
       quizSubmitted: false,
+      isScore: false,
+      scoreText: "",
     };
-  },
-  mounted() {
-    const inputStore = useInputStore();
-    inputStore.hide();
   },
   unmounted() {
     const inputStore = useInputStore();
@@ -108,6 +113,22 @@ export default {
       return this.userAnswers.every((answer) => answer !== null);
     },
     parseQuizQuestions(content) {
+      console.log(content);
+
+      const scoreMatch = content.match(/^(\d+%)*/);
+      if (scoreMatch && scoreMatch[0]) {
+        this.isScore = true;
+        this.scoreText = scoreMatch[0];
+        this.quizSubmitted = true;
+        const inputStore = useInputStore();
+        inputStore.show();
+        content = content.substring(scoreMatch[0].length);
+      }
+      else{
+            const inputStore = useInputStore();
+    inputStore.hide();
+      }
+
       let quizData;
       try {
         quizData = JSON.parse(content);
@@ -166,31 +187,28 @@ export default {
           correctCount++;
         }
       });
+
+      const scorePercentage = Math.round(
+        (correctCount / this.questions.length) * 100
+      );
       const messageStore = useMessageStore();
       let response;
-      if (correctCount === this.questions.length) {
-        response = await messageStore.sendMessage(
-          "aced",
-          this.$route.path
-        );
-      } else {
-        response = await messageStore.sendMessage(
-          this.userAnswers,
-          this.$route.path
-        );
-      }
+      response = await messageStore.sendMessage(
+        `Score: ${scorePercentage}% | Answers: ${this.userAnswers.join(", ")}`,
+        this.$route.path
+      );
 
       if (response === "not sent") {
         return;
       } else {
         this.submitText = "Finished";
         this.quizSubmitted = true;
+        const inputStore = useInputStore();
+        inputStore.show();
       }
     },
     submitQuiz() {
       this.checkAnswers();
-      const inputStore = useInputStore();
-      inputStore.show();
       console.log("Quiz submitted with answers:", this.userAnswers);
     },
     shuffleArray(array) {
@@ -215,6 +233,7 @@ export default {
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
   word-wrap: break-word;
+  text-align: left;
 }
 
 .quiz-question {
@@ -295,5 +314,10 @@ button:hover:not(:disabled) {
 
 .disabled-choice {
   cursor: not-allowed;
+}
+
+.score-display .centered-score {
+  text-align: center;
+  font-size: 24px;
 }
 </style>

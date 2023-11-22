@@ -11,9 +11,11 @@ export const useInputStore = defineStore({
             this.isInputFieldVisible = !this.isInputFieldVisible;
         },
         show() {
+            console.log("showing")
             this.isInputFieldVisible = true;
         },
         hide() {
+            console.log("hiding")
             this.isInputFieldVisible = false;
         },
     },

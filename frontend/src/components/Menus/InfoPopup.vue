@@ -55,6 +55,7 @@ export default {
   padding-bottom: 12px;
   border-radius: 8px;
   position: relative;
+  border-bottom: 12px;
 }
 
 .popup-header {

@@ -5,8 +5,8 @@ import json
 
 #### settings ####
 max_retries = 5
-delay = 10
-request_timeout = 20  # Timeout for API requests in seconds
+delay = 3
+request_timeout = 60  # Timeout for API requests in seconds
 
 TOKEN_CAP = 500
 LESSON_TOKENS = 1000

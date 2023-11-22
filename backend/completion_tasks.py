@@ -159,16 +159,32 @@ def quiz_create(user_id, lesson_id):
     return generate_response(user_id, messages), lesson_id
 
 def quiz_feedback(user_id, lesson_id):
-    # Frontend quiz passed.
-    if db.get_latest_message_by_role(user_id, "user") == "aced":
-        db.remove_latest_message_by_role(user_id, "user")
+    answer_msg = db.get_latest_message_by_role(user_id, "user")
+
+    print(answer_msg)
+    if "Score:" in answer_msg and "Answers:" in answer_msg:
+        print("scored")
+    else:
+        print("Error: no quiz score.")
+        return None, lesson_id
+    
+    parts = answer_msg.split(" | ")
+    score_part = parts[0]  # "Score: [score]%"
+    answers_part = parts[1]  # "Answers: [answers]"
+
+    score = score_part.split(": ")[1]
+    answer_msg = answers_part.split(": ")[1]
+    if score == "100%":
+        db.remove_score_from_answer(user_id, answer_msg)
+        db.complete_quiz_message(user_id, lesson_id, score)
         db.update_lesson(user_id, lesson_id, datetime.utcnow())
         db.add_completion_message(user_id, lesson_id=lesson_id)
         return None, lesson_id
-
+        
     messages = mh.prepare_session_messages(user_id, lesson_id) 
     response = generate_response(user_id, messages)
-    db.remove_latest_message_by_role(user_id, "user")
+    db.remove_score_from_answer(user_id, answer_msg)
+    db.complete_quiz_message(user_id, lesson_id, score)
     return response, lesson_id
 
 #### private ####
@@ -245,6 +261,9 @@ def identify_content(user_id, message):
         for lesson_obj in lesson_descriptions:
             lesson_text = remove_emojis(lesson_obj.get("lesson_name", "")).strip()
             lesson_emoji = lesson_obj.get("lesson_emoji", "")
+            print(lesson_emoji)
+            if lesson_emoji == "\",": # so many hax please help
+                lesson_emoji = "🤔"
             lesson_name = remove_emojis_except_first(lesson_emoji+lesson_text)
             action_text = f"Start lesson: {lesson_name}"
             db.add_action(user_id, action_text)
@@ -252,6 +271,9 @@ def identify_content(user_id, message):
         for challenge_obj in challenge_descriptions:
             challenge_text = remove_emojis(challenge_obj.get("challenge_name", "")).strip()
             challenge_emoji = challenge_obj.get("challenge_emoji", "")
+            print(challenge_emoji)
+            if challenge_emoji == "\",":
+                challenge_emoji = "⛰️"
             challenge_name = remove_emojis_except_first(challenge_emoji+challenge_text)
             action_text = f"Accept challenge: {challenge_name}"
             db.add_action(user_id, action_text)

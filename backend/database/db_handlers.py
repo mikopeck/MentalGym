@@ -113,7 +113,7 @@ def get_system_role(user_id, lesson_id=None):
     return user.system_role if user else None
 
 def remove_latest_system_message(user_id, lesson_id=None):
-    latest_system_message = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, role='system').order_by(ChatHistory.timestamp.desc()).first()
+    latest_system_message = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, role='system').order_by(ChatHistory.id.desc()).first()
     if latest_system_message:
         db.session.delete(latest_system_message)
         db.session.commit()
@@ -135,14 +135,24 @@ def get_system_messages(user_id, lesson_id=None):
     return [{"role": chat.role, "content": chat.message} for chat in system_chats]
 
 def remove_latest_message_by_role(user_id, role):
-    latest_message = ChatHistory.query.filter_by(user_id=user_id, role=role).order_by(ChatHistory.timestamp.desc()).first()
+    latest_message = ChatHistory.query.filter_by(user_id=user_id, role=role).order_by(ChatHistory.id.desc()).first()
     if latest_message:
         db.session.delete(latest_message)
         db.session.commit()
 
 def get_latest_message_by_role(user_id, role):
-    latest_message = ChatHistory.query.filter_by(user_id=user_id, role=role).order_by(ChatHistory.timestamp.desc()).first()
+    latest_message = ChatHistory.query.filter_by(user_id=user_id, role=role).order_by(ChatHistory.id.desc()).first()
     return latest_message.message if latest_message else None
+
+def remove_score_from_answer(user_id, message):
+    latest_message = ChatHistory.query.filter_by(user_id=user_id, role="user").order_by(ChatHistory.id.desc()).first()
+    latest_message.message = message
+    db.session.commit()
+
+def complete_quiz_message(user_id, lesson_id, score):
+    latest_quiz = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, message_type="quiz").order_by(ChatHistory.id.desc()).first()
+    latest_quiz.message = score + latest_quiz.message
+    db.session.commit()
 
 def add_action(user_id, action_name, lesson_id=None):
     action = UserAction(user_id=user_id, action=action_name, lesson_id=lesson_id)
@@ -223,7 +233,7 @@ def set_user_content(user_id, content_description):
 
 def add_challenge(user_id, challenge_name, user_started = True):
     if not extract_single_emoji(challenge_name):
-        challenge_name = f"❔{challenge_name}"
+        challenge_name = f"⛰️{challenge_name}"
     challenge = Challenge(user_id=user_id, challenge_name=challenge_name, completion_date=None)
     db.session.add(challenge)
     db.session.commit()
@@ -243,7 +253,7 @@ def update_challenge(user_id, challenge_id):
 
 def add_lesson(user_id, lesson_name, user_started = True):
     if not extract_single_emoji(lesson_name):
-        lesson_name = f"❓{lesson_name}"
+        lesson_name = f"🤔{lesson_name}"
     lesson = Lesson(user_id=user_id, lesson_name=lesson_name, completion_date=None, system_role=None)
     db.session.add(lesson)
     db.session.commit()
