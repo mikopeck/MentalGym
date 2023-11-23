@@ -54,6 +54,7 @@ export default {
       const messageStore = useMessageStore();
       messageStore.fetchRecentMessages("/");
     }
+
     const path = window.location.pathname;
     if (
       path === "/" ||
@@ -120,14 +121,6 @@ export default {
         window.scrollTo(0, 0);
       }
 
-      if (!this.loggedIn & this.shouldShowLogin) {
-        if (this.$route.path === "/") {
-          this.$router.push("/about");
-        } else {
-          this.$router.push("/login");
-        }
-      }
-
       const menuStore = useMenuStore();
       menuStore.hideActionMenu();
       if (window.innerWidth < 1750) {
@@ -140,7 +133,7 @@ export default {
         const popupStore = usePopupStore();
         popupStore.showWelcomePopup();
         const messageStore = useMessageStore();
-        messageStore.fetchRecentMessages(this.$route.path);
+        messageStore.fetchRecentMessages();
       }
     },
   },

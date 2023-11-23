@@ -4,6 +4,8 @@ import { createPinia } from 'pinia'
 import App from './App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
+import { useAuthStore } from "@/store/authStore";
+
 import './assets/styles.css';
 import './assets/themes.css';
 
@@ -24,6 +26,17 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+router.beforeEach((to, from, next) => {
+  console.log(from.path + to.path);
+  const authStore = useAuthStore();
+
+  if (!authStore.loggedIn && to.path !== '/about' && to.path !== '/login') {
+    next('/login');
+  } else {
+    next();
+  }
+});
+
 const pinia = createPinia()
 
 const app = createApp(App);
