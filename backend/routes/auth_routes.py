@@ -117,6 +117,7 @@ def init_auth_routes(app):
             db.session.add(user)
             db.session.commit()
             login_user(user)
+            initialize_messages(user.id)
             return jsonify({'status': "success", "message":"new_user"}), 200
         else:
             user.username = name
