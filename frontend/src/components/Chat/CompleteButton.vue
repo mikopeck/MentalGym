@@ -154,6 +154,7 @@ export default {
 }
 
 .next-button {
+  font-weight: 700;
   color: var(--text-color);
   transition: color 0.2s;
 }

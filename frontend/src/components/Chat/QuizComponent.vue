@@ -120,13 +120,10 @@ export default {
         this.isScore = true;
         this.scoreText = scoreMatch[0];
         this.quizSubmitted = true;
-        const inputStore = useInputStore();
-        inputStore.show();
         content = content.substring(scoreMatch[0].length);
-      }
-      else{
-            const inputStore = useInputStore();
-    inputStore.hide();
+      } else {
+        const inputStore = useInputStore();
+        inputStore.hide();
       }
 
       let quizData;

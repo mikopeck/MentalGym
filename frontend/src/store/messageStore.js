@@ -17,7 +17,7 @@ export const useMessageStore = defineStore('messageStore', {
             this.messages = data.messages;
             this.actions = data.actions;
             if ("subheading" in data) {
-                this.subheadingText = data.subheading;
+                this.subheading = data.subheading;
             }
         },
         async fetchRecentMessages(currentPath) {

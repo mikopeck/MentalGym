@@ -99,6 +99,10 @@ export default {
       const messageStore = useMessageStore();
       return !(messageStore.subheading === "");
     },
+    subheader() {
+      const messageStore = useMessageStore();
+      return messageStore.subheading;
+    },
   },
   watch: {
     loggedIn(newValue) {

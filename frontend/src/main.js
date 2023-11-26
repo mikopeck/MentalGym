@@ -30,7 +30,7 @@ router.beforeEach((to, from, next) => {
   console.log(from.path + to.path);
   const authStore = useAuthStore();
   if (!authStore.loggedIn && to.path === '/') { next('/about'); }
-  else if (!authStore.loggedIn && to.path !== '/about' && to.path !== '/login') {
+  else if (!authStore.loggedIn && to.path !== '/about' && to.path !== '/login' && to.path !== '/terms' && to.path !== '/contact') {
     next('/login');
   } else {
     next();

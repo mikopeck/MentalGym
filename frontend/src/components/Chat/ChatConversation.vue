@@ -39,6 +39,7 @@ import QuizComponent from './QuizComponent.vue';
 import ContentButton from "./ContentButton.vue";
 import CompleteButton from "./CompleteButton.vue";
 import { useMessageStore } from "@/store/messageStore";
+import { useInputStore } from "@/store/inputStore";
 
 export default {
   components: {
@@ -99,7 +100,12 @@ export default {
       return role.includes("?completed");
     },
     isCompletionMessage(role) {
-      return role == "complete";
+      let result = role == "complete";
+      if (result){
+        const inputStore = useInputStore();
+        inputStore.hide();
+      }
+      return result;
     },
     getContentType(role) {
       if (role.startsWith("challenge/")) {
