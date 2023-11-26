@@ -2,7 +2,11 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-html {
+html, body{
+    display: flex;
+    height: 100%;
+    width: 100vw;
+    margin: 0;
     cursor: default;
     font-family: "Helvetica", sans-serif;
 }

@@ -1,72 +1,79 @@
 <template>
-  <div class="center-content">
-    <div class="background-gradient-container">
-      <div class="about-main-container">
-        <div class="reactive-subtitle">
-          <h1>Unlock Your Potential with Ascendance·☁️</h1>
-        </div>
-        <div class="about-main-section">
-          <h3>Discover. Experience. Grow.</h3>
-          <div class="ascent-container">
-            <button class="ascent-button" @click="redirectLogin">
-              Begin your ascent
-            </button>
+  <div class="landing-container">
+    <div class="landing-page-1">
+      <div class="landing-page">
+        <div class="background-gradient-container">
+          <div class="content-container">
+            <div class="landing-title">Ascendance·☁️</div>
+            <div class="buttons">
+              <div
+                v-for="(item, index) in items"
+                :key="index"
+                :class="{ 'button-active': activeIndex === index }"
+                class="button"
+                @click="setActiveIndex(index)"
+              >
+                {{ item }}
+              </div>
+            </div>
+            <transition name="fade" mode="out-in">
+              <div
+                class="value-content"
+                v-if="activeIndex === 0"
+                key="content-0"
+              >
+                <div class="value-explainer">
+                  Personalized AI-driven exploration.
+                </div>
+                <div class="value-text">
+                  Gain experience in a new way. Complete custom lessons, because
+                  knowledge is power. Dare to accept challenges tailored to push
+                  <i>your</i>
+                  limits. Start your Ascendance to reach your potential.
+                </div>
+              </div>
+              <div
+                class="value-content"
+                v-if="activeIndex === 1"
+                key="content-1"
+              >
+                <div class="value-explainer">
+                  Learn anything, challenge yourself.
+                </div>
+                <div class="value-text">
+                  Learn with generated lessons on any topic by a personalized
+                  tutor. Engage in quizzes and challenges that adapt to your
+                  style, deepening your knowledge and skills.
+                </div>
+              </div>
+              <div
+                class="value-content"
+                v-if="activeIndex === 2"
+                key="content-2"
+              >
+                <div class="value-explainer">Stats, graphs, streaks...</div>
+                <div class="value-text">
+                  Seeing progress gives us the rewarding feeling hard work
+                  deserves. Track your gains with graphs and stats. Build a
+                  habit of growth by keeping up that daily lesson streak.
+                </div>
+              </div>
+            </transition>
+            <div class="cta-container" @click="redirectLogin">
+              <CtaButton />
+            </div>
           </div>
-          <p>
-            As sentient civilizations uncover more laws of the universe and
-            escape the gravity wells of their planets, the astonishing abundance
-            of resources becomes apparent. We believe in the limitless potential
-            of every sentient individual. Our mission is to empower you to
-            ascend to new heights in your personal and professional endeavors.
-            Make your life meaningful. Create memories. The AI in this app is
-            designed to help you succeed if you know exactly what you want to
-            achieve, but also to offer guidance and suggest a path when you
-            feel lost in life.
-          </p>
-          <div class="reactive-subtitle"><h2>🛠How We Work</h2></div>
-          <ul>
-            <li>
-              <div class="reactive-subtitle">📖Intelligent Tutoring</div>
-              Our platform features a sophisticated AI chat interface that
-              learns about you — your strengths, weaknesses, goals, and
-              aspirations. It then suggests and tailors lessons and challenges
-              uniquely suited to your style.
-            </li>
-            <li>
-              <div class="reactive-subtitle">📚Diverse Learning Topics</div>
-              Whether you're diving into quantum physics, exploring the world of
-              digital art, or brushing up on ancient history, we've got you
-              covered. Our AI curates lessons on virtually any topic you're
-              passionate about.
-            </li>
-            <li>
-              <div class="reactive-subtitle">🎯Personalized Challenges</div>
-              Beyond lessons, we present challenges that push your boundaries
-              and test your understanding, ensuring you're always growing and
-              progressing.
-            </li>
-            <li>
-              <div class="reactive-subtitle">🌱Mentorship</div>
-              More than just a tutor, our AI acts as a mentor, guiding you,
-              motivating you, and celebrating your achievements with you.
-            </li>
-          </ul>
-
-          <div class="reactive-subtitle"><h2>👀Our Vision</h2></div>
-          Our future is one where AI empowers human excellence and flourishing.
-          This whole app is inspired and driven by the ideas in
-          <a href="https://arxiv.org/pdf/2302.09248.pdf">this paper</a>.
-
-          <div class="reactive-subtitle">
-            <h2>🤖Technology Behind the Scenes</h2>
-          </div>
-          <p>
-            Harnessing the power of the latest AI models, we've created a
-            seamless and adaptive learning experience. Our algorithms are
-            constantly evolving, ensuring the lessons and challenges remain
-            relevant and effective for you.
-          </p>
         </div>
+      </div>
+    </div>
+    <div class="landing-page-2">
+      <div class="stat-infos">
+        <div class="stat-info">🤝Join 1000+ Ascendants!</div>
+        <div class="stat-info">📖12000+ Custom Lessons generated.</div>
+        <div class="stat-info">🎯6000+ Personal Challenges accepted.</div>
+      </div>
+      <div class="faq-container">
+      <FaqComponent/>
       </div>
     </div>
   </div>
@@ -74,16 +81,31 @@
 
 <script>
 import { usePopupStore } from "@/store/popupStore";
+import CtaButton from "./LandingPageComponents/CtaButton.vue";
+import FaqComponent from "./LandingPageComponents/FaqComponent.vue";
+
 export default {
   name: "AboutPage",
+  components: {
+    CtaButton,
+    FaqComponent
+  },
   data() {
     return {
+      items: ["Discover.", "Learn.", "Grow."],
+      activeIndex: 0,
       popupMessage: "",
+      backgroundImages: [
+        require("@/assets/images/discover.webp"),
+        require("@/assets/images/learn.webp"),
+        require("@/assets/images/grow.webp"),
+      ],
     };
   },
   created() {
     const messageCode = this.$route.query.message;
     this.handleMessageCode(messageCode);
+    this.interval = setInterval(this.rotateActiveIndex, 6000);
   },
   methods: {
     handleMessageCode(code) {
@@ -102,198 +124,251 @@ export default {
     redirectLogin() {
       this.$router.push("/login");
     },
+    setActiveIndex(index) {
+      this.activeIndex = index;
+    },
+    rotateActiveIndex() {
+      this.activeIndex = (this.activeIndex + 1) % this.items.length;
+      this.updateBackgroundImage();
+    },
+    updateBackgroundImage() {
+      const landingPage = document.querySelector(".landing-page");
+      landingPage.style.backgroundImage = `url(${
+        this.backgroundImages[this.activeIndex]
+      })`;
+    },
+    observeStatInfos() {
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 1
+      });
+
+      const stats = document.querySelectorAll('.stat-info');
+      stats.forEach(stat => {
+        observer.observe(stat);
+      });
+    },
+  },
+  mounted() {
+    this.updateBackgroundImage();
+    this.observeStatInfos();
+  },
+  beforeUnmount() {
+    clearInterval(this.interval);
   },
 };
 </script>
 
 <style scoped>
-.about-main-container {
-  font-weight: 500;
-    margin-top: 1em;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.center-content {
-  max-width: 1024px;
-  margin: auto;
-  position: relative;
+.landing-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;
 }
 
-h3 {
-  text-align: center;
-  font-weight: 700;
-  text-shadow: 0 0 5px #bb86fc, 0 0 10px #bb86fc;
+.landing-page {
+  text-align: left;
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  transition: background-image 0.5s ease-in-out;
+  width: auto;
+  height: 84vh;
+  max-width: 1024px;
 }
 
 .background-gradient-container {
-  position: relative;
+  padding: 0 1em;
   background-image: linear-gradient(
-      to right,
+      to top,
       #00000000 90%,
       var(--background-color) 100%
     ),
+    linear-gradient(to right, #00000000 90%, var(--background-color) 100%),
     linear-gradient(to left, #00000000 90%, var(--background-color) 100%),
-    linear-gradient(to bottom, #00000000 60%, var(--background-color) 100%),
-    url("~@/assets/images/background_hued_web.png");
+    linear-gradient(to bottom, #00000000 50%, var(--background-color) 95%);
   background-position: center top;
   background-size: cover;
-  max-width: 1024px;
+  /* max-width: 1024px; */
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.background-gradient-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(var(--background-color-rgb), 0.4);
+  height: 84vh;
   z-index: 0;
 }
 
-@media (max-width: 768px) {
-  .center-content, .background-gradient-container {
-    max-width: 100%;
-  }}
-.about-main-container {
-  z-index: 1;
-  text-shadow: 0px 0px 5px var(--background-color),
-    0px 0px 10px var(--background-color), 0px 0px 15px var(--background-color);
-}
-
-.ascent-button {
-  position: relative;
-  background: radial-gradient(
-    ellipse at center,
-    #bb86fcb8 20%,
-    transparent 80%
-  );
-  font-size: 1.4em;
-  margin-top: 8px;
-  padding: 10px 15px;
-  color: var(--text-color);
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: text-shadow 0.3s ease;
-  text-shadow: 0px 0px 5px var(--background-color),
-    0px 0px 10px var(--background-color), 0px 0px 15px var(--background-color);
-  transform-origin: 50% 50%;
-}
-
-.ascent-button:hover {
-  text-shadow: 0 0 5px #bb86fc, 0 0 10px #bb86fc, 0 0 15px #bb86fc;
-}
-@keyframes wiggle {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-20px);
-  }
-}
-
-.ascent-button:hover {
-  animation: wiggle 10s infinite;
-  text-shadow: 0 0 5px #bb86fc, 0 0 10px #bb86fc, 0 0 15px #bb86fc;
-}
-
-.ascent-button::before {
-  content: "→";
-  left: calc(-100% - 10px);
-}
-.ascent-button::after {
-  right: calc(-100% - 10px);
-  content: "←";
-}
-.ascent-button::before,
-.ascent-button::after {
-  font-weight: 900;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  opacity: 1;
-  transition: opacity 0.3s ease;
-}
-
-.ascent-button::before {
-  left: -20px;
-  animation: arrow-motion-before 2s linear infinite alternate;
-}
-
-.ascent-button::after {
-  right: -20px;
-  animation: arrow-motion-after 2s linear infinite alternate;
-}
-
-@keyframes arrow-motion-before {
-  0% {
-    transform: translateY(-50%) translateX(0);
-  }
-  100% {
-    transform: translateY(-50%) translateX(-10px);
-  }
-}
-
-@keyframes arrow-motion-after {
-  0% {
-    transform: translateY(-50%) translateX(0);
-  }
-  100% {
-    transform: translateY(-50%) translateX(10px);
-  }
-}
-
-.ascent-button:hover::before,
-.ascent-button:hover::after {
-  opacity: 0;
-}
-
-.reactive-subtitle {
-  font-weight: 700;
-  position: relative;
-  transition: opacity 0.3s ease;
-}
-
-.reactive-subtitle::after {
+.background-gradient-container::after {
   content: "";
   position: absolute;
   top: 0;
+  left: 0;
   right: 0;
   bottom: 0;
-  left: 0;
-  background: radial-gradient(
-    ellipse at center,
-    #bb86fc42 20%,
-    transparent 80%
-  );
-  opacity: 0;
-  transition: opacity 0.2s ease;
+  background: rgba(var(--background-color-rgb), 0.5);
+  z-index: 0;
 }
 
-.reactive-subtitle:hover::after {
-  opacity: 1;
+.content-container {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0 0.5em;
+  position: relative;
+  z-index: 1;
 }
 
-h1,
-h2 {
-  margin-top: 20px;
-}
-
-p {
-  margin: 10px 0;
-}
-
-.ascent-container {
+.landing-title {
   text-align: center;
+  font-weight: 700;
+  font-size: 3em;
+  margin: 1em 0;
+  color: var(--text-color);
+  text-shadow: 0px 0px 10px var(--background-color),
+    0px 0px 20px var(--background-color), 0px 0px 30px var(--background-color);
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.button {
+  display: inline-block;
+  cursor: pointer;
+  opacity: 0.4;
+  margin-right: 10px;
+  font-size: 2em;
+  text-shadow: none;
+  transition: all 0.3s ease;
+}
+
+.button-active {
+  opacity: 1;
+  text-shadow: 0px 0px 5px var(--background-color),
+    0px 0px 10px var(--background-color), 0px 0px 15px var(--background-color);
+}
+
+.value-content {
+  height: 4em;
+  font-size: 1.2em;
+  transition: all 0.3s ease;
+  padding-right: 35%;
+  text-shadow: 0px 0px 5px var(--background-color),
+    0px 0px 10px var(--background-color), 0px 0px 15px var(--background-color);
+}
+
+.value-explainer {
+  font-size: 1em;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.value-text {
+  font-size: 0.8em;
+  opacity: 0.85;
+  transition: all 0.3s ease;
+}
+
+.stat-infos {
+  padding: 0.5em;
+  text-align: center;
+}
+
+.stat-info {
+  font-size: 1.2em;
+  font-weight: 700;
+  margin: 1em;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.stat-info.visible {
+  animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+.landing-page-1 {
+  display: flex;
+  justify-content: center;
+  height: calc(100vh - 110px);
+}
+.landing-page-2 {
+  display: flex;
+  justify-content: center;
+  height: calc(100vh - 110px);
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.faq-container{
+  z-index: 1;
+}
+
+/* media */
+
+@media only screen and (max-width: 600px) {
+  .value-content {
+    padding-right: 20%;
+  }
+}
+
+@media only screen and (max-width: 440px) {
+  .landing-title {
+    font-weight: 700;
+    font-size: 2.5em;
+  }
+
+  .content-container {
+    padding: 0;
+  }
+
+  .value-content {
+    padding: 0;
+  }
+
+  .button {
+    font-size: 1.8em;
+  }
+
+  .cta-container {
+    padding-top: 1em;
+  }
+}
+
+@media only screen and (max-width: 350px) {
+  .landing-title {
+    font-size: 2em;
+  }
+}
+
+@media only screen and (max-height: 660px) {
+  .landing-title {
+    margin: 0;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

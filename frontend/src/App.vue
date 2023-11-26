@@ -1,12 +1,17 @@
 <!-- App.vue -->
 <template>
   <div class="app-container" :class="themeClass">
-    <TopBar />
-    <SubHeader v-if="loggedIn & shouldShowChat & subheaderExists" />
+    <div :class="{ 'nav-bar-invisible': !shouldShowTitle, 'nav-bar': true }">
+      <TopBar />
+    </div>
+    <SubHeader
+      v-if="loggedIn & shouldShowChat & subheaderExists"
+      :subheading="subheader"
+    />
     <SideMenu />
 
     <div class="main-content">
-      <div class="another">
+      <div class="another" @scroll="onScroll">
         <!-- Main chat -->
         <ChatComponent v-if="shouldShowChat" />
 
@@ -15,8 +20,10 @@
         <InfoPopup />
         <AdPopup />
       </div>
-      <BottomBar v-if="!loggedIn | !shouldShowChat" />
     </div>
+      <div :class="{ 'nav-bar-invisible': !shouldShowTitle, 'nav-bar': true }">
+        <BottomBar v-if="!loggedIn | !shouldShowChat" />
+      </div>
   </div>
 </template>
 
@@ -45,6 +52,11 @@ export default {
     InfoPopup,
     AdPopup,
   },
+  data() {
+    return {
+      scrollTop: 0,
+    };
+  },
   mounted() {
     const authStore = useAuthStore();
     if (window.location.search === "?awake") {
@@ -66,6 +78,13 @@ export default {
     }
   },
   computed: {
+    shouldShowTitle() {
+      const path = this.$route.path;
+      if (path === "/about") {
+        return this.scrollTop > 100;
+      }
+      return true;
+    },
     themeClass() {
       const themeStore = useThemeStore();
       return themeStore.darkMode ? "light-theme" : "";
@@ -141,7 +160,19 @@ export default {
       }
     },
   },
-  methods: {},
+  methods: {
+    onScroll(event) {
+      this.scrollTop = event.target.scrollTop;
+      let navBar = this.$el.querySelector(".nav-bar");
+      if (this.scrollTop > 80) {
+        navBar.style.opacity = 1;
+        navBar.style.pointerEvents = "auto";
+      } else {
+        navBar.style.opacity = 0;
+        navBar.style.pointerEvents = "none";
+      }
+    },
+  },
 };
 </script>
 
@@ -151,7 +182,9 @@ export default {
   color: var(--text-color);
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
+  width: 100vw;
+  z-index: 1;
 }
 
 .main-content {
@@ -159,6 +192,18 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+.nav-bar {
+  transition: opacity 0.3s ease-in-out;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nav-bar-invisible {
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .another {
