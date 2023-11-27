@@ -2,7 +2,7 @@
 <template>
   <div class="app-container" :class="themeClass">
     <div :class="{ 'nav-bar-invisible': !shouldShowTitle, 'nav-bar': true }">
-      <TopBar />
+      <TopBar v-if="true" />
     </div>
     <SubHeader
       v-if="loggedIn & shouldShowChat & subheaderExists"
