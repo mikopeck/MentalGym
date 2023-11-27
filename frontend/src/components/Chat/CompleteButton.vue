@@ -28,9 +28,9 @@
           v-model="feedback"
           placeholder="Enter your feedback here..."
         ></textarea>
-        <button :disabled="!isValid" @click="submitFeedback" class="submit-btn">
-          Submit
-        </button>
+        <button :disabled="!isValid || isSubmitted" @click="submitFeedback" class="submit-btn">
+  {{ isSubmitted ? 'Thank You' : 'Submit' }}
+</button>
       </div>
     </div>
   </div>
@@ -46,6 +46,7 @@ export default {
       rating: 0,
       feedback: "",
       showFeedback: false,
+      isSubmitted: false,
     };
   },
   computed: {
@@ -88,6 +89,7 @@ export default {
           } else {
             popupStore.showPopup("Feedback submitted.");
           }
+          this.isSubmitted = true;
           this.message = "";
         })
         .catch((error) => {

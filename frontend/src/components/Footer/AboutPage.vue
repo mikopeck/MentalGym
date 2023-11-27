@@ -73,7 +73,7 @@
         <div class="stat-info">🎯6000+ Personal Challenges accepted.</div>
       </div>
       <div class="faq-container">
-      <FaqComponent/>
+        <FaqComponent />
       </div>
     </div>
   </div>
@@ -88,7 +88,7 @@ export default {
   name: "AboutPage",
   components: {
     CtaButton,
-    FaqComponent
+    FaqComponent,
   },
   data() {
     return {
@@ -138,19 +138,22 @@ export default {
       })`;
     },
     observeStatInfos() {
-      const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, {
-        threshold: 1
-      });
+      const observer = new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 1,
+        }
+      );
 
-      const stats = document.querySelectorAll('.stat-info');
-      stats.forEach(stat => {
+      const stats = document.querySelectorAll(".stat-info");
+      stats.forEach((stat) => {
         observer.observe(stat);
       });
     },
@@ -225,7 +228,7 @@ export default {
 .landing-title {
   text-align: center;
   font-weight: 700;
-  font-size: 3em;
+  font-size: 4em;
   margin: 1em 0;
   color: var(--text-color);
   text-shadow: 0px 0px 10px var(--background-color),
@@ -264,13 +267,13 @@ export default {
 }
 
 .value-explainer {
-  font-size: 1em;
+  font-size: 1.2em;
   font-weight: 700;
   transition: all 0.3s ease;
 }
 
 .value-text {
-  font-size: 0.8em;
+  font-size: 1em;
   opacity: 0.85;
   transition: all 0.3s ease;
 }
@@ -305,15 +308,24 @@ export default {
   justify-content: space-around;
 }
 
-.faq-container{
+.faq-container {
   z-index: 1;
 }
 
 /* media */
 
 @media only screen and (max-width: 600px) {
+    .landing-title {
+    font-size: 3em;
+  }
   .value-content {
     padding-right: 20%;
+  }
+  .value-explainer {
+    font-size: 1em;
+  }
+  .value-text {
+    font-size: 0.8em;
   }
 }
 
