@@ -14,13 +14,8 @@
           key="signupForm"
         />
       </transition>
-      <button @click="toggleForms">
-        {{
-          showLoginForm
-            ? "Don't have an account? Sign up"
-            : "Already have an account? Log in"
-        }}
-      </button>
+  <button class="toggle-btn" @click="toggleForms" v-html="toggleButtonText"></button>
+
       <div ref="googleButton"></div>
     </div>
   </div>
@@ -58,6 +53,11 @@ export default {
     loggedIn() {
       const authStore = useAuthStore();
       return authStore.loggedIn;
+    },
+    toggleButtonText() {
+      return this.showLoginForm
+        ? "Don't have an account? <span class='underline-text'>Sign up</span>"
+        : "Already have an account? <span class='underline-text'>Log in</span>";
     },
   },
   methods: {
@@ -170,7 +170,7 @@ export default {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease, text-shadow 0.3s ease;
+  transition: all 0.3s ease;
   text-align: center;
 }
 
@@ -186,11 +186,14 @@ export default {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: text-shadow 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .popup-content button:hover {
   text-shadow: 0 0 5px #bb86fc, 0 0 10px #bb86fc, 0 0 15px #bb86fc;
+}
+.underline-text {
+  text-decoration: underline;
 }
 
 .fade-enter-active,

@@ -11,8 +11,8 @@
         <span class="plus-icon" v-html="getIcon(index)"></span>
         {{ faq.question }}
       </button>
-      <div :class="['faq-answer', isActive(index)]">
-        <div class="answer-text">{{ faq.answer }}</div>
+      <div class="faq-answer" :class="['faq-answer', isActive(index)]">
+        <div class="answer-text" v-html="faq.answer"></div>
       </div>
     </div>
   </div>
@@ -36,6 +36,13 @@ export default {
             "Ascendance uses advanced algorithms to analyze your learning style, pace, and preferences. Based on this analysis, it customizes lessons and challenges to suit your unique needs, ensuring an engaging and effective learning journey.",
           isOpen: false,
         },
+            {
+              question:
+                "Is there a subscription model and what are the payment options?",
+              answer:
+                "Ascendance offers free, <a href='/plans'>paid and premium subscription models</a>. The paid models provide access to additional features and content. Payment can be made via major credit cards, and other digital wallets, depending on your region.",
+              isOpen: false,
+            },
         {
           question:
             "What types of progress tracking and analytics does Ascendance offer?",
@@ -47,14 +54,7 @@ export default {
           question:
             "What should I do if I encounter a technical issue on Ascendance?",
           answer:
-            "If you face any technical issues, you can reach out to our support team via the contact form on our website or email us at miko@ascendance.com. We also have a troubleshooting guide in the Help section that may address common problems.",
-          isOpen: false,
-        },
-        {
-          question:
-            "Is there a subscription model for Ascendance and what are the payment options?",
-          answer:
-            "Ascendance offers both free and premium subscription models. The premium subscription provides access to additional features and content. Payment can be made via major credit cards, and other digital wallets, depending on your region.",
+            "If you face any technical issues, you can reach out to our support team via the <a href='/contact'>contact form</a> or email us at miko@ascendance.com. Check <a href='https://twitter.com/AscendanceCloud' target='_blank'>Discord</a> for common problems.",
           isOpen: false,
         },
       ],
@@ -119,7 +119,7 @@ export default {
 }
 
 .pill-button {
-    display: flex;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;

@@ -16,11 +16,11 @@
 
             <input type="submit" value="Submit" />
           </form>
-          <div v-else>Please <a href="/">log in</a> to submit feedback and bugs.</div>
+          <div v-else>Please <a href="/login">log in</a> to submit feedback and bugs.</div>
           <br />
           <div>
             To reach us, join the Discord community at the bottom of the page or
-            email miko@ascendance.cloud.
+            email <b>miko@ascendance.cloud</b>.
           </div>
         </div>
       </div>

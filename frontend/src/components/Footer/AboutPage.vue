@@ -29,7 +29,7 @@
                   Gain experience in a new way. Complete custom lessons, because
                   knowledge is power. Dare to accept challenges tailored to push
                   <i>your</i>
-                  limits. Start your Ascendance to reach your potential.
+                  limits. Discover your potential.
                 </div>
               </div>
               <div
@@ -278,6 +278,10 @@ export default {
   transition: all 0.3s ease;
 }
 
+  .cta-container {
+    margin-bottom: 2em;
+  }
+
 .stat-infos {
   padding: 0.5em;
   text-align: center;
@@ -303,7 +307,6 @@ export default {
 .landing-page-2 {
   display: flex;
   justify-content: center;
-  height: calc(100vh - 110px);
   flex-direction: column;
   justify-content: space-around;
 }
@@ -315,7 +318,7 @@ export default {
 /* media */
 
 @media only screen and (max-width: 600px) {
-    .landing-title {
+  .landing-title {
     font-size: 3em;
   }
   .value-content {
@@ -347,9 +350,6 @@ export default {
     font-size: 1.8em;
   }
 
-  .cta-container {
-    padding-top: 1em;
-  }
 }
 
 @media only screen and (max-width: 350px) {
