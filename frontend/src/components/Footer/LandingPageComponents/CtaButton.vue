@@ -1,6 +1,6 @@
 <template>
   <div class="cta-container">
-    <button class="pill-button" >Sign up free!</button>
+    <button class="pill-button" >Try it free!</button>
   </div>
 </template>
 
@@ -23,7 +23,7 @@ export default {
   font-size: 1.5em;
   margin-top: 1.5em;
   margin: 1em;
-  padding: 10px 20px;
+  padding: 15px 30px;
   border: solid 1px var(--highlight-color);
   border-radius: 50px;
   color: var(--text-color);
