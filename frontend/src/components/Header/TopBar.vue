@@ -11,7 +11,7 @@
     />
     <div class="app-title" @click="redirectToHome">{{ pageTitle }}</div>
 
-    <button id="sideMenu" @click="toggleSideMenu" class="menu-btn">
+    <button id="sideMenu" @click="toggleSideMenu" class="menu-btn" aria-label="side menu">
       <!-- Three line (hamburger) icon -->
       <span class="menu-line"></span>
       <span class="menu-line"></span>

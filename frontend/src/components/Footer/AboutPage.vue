@@ -68,9 +68,9 @@
     </div>
     <div class="landing-page-2">
       <div class="stat-infos">
-        <div class="stat-info">🤝Join 1000+ Ascendants!</div>
-        <div class="stat-info">📖12000+ Custom Lessons generated.</div>
-        <div class="stat-info">🎯6000+ Personal Challenges accepted.</div>
+        <div class="stat-info">🤝Join 10+ Ascendants!</div>
+        <div class="stat-info">📖120+ Custom Lessons generated.</div>
+        <div class="stat-info">🎯60+ Unique Challenges accepted.</div>
       </div>
       <div class="faq-container">
         <FaqComponent />
