@@ -1,6 +1,6 @@
 <!-- BottomBar.vue -->
 <template>
-  <div class="app-footer">
+  <div class="app-footer"  :class="{'nav-bar-invisible': !isVisible, 'nav-bar': isVisible}">
     <div class="footer-top">
       <router-link to="/about" class="text-link">About</router-link>
       <span class="separator">·</span>
@@ -58,10 +58,19 @@
 
 <script>
 import { useThemeStore } from "@/store/themeStore";
+import { useScrollStore } from "@/store/scrollStore";
 
 export default {
   name: "BottomBar",
   computed: {
+    scrollTop() {
+      return useScrollStore().scrollTop;
+    },
+    isVisible() {
+      console.log(this.$route.path+this.scrollTop);
+      if (this.$route.path !== "/about"){ return true;}
+      return this.scrollTop > 80;
+    },
     themeIcon() {
       return this.darkMode
         ? require("@/assets/images/darkmode.png")
@@ -115,7 +124,6 @@ export default {
   background-color: var(--background-color-1t);
   backdrop-filter: blur(8px);
   box-shadow: 0 0 2px 2px var(--background-color-1t);
-  opacity: 0.8;
 }
 
 .footer-top,

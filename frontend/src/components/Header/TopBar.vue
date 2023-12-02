@@ -1,6 +1,6 @@
 <!-- TopBar.vue -->
 <template>
-  <header class="top-bar">
+  <div class="top-bar"  :class="{'nav-bar-invisible': !isVisible, 'nav-bar': isVisible}">
     <img
       :src="logoPath"
       alt="Ascendance Logo"
@@ -17,16 +17,25 @@
       <span class="menu-line"></span>
       <span class="menu-line"></span>
     </button>
-  </header>
+  </div>
 </template>
   
 <script>
 import { useMenuStore } from "@/store/menuStore";
 import { useThemeStore } from "@/store/themeStore";
+import { useScrollStore } from "@/store/scrollStore";
 
 export default {
   name: "TopBar",
   computed: {
+    scrollTop() {
+      return useScrollStore().scrollTop;
+    },
+    isVisible() {
+      console.log(this.$route.path+this.scrollTop);
+      if (this.$route.path !== "/about"){ return true;}
+      return this.scrollTop > 80;
+    },
     logoPath() {
       const themeStore = useThemeStore();
       return themeStore.darkMode

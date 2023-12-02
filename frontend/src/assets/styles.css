@@ -100,6 +100,17 @@ a:hover {
     max-width: 720px;
 }
 
+.nav-bar {
+    transition: opacity 0.3s ease-in-out;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .nav-bar-invisible {
+    opacity: 0;
+    pointer-events: none;
+  }
+
 /* Webkit browsers (e.g., Chrome, Safari) scrollbar styles */
 ::-webkit-scrollbar {
     width: 12px;

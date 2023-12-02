@@ -1,9 +1,7 @@
 <!-- App.vue -->
 <template>
   <div class="app-container" :class="themeClass">
-    <div :class="{ 'nav-bar-invisible': !shouldShowTitle, 'nav-bar': true }">
-      <TopBar v-if="true" />
-    </div>
+    <TopBar />
     <SubHeader
       v-if="loggedIn & shouldShowChat & subheaderExists"
       :subheading="subheader"
@@ -21,9 +19,7 @@
         <AdPopup />
       </div>
     </div>
-      <div :class="{ 'nav-bar-invisible': !shouldShowTitle, 'nav-bar': true }">
-        <BottomBar v-if="!loggedIn | !shouldShowChat" />
-      </div>
+    <BottomBar v-if="!loggedIn | !shouldShowChat" />
   </div>
 </template>
 
@@ -40,6 +36,7 @@ import { useMenuStore } from "@/store/menuStore";
 import { useThemeStore } from "@/store/themeStore";
 import { usePopupStore } from "@/store/popupStore";
 import { useMessageStore } from "@/store/messageStore";
+import { useScrollStore } from "@/store/scrollStore";
 
 export default {
   name: "App",
@@ -51,11 +48,6 @@ export default {
     SubHeader,
     InfoPopup,
     AdPopup,
-  },
-  data() {
-    return {
-      scrollTop: 0,
-    };
   },
   mounted() {
     const authStore = useAuthStore();
@@ -78,13 +70,6 @@ export default {
     }
   },
   computed: {
-    shouldShowTitle() {
-      const path = this.$route.path;
-      if (path === "/about") {
-        return this.scrollTop > 100;
-      }
-      return true;
-    },
     themeClass() {
       const themeStore = useThemeStore();
       return themeStore.darkMode ? "light-theme" : "";
@@ -162,15 +147,8 @@ export default {
   },
   methods: {
     onScroll(event) {
-      this.scrollTop = event.target.scrollTop;
-      let navBar = this.$el.querySelector(".nav-bar");
-      if (this.scrollTop > 80) {
-        navBar.style.opacity = 1;
-        navBar.style.pointerEvents = "auto";
-      } else {
-        navBar.style.opacity = 0;
-        navBar.style.pointerEvents = "none";
-      }
+      const scrollStore = useScrollStore();
+      scrollStore.scrollTop = event.target.scrollTop;
     },
   },
 };
@@ -192,18 +170,6 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-}
-
-.nav-bar {
-  transition: opacity 0.3s ease-in-out;
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.nav-bar-invisible {
-  opacity: 0;
-  pointer-events: none;
-  z-index: 0;
 }
 
 .another {
