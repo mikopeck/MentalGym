@@ -106,7 +106,7 @@ export default {
     },
     sendTokenToBackend(id_token) {
       axios
-        .post("/auth/google/callback", { id_token })
+        .post("/api/auth/google/callback", { id_token })
         .then((response) => {
           const authStore = useAuthStore();
           authStore.login();

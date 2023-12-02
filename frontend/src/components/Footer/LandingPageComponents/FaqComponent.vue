@@ -40,7 +40,7 @@ export default {
               question:
                 "Is there a subscription model and what are the payment options?",
               answer:
-                "Ascendance offers free, <a href='/plans'>paid and premium subscription models</a>. The paid models provide access to additional features and content. Payment can be made via major credit cards, and other digital wallets, depending on your region.",
+                "Ascendance offers free, <a href='/plan'>paid and premium subscription models</a>. The paid models provide access to additional features and content. Payment can be made via major credit cards, and other digital wallets, depending on your region.",
               isOpen: false,
             },
         {

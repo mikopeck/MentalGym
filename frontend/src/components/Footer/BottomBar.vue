@@ -142,6 +142,7 @@ export default {
 }
 
 .text-link {
+  cursor: pointer;
   color: var(--text-color);
   text-decoration: none;
 }

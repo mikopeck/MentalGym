@@ -11,7 +11,7 @@ export const useAuthStore = defineStore('auth', {
     async checkAuth() {
       console.log("Checking authentication");
       try {
-        const response = await axios.get('/check-auth');
+        const response = await axios.get('/api/check-auth');
         if (response.data.loggedIn) {
           this.login();
         }

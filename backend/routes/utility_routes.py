@@ -32,7 +32,7 @@ def init_utility_routes(app):
         achievements_data = dbh.get_user_achievements(current_user.id)
         return jsonify(status="success", achievements=achievements_data)
 
-    @app.route("/reset", methods=["GET"])
+    @app.route("/api/reset", methods=["GET"])
     @login_required
     def reset():
         dbh.reset_user_profile(current_user.id)

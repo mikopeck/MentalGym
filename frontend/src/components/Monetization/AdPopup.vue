@@ -34,7 +34,7 @@ export default {
   setup() {
     const ads = useAdsStore();
     const messages = ref([
-      '<a href="/plans">Paid plans</a> use the most accurate and powerful models available.',
+      '<a href="/plan">Paid plans</a> use the most accurate and powerful models available.',
       'Your ad could appear here.. <a href="/contact">get in touch.</a>',
       'Would you recommend us to a friend? <br><a href="/contact">What could we do to make that happen?</a>',
       'Join our community on <a target="_blank" href="https://twitter.com/AscendanceCloud">X</a> and <a target="_blank" href="https://discord.gg/SSGygda5DX">Discord</a> to stay up-to-date with the latest features.',

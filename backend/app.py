@@ -4,12 +4,10 @@ import os
 import openai
 import resend
 from dotenv import load_dotenv
-from flask import Flask, jsonify, make_response, send_from_directory
+from flask import Flask, jsonify, make_response, send_from_directory, request
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_cors import CORS
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 
 from database.models import db, User
 
@@ -64,6 +62,10 @@ def serve_frontend(path):
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, 'index.html')
+    
+@app.route('/robots.txt')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
     
 @login_manager.unauthorized_handler
 def unauthorized():

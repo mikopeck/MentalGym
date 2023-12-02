@@ -17,7 +17,7 @@ GOOGLE_CLIENT_ID = "529262341360-9sq10od3qkro19jaavhgachkpviugfv3.apps.googleuse
 
 def init_auth_routes(app):
 
-    @app.route('/login', methods=['POST'])
+    @app.route('/api/login', methods=['POST'])
     def login():
         email = request.form['email']
         password = request.form['password']
@@ -28,13 +28,13 @@ def init_auth_routes(app):
         else:
             return jsonify({'status': 'fail'})
 
-    @app.route("/logout", methods=["GET"])
+    @app.route("/api/logout", methods=["GET"])
     @login_required
     def logout_route():
         logout_user()
         return jsonify({"status": "success"})
 
-    @app.route('/check-auth', methods=['GET'])
+    @app.route('/api/check-auth', methods=['GET'])
     def check_auth():
         if current_user.is_authenticated:
             return jsonify({'loggedIn': True, 'userTier': get_user_tier(current_user.id)})
@@ -42,7 +42,7 @@ def init_auth_routes(app):
             return jsonify({'loggedIn': False, 'userTier': None})
         
 
-    @app.route('/signup', methods=['POST'])
+    @app.route('/api/signup', methods=['POST'])
     def signup():
         try:
             email = request.form['new-email']
@@ -64,7 +64,7 @@ def init_auth_routes(app):
             else:
                 return jsonify({'status': 'error', 'message': 'An unexpected error occurred. Please try again later.'}), 500
 
-    @app.route('/confirm/<token>')
+    @app.route('/api/confirm/<token>')
     def confirm_email(token):
         user = User.query.filter_by(confirmation_token=token).first()
         if user and confirm(user.id, token):
@@ -83,7 +83,7 @@ def init_auth_routes(app):
                 return redirect('/about?message=expired_registration_token')
             return redirect('/about?message=invalid_registration_token')
     
-    @app.route('/auth/google/callback', methods=['POST'])
+    @app.route('/api/auth/google/callback', methods=['POST'])
     def google_auth_callback():
         token = request.json.get('id_token')
 

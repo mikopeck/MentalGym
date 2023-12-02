@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+Disallow: /backend/
+Allow: /$  # Root path
+Allow: /about$
+Allow: /login$
+Allow: /terms$
+Allow: /contact$
+Sitemap: https://ascendance.cloud/sitemap.xml

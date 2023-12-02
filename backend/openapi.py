@@ -49,7 +49,7 @@ def generate_response(user_id, messages, functions=None, function_call="none", m
                 print(response_data)
                 return response_data
             else:
-                print(f"Request failed with status code {response.status_code}")
+                print(f"Request failed with status code {response.status_code}: {response.json()}")
                 time.sleep(delay)
 
         except requests.exceptions.Timeout:

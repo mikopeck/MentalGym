@@ -101,7 +101,7 @@ export default {
     },
     async logout() {
       try {
-        let response = await axios.get("/logout");
+        let response = await axios.get("/api/logout");
         if (response.data.status === "success") {
           const authStore = useAuthStore();
           authStore.logout();
@@ -115,7 +115,7 @@ export default {
     },
     async resetConversation() {
       try {
-        let response = await axios.get("/reset");
+        let response = await axios.get("/api/reset");
         if (response.data.status === "success") {
           this.$router.push("/");
         } else {
