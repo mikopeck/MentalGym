@@ -7,7 +7,7 @@
       :class="[
         message.role,
         { 'first-chat-bubble': index === 0 && $route.path.includes('lesson') },
-        { 'quiz-bubble': message.type === 'quiz'},
+        { 'quiz-bubble': message.type === 'quiz' },
       ]"
       class="chat-bubble"
     >
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import QuizComponent from './QuizComponent.vue';
+import QuizComponent from "./QuizComponent.vue";
 import ContentButton from "./ContentButton.vue";
 import CompleteButton from "./CompleteButton.vue";
 import { useMessageStore } from "@/store/messageStore";
@@ -49,13 +49,15 @@ export default {
   },
   computed: {
     filteredMessages() {
-    const messageStore = useMessageStore();
+      const messageStore = useMessageStore();
 
       if (!messageStore.messages) {
         console.log("No messages!");
         return [];
       }
-      var msgs = messageStore.messages.filter((message) => message.role !== "system");
+      var msgs = messageStore.messages.filter(
+        (message) => message.role !== "system"
+      );
       msgs = msgs.filter((message) => message.role !== "app");
       const tempMessage = {
         role: "app",
@@ -67,13 +69,62 @@ export default {
   },
   methods: {
     formatMessageContent(content) {
-      let regex = /```([\s\S]*?)```/g;
+      let regex;
+
+      // Code block
+      regex = /```([\s\S]*?)```/g;
       content = content.replace(regex, '<div class="code-block">$1</div>');
 
-      let boldRegex = /\*\*([\s\S]*?)\*\*/g;
-      content = content.replace(boldRegex, "<strong>$1</strong>");
+      // Inline code
+      regex = /`([^`]*?)`/g;
+      content = content.replace(regex, "<code>$1</code>");
 
-      return content.replace(/\n/g, "<br />");
+      // Bold
+      regex = /\*\*([^*]*?)\*\*/g;
+      content = content.replace(regex, "<strong>$1</strong>");
+
+      // Italics
+      regex = /_([^_]*?)_|\*([^*]*?)\*/g;
+      content = content.replace(regex, "<em>$1$2</em>");
+
+      // Strikethrough
+      regex = /~~([^~]*?)~~/g;
+      content = content.replace(regex, "<del>$1</del>");
+
+      // Headers
+      regex = /^(#{1,6})\s*([^\n]+)\n/gm;
+      content = content.replace(regex, function (_match, hashes, text) {
+        let level = hashes.length;
+        return `<h${level}>${text.trim()}</h${level}>`;
+      });
+
+      // Links
+      regex = /\[([\s\S]*?)\]\((http:\/\/|https:\/\/|ftp:\/\/)([\s\S]*?)\)/g;
+      content = content.replace(regex, '<a href="$2$3">$1</a>');
+
+      // Images (Optional)
+      regex = /!\[([\s\S]*?)\]\((http:\/\/|https:\/\/|ftp:\/\/)([\s\S]*?)\)/g;
+      content = content.replace(regex, '<img src="$2$3" alt="$1">');
+
+      // Unordered Lists (the following regexes need to be applied in sequence, not independently)
+      // Match bullet points and transform them into HTML list items
+      regex = /^\s*\*\s*(.*?)$/gm;
+      content = content.replace(regex, "<li>$1</li>");
+      // Add <ul> tags around consecutive <li>
+      regex = /(<li>.*<\/li>)/gs;
+      content = content.replace(regex, "<ul>$1</ul>");
+
+      // Ordered Lists similar to Unordered Lists
+      regex = /^\s*\d+\.\s*(.*?)$/gm;
+      content = content.replace(regex, "<li>$1</li>");
+      // Add <ol> tags around consecutive <li>
+      regex = /(<li>.*<\/li>)/gs;
+      content = content.replace(regex, "<ol>$1</ol>");
+
+      // Line breaks
+      content = content.replace(/\n/g, "<br />");
+
+      return content;
     },
     navigateToContent(role) {
       if (typeof role === "undefined") {
@@ -84,12 +135,12 @@ export default {
     isQuizMessage(msg) {
       let role = msg.role;
       let type = msg.type;
-      return role === 'assistant' && type === 'quiz'
+      return role === "assistant" && type === "quiz";
     },
     isChatMessage(role, type) {
       return (
         role.startsWith("user") ||
-        (role.startsWith("assistant") && type !== 'quiz') ||
+        (role.startsWith("assistant") && type !== "quiz") ||
         role.startsWith("app")
       );
     },
@@ -101,7 +152,7 @@ export default {
     },
     isCompletionMessage(role) {
       let result = role == "complete";
-      if (result){
+      if (result) {
         const inputStore = useInputStore();
         inputStore.hide();
       }
@@ -164,7 +215,8 @@ export default {
   align-self: flex-end;
 }
 
-.first-chat-bubble, .quiz-bubble {
+.first-chat-bubble,
+.quiz-bubble {
   width: 100%;
   max-width: 100%;
 }
