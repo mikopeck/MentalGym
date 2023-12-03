@@ -267,12 +267,13 @@ export default {
   width: 25px;
   background-color: var(--text-color);
   border-radius: 50%;
-  transition: box-shadow 0.3s;
+  transition: background-color 0.3s;
 }
 
 .quiz-radio:checked + .radio-dot {
-  box-shadow: inset 0 0 0 10px black;
+  background-color: var(--element-color-1);
 }
+
 
 .selected-choice {
   transition: opacity 0.3s;

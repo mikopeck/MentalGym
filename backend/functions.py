@@ -62,7 +62,7 @@ Lesson = {
             },
             "lesson_emoji": {
                 "type": "string",
-                "description": "One emoji which represents the lesson topic.",
+                "description": "A single, valid Unicode emoji representing the lesson topic. Must be within standard Unicode emoji ranges.",
             },
         },
         "required": ["lesson_name","lesson_emoji"],
@@ -81,7 +81,7 @@ Challenge = {
             },
             "challenge_emoji": {
                 "type": "string",
-                "description": "One emoji which represents the challenge topic.",
+                "description": "A single, valid Unicode emoji representing the challenge topic. Must be within standard Unicode emoji ranges.",
             }
         },
         "required": ["challenge_name", "challenge_emoji"],
@@ -105,7 +105,7 @@ Content = {
                         },
                         "lesson_emoji": {
                             "type": "string",
-                            "description": "One emoji which represents the lesson topic."
+                            "description": "A single, valid Unicode emoji representing the lesson topic. Must be within standard Unicode emoji ranges."
                         }
                     },
                     "required": ["lesson_name", "lesson_emoji"]
@@ -123,7 +123,7 @@ Content = {
                         },
                         "challenge_emoji": {
                             "type": "string",
-                            "description": "One emoji which represents the challenge topic."
+                            "description": "A single, valid Unicode emoji representing the challenge topic. Must be within standard Unicode emoji ranges."
                         }
                     },
                     "required": ["challenge_name", "challenge_emoji"]

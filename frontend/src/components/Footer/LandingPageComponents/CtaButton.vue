@@ -24,7 +24,7 @@ export default {
   margin-top: 1.5em;
   margin: 1em;
   padding: 15px 30px;
-  border: solid 1px var(--highlight-color);
+  border: solid 1px var(--element-color-2);
   border-radius: 50px;
   color: var(--text-color);
   background-image: linear-gradient(
@@ -38,6 +38,6 @@ export default {
 }
 
 .pill-button:hover {
-  border: solid 1px var(--element-color-2);
+  border: solid 1px var(--highlight-color);
 }
 </style>

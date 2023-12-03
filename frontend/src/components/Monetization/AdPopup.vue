@@ -7,7 +7,14 @@
           <span class="emoji-indicator">💳</span>
           <button class="close-button" @click="ads.hide">✖</button>
         </div>
-        <p class="popup-message" v-html="randomMessage"></p>
+        <transition name="fade-message" mode="out-in">
+          <div
+            class="popup-message"
+            :key="randomMessage" 
+            v-html="randomMessage"
+          >
+          </div>
+        </transition>
         <div class="popup-footer">
           <span v-if="ads.isLoading" class="loading-message"
             ><div>Loading response</div>
@@ -35,15 +42,24 @@ export default {
     const ads = useAdsStore();
     const messages = ref([
       '<a href="/plan">Paid plans</a> use the most accurate and powerful models available.',
+      "Generating lessons and quizzes takes about 2-3× longer than regular replies. Thank you for your patience.",
       'Your ad could appear here.. <a href="/contact">get in touch.</a>',
       'Would you recommend us to a friend? <br><a href="/contact">What could we do to make that happen?</a>',
       'Join our community on <a target="_blank" href="https://twitter.com/AscendanceCloud">X</a> and <a target="_blank" href="https://discord.gg/SSGygda5DX">Discord</a> to stay up-to-date with the latest features.',
       'Please consider <a target="_blank" href="https://donate.stripe.com/fZe8Ao9hl63qe9GeUX">donating</a> to help this app grow faster!',
     ]);
-    const randomMessage = computed(() => {
-      const randomIndex = Math.floor(Math.random() * messages.value.length);
-      return messages.value[randomIndex];
-    });
+    const specialMessage = messages.value.splice(1, 1)[0];
+    messages.value.sort(() => Math.random() - 0.5);
+    messages.value.splice(1, 0, specialMessage);
+
+    let messageIndex = ref(0);
+    const randomMessage = computed(() => messages.value[messageIndex.value]);
+
+    const changeMessage = () => {
+      messageIndex.value = (messageIndex.value + 1) % messages.value.length;
+    };
+
+    let messageInterval;
 
     const handleKeyPress = (event) => {
       if (event.key === "Enter" && !ads.isLoading) {
@@ -56,12 +72,15 @@ export default {
     };
 
     onMounted(() => {
+      messageInterval = setInterval(changeMessage, 5000);
       window.addEventListener("keydown", handleKeyPress);
     });
 
     onUnmounted(() => {
+      clearInterval(messageInterval);
       window.removeEventListener("keydown", handleKeyPress);
     });
+
     return {
       ads,
       randomMessage,
@@ -177,6 +196,7 @@ export default {
   margin-left: 2px;
   display: flex;
   gap: 5px;
+  scale: 0.9;
 }
 
 .loading-dots span {
@@ -231,5 +251,14 @@ export default {
   52% {
     transform: translateY(0);
   }
+}
+
+.fade-message-enter-active,
+.fade-message-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-message-enter-from,
+.fade-message-leave-to {
+  opacity: 0;
 }
 </style>

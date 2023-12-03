@@ -72,8 +72,12 @@
         <div class="stat-info">📖120+ Custom Lessons generated.</div>
         <div class="stat-info">🎯60+ Unique Challenges accepted.</div>
       </div>
+      <img :src="openaiPath" alt="Powered by OpenAI" class="openai" />
       <div class="faq-container">
         <FaqComponent />
+      </div>
+      <div class="cta-container" @click="redirectLogin">
+        <CtaButton />
       </div>
     </div>
   </div>
@@ -81,6 +85,7 @@
 
 <script>
 import { usePopupStore } from "@/store/popupStore";
+import { useThemeStore } from "@/store/themeStore";
 import CtaButton from "./LandingPageComponents/CtaButton.vue";
 import FaqComponent from "./LandingPageComponents/FaqComponent.vue";
 
@@ -106,6 +111,14 @@ export default {
     const messageCode = this.$route.query.message;
     this.handleMessageCode(messageCode);
     this.interval = setInterval(this.rotateActiveIndex, 6000);
+  },
+  computed: {
+    openaiPath() {
+      const themeStore = useThemeStore();
+      return themeStore.darkMode
+        ? require("@/assets/images/powered-by-openai-badge-outlined-on-light.svg")
+        : require("@/assets/images/powered-by-openai-badge-outlined-on-dark.svg");
+    },
   },
   methods: {
     handleMessageCode(code) {
@@ -278,9 +291,10 @@ export default {
   transition: all 0.3s ease;
 }
 
-  .cta-container {
-    margin-bottom: 2em;
-  }
+.cta-container {
+  margin-bottom: 2em;
+  z-index: 10;
+}
 
 .stat-infos {
   padding: 0.5em;
@@ -315,6 +329,13 @@ export default {
   z-index: 1;
 }
 
+.openai {
+  margin: 0 auto;
+  padding: 64px 25%;
+  max-height: 212px;
+  z-index: 1;
+}
+
 /* media */
 
 @media only screen and (max-width: 600px) {
@@ -329,6 +350,9 @@ export default {
   }
   .value-text {
     font-size: 0.8em;
+  }
+  .openai {
+    padding: 48px 20%;
   }
 }
 
@@ -349,7 +373,9 @@ export default {
   .button {
     font-size: 1.8em;
   }
-
+  .openai {
+    padding: 32px 15%;
+  }
 }
 
 @media only screen and (max-width: 350px) {

@@ -47,11 +47,12 @@
       </a>
     </div>
     <div class="footer-bottom">
-      <router-link to="/terms" class="text-link"
+      <div class="footer-top"><router-link to="/terms" class="text-link"
         >Terms and Policies</router-link
       >
       <span class="separator">·</span>
-      <p>© 2023 Ascendance.</p>
+      <p>© 2023 Ascendance.</p></div>
+      <div><p class="sincere-msg">Made with ❤️ for knowing and doing.</p></div>
     </div>
   </div>
 </template>
@@ -131,6 +132,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.footer-bottom{
+  flex-direction: column;
 }
 
 .link-icon:hover {

@@ -123,7 +123,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  border: solid 1px var(--highlight-color);
+  border: solid 1px var(--element-color-2);
   border-radius: 20px;
   color: var(--text-color);
   background-image: linear-gradient(
@@ -135,6 +135,11 @@ export default {
   outline: none;
   width: 100%;
   max-width: 720px;
+  transition: border 0.3s;
+}
+
+.pill-button:hover {
+  border: solid 1px var(--highlight-color);
 }
 
 .plus-icon {
