@@ -11,7 +11,7 @@ request_timeout = 60  # Timeout for API requests in seconds
 TOKEN_CAP = 500
 LESSON_TOKENS = 1000
 
-GPT3_5 = "gpt-3.5-turbo-1106"
+GPT3_5 = "gpt-3.5-turbo-0613"
 GPT4 = "gpt-4"
 
 def generate_response(user_id, messages, functions=None, function_call="none", model=GPT3_5, tokens=TOKEN_CAP):

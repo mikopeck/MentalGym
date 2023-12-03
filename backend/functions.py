@@ -90,7 +90,7 @@ Challenge = {
 
 Content = {
     "name": "offered_content",
-    "description": "Returns descriptions and separate emojis for any lessons or challenges being offered.",
+    "description": "Returns descriptions and emojis for any lessons or challenges being offered.",
     "parameters": {
         "type": "object",
         "properties": {

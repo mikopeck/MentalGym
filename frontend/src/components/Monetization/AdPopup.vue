@@ -72,7 +72,7 @@ export default {
     };
 
     onMounted(() => {
-      messageInterval = setInterval(changeMessage, 5000);
+      messageInterval = setInterval(changeMessage, 7000);
       window.addEventListener("keydown", handleKeyPress);
     });
 
