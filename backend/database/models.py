@@ -58,7 +58,8 @@ class User(db.Model, UserMixin):
             "active_challenges": active_challenges,
             "completed_challenges": completed_challenges,
             "active_lessons": active_lessons,
-            "completed_lessons": completed_lessons
+            "completed_lessons": completed_lessons,
+            "latest_action": self.current_content
         }
         return user_data
 

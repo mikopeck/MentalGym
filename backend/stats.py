@@ -68,31 +68,34 @@ def get_line_graph_data(user_id):
         extract('year', Challenge.completion_date)
     ).all()
     
-    merged_data = defaultdict(lambda: {"lessons": 0, "challenges": 0})
+    # Find the earliest and latest date across both datasets
+    start_date = min([datetime(year, month, day) for day, month, year, _ in lessons_over_time + challenges_over_time if day and month and year])
+    end_date = max([datetime(year, month, day) for day, month, year, _ in lessons_over_time + challenges_over_time if day and month and year])
 
+    # Initialize merged_data with all dates in the range and zero counts
+    merged_data = {start_date + timedelta(days=x): {"lessons": 0, "challenges": 0} for x in range((end_date - start_date).days + 1)}
 
-
+    # Aggregate lessons and challenges data
     for day, month, year, count in lessons_over_time:
         if day is None or month is None or year is None:
             continue
-        date_key = f"{year}-{month:02}-{day:02}"
+        date_key = datetime(year, month, day)
         merged_data[date_key]["lessons"] = count
 
     for day, month, year, count in challenges_over_time:
         if day is None or month is None or year is None:
             continue
-        date_key = f"{year}-{month:02}-{day:02}"
+        date_key = datetime(year, month, day)
         merged_data[date_key]["challenges"] = count
 
-
-    data = [{"date": key, "lessons": value["lessons"], "challenges": value["challenges"]} for key, value in merged_data.items()]
+    # Prepare final dataset
+    data = [{"date": key.strftime('%Y-%m-%d'), "lessons": value["lessons"], "challenges": value["challenges"]} for key, value in merged_data.items()]
     data = sorted(data, key=lambda x: x["date"])
     dates = [item['date'] for item in data]
     lessons = [item['lessons'] for item in data]
     challenges = [item['challenges'] for item in data]
     cumulative_lessons = [sum(lessons[:i+1]) for i in range(len(lessons))]
     cumulative_challenges = [sum(challenges[:i+1]) for i in range(len(challenges))]
-
 
     return {
         "labels": dates,

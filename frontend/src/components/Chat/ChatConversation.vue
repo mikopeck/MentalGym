@@ -29,7 +29,7 @@
         @navigate="navigateToContent"
       ></ContentButton>
 
-      <CompleteButton v-if="isCompletionMessage(message.role)"></CompleteButton>
+      <CompleteButton v-if="isCompletionMessage(message)"></CompleteButton>
     </div>
   </div>
 </template>
@@ -50,11 +50,12 @@ export default {
   computed: {
     filteredMessages() {
       const messageStore = useMessageStore();
-
       if (!messageStore.messages) {
         console.log("No messages!");
         return [];
       }
+      const inputStore = useInputStore();
+      inputStore.show();
       var msgs = messageStore.messages.filter(
         (message) => message.role !== "system"
       );
@@ -150,9 +151,10 @@ export default {
     isCompleted(role) {
       return role.includes("?completed");
     },
-    isCompletionMessage(role) {
-      let result = role == "complete";
+    isCompletionMessage(message) {
+      let result = message.role == "complete";
       if (result) {
+        console.log(this.filteredMessages);
         const inputStore = useInputStore();
         inputStore.hide();
       }

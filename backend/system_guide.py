@@ -19,7 +19,8 @@ def progress_lesson(user_id, user_message, lesson_id):
 def progress_challenge(user_id, user_message, challenge_id):
     db.add_user_message(user_id, user_message, challenge_id=challenge_id)
     response = cts.challenge_progress(user_id, challenge_id)
-    db.add_ai_response(user_id, response, roles.ChallengeGuide, challenge_id=challenge_id)
+    if response:
+        db.add_ai_response(user_id, response, roles.ChallengeGuide, challenge_id=challenge_id)
 
 def progress(user_id, lesson_id, no_redirect = False):
     db.clear_user_actions(user_id, lesson_id)

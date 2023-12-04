@@ -3,7 +3,7 @@ import { createApp, defineAsyncComponent } from 'vue';
 import { createPinia } from 'pinia'
 import App from './App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
-
+import { useInputStore} from "@/store/inputStore"
 import { useAuthStore } from "@/store/authStore";
 
 import './assets/styles.css';
@@ -28,6 +28,8 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   console.log(from.path + to.path);
+  const inputStore = useInputStore();
+  inputStore.show();
   const authStore = useAuthStore();
   if (!authStore.loggedIn && to.path === '/') { next('/about'); }
   else if (!authStore.loggedIn && to.path !== '/about' && to.path !== '/login' && to.path !== '/terms' && to.path !== '/contact') {
