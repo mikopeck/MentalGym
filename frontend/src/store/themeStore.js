@@ -7,7 +7,7 @@ export const useThemeStore = defineStore('theme', {
         const storedDarkMode = window.localStorage.getItem('darkMode');
 
         return {
-            darkMode: storedDarkMode !== null ? JSON.parse(storedDarkMode) : true
+            darkMode: storedDarkMode !== null ? JSON.parse(storedDarkMode) : false
         };
     },
     actions: {
