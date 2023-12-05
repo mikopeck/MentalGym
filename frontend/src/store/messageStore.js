@@ -10,14 +10,20 @@ export const useMessageStore = defineStore('messageStore', {
         messages: [],
         actions: [],
         subheading: "",
+        progress: 0,
         sending: false,
     }),
     actions: {
         async updateConversation(data) {
+            console.log("updating")
             this.messages = data.messages;
             this.actions = data.actions;
             if ("subheading" in data) {
                 this.subheading = data.subheading;
+
+                if ("progress" in data) {
+                    this.progress = parseFloat(data.progress) || 0; 
+                }
             }
         },
         async fetchRecentMessages(currentPath) {

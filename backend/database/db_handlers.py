@@ -149,6 +149,9 @@ def remove_score_from_answer(user_id, message):
     latest_message.message = message
     db.session.commit()
 
+def contains_quiz_message(user_id, lesson_id):
+    return bool(ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, message_type="quiz").order_by(ChatHistory.id.desc()).first())
+
 def complete_quiz_message(user_id, lesson_id, score):
     latest_quiz = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, message_type="quiz").order_by(ChatHistory.id.desc()).first()
     latest_quiz.message = score + latest_quiz.message
@@ -251,6 +254,10 @@ def update_challenge(user_id, challenge_id):
         set_user_content(user_id, f"completed challenge {challenge.challenge_name}")
         challenge.completion_date = datetime.now()
 
+def is_challenge_complete(user_id, challenge_id):
+    challenge = Challenge.query.filter_by(user_id=user_id, id=challenge_id).first()
+    return challenge.completion_date is not None if challenge else False
+
 def add_lesson(user_id, lesson_name, user_started = True):
     if not extract_single_emoji(lesson_name):
         lesson_name = f"🤔{lesson_name}"
@@ -275,6 +282,10 @@ def update_lesson(user_id, lesson_id, completion_date=None, system_role=None):
             lesson.system_role = system_role
     
     db.session.commit()
+
+def is_lesson_complete(user_id, lesson_id):
+    lesson = Lesson.query.filter_by(user_id=user_id, id=lesson_id).first()
+    return lesson.completion_date is not None if lesson else False
 
 def get_user_challenges(user_id):
     return Challenge.query.filter_by(user_id=user_id).all()

@@ -3,19 +3,26 @@
   <transition name="slide-fade">
     <div v-if="show" class="subheading-container">
       {{ subheading }}
+      <div class="progress-bar" :style="{ width: progressBarWidth }"></div>
     </div>
   </transition>
 </template>
 
 <script>
+import { useMessageStore } from "@/store/messageStore";
+
 export default {
-  props: {
-    subheading: {
-      type: String,
-      required: true,
-    },
-  },
   computed: {
+    messageStore() {
+      return useMessageStore();
+    },
+    subheading() {
+      return this.messageStore.subheading;
+    },
+    progressBarWidth() {
+      console.log("calculating")
+      return `${this.messageStore.progress * 100}%`;
+    },
     show() {
       return this.subheading && this.subheading.trim() !== "";
     },
@@ -31,13 +38,23 @@ export default {
   background-color: #0000001a;
   padding: 5px 0;
   backdrop-filter: blur(8px);
+  position: relative;
+}
+
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background-color: var(--element-color-1);
 }
 
 .slide-fade-enter-active,
 .slide-fade-leave-active {
   transition: opacity 0.5s;
 }
-.slide-fade-enter, .slide-fade-leave-to {
+.slide-fade-enter,
+.slide-fade-leave-to {
   opacity: 0;
 }
 </style>

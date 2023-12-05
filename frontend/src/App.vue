@@ -4,7 +4,7 @@
     <TopBar />
     <SubHeader
       v-if="loggedIn & shouldShowChat & subheaderExists"
-      :subheading="subheader"
+      :key="forceUpdateKey"
     />
     <SideMenu />
 
@@ -70,6 +70,10 @@ export default {
     }
   },
   computed: {
+    forceUpdateKey() {
+      const messageStore = useMessageStore();
+      return messageStore.progress;
+    },
     themeClass() {
       const themeStore = useThemeStore();
       return themeStore.darkMode ? "light-theme" : "";
@@ -102,10 +106,6 @@ export default {
     subheaderExists() {
       const messageStore = useMessageStore();
       return !(messageStore.subheading === "");
-    },
-    subheader() {
-      const messageStore = useMessageStore();
-      return messageStore.subheading;
     },
   },
   watch: {
