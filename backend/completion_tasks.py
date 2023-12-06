@@ -40,7 +40,7 @@ def gather_profile(user_id):
     messages = mh.prepare_session_messages(user_id)
     return generate_response(user_id, messages), None
 
-def suggest_content(user_id, set_challenge = True, set_lesson = True):
+def suggest_content(user_id, set_challenge = False, set_lesson = True):
     messages = mh.prepare_session_messages(user_id)
     if not set_challenge and not set_lesson:
         response = generate_response(user_id, messages)
