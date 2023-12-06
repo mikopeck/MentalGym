@@ -17,9 +17,11 @@ def extract_single_emoji(text):
     print(f"String: {text}")
     emojis = emoji_pattern.findall(text)
     print(f"Emojis: {emojis}")
+    if not emojis:
+        return None
     if emojis[0] == "\",":
         return None
-    return emojis[0] if emojis else None
+    return emojis[0]
 
 def remove_emojis(text):
     return emoji_pattern.sub(r'', text)
