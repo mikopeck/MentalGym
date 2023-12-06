@@ -326,6 +326,16 @@ def add_feedback(user_id, content, lesson_id=None, challenge_id=None, rating=Non
     db.session.add(new_feedback)
     db.session.commit()
 
+def get_all_feedback():
+    feedback_list = Feedback.query.all()
+    return [feedback.as_dict() for feedback in feedback_list]
+
+def get_all_user_emails():
+    users = User.query.with_entities(User.email).all()
+    email_list = [user.email for user in users]
+    return email_list
+
+
 ### CLEAR ###
 
 def clear_user_chat_history(user_id):

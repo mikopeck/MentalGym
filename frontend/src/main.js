@@ -20,6 +20,7 @@ const routes = [
   { path: '/terms', component: defineAsyncComponent(() => import('./components/Footer/TermsAndPoliciesPage.vue')) },
   { path: '/plan', component: defineAsyncComponent(() => import('./components/Monetization/PlanPage.vue')) },
   { path: '/login', component: defineAsyncComponent(() => import('./components/Auth/LoginSignupPopup.vue')) },
+  { path: '/admin', component: defineAsyncComponent(() => import('./components/Auth/AdminPage.vue')) },
 ];
 
 const router = createRouter({
