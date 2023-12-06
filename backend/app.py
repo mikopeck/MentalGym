@@ -4,7 +4,7 @@ import os
 import openai
 import resend
 from dotenv import load_dotenv
-from flask import Flask, jsonify, make_response, send_from_directory, request, redirect
+from flask import Flask, jsonify, make_response, send_from_directory, request
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_cors import CORS
@@ -54,12 +54,6 @@ init_utility_routes(app)
 init_chat_routes(app)
 init_graph_routes(app)
 init_feedback_routes(app)
-
-@app.before_request
-def before_request():
-    if not request.is_secure and host:
-        url = request.url.replace('http://', 'https://', 1)
-        return redirect(url, code=301)
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
