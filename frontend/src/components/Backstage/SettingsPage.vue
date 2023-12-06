@@ -52,6 +52,7 @@
 import axios from "axios";
 import MenuButton from "@/components/Menus/MenuButton.vue";
 import { useAuthStore } from "@/store/authStore";
+import { usePopupStore } from "@/store/popupStore";
 
 export default {
   name: "SettingsPage",
@@ -86,20 +87,22 @@ export default {
   },
   methods: {
     async updateProfile(type) {
+      const popupStore = usePopupStore();
       try {
         const response = await axios.post(`/api/profile/${type}`, {
           data: this.profile[type],
         });
         if (response.data.status === "success") {
-          console.log(`${type} profile updated successfully`);
+          popupStore.showPopup(`Profile of ${type} updated successfully.`);
         } else {
-          console.error(`Failed to update ${type} profile`);
+          popupStore.showPopup(`Failed to update ${type} profile`);
         }
       } catch (error) {
-        console.error(`Error updating ${type} profile:`, error);
+        popupStore.showPopup(`Error updating ${type} profile:`, error);
       }
     },
     async logout() {
+      const popupStore = usePopupStore();
       try {
         let response = await axios.get("/api/logout");
         if (response.data.status === "success") {
@@ -107,10 +110,10 @@ export default {
           authStore.logout();
           this.$router.push("/");
         } else {
-          console.error("Failed to logout");
+          popupStore.showPopup("Failed to logout");
         }
       } catch (error) {
-        console.error("Error logging out:", error);
+        popupStore.showPopup("Error logging out:", error);
       }
     },
     async resetConversation() {
