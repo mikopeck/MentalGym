@@ -13,7 +13,7 @@ def init_feedback_routes(app):
     def handle_feedback():
         # sanitize & length
         userInput = request.form.get("message", "")
-        rating = request.form.get("rating", None)  # If you have a rating system
+        rating = request.form.get("rating", None)
         userInput = clean(userInput)
         if len(userInput) > 2000:
             return jsonify({"error": "Message is too long. Maximum 2000 characters allowed."}), 400
