@@ -32,3 +32,31 @@ def init_feedback_routes(app):
         
         dbh.add_feedback(current_user.id, userInput, lesson_id, challenge_id, rating)
         return jsonify({"message": "Feedback submitted successfully."}), 201
+    
+    @app.route("/api/share", methods=["POST"])
+    @login_required
+    def share_lesson():
+        data = request.json
+        route_path = data.get('path')
+        
+        path_parts = route_path.split('/')
+        if len(path_parts) >= 3 and path_parts[1] in ['challenge', 'lesson']:
+            content_type = path_parts[1]
+            try:
+                content_id = int(path_parts[2])
+            except ValueError:
+                return jsonify({"error": "Invalid content ID"}), 400
+
+            if content_type == 'challenge':
+                if dbh.share_challenge(content_id, current_user.id):
+                    return jsonify({"message": "Challenge shared successfully."})
+                else:
+                    return jsonify({"error": "Unauthorized"}), 401
+
+            elif content_type == 'lesson':
+                if dbh.share_lesson(content_id, current_user.id):
+                    return jsonify({"message": "Lesson shared successfully."})
+                else:
+                    return jsonify({"error": "Unauthorized"}), 401
+        else:
+            return jsonify({"error": "Invalid route path"}), 400

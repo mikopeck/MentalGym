@@ -85,6 +85,12 @@ def get_recent_messages(user_id, lesson_id=None, challenge_id=None, limit=histor
     recent_messages = recent_messages[::-1]
     return [{"role": msg.role, "content": msg.message, "type": msg.message_type} for msg in recent_messages]
 
+def get_content_messages(lesson_id, challenge_id, limit=history_limit):
+    query = ChatHistory.query.filter_by(lesson_id=lesson_id, challenge_id=challenge_id)
+    recent_messages = query.order_by(ChatHistory.id.desc()).limit(limit).all()
+    recent_messages = recent_messages[::-1]
+    return [{"role": msg.role, "content": msg.message, "type": msg.message_type} for msg in recent_messages]
+
 def get_lesson_message(user_id, lesson_id):
     message = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, message_type="lesson").first()
     return message.message if message else None
@@ -149,8 +155,8 @@ def remove_score_from_answer(user_id, message):
     latest_message.message = message
     db.session.commit()
 
-def contains_quiz_message(user_id, lesson_id):
-    return bool(ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, message_type="quiz").order_by(ChatHistory.id.desc()).first())
+def contains_quiz_message(lesson_id):
+    return bool(ChatHistory.query.filter_by(lesson_id=lesson_id, message_type="quiz").order_by(ChatHistory.id.desc()).first())
 
 def complete_quiz_message(user_id, lesson_id, score):
     latest_quiz = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, message_type="quiz").order_by(ChatHistory.id.desc()).first()
@@ -254,9 +260,13 @@ def update_challenge(user_id, challenge_id):
         set_user_content(user_id, f"completed challenge {challenge.challenge_name}")
         challenge.completion_date = datetime.now()
 
-def is_challenge_complete(user_id, challenge_id):
-    challenge = Challenge.query.filter_by(user_id=user_id, id=challenge_id).first()
+def is_challenge_complete(challenge_id):
+    challenge = Challenge.query.filter_by(id=challenge_id).first()
     return challenge.completion_date is not None if challenge else False
+
+def is_challenge_shared(challenge_id):
+    challenge = Challenge.query.filter_by(id=challenge_id).first()
+    return challenge.shared is not None if challenge else False
 
 def add_lesson(user_id, lesson_name, user_started = True):
     if not extract_single_emoji(lesson_name):
@@ -283,21 +293,25 @@ def update_lesson(user_id, lesson_id, completion_date=None, system_role=None):
     
     db.session.commit()
 
-def is_lesson_complete(user_id, lesson_id):
-    lesson = Lesson.query.filter_by(user_id=user_id, id=lesson_id).first()
+def is_lesson_complete(lesson_id):
+    lesson = Lesson.query.filter_by(id=lesson_id).first()
     return lesson.completion_date is not None if lesson else False
+
+def is_lesson_shared(lesson_id):
+    lesson = Lesson.query.filter_by(id=lesson_id).first()
+    return lesson.shared is not None if lesson else False
 
 def get_user_challenges(user_id):
     return Challenge.query.filter_by(user_id=user_id).all()
 
-def get_user_challenge_name(user_id, challenge_id):
-    return Challenge.query.filter_by(id=challenge_id, user_id=user_id).first().challenge_name
+def get_challenge_name(challenge_id):
+    return Challenge.query.filter_by(id=challenge_id).first().challenge_name
     
 def get_user_lessons(user_id):
     return Lesson.query.filter_by(user_id=user_id).all()
 
-def get_user_lesson_name(user_id, lesson_id):
-    return Lesson.query.filter_by(id=lesson_id, user_id=user_id).first().lesson_name
+def get_lesson_name(lesson_id):
+    return Lesson.query.filter_by(id=lesson_id).first().lesson_name
 
 def get_completed_challenges(user_id):
     completed_challenges = Challenge.query.filter_by(user_id=user_id).filter(Challenge.completion_date.isnot(None)).all()
@@ -314,6 +328,22 @@ def get_completed_lessons(user_id):
 def get_active_lessons(user_id):
     active_lessons = Lesson.query.filter_by(user_id=user_id).filter(Lesson.completion_date.is_(None)).all()
     return [lesson.as_dict() for lesson in active_lessons]
+
+def share_challenge(challenge_id, user_id):
+        challenge = Challenge.query.get(challenge_id)
+        if challenge and challenge.user_id == user_id:
+            challenge.shared = True
+            db.session.commit()
+            return True
+        return False
+
+def share_lesson(lesson_id, user_id):
+    lesson = Lesson.query.get(lesson_id)
+    if lesson and lesson.user_id == user_id:
+        lesson.shared = True
+        db.session.commit()
+        return True
+    return False
 
 def add_feedback(user_id, content, lesson_id=None, challenge_id=None, rating=None):
     new_feedback = Feedback(

@@ -27,33 +27,30 @@ export const useMessageStore = defineStore('messageStore', {
             }
         },
         async fetchRecentMessages(currentPath) {
-            const authStore = useAuthStore();
-            if (authStore.loggedIn) {
-                console.log("fetching for " + currentPath)
-                let apiEndpoint = "/api/chat";
-                const params = {};
+            console.log("fetching for " + currentPath)
+            let apiEndpoint = "/api/chat";
+            const params = {};
 
-                const isLesson = currentPath.includes("/lesson/");
-                const isChallenge = currentPath.includes("/challenge/");
+            const isLesson = currentPath.includes("/lesson/");
+            const isChallenge = currentPath.includes("/challenge/");
 
-                if (isLesson) {
-                    params.lesson_id = currentPath.split("/").pop();
-                } else if (isChallenge) {
-                    params.challenge_id = currentPath.split("/").pop();
-                }
-                axios
-                    .get(apiEndpoint, { params })
-                    .then((response) => {
-                        this.updateConversation(response.data);
-                    })
-                    .catch((error) => {
-                        console.error(`Error fetching recent messages:`, error);
-                        if (error.response && error.response.status === 401) {
-                            const authStore = useAuthStore();
-                            authStore.logout();
-                        }
-                    });
+            if (isLesson) {
+                params.lesson_id = currentPath.split("/").pop();
+            } else if (isChallenge) {
+                params.challenge_id = currentPath.split("/").pop();
             }
+            axios
+                .get(apiEndpoint, { params })
+                .then((response) => {
+                    this.updateConversation(response.data);
+                })
+                .catch((error) => {
+                    console.error(`Error fetching recent messages:`, error);
+                    if (error.response && error.response.status === 401) {
+                        const authStore = useAuthStore();
+                        authStore.logout();
+                    }
+                });
         },
         async sendMessage(message, currentPath) {
             if (this.sending) return "not sent";

@@ -58,7 +58,7 @@ Lesson = {
         "properties": {
             "lesson_name": {
                 "type": "string",
-                "description": "A concise but complete description of the lesson to start.",
+                "description": "A concise but complete description of the lesson to start. Up to 12 words.",
             },
             "lesson_emoji": {
                 "type": "string",
@@ -77,7 +77,7 @@ Challenge = {
         "properties": {
             "challenge_name": {
                 "type": "string",
-                "description": "A concise but complete description of the challenge.",
+                "description": "A concise but complete description of the challenge. Up to 12 words.",
             },
             "challenge_emoji": {
                 "type": "string",
@@ -101,7 +101,7 @@ Content = {
                     "properties": {
                         "lesson_name": {
                             "type": "string",
-                            "description": "A concise but complete description of the lesson."
+                            "description": "A concise but complete description of the lesson. Up to 12 words."
                         },
                         "lesson_emoji": {
                             "type": "string",
@@ -119,7 +119,7 @@ Content = {
                     "properties": {
                         "challenge_name": {
                             "type": "string",
-                            "description": "A concise but complete description of the challenge."
+                            "description": "A concise but complete description of the challenge. Up to 12 words."
                         },
                         "challenge_emoji": {
                             "type": "string",

@@ -17,14 +17,6 @@
             </td>
             <td>
               <button
-                class="share-button"
-                @click="shareChallenge(challenge.id)"
-              >
-                Share
-              </button>
-            </td>
-            <td>
-              <button
                 class="delete-button"
                 @click="deleteChallenge(challenge.id)"
               >
@@ -50,14 +42,6 @@
                 :content_type="'challenge'"
                 @navigate="navigateToChallenge"
               ></ContentButton>
-            </td>
-            <td>
-              <button
-                class="share-button"
-                @click="shareChallenge(challenge.id)"
-              >
-                Share
-              </button>
             </td>
             <td>
               <button
@@ -109,11 +93,6 @@ export default {
     navigateToChallenge(challengeId) {
       this.$router.push(`/challenge/${challengeId}`);
     },
-    shareChallenge(challengeId) {
-      console.log(challengeId)
-      const popupStore = usePopupStore();
-      popupStore.showPopup("Coming soon..");
-    },
     deleteChallenge(challengeId) {
       console.log(challengeId)
       const popupStore = usePopupStore();
@@ -136,16 +115,11 @@ export default {
   gap: 16px;
 }
 
-.share-button {
-  background-color: var(--element-color-1);
-}
-
 .delete-button {
   background-color: #e53935;
 }
 
-.delete-button,
-.share-button {
+.delete-button {
   padding: 0.5rem 1rem;
   border: 2px solid var(--background-color-1t);
   border-radius: 10px;
@@ -157,10 +131,6 @@ export default {
 .delete-button:hover {
   border-color: var(--background-color);
 }
-.share-button:hover {
-  border-color: #6a2bc2b3;
-}
-
 .section-title {
   margin-bottom: 10px;
 }

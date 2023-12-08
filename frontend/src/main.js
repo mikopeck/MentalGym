@@ -32,8 +32,14 @@ router.beforeEach((to, from, next) => {
   const inputStore = useInputStore();
   inputStore.show();
   const authStore = useAuthStore();
-  if (!authStore.loggedIn && to.path === '/') { next('/about'); }
-  else if (!authStore.loggedIn && to.path !== '/about' && to.path !== '/login' && to.path !== '/terms' && to.path !== '/contact') {
+
+  const isLessonOrChallenge = to.path.startsWith('/lesson/') || to.path.startsWith('/challenge/');
+  
+  if (!authStore.loggedIn && to.path === '/') {
+    next('/about');
+  } else if (!authStore.loggedIn && !isLessonOrChallenge && 
+            to.path !== '/about' && to.path !== '/login' && 
+            to.path !== '/terms' && to.path !== '/contact') {
     next('/login');
   } else {
     next();

@@ -19,6 +19,7 @@
           {{ email }}
         </li>
       </ul>
+      <p>Total Emails: {{ totalEmails }}</p>
     </div>
   </div>
 </template>
@@ -37,6 +38,9 @@ export default {
     },
     error() {
       return this.adminStore.error;
+    },
+    totalEmails() {
+      return this.userEmails.length;
     }
   },
   setup() {
@@ -52,7 +56,3 @@ export default {
   }
 };
 </script>
-
-<style>
-/* Add your styles here */
-</style>

@@ -16,11 +16,6 @@
               ></ContentButton>
             </td>
             <td>
-              <button class="share-button" @click="shareLesson(lesson.id)">
-                Share
-              </button>
-            </td>
-            <td>
               <button class="delete-button" @click="deleteLesson(lesson.id)">
                 Delete
               </button>
@@ -44,11 +39,6 @@
                 :content_type="'lesson'"
                 @navigate="navigateToLesson"
               ></ContentButton>
-            </td>
-            <td>
-              <button class="share-button" @click="shareLesson(lesson.id)">
-                Share
-              </button>
             </td>
             <td>
               <button class="delete-button" @click="deleteLesson(lesson.id)">
@@ -97,11 +87,6 @@ export default {
     navigateToLesson(lessonId) {
       this.$router.push(`/lesson/${lessonId}`);
     },
-    shareLesson(lessonId) {
-      console.log(lessonId)
-      const popupStore = usePopupStore();
-      popupStore.showPopup("Coming soon..");
-    },
     deleteLesson(lessonId) {
       console.log(lessonId)
       const popupStore = usePopupStore();
@@ -124,16 +109,11 @@ export default {
   gap: 16px;
 }
 
-.share-button {
-  background-color: var(--element-color-1);
-}
-
 .delete-button {
   background-color: #e53935;
 }
 
-.delete-button,
-.share-button {
+.delete-button{
   padding: 0.5rem 1rem;
   border: 2px solid var(--background-color-1t);
   border-radius: 10px;
@@ -144,9 +124,6 @@ export default {
 
 .delete-button:hover {
   border-color: var(--background-color);
-}
-.share-button:hover {
-  border-color: #6a2bc2b3;
 }
 
 .section-title {

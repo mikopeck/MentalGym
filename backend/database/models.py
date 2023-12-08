@@ -117,6 +117,7 @@ class Challenge(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     challenge_name = db.Column(db.String(100), nullable=False)
     completion_date = db.Column(db.DateTime, nullable=True)
+    shared = db.Column(db.Boolean, default=False)
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -127,6 +128,7 @@ class Lesson(db.Model):
     lesson_name = db.Column(db.String(100), nullable=False)
     completion_date = db.Column(db.DateTime, nullable=True)
     system_role = db.Column(db.String(100), default='')
+    shared = db.Column(db.Boolean, default=False)
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

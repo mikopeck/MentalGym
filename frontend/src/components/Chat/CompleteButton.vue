@@ -2,8 +2,16 @@
   <div class="completion-container">
     <div class="celebratory-message">🎉 Congratulations! 🎉</div>
     <div class="what-next-container">
-      <button class="next-button" @click="navigateToContent">🔙Return</button>
-      or
+      <button class="next-button" @click="navigateToContent">
+        🔙Return to main Chat
+      </button>
+      <button class="next-button" @click="toggleShare">
+        {{ isSharing ? "Copy Link" : "Share" }}
+      </button>
+      <div v-if="isSharing" class="share-container">
+        <input v-model="shareLink" readonly class="share-link-input" />
+        <button @click="copyToClipboard" class="copy-button">{{ copyButtonText }}</button>
+      </div>
       <button class="next-button" @click="toggleFeedback">
         {{ showFeedback ? "Hide Feedback⬆️" : "Give Feedback⤵️" }}
       </button>
@@ -28,9 +36,13 @@
           v-model="feedback"
           placeholder="Enter your feedback here..."
         ></textarea>
-        <button :disabled="!isValid || isSubmitted" @click="submitFeedback" class="submit-btn">
-  {{ isSubmitted ? 'Thank You' : 'Submit' }}
-</button>
+        <button
+          :disabled="!isValid || isSubmitted"
+          @click="submitFeedback"
+          class="submit-btn"
+        >
+          {{ isSubmitted ? "Thank You" : "Submit" }}
+        </button>
       </div>
     </div>
   </div>
@@ -47,6 +59,9 @@ export default {
       feedback: "",
       showFeedback: false,
       isSubmitted: false,
+      isSharing: false,
+      shareLink: window.location.href, 
+      copyButtonText: "Copy",
     };
   },
   computed: {
@@ -64,9 +79,44 @@ export default {
     setRating(n) {
       this.rating = n;
     },
+    toggleShare() {
+      if (this.isSharing) {
+        this.isSharing = false;
+      } else {
+        const confirmShare = confirm("This content will be viewable by anyone with a link. This cannot be undone!");
+        if (confirmShare) {
+          this.shareContent();
+        }
+      }
+    },
+    shareContent() {
+      const routePath = this.$route.path;
+      axios.post("/api/share", { path: routePath })
+        .then(() => {
+          this.isSharing = true;
+          this.shareLink = window.location.href;
+        })
+        .catch(error => {
+          console.error('Error sharing content: ', error);
+        });
+    },
+    copyToClipboard() {
+    navigator.clipboard.writeText(this.shareLink).then(() => {
+      this.copyButtonText = "Copied!";
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+    });
+  },
     submitFeedback() {
+      const sanitizeInput = (input) => {
+                const div = document.createElement("div");
+                div.textContent = input;
+                return div.innerHTML;
+            };
+      const sanitizedMessage = sanitizeInput(this.feedback);
+
       const payload = new FormData();
-      payload.append("message", this.feedback);
+      payload.append("message", sanitizedMessage);
       payload.append("rating", this.rating);
       const routeParts = this.$route.path.split("/");
       if (routeParts.length >= 2) {
@@ -129,13 +179,46 @@ export default {
   font-weight: bold;
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
-  font-size: 1.4em;
+  font-size: 1.5em;
 }
 
 .what-next-container {
+  display: flex;
+  flex-direction: column;
+  padding-top: 2em;
   opacity: 0.8;
-  font-size: 0.8em;
+  font-size: 1.2em;
   transition: opacity 2s;
+}
+
+.share-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.share-link-input {
+  color: var(--text-color);
+  background: var(--background-color);
+  border: 1px solid var(--text-color);
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.copy-button {
+  background-color: var(--element-color-1);
+  color: var(--text-color);
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.copy-button:hover {
+  background-color: #5c2d91;
 }
 
 .stars {
@@ -156,6 +239,7 @@ export default {
 }
 
 .next-button {
+  padding: 4px;
   font-weight: 700;
   color: var(--text-color);
   transition: color 0.2s;
@@ -171,6 +255,7 @@ export default {
   padding: 0.5rem;
   border: 1px solid var(--text-color);
   border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
 .rating-feedback {

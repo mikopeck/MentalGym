@@ -117,7 +117,7 @@ def challenge_progress(user_id, challenge_id):
 
 def lesson_create(user_id, lesson_id, lesson_name = None):
     if not lesson_name:
-        lesson_name = db.get_user_lesson_name(user_id, lesson_id)
+        lesson_name = db.get_lesson_name(lesson_id)
     profile = db.get_profile(user_id)
     ##### TODO: generate improved tutor #####
     if not db.get_tutor(user_id):
