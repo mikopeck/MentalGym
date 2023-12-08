@@ -129,6 +129,7 @@ class Lesson(db.Model):
     completion_date = db.Column(db.DateTime, nullable=True)
     system_role = db.Column(db.String(100), default='')
     shared = db.Column(db.Boolean, default=False)
+    public = db.Column(db.Boolean, default=False)
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

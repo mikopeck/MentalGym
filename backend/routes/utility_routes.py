@@ -38,3 +38,14 @@ def init_utility_routes(app):
         dbh.reset_user_profile(current_user.id)
         initialize_messages(current_user.id)
         return jsonify(messages=dbh.get_recent_messages(current_user.id), actions=[], status="success")
+    
+    @app.route("/api/public-content", methods=["GET"])
+    def get_public_content():
+        public_lessons = dbh.get_public_lessons()
+        # public_challenges = dbh.get_public_challenges()
+    
+        return jsonify({
+            "lessons": public_lessons,
+            # "challenges": public_challenges
+        })
+        

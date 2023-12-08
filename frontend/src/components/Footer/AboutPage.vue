@@ -68,8 +68,9 @@
     </div>
     <div class="landing-page-2">
       <div class="stat-infos">
-        <div class="stat-info">🤝Join 20+ Ascendants!</div>
+        <!-- <div class="stat-info">🤝Join 20+ Ascendants!</div> -->
         <div class="stat-info">📖120+ Custom Lessons generated.</div>
+        <div class="shared-content"><SharedContent/></div>
         <div class="stat-info">🎯60+ Unique Challenges accepted.</div>
       </div>
       <img :src="openaiPath" alt="Powered by OpenAI" class="openai" />
@@ -88,12 +89,14 @@ import { usePopupStore } from "@/store/popupStore";
 import { useThemeStore } from "@/store/themeStore";
 import CtaButton from "./LandingPageComponents/CtaButton.vue";
 import FaqComponent from "./LandingPageComponents/FaqComponent.vue";
+import SharedContent from './LandingPageComponents/SharedContent.vue';
 
 export default {
   name: "AboutPage",
   components: {
     CtaButton,
     FaqComponent,
+    SharedContent,
   },
   data() {
     return {
@@ -299,6 +302,10 @@ export default {
 .stat-infos {
   padding: 0.5em;
   text-align: center;
+}
+
+.shared-content{
+  display: flex;
 }
 
 .stat-info {

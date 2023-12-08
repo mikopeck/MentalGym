@@ -264,9 +264,6 @@ def is_challenge_complete(challenge_id):
     challenge = Challenge.query.filter_by(id=challenge_id).first()
     return challenge.completion_date is not None if challenge else False
 
-def is_challenge_shared(challenge_id):
-    challenge = Challenge.query.filter_by(id=challenge_id).first()
-    return challenge.shared is not None if challenge else False
 
 def add_lesson(user_id, lesson_name, user_started = True):
     if not extract_single_emoji(lesson_name):
@@ -300,6 +297,34 @@ def is_lesson_complete(lesson_id):
 def is_lesson_shared(lesson_id):
     lesson = Lesson.query.filter_by(id=lesson_id).first()
     return lesson.shared is not None if lesson else False
+
+def is_challenge_shared(challenge_id):
+    challenge = Challenge.query.filter_by(id=challenge_id).first()
+    return challenge.shared is not None if challenge else False
+
+def publicise_challenge(challenge_id, user_id, make_public):
+    challenge = Challenge.query.get(challenge_id)
+    if challenge and challenge.user_id == user_id:
+        challenge.public = make_public
+        db.session.commit()
+        return True
+    return False
+
+def publicise_lesson(lesson_id, user_id, make_public):
+    lesson = Lesson.query.get(lesson_id)
+    if lesson and lesson.user_id == user_id:
+        lesson.public = make_public
+        db.session.commit()
+        return True
+    return False
+
+def get_public_lessons():
+    public_lessons = Lesson.query.filter_by(public=True, shared=True).limit(16).all()
+    return [lesson.as_dict() for lesson in public_lessons]
+
+def get_public_challenges():
+    public_challenges = Challenge.query.filter_by(public=True, shared=True).limit(16).all()
+    return [challenge.as_dict() for challenge in public_challenges]
 
 def get_user_challenges(user_id):
     return Challenge.query.filter_by(user_id=user_id).all()

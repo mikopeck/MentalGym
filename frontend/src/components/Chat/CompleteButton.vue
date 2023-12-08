@@ -10,7 +10,9 @@
       </button>
       <div v-if="isSharing" class="share-container">
         <input v-model="shareLink" readonly class="share-link-input" />
-        <button @click="copyToClipboard" class="copy-button">{{ copyButtonText }}</button>
+        <button @click="copyToClipboard" class="copy-button">
+          {{ copyButtonText }}
+        </button>
       </div>
       <button class="next-button" @click="toggleFeedback">
         {{ showFeedback ? "Hide Feedback⬆️" : "Give Feedback⤵️" }}
@@ -60,7 +62,7 @@ export default {
       showFeedback: false,
       isSubmitted: false,
       isSharing: false,
-      shareLink: window.location.href, 
+      shareLink: window.location.href,
       copyButtonText: "Copy",
     };
   },
@@ -83,36 +85,55 @@ export default {
       if (this.isSharing) {
         this.isSharing = false;
       } else {
-        const confirmShare = confirm("This content will be viewable by anyone with a link. This cannot be undone!");
+        const confirmShare = confirm(
+          "This will make your content shareable with a link. Do you want to proceed?"
+        );
         if (confirmShare) {
-          this.shareContent();
+          const confirmPublic = confirm(
+            "Do you also want to make this content visible on the landing page for everyone?\nWARNING: Everyone will be able to view all messages in this lesson / challenge."
+          );
+          if (confirmPublic) {
+            this.shareContent(true);
+          } else {
+            this.shareContent(false);
+          }
         }
       }
     },
-    shareContent() {
+
+    shareContent(isPublic) {
       const routePath = this.$route.path;
-      axios.post("/api/share", { path: routePath })
+      axios
+        .post("/api/share", { path: routePath, public: isPublic })
         .then(() => {
           this.isSharing = true;
           this.shareLink = window.location.href;
+          alert(
+            `Content has been successfully ${
+              isPublic ? "made public" : "shared"
+            }.`
+          );
         })
-        .catch(error => {
-          console.error('Error sharing content: ', error);
+        .catch((error) => {
+          console.error("Error sharing content: ", error);
         });
     },
     copyToClipboard() {
-    navigator.clipboard.writeText(this.shareLink).then(() => {
-      this.copyButtonText = "Copied!";
-    }).catch(err => {
-      console.error('Failed to copy: ', err);
-    });
-  },
+      navigator.clipboard
+        .writeText(this.shareLink)
+        .then(() => {
+          this.copyButtonText = "Copied!";
+        })
+        .catch((err) => {
+          console.error("Failed to copy: ", err);
+        });
+    },
     submitFeedback() {
       const sanitizeInput = (input) => {
-                const div = document.createElement("div");
-                div.textContent = input;
-                return div.innerHTML;
-            };
+        const div = document.createElement("div");
+        div.textContent = input;
+        return div.innerHTML;
+      };
       const sanitizedMessage = sanitizeInput(this.feedback);
 
       const payload = new FormData();

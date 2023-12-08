@@ -38,7 +38,8 @@ def init_feedback_routes(app):
     def share_lesson():
         data = request.json
         route_path = data.get('path')
-        
+        make_public = data.get('public', False)
+
         path_parts = route_path.split('/')
         if len(path_parts) >= 3 and path_parts[1] in ['challenge', 'lesson']:
             content_type = path_parts[1]
@@ -49,13 +50,19 @@ def init_feedback_routes(app):
 
             if content_type == 'challenge':
                 if dbh.share_challenge(content_id, current_user.id):
+                    if make_public and not dbh.publicise_challenge(content_id, current_user.id, make_public):
+                        return jsonify({"error": "Failed to make challenge public"}), 400
                     return jsonify({"message": "Challenge shared successfully."})
+
                 else:
                     return jsonify({"error": "Unauthorized"}), 401
 
             elif content_type == 'lesson':
                 if dbh.share_lesson(content_id, current_user.id):
+                    if make_public and not dbh.publicise_lesson(content_id, current_user.id, make_public):
+                        return jsonify({"error": "Failed to make lesson public"}), 400
                     return jsonify({"message": "Lesson shared successfully."})
+
                 else:
                     return jsonify({"error": "Unauthorized"}), 401
         else:
