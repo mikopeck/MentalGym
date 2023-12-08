@@ -88,7 +88,9 @@ def suggest_content(user_id, set_challenge = False, set_lesson = True):
     return response, None
 
 def after_content(user_id):
-    return generate_response(user_id, mh.prepare_session_messages(user_id)), None
+    response = generate_response(user_id, mh.prepare_session_messages(user_id))
+    identify_content(user_id, response["choices"][0]["message"]['content'])
+    return response, None
 
 def challenge_progress(user_id, challenge_id):
     messages = mh.prepare_session_messages(user_id, challenge_id=challenge_id)
