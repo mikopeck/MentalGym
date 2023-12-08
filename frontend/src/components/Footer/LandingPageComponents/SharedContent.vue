@@ -62,7 +62,7 @@ export default {
 }
 
 .preview-container {
-  width: 100vh;
+  width: 100%;
   display: flex;
   overflow: hidden;
   flex-direction: row;
@@ -76,10 +76,10 @@ export default {
 @keyframes slideRightToLeft {
   0%,
   100% {
-    transform: translateX(100%);
+    transform: translateX(100vh);
   }
   50% {
-    transform: translateX(-100%);
+    transform: translateX(-100vh);
   }
 }
 </style>
