@@ -45,12 +45,20 @@ def init_chat_routes(app):
             lesson_id = request.form.get("lesson_id", None)
             challenge_id = request.form.get("challenge_id", None)
 
-            if lesson_id:
-                return post_lesson_message(userInput, lesson_id)
-            elif challenge_id:
-                return post_challenge_message(userInput, challenge_id)
-            else:
-                return post_general_message(userInput)
+            try:
+                if lesson_id:
+                    return post_lesson_message(userInput, lesson_id)
+                elif challenge_id:
+                    return post_challenge_message(userInput, challenge_id)
+                else:
+                    return post_general_message(userInput)
+            except Exception as e:
+                dbh.remove_latest_message_by_role(current_user.id, "user")
+                print(f"Error: {e}")
+                return jsonify({"error": "An error occurred while processing the message."}), 500
+
+           
+                
 
     def get_recent_chat(lesson_id, challenge_id):
         if not current_user.is_authenticated:
@@ -72,7 +80,7 @@ def init_chat_routes(app):
             messages=dbh.get_content_messages(lesson_id, challenge_id)
         else:
             messages=dbh.get_recent_messages(current_user.id, lesson_id, challenge_id)
-            
+
         return jsonify(
             messages=messages,
             actions=actions,

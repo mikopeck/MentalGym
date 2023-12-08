@@ -1,7 +1,7 @@
 <template>
   <div class="completion-container">
     <div class="celebratory-message">🎉 Congratulations! 🎉</div>
-    <div class="what-next-container">
+    <div v-if="loggedIn" class="what-next-container">
       <button class="next-button" @click="navigateToContent">
         🔙Return to main Chat
       </button>
@@ -53,6 +53,7 @@
 <script>
 import axios from "axios";
 import { usePopupStore } from "@/store/popupStore";
+import { useAuthStore } from "@/store/authStore";
 
 export default {
   data() {
@@ -70,6 +71,11 @@ export default {
     isValid() {
       return this.rating > 0 || this.feedback.trim().length > 0;
     },
+    loggedIn() {
+      const authStore = useAuthStore();
+      authStore.checkAuth();
+      return authStore.loggedIn;
+    }
   },
   methods: {
     navigateToContent() {
