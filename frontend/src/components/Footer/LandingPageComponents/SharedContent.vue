@@ -1,7 +1,12 @@
 <template>
   <div class="preview-container" v-if="loaded">
-    <div class="content-button-animation" v-for="lesson in lessons" :key="lesson.id">
+    <div
+      class="content-button-animation"
+      v-for="lesson in lessons"
+      :key="lesson.id"
+    >
       <ContentButton
+        :showType="false"
         :content="lesson.lesson_name"
         :role="'lesson/' + lesson.id"
         content_type="lesson"
@@ -70,16 +75,17 @@ export default {
 }
 
 .content-button-animation {
+  padding: 0 4px;
   animation: slideRightToLeft 60s linear infinite;
 }
 
 @keyframes slideRightToLeft {
   0%,
   100% {
-    transform: translateX(100vh);
+    transform: translateX(50vh);
   }
   50% {
-    transform: translateX(-100vh);
+    transform: translateX(-50vh);
   }
 }
 </style>

@@ -9,6 +9,7 @@
           <tr v-for="lesson in lessons.active" :key="lesson.id">
             <td>
               <ContentButton
+              :showType="false"
                 :content="lesson.lesson_name"
                 :role="lesson.id"
                 :content_type="'lesson'"
@@ -34,6 +35,7 @@
           >
             <td>
               <ContentButton
+              :showType="false"
                 :content="lesson.lesson_name"
                 :role="lesson.id + '?completed'"
                 :content_type="'lesson'"
