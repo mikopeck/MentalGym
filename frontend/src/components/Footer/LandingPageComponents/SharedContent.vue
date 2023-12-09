@@ -2,7 +2,7 @@
   <div class="preview-container" v-if="loaded">
     <div
       class="content-button-animation"
-      v-for="lesson in lessons"
+      v-for="lesson in extendedLessons"
       :key="lesson.id"
     >
       <ContentButton
@@ -35,6 +35,11 @@ export default {
   },
   created() {
     this.fetchPublicContent();
+  },
+  computed: {
+    extendedLessons() {
+      return [...this.lessons, ...this.lessons, ...this.lessons];
+    }
   },
   methods: {
     async fetchPublicContent() {
@@ -71,21 +76,20 @@ export default {
   display: flex;
   overflow: hidden;
   flex-direction: row;
-  justify-content: space-around;
 }
 
 .content-button-animation {
+  flex: 0 0 auto;
   padding: 0 4px;
   animation: slideRightToLeft 60s linear infinite;
 }
 
 @keyframes slideRightToLeft {
-  0%,
-  100% {
-    transform: translateX(50vh);
+  0% {
+    transform: translateX(0%);
   }
-  50% {
-    transform: translateX(-50vh);
+  100% {
+    transform: translateX(-200%);
   }
 }
 </style>
