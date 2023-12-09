@@ -24,7 +24,7 @@ def is_within_limit(user):
     if user.daily_request_count >= daily_limit:
         hours, remainder = divmod(int(time_until_reset.total_seconds()), 3600)
         minutes = divmod(remainder, 60)
-        return False, f"Daily limit ({daily_limit}) exceeded. Please wait {hours} hours and {minutes} minutes before you send another message."
+        return False, f"Daily limit ({daily_limit}) exceeded. Please upgrade your plan or wait {hours} hours and {minutes} minutes before you send another message."
 
     if user.last_request_time and (now - user.last_request_time) <= timedelta(seconds=2):
         return False, f"Cooldown triggered. Please wait a few seconds and try again."

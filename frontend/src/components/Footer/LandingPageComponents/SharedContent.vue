@@ -70,7 +70,7 @@ export default {
 }
 
 .content-button-animation {
-  animation: slideRightToLeft 30s linear infinite;
+  animation: slideRightToLeft 60s linear infinite;
 }
 
 @keyframes slideRightToLeft {
