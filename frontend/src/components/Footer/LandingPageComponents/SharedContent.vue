@@ -1,7 +1,8 @@
 <template>
+<div class="preview-box">
   <div class="preview-container" v-if="loaded">
     <div
-      class="content-button-animation"
+      class="content-button-container"
       v-for="lesson in extendedLessons"
       :key="lesson.id"
     >
@@ -13,7 +14,7 @@
         @navigate="handleNavigation('/lesson/' + lesson.id)"
       />
     </div>
-  </div>
+  </div></div>
 </template>
 
 <script>
@@ -65,23 +66,23 @@ export default {
 <style scoped>
 .preview-box {
   width: 100%;
-  display: flex;
+  /* display: flex;
   white-space: nowrap;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-around; */
+  overflow-x: hidden;
 }
 
 .preview-container {
   width: 100%;
   display: flex;
-  overflow: hidden;
   flex-direction: row;
+  animation: slideRightToLeft 60s linear infinite;
 }
 
-.content-button-animation {
+.content-button-container {
   flex: 0 0 auto;
   padding: 0 4px;
-  animation: slideRightToLeft 60s linear infinite;
 }
 
 @keyframes slideRightToLeft {
@@ -89,7 +90,7 @@ export default {
     transform: translateX(0%);
   }
   100% {
-    transform: translateX(-200%);
+    transform: translateX(-100%);
   }
 }
 </style>
