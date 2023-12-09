@@ -69,9 +69,10 @@
     <div class="landing-page-2">
       <div class="stat-infos">
         <!-- <div class="stat-info">🤝Join 20+ Ascendants!</div> -->
-        <div class="stat-info">📖120+ Custom Lessons generated.</div>
+        <div class="stat-info">📖200+ Custom Lessons generated.</div>
+        <div class="small-text">Check out these shared lessons ↓</div>
         <div class="shared-content"><SharedContent/></div>
-        <div class="stat-info">🎯60+ Unique Challenges accepted.</div>
+        <!-- <div class="stat-info">🎯60+ Unique Challenges accepted.</div> -->
       </div>
       <img :src="openaiPath" alt="Powered by OpenAI" class="openai" />
       <div class="faq-container">
@@ -311,7 +312,8 @@ export default {
 .stat-info {
   font-size: 1.2em;
   font-weight: 700;
-  margin: 1em;
+  margin-top: 1em;
+  margin: 0.5em;
   opacity: 0;
   transform: translateY(20px);
 }
@@ -341,6 +343,14 @@ export default {
   padding: 64px 25%;
   max-height: 212px;
   z-index: 1;
+}
+
+.small-text {
+  font-weight: 700;
+  font-size: 0.8em;
+  opacity: 0.6;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
 }
 
 /* media */
@@ -409,7 +419,7 @@ export default {
 @keyframes fadeSlideIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
