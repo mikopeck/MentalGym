@@ -401,7 +401,7 @@ export default {
   }
 }
 
-@media only screen and (max-height: 660px) {
+@media only screen and (max-height: 700px) {
   .landing-title {
     margin: 0;
   }
