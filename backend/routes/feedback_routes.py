@@ -50,8 +50,8 @@ def init_feedback_routes(app):
 
             if content_type == 'challenge':
                 if dbh.share_challenge(content_id, current_user.id):
-                    if make_public and not dbh.publicise_challenge(content_id, current_user.id, make_public):
-                        return jsonify({"error": "Failed to make challenge public"}), 400
+                    if not dbh.publicise_challenge(content_id, current_user.id, make_public):
+                        return jsonify({"error": "Failed to change challenge publicity"}), 400
                     return jsonify({"message": "Challenge shared successfully."})
 
                 else:
@@ -59,11 +59,12 @@ def init_feedback_routes(app):
 
             elif content_type == 'lesson':
                 if dbh.share_lesson(content_id, current_user.id):
-                    if make_public and not dbh.publicise_lesson(content_id, current_user.id, make_public):
-                        return jsonify({"error": "Failed to make lesson public"}), 400
+                    if not dbh.publicise_lesson(content_id, current_user.id, make_public):
+                        return jsonify({"error": "Failed to change lesson publicity"}), 400
                     return jsonify({"message": "Lesson shared successfully."})
 
                 else:
                     return jsonify({"error": "Unauthorized"}), 401
         else:
             return jsonify({"error": "Invalid route path"}), 400
+
