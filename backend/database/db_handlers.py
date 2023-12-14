@@ -296,11 +296,11 @@ def is_lesson_complete(lesson_id):
 
 def is_lesson_shared(lesson_id):
     lesson = Lesson.query.filter_by(id=lesson_id).first()
-    return lesson.shared is not None if lesson else False
+    return bool(lesson and lesson.shared)
 
 def is_challenge_shared(challenge_id):
     challenge = Challenge.query.filter_by(id=challenge_id).first()
-    return challenge.shared is not None if challenge else False
+    return bool(challenge and challenge.shared)
 
 def publicise_challenge(challenge_id, user_id, make_public):
     challenge = Challenge.query.get(challenge_id)

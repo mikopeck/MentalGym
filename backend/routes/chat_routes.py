@@ -57,8 +57,6 @@ def init_chat_routes(app):
                 print(f"Error: {e}")
                 return jsonify({"error": "An error occurred while processing the message."}), 500
 
-           
-                
 
     def get_recent_chat(lesson_id, challenge_id):
         if not current_user.is_authenticated:
