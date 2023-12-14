@@ -45,7 +45,7 @@ export default {
       "Generating lessons and quizzes takes about 2-3× longer than regular replies. Thank you for your patience.",
       'Your ad could appear here.. <a href="/contact">get in touch.</a>',
       'Would you recommend us to a friend? <br><a href="/contact">What could we do to make that happen?</a>',
-      'Join our community on <a target="_blank" href="https://twitter.com/AscendanceCloud">X</a> and <a target="_blank" href="https://discord.gg/SSGygda5DX">Discord</a> to stay up-to-date with the latest features.',
+      'Join our community on <a target="_blank" href="https://twitter.com/AscendanceCloud">𝕏</a> and <a target="_blank" href="https://discord.gg/SSGygda5DX">Discord</a> to stay up-to-date with the latest features.',
       'Please consider <a target="_blank" href="https://donate.stripe.com/fZe8Ao9hl63qe9GeUX">donating</a> to help this app grow faster!',
     ]);
     const specialMessage = messages.value.splice(1, 1)[0];
