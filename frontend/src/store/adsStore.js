@@ -16,6 +16,7 @@ export const useAdsStore = defineStore('ads', {
     },
     loaded() {
       this.isLoading = false;
+      setTimeout(this.hide, 5000);
     },
   },
 });
