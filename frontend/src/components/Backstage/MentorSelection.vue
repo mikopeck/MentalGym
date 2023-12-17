@@ -19,6 +19,7 @@
               }"
             />
             <div class="mentor-name">{{ mentor.name }}</div>
+            <div class="mentor-personality" v-html="mentor.personality"></div>
           </div>
         </div>
         <MenuButton
@@ -30,6 +31,7 @@
     </div>
   </transition>
 </template>
+
 
 <script>
 import MenuButton from "../Menus/MenuButton.vue";
@@ -90,12 +92,19 @@ export default {
   margin-bottom: 8px;
 }
 
+.mentor-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .mentor-image {
   padding: 8px;
   width: 100%;
   height: auto;
-  max-width: 360px;
-  max-height: 360px;
+  max-width: 320px;
+  max-height: 320px;
   object-fit: contain;
   border: 3px solid var(--background-color);
   border-radius: 4px;
@@ -107,6 +116,11 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.mentor-personality {
+    font-size: 0.8em;
+    opacity: 0.8;
 }
 
 .selected {

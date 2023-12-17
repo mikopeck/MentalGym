@@ -13,11 +13,31 @@ import sterlingImage from '@/assets/images/sterling.png';
 export const useMentorStore = defineStore('mentorStore', {
     state: () => ({
         mentors: [
-            { id: 'azalea', name: 'Azalea', imageUrl: azaleaImage },
-            { id: 'irona', name: 'Irona', imageUrl: ironaImage },
-            { id: 'bubbles', name: 'Bubbles', imageUrl: bubblesImage },
-            { id: 'sterling', name: 'Sterling', imageUrl: sterlingImage },
-        ],
+            { 
+                id: 'azalea', 
+                name: 'Azalea', 
+                imageUrl: azaleaImage, 
+                personality: "<ul><li>Creative and innovative</li><li>Expressive, subtle humor</li><li>Occasional emojis</li></ul>"
+            },
+            { 
+                id: 'irona', 
+                name: 'Irona', 
+                imageUrl: ironaImage, 
+                personality: "<ul><li>Firm and strict approach</li><li>Effective, dry humor</li><li>Sparse emojis</li></ul>"
+            },
+            { 
+                id: 'bubbles', 
+                name: 'Bubbles', 
+                imageUrl: bubblesImage, 
+                personality: "<ul><li>Playful and lighthearted</li><li>Warm, cheerful jokes</li><li>Lots of emojis</li></ul>"
+            },
+            { 
+                id: 'sterling', 
+                name: 'Sterling', 
+                imageUrl: sterlingImage, 
+                personality: "<ul><li>Professional and direct</li><li>Minimal use of humor</li><li>Almost no emojis</li></ul>"
+            },
+        ],               
         currentMentor: null,
         selectedMentorId: null,
         isVisible: false,
