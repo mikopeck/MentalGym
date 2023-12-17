@@ -71,7 +71,8 @@ export default {
   border: 1px solid var(--text-color);
   max-width: 80%;
   min-width: 40%;
-  max-height: 75vh;
+  max-height: 80vh;
+  margin-bottom: 6vh;
   display: flex;
   justify-content: center;
   flex-direction: column;
