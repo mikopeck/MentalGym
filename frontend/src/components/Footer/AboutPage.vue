@@ -405,6 +405,9 @@ export default {
   .landing-title {
     margin: 0;
   }
+  .button {
+    font-size: 1.5em;
+  }
 }
 
 .fade-enter-active,
