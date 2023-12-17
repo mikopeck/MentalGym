@@ -5,6 +5,7 @@ from flask_login import login_required, current_user
 
 import database.db_handlers as dbh
 from database.user_handler import get_user_tier, set_user_tier
+from message_handler import update_system_role, initialize_messages
 
 def init_profile_routes(app):
 
@@ -44,4 +45,26 @@ def init_profile_routes(app):
             return jsonify(status="error", message=""), 400
 
         set_user_tier(current_user.id, tierName)
+        return jsonify(status="success")
+    
+    @app.route("/api/mentor", methods=["GET"])
+    @login_required
+    def get_user_mentor():
+        name = dbh.get_mentor_name(current_user.id)
+        return jsonify(status="success", selectedMentorId=name)
+
+    @app.route("/api/mentor", methods=["POST"])
+    @login_required
+    def set_user_mentor():
+        data = request.json
+        name = data.get('mentorId')
+        print(name)
+        if not name:
+            return jsonify(status="error", message=""), 400
+
+        dbh.set_mentor_name(current_user.id, name)
+        update_system_role(current_user.id, dbh.get_system_role(current_user.id))
+        isInitial = len(dbh.get_api_messages(current_user.id))
+        if isInitial == 2:
+            initialize_messages(current_user.id)
         return jsonify(status="success")

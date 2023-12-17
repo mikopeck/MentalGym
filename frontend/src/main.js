@@ -5,6 +5,9 @@ import App from './App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { useInputStore} from "@/store/inputStore"
 import { useAuthStore } from "@/store/authStore";
+import { usePopupStore } from "@/store/popupStore";
+import { useMentorStore } from "@/store/mentorStore";
+// import { useMessageStore } from "@/store/messageStore";
 
 import './assets/styles.css';
 import './assets/themes.css';
@@ -28,7 +31,14 @@ const router = createRouter({
   routes,
 });
 router.beforeEach((to, from, next) => {
-  console.log(from.path + to.path);
+  console.log("mainjs"+from+to.fullPath);
+  if (to.fullPath === "/?awake") {
+    const popupStore = usePopupStore();
+    popupStore.showWelcomePopup();
+    const mentorStore = useMentorStore();
+    mentorStore.show();
+    next('/');
+  }
   const inputStore = useInputStore();
   inputStore.show();
   const authStore = useAuthStore();

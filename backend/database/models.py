@@ -10,6 +10,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(200), nullable=True)
     email = db.Column(db.String(100), unique=True, nullable=False)
     
+    mentor_name = db.Column(db.String(100), default='Azalea')
     system_role = db.Column(db.String(100), default='')
     profile = db.Column(db.Text, nullable=True)
     ai_tutor_profile = db.Column(db.Text, nullable=True)

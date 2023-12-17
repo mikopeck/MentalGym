@@ -63,7 +63,7 @@ export default {
 .message-history {
   padding: 1rem;
   width: 100%;
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
   flex-grow: 1;
   overflow-y: auto;

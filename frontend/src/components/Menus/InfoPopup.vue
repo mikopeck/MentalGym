@@ -6,7 +6,7 @@
           <span class="emoji-indicator">ℹ</span>
           <button class="close-button" @click="popup.hidePopup">✖</button>
         </div>
-        <p class="popup-message">{{ popup.message }}</p>
+        <p class="popup-message" v-html="popup.message"></p>
         <button class="popup-button" @click="popup.hidePopup">Ok</button>
       </div>
     </div>

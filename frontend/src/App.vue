@@ -7,6 +7,7 @@
       :key="forceUpdateKey"
     />
     <SideMenu />
+    <MentorSelection />
 
     <div class="main-content">
       <div class="another" @scroll="onScroll">
@@ -31,12 +32,14 @@ import BottomBar from "./components/Footer/BottomBar.vue";
 import SubHeader from "./components/Header/SubHeader.vue";
 import InfoPopup from "./components/Menus/InfoPopup.vue";
 import AdPopup from "./components/Monetization/AdPopup.vue";
+import MentorSelection from "./components/Backstage/MentorSelection.vue";
 import { useAuthStore } from "@/store/authStore";
 import { useMenuStore } from "@/store/menuStore";
 import { useThemeStore } from "@/store/themeStore";
 import { usePopupStore } from "@/store/popupStore";
 import { useMessageStore } from "@/store/messageStore";
 import { useScrollStore } from "@/store/scrollStore";
+import { useMentorStore } from "@/store/mentorStore";
 
 export default {
   name: "App",
@@ -48,15 +51,18 @@ export default {
     SubHeader,
     InfoPopup,
     AdPopup,
+    MentorSelection,
   },
   mounted() {
     const authStore = useAuthStore();
+    const router = this.$router;
     if (window.location.search === "?awake") {
       authStore.login();
       const popupStore = usePopupStore();
       popupStore.showWelcomePopup();
-      const messageStore = useMessageStore();
-      messageStore.fetchRecentMessages("/");
+      const mentorStore = useMentorStore();
+      mentorStore.show();
+      router.push('/');
     }
 
     const path = window.location.pathname;
@@ -131,18 +137,20 @@ export default {
 
       const menuStore = useMenuStore();
       menuStore.hideActionMenu();
+      const mentorStore = useMentorStore();
+      mentorStore.hide();
       if (window.innerWidth < 1750) {
         menuStore.hideSideMenu();
       }
 
-      if (this.$route.query.awake) {
-        const authStore = useAuthStore();
-        authStore.login();
-        const popupStore = usePopupStore();
-        popupStore.showWelcomePopup();
-        const messageStore = useMessageStore();
-        messageStore.fetchRecentMessages();
-      }
+      // if (this.$route.query.awake) {
+      //   const authStore = useAuthStore();
+      //   authStore.login();
+      //   const popupStore = usePopupStore();
+      //   popupStore.showWelcomePopup();
+      //   const mentorStore = useMentorStore();
+      //   mentorStore.show();
+      // }
     },
   },
   methods: {

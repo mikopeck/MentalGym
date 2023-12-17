@@ -3,7 +3,6 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 import { usePopupStore } from "@/store/popupStore";
 import { useAdsStore } from "@/store/adsStore";
-import { useAuthStore } from "@/store/authStore";
 
 export const useMessageStore = defineStore('messageStore', {
     state: () => ({
@@ -42,13 +41,14 @@ export const useMessageStore = defineStore('messageStore', {
             axios
                 .get(apiEndpoint, { params })
                 .then((response) => {
+                    console.log(response.data)
                     this.updateConversation(response.data);
                 })
                 .catch((error) => {
                     console.error(`Error fetching recent messages:`, error);
                     if (error.response && error.response.status === 401) {
-                        const authStore = useAuthStore();
-                        authStore.logout();
+                        const popupStore = usePopupStore();
+                        popupStore.showPopup("You do not have permission to view this content.");
                     }
                 });
         },

@@ -2,16 +2,22 @@
   <div class="page-main-container">
     <h1 class="page-title">Profile</h1>
     <div class="page-main-section">
-          <div class="profile-section">
-      <h2 class="section-title">Email</h2>
-      <p class="profile-info">{{ profile.email }}</p>
-    </div>
+      <div class="profile-section">
+        <h2 class="section-title">Email</h2>
+        <p class="profile-info">{{ profile.email }}</p>
+      </div>
 
-    <div class="profile-section">
-      <h2 class="section-title">Subscription Tier</h2>
-      <p class="profile-info">{{ profile.tier }}</p>
-    </div>
-    <br>
+      <div class="profile-section">
+        <h2 class="section-title">Subscription Tier</h2>
+        <p class="profile-info">{{ profile.tier }}</p>
+      </div>
+
+      <div class="profile-section">
+        <h2 class="section-title">Base tutor</h2>
+        <p class="profile-info">{{ currentMentorName }}</p>
+        <MenuButton label="Change Mentor" @click="changeMentor" />
+      </div>
+      <br />
       <h2 class="section-title">User Profile</h2>
       <textarea
         ref="userTextarea"
@@ -51,6 +57,7 @@
   <script>
 import axios from "axios";
 import MenuButton from "@/components/Menus/MenuButton.vue";
+import { useMentorStore } from "@/store/mentorStore";
 import { useAuthStore } from "@/store/authStore";
 import { usePopupStore } from "@/store/popupStore";
 
@@ -70,22 +77,32 @@ export default {
     MenuButton,
   },
   async mounted() {
-    try {
-      const response = await axios.get("/api/profile");
-      if (response.data.status === "success") {
-        this.profile = response.data.profile;
-        this.$nextTick(() => {
-          this.autoGrow({ target: this.$refs.userTextarea });
-          this.autoGrow({ target: this.$refs.tutorTextarea });
-        });
-      } else {
-        console.error("Failed to fetch profile");
-      }
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-    }
+    this.fetchProfile();
+    this.fetchCurrentMentor();
+  },
+  computed: {
+    currentMentorName() {
+      const mentorStore = useMentorStore();
+      return mentorStore.currentMentor;
+    },
   },
   methods: {
+    async fetchProfile() {
+      try {
+        const response = await axios.get("/api/profile");
+        if (response.data.status === "success") {
+          this.profile = response.data.profile;
+          this.$nextTick(() => {
+            this.autoGrow({ target: this.$refs.userTextarea });
+            this.autoGrow({ target: this.$refs.tutorTextarea });
+          });
+        } else {
+          console.error("Failed to fetch profile");
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    },
     async updateProfile(type) {
       const popupStore = usePopupStore();
       try {
@@ -101,6 +118,14 @@ export default {
         popupStore.showPopup(`Error updating ${type} profile:`, error);
       }
     },
+    async fetchCurrentMentor() {
+      const mentorStore = useMentorStore();
+      mentorStore.getCurrentMentorName();
+    },
+    changeMentor() {
+      const mentorStore = useMentorStore();
+      mentorStore.show();
+    },
     async logout() {
       const popupStore = usePopupStore();
       try {
@@ -110,7 +135,7 @@ export default {
           authStore.logout();
           this.$router.push("/");
         } else {
-          popupStore.showPopup("Failed to logout");
+          popupStore.showPopup("Failed to logout.");
         }
       } catch (error) {
         popupStore.showPopup("Error logging out:", error);
@@ -120,9 +145,9 @@ export default {
       try {
         let response = await axios.get("/api/reset");
         if (response.data.status === "success") {
-          this.$router.push("/");
+          this.$router.push("/?awake");
         } else {
-          console.error("Failed to reset conversation");
+          console.error("Failed to reset conversation.");
         }
       } catch (error) {
         console.error("Error resetting conversation:", error);

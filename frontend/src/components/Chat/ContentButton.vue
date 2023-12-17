@@ -59,7 +59,6 @@ export default {
     },
     contentWithoutEmoji() {
       if (!this.content) return "";
-      console.log(this.content);
       return this.content.replace(this.extractedEmoji, "").trim();
     },
   },

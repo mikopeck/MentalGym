@@ -103,10 +103,6 @@ export default {
       regex = /\[([\s\S]*?)\]\((http:\/\/|https:\/\/|ftp:\/\/)([\s\S]*?)\)/g;
       content = content.replace(regex, '<a href="$2$3">$1</a>');
 
-      // Images (Optional)
-      regex = /!\[([\s\S]*?)\]\((http:\/\/|https:\/\/|ftp:\/\/)([\s\S]*?)\)/g;
-      content = content.replace(regex, '<img src="$2$3" alt="$1">');
-
       // Unordered Lists (the following regexes need to be applied in sequence, not independently)
       // Match bullet points and transform them into HTML list items
       regex = /^\s*\*\s*(.*?)$/gm;

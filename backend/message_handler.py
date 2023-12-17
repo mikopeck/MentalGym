@@ -5,8 +5,10 @@ import functions as fns
 import database.db_handlers as db
 
 def initialize_messages(user_id):
+    db.clear_user_chat_history(user_id)
     update_system_role(user_id, roles.ProfileGather)
-    message = "Hello! I'm Azalea, and I'm here to help you grow and achieve your goals. Is there anything you like to learn about today?"
+    name = db.get_mentor_name(user_id)
+    message = f"Hello! I'm {name}, and I'm here to help you grow and achieve your goals. Is there anything you like to learn about today?"
     db.add_ai_message(user_id, message, roles.ProfileGather)
 
 def create_message(system_message, user_message):
@@ -65,7 +67,8 @@ def system_message(user_id, file_name = None ):
         system_message = system_message.replace("{profile-function}", str(fns.Profile))
 
     if "{base-persona}" in system_message:
-        base_persona_path = os.path.join(system_prompts_path, 'BaseAzalea.txt')
+        name = db.get_mentor_name(user_id)
+        base_persona_path = os.path.join(system_prompts_path, f'Base{name}.txt')
         with open(base_persona_path, 'r') as file:
             persona = file.read()
             system_message = system_message.replace("{base-persona}", persona)

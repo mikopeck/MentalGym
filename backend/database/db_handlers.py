@@ -118,6 +118,16 @@ def get_system_role(user_id, lesson_id=None):
     user = User.query.get(user_id)
     return user.system_role if user else None
 
+def set_mentor_name(user_id, name):
+    user = User.query.get(user_id)
+    if user:
+        user.mentor_name = name
+        db.session.commit()
+
+def get_mentor_name(user_id):
+    user = User.query.get(user_id)
+    return user.mentor_name if user and user.mentor_name else "Azalea"
+
 def remove_latest_system_message(user_id, lesson_id=None):
     latest_system_message = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, role='system').order_by(ChatHistory.id.desc()).first()
     if latest_system_message:
