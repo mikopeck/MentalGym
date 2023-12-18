@@ -46,7 +46,7 @@ export const useMessageStore = defineStore('messageStore', {
                 })
                 .catch((error) => {
                     console.error(`Error fetching recent messages:`, error);
-                    if (error.response && error.response.status === 401) {
+                    if (error.response && error.response.status === 401 && currentPath !== "/") {
                         const popupStore = usePopupStore();
                         popupStore.showPopup("You do not have permission to view this content.");
                     }

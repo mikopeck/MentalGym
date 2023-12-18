@@ -5,17 +5,14 @@
       <ChatConversation/>
     </div>
     <MessageInput
-      ref="messageInputRef"
       class="message-input"
     />
   </div>
 </template>
 
 <script>
-import { watch, nextTick, ref } from 'vue';
 import MessageInput from "./MessageInput.vue";
 import ChatConversation from "./ChatConversation.vue";
-import { useMessageStore } from "@/store/messageStore";
 
 export default {
   name: "ChatComponent",
@@ -24,30 +21,6 @@ export default {
     ChatConversation,
   },
   setup() {
-    const messageStore = useMessageStore();
-    const messageInputRef = ref(null);
-
-    watch(() => messageStore.messages, () => {
-      updateView();
-    });
-
-    const updateView = () => {
-      nextTick(() => {
-        setTimeout(() => {
-          if (messageInputRef.value) {
-            const inputElement = messageInputRef.value.$el;
-            window.scrollTo(
-              0,
-              inputElement.offsetTop + inputElement.clientHeight - 2000
-            );
-          }
-        }, 100);
-      });
-    };
-
-    return {
-      messageInputRef, 
-    };
   },
 };
 </script>
