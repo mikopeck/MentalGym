@@ -41,9 +41,9 @@
                   Learn anything, challenge yourself.
                 </div>
                 <div class="value-text">
-                  Learn with generated lessons on any topic by a personalized
-                  tutor. Engage in quizzes and challenges that adapt to your
-                  style, deepening your knowledge and skills.
+                  Embark on a personalized learning adventure with interactive
+                  lessons and fun quizzes. Master skills through daily
+                  challenges and real-world tasks in a game-like setting.
                 </div>
               </div>
               <div
@@ -71,7 +71,7 @@
         <!-- <div class="stat-info">🤝Join 20+ Ascendants!</div> -->
         <div class="stat-info">📖200+ Custom Lessons generated.</div>
         <div class="small-text">Check out these shared lessons ↓</div>
-        <div class="shared-content"><SharedContent/></div>
+        <div class="shared-content"><SharedContent /></div>
         <!-- <div class="stat-info">🎯60+ Unique Challenges accepted.</div> -->
       </div>
       <img :src="openaiPath" alt="Powered by OpenAI" class="openai" />
@@ -90,7 +90,7 @@ import { usePopupStore } from "@/store/popupStore";
 import { useThemeStore } from "@/store/themeStore";
 import CtaButton from "./LandingPageComponents/CtaButton.vue";
 import FaqComponent from "./LandingPageComponents/FaqComponent.vue";
-import SharedContent from './LandingPageComponents/SharedContent.vue';
+import SharedContent from "./LandingPageComponents/SharedContent.vue";
 
 export default {
   name: "AboutPage",
@@ -305,7 +305,7 @@ export default {
   text-align: center;
 }
 
-.shared-content{
+.shared-content {
   display: flex;
 }
 

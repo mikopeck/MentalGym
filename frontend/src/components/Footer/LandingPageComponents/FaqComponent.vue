@@ -36,13 +36,13 @@ export default {
             "Ascendance uses advanced algorithms to analyze your learning style, pace, and preferences. Based on this analysis, it customizes lessons and challenges to suit your unique needs, ensuring an engaging and effective learning journey.",
           isOpen: false,
         },
-            {
-              question:
-                "Is there a subscription model and what are the payment options?",
-              answer:
-                "Ascendance offers free, <a href='/plan'>paid and premium subscription models</a>. The paid models provide access to additional features and content. Payment can be made via major credit cards, and other digital wallets, depending on your region.",
-              isOpen: false,
-            },
+        {
+          question:
+            "Is there a subscription model and what are the payment options?",
+          answer:
+            "Ascendance offers free, <a href='/plan'>paid and premium subscription plans</a>. The paid plans feature higher message limits and use more powerful AI models. Payment can be made via major credit cards, and other digital wallets, depending on your region.",
+          isOpen: false,
+        },
         {
           question:
             "What types of progress tracking and analytics does Ascendance offer?",

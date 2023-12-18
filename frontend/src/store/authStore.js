@@ -12,12 +12,12 @@ export const useAuthStore = defineStore('auth', {
       console.log("Checking authentication");
       try {
         const response = await axios.get('/api/check-auth');
+        this.userTier = response.data.userTier;
         if (response.data.loggedIn) {
           this.login();
         }
-        else { this.logout();
-        
-        this.userTier = response.data.userTier;
+        else {
+          this.logout();
         }
       } catch (error) {
         console.error('Error checking auth status:', error);

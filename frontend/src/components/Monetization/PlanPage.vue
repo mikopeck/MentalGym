@@ -40,9 +40,9 @@ export default {
           title: "Aspirant",
           price: "Free",
           features: [
-            "Personalized mentor. Updated daily.",
+            "Personalized mentor.",
             "Custom Lessons & Challenges.",
-            "20 Daily Messages.",
+            "20 Daily message limit.",
           ],
           color: "var(--background-color-1t)",
           buttonColor: "var(--background-color-2t)",
@@ -52,8 +52,7 @@ export default {
           price: "$10/month",
           features: [
             "All features in Aspirant.",
-            "Mentor gradually learns about you.",
-            "200 daily messages.",
+            "200 daily message limit.",
             "Priority Support.",
           ],
           color: "var(--element-color-1)",
@@ -65,7 +64,7 @@ export default {
           features: [
             "All features in Awakened.",
             "Use the best available AI models.",
-            "2000 daily messages",
+            "2000 daily message limit.",
             "Early access to new features.",
           ],
           color: "var(--element-color-2)",
