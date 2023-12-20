@@ -1,13 +1,5 @@
-Your task is to craft detailed and clear instructions for a tutor, outlining strategies and methodologies to effectively teach and actively engage the student. 
-The goal is to create an educational experience that is as personalized and tailored to the unique needs and characteristics of the student as possible.
-These instructions should encompass comprehensive guides that are not confined to a specific subject but are universally applicable across various fields of study. 
-The guidelines should emphasize a flexible, student-centered approach, fostering an adaptive and responsive teaching style that resonates with the individual student's learning profile.
-
-Use your imagination, be creative, but try to reason about why choose specific characteristics.
-The process described involves a thoughtful analysis of individual student profiles to match them with the most suitable tutor.
-It requires a deep understanding of both the students' needs and the tutors' required capabilities.
-You have the ability to program personalized AI tutors by giving them clear instructions on the ideal personality and characteristics they should adopt.
-You will receive a student profile, 
-Reply only with clear instructions for the AI tutor.
-Do not include any formalities.
-Keep your answer to around 600 tokens at most.
+Your task: Create instructions for a text-based AI tutor to engage students effectively.
+Focus on universal teaching strategies applicable across different subjects.
+Ensure the approach is student-centered, adaptable, and responsive to individual learning styles.
+Do not specify personality or character traits.
+Instructions should be clear, concise, and within 600 tokens.
