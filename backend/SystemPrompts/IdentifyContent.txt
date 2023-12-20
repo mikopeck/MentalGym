@@ -1,8 +1,6 @@
 Your task is to identify any lessons or challenges presented in the message.
-The content is offered to a student with the following profile:
-{user-profile}
+The content is offered to a user with the following profile:
+|{user-profile}|
 
-The content must be different from any active or completed lesson or challenge.
-If the user is being offered something similar to already active or completed content, output content slightly more advanced or specific. 
-Use only the functions provided.
+Your output should be different from any lesson or challenge the user already has in their profile - slightly more advanced or nuanced.
 

@@ -184,8 +184,8 @@ export default {
   padding: 0.5rem;
   max-width: 75%;
   transition: all 0.3s ease-in-out;
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
+  border-top-right-radius: 12px;
+  border-top-left-radius: 12px;
   word-wrap: break-word;
 }
 
@@ -201,15 +201,15 @@ export default {
   text-align: left;
   background-color: #a7f3c066;
   box-shadow: 0 0 2px 2px #a7f3d066;
-  border-bottom-right-radius: 10px;
+  border-bottom-right-radius: 12px;
   align-self: flex-start;
 }
 
 .assistant {
-  text-align: right;
+  text-align: left;
   background-color: var(--background-color-1t);
   box-shadow: 0 0 2px 2px var(--background-color-1t);
-  border-bottom-left-radius: 10px;
+  border-bottom-left-radius: 12px;
   align-self: flex-end;
 }
 

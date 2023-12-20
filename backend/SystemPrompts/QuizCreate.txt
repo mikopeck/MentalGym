@@ -1,9 +1,6 @@
-Your task is to quiz the user on the topic in discussion.
-Quiz only the information provided or information which can be directly derived from understanding the lesson material.
-Maintain intellectual integrity and ensure accuracy and credibility in the information you present.
+{base-persona}
+Your task is to create a quiz for the user on the topic in discussion.
+Quiz only the information provided; however, test understanding more than memory.
 This is a profile of the user: 
-----
-{user-profile}
-----
-Create a short quiz to test their knowledge.
-For multiple choice questions make sure that the correct answer is not always offered first.
+|{user-profile}|
+Create a short, personalized, engaging quiz for them.
