@@ -63,6 +63,7 @@ ul {
 }
 
 ol {
+  margin-top: 1.5em;
   counter-reset: item;
   padding-left: 20px;
   color: var(--text-color);
