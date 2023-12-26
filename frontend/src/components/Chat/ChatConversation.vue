@@ -103,23 +103,82 @@ export default {
       regex = /\[([\s\S]*?)\]\((http:\/\/|https:\/\/|ftp:\/\/)([\s\S]*?)\)/g;
       content = content.replace(regex, '<a href="$2$3">$1</a>');
 
-      // Unordered Lists (the following regexes need to be applied in sequence, not independently)
-      // Match bullet points and transform them into HTML list items
-      regex = /^\s*\*\s*(.*?)$/gm;
-      content = content.replace(regex, "<li>$1</li>");
-      // Add <ul> tags around consecutive <li>
-      regex = /(<li>.*<\/li>)/gs;
-      content = content.replace(regex, "<ul>$1</ul>");
+      // Normalize line breaks
+      content = content.replace(/\r\n?/g, "\n");
 
-      // Ordered Lists similar to Unordered Lists
-      regex = /^\s*\d+\.\s*(.*?)$/gm;
-      content = content.replace(regex, "<li>$1</li>");
-      // Add <ol> tags around consecutive <li>
-      regex = /(<li>.*<\/li>)/gs;
-      content = content.replace(regex, "<ol>$1</ol>");
+      // Function to process list items and return HTML list string
+      function processListItems(items, listType) {
+        const tag = listType === "ol" ? "ol" : "ul";
+        let htmlList = `<${tag}>`;
 
-      // Line breaks
-      content = content.replace(/\n/g, "<br />");
+        items.forEach((item) => {
+          htmlList += `<li>${item}</li>`;
+        });
+
+        htmlList += `</${tag}>`;
+        return htmlList;
+      }
+
+      // Split content into lines and trim whitespace
+      let lines = content.split("\n").map((line) => line.trim());
+
+      // State variables
+      let currentListItems = [];
+      let currentListType = "";
+      let output = [];
+
+      lines.forEach((line) => {
+        // Match ordered list item (e.g., "1. Item")
+        if (line.match(/^\d+\./)) {
+          // If we were building an unordered list, finish it
+          if (currentListType === "ul") {
+            output.push(processListItems(currentListItems, "ul"));
+            currentListItems = [];
+          }
+          currentListType = "ol";
+          currentListItems.push(line.substring(line.indexOf(" ") + 1));
+        }
+        // Match unordered list item (e.g., "- Item")
+        else if (line.match(/^-/)) {
+          // If we were building an ordered list, finish it
+          if (currentListType === "ol") {
+            output.push(processListItems(currentListItems, "ol"));
+            currentListItems = [];
+          }
+          currentListType = "ul";
+          currentListItems.push(line.substring(2));
+        }
+        // If not a list item, process what we have and reset
+        else {
+          if (currentListItems.length > 0) {
+            output.push(processListItems(currentListItems, currentListType));
+            currentListItems = [];
+            currentListType = "";
+          }
+          output.push(line);
+        }
+      });
+
+      // If we were in the middle of building a list, finish it
+      if (currentListItems.length > 0) {
+        output.push(processListItems(currentListItems, currentListType));
+      }
+
+      // Join the output lines back together
+      content = output.join("\n");
+
+      // Replace line breaks with <br> tags
+      content = content.replace(/\n/g, "<br>\n");
+
+      // Wrap any words in front of a colon with <strong> tags, but only if there are at most 5 words
+      content = content.replace(
+        /^(?:\s*\b\w+\b){1,5}\s*:/gm,
+        "<strong>$&</strong>"
+      );
+
+      // Fix stuff
+      content = content.replace(/<\/ol>\s*<br>\s*<br>\s*<ol>/g, "");
+      content = content.replace(/<\/ul>\s*<br>\s*<br>\s*<ul>/g, "");
 
       return content;
     },

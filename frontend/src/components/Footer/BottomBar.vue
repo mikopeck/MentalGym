@@ -68,7 +68,6 @@ export default {
       return useScrollStore().scrollTop;
     },
     isVisible() {
-      console.log(this.$route.path+this.scrollTop);
       if (this.$route.path !== "/about"){ return true;}
       return this.scrollTop > 80;
     },

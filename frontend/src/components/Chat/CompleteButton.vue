@@ -5,7 +5,7 @@
       <button class="next-button" @click="navigateToContent">
         🔙Return to main Chat
       </button>
-      <button class="next-button" @click="toggleShare">
+      <button class="share-button" @click="toggleShare">
         {{ isSharing ? "Copy Link" : "Share" }}
       </button>
       <div v-if="isSharing" class="share-container">
@@ -14,7 +14,7 @@
           {{ copyButtonText }}
         </button>
       </div>
-      <button class="next-button" @click="toggleFeedback">
+      <button class="feedback-button" @click="toggleFeedback">
         {{ showFeedback ? "Hide Feedback⬆️" : "Give Feedback⤵️" }}
       </button>
     </div>
@@ -265,14 +265,18 @@ export default {
   color: #ffc107;
 }
 
-.next-button {
+.next-button, .share-button, .feedback-button {
   padding: 4px;
   font-weight: 700;
   color: var(--text-color);
   transition: color 0.2s;
 }
 
-.next-button:hover {
+.next-button{
+  font-weight: 900;
+}
+
+.next-button:hover, .share-button:hover ,.feedback-button:hover {
   color: var(--highlight-color);
 }
 
