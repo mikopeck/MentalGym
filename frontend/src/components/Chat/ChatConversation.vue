@@ -106,66 +106,25 @@ export default {
       // Normalize line breaks
       content = content.replace(/\r\n?/g, "\n");
 
-      // Function to process list items and return HTML list string
-      function processListItems(items, listType) {
-        const tag = listType === "ol" ? "ol" : "ul";
-        let htmlList = `<${tag}>`;
+content = content.replace(
+    /(\n|^)((\d+\.\s*.*?)(\n\s*\d+\.\s*.*?)*)(?=\n[^\d]|$)/gs,
+    function (_match, p1, listContent) {
+      // Remove the numbers and dots from the list items and wrap them in <li> tags
+      let listItems = listContent.replace(/^\s*\d+\.\s*/gm, "<li>").replace(/\n\s*\d+\.\s*/g, "</li>");
+      // Return the formatted list
+      return `${p1}<ol>${listItems}</li></ol>`;
+    }
+  );
 
-        items.forEach((item) => {
-          htmlList += `<li>${item}</li>`;
-        });
-
-        htmlList += `</${tag}>`;
-        return htmlList;
-      }
-
-      // Split content into lines and trim whitespace
-      let lines = content.split("\n").map((line) => line.trim());
-
-      // State variables
-      let currentListItems = [];
-      let currentListType = "";
-      let output = [];
-
-      lines.forEach((line) => {
-        // Match ordered list item (e.g., "1. Item")
-        if (line.match(/^\d+\./)) {
-          // If we were building an unordered list, finish it
-          if (currentListType === "ul") {
-            output.push(processListItems(currentListItems, "ul"));
-            currentListItems = [];
-          }
-          currentListType = "ol";
-          currentListItems.push(line.substring(line.indexOf(" ") + 1));
-        }
-        // Match unordered list item (e.g., "- Item")
-        else if (line.match(/^-/)) {
-          // If we were building an ordered list, finish it
-          if (currentListType === "ol") {
-            output.push(processListItems(currentListItems, "ol"));
-            currentListItems = [];
-          }
-          currentListType = "ul";
-          currentListItems.push(line.substring(2));
-        }
-        // If not a list item, process what we have and reset
-        else {
-          if (currentListItems.length > 0) {
-            output.push(processListItems(currentListItems, currentListType));
-            currentListItems = [];
-            currentListType = "";
-          }
-          output.push(line);
-        }
-      });
-
-      // If we were in the middle of building a list, finish it
-      if (currentListItems.length > 0) {
-        output.push(processListItems(currentListItems, currentListType));
-      }
-
-      // Join the output lines back together
-      content = output.join("\n");
+  content = content.replace(
+    /(\n|^)(-.+?)(?=\n[^-]|$)/gs,
+    function (_match, p1, p2) {
+      // Remove the dashes and wrap the list items in <li> tags
+      let listItems = p2.replace(/\n-/g, "</li><li>").replace(/^- /, "");
+      // Return the formatted list
+      return `${p1}<ul><li>${listItems}</li></ul>`;
+    }
+  );
 
       // Replace line breaks with <br> tags
       content = content.replace(/\n/g, "<br>\n");
@@ -175,10 +134,6 @@ export default {
         /^(?:\s*\b\w+\b){1,5}\s*:/gm,
         "<strong>$&</strong>"
       );
-
-      // Fix stuff
-      content = content.replace(/<\/ol>\s*<br>\s*<br>\s*<ol>/g, "");
-      content = content.replace(/<\/ul>\s*<br>\s*<br>\s*<ul>/g, "");
 
       return content;
     },
