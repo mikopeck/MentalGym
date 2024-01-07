@@ -103,37 +103,22 @@ export default {
       regex = /\[([\s\S]*?)\]\((http:\/\/|https:\/\/|ftp:\/\/)([\s\S]*?)\)/g;
       content = content.replace(regex, '<a href="$2$3">$1</a>');
 
+      // Unordered lists
+      regex = /(?:^|\n)\s*-\s(.+?)(?=\n|$)/gm;
+      content = content.replace(regex, "<ul><li>$1</li></ul>");
+      content = content.replace(/<\/ul>\n<ul>/g, "");
+
       // Normalize line breaks
       content = content.replace(/\r\n?/g, "\n");
 
-content = content.replace(
-    /(\n|^)((\d+\.\s*.*?)(\n\s*\d+\.\s*.*?)*)(?=\n[^\d]|$)/gs,
-    function (_match, p1, listContent) {
-      // Remove the numbers and dots from the list items and wrap them in <li> tags
-      let listItems = listContent.replace(/^\s*\d+\.\s*/gm, "<li>").replace(/\n\s*\d+\.\s*/g, "</li>");
-      // Return the formatted list
-      return `${p1}<ol>${listItems}</li></ol>`;
-    }
-  );
-
-  content = content.replace(
-    /(\n|^)(-.+?)(?=\n[^-]|$)/gs,
-    function (_match, p1, p2) {
-      // Remove the dashes and wrap the list items in <li> tags
-      let listItems = p2.replace(/\n-/g, "</li><li>").replace(/^- /, "");
-      // Return the formatted list
-      return `${p1}<ul><li>${listItems}</li></ul>`;
-    }
-  );
+      // Wrap any words in front of a colon with <strong> tags, but only if there are at most 5 words
+      content = content.replace(
+        /((?:^|\n)(?:\s*(?:\d+\.\s*|-+\s*)?\b\w+\b){1,5}\s*:)/gm,
+        "<strong>$1</strong>"
+      );
 
       // Replace line breaks with <br> tags
       content = content.replace(/\n/g, "<br>\n");
-
-      // Wrap any words in front of a colon with <strong> tags, but only if there are at most 5 words
-      content = content.replace(
-        /^(?:\s*\b\w+\b){1,5}\s*:/gm,
-        "<strong>$&</strong>"
-      );
 
       return content;
     },
