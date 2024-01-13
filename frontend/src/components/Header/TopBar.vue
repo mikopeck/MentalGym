@@ -1,17 +1,27 @@
 <!-- TopBar.vue -->
 <template>
-  <div class="top-bar"  :class="{'nav-bar-invisible': !isVisible, 'nav-bar': isVisible}">
-    <img
-      :src="logoPath"
-      alt="Ascendance Logo"
-      width="32"
-      height="32"
-      class="logo"
-      @click="redirectToAbout"
-    />
-    <div class="app-title" @click="redirectToHome">{{ pageTitle }}</div>
-
-    <button id="sideMenu" @click="toggleSideMenu" class="menu-btn" aria-label="side menu">
+  <div
+    class="top-bar"
+    :class="{ 'nav-bar-invisible': !isVisible, 'nav-bar': isVisible }"
+  >
+    <router-link to="/about">
+      <img
+        :src="logoPath"
+        alt="Ascendance Logo"
+        width="32"
+        height="32"
+        class="logo"
+      />
+    </router-link>
+    <router-link to="/" custom v-slot="{ navigate }">
+      <div class="app-title" @click="navigate">{{ pageTitle }}</div>
+    </router-link>
+    <button
+      id="sideMenu"
+      @click="toggleSideMenu"
+      class="menu-btn"
+      aria-label="side menu"
+    >
       <!-- Three line (hamburger) icon -->
       <span class="menu-line"></span>
       <span class="menu-line"></span>
@@ -32,7 +42,9 @@ export default {
       return useScrollStore().scrollTop;
     },
     isVisible() {
-      if (this.$route.path !== "/about"){ return true;}
+      if (this.$route.path !== "/about") {
+        return true;
+      }
       return this.scrollTop > 80;
     },
     logoPath() {
@@ -61,12 +73,6 @@ export default {
     toggleSideMenu() {
       const menuStore = useMenuStore();
       menuStore.toggleSideMenu();
-    },
-    redirectToHome() {
-      this.$router.push("/");
-    },
-    redirectToAbout() {
-      this.$router.push("/about");
     },
   },
 };
