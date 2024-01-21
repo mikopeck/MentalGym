@@ -226,7 +226,7 @@ def get_profile(user_id):
     user = User.query.get(user_id)
     return user.profile if user else None
 
-def get_user_context(user_id):
+def get_user_info(user_id):
     user = User.query.get(user_id)
     return user.as_dict() if user else None
 

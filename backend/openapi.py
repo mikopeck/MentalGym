@@ -101,3 +101,32 @@ def moderate(user_input):
     else:
         print("Max retries reached. Unable to complete moderation.")
         return None, None
+    
+
+##### EMBEDDINGS #####
+
+def get_embeddings(strings_list):
+    print(f"embedding {strings_list}")
+    headers = {
+        "Authorization": f"Bearer {openai.api_key}",
+        "Content-Type": "application/json"
+    }
+
+    try:
+        response = requests.post(
+            "https://api.openai.com/v1/embeddings",
+            headers=headers,
+            json={
+                "input": strings_list,
+                "model": "text-embedding-ada-002"
+            }
+        )
+
+        if response.status_code == 200:
+            return response.json()['data']
+        else:
+            print(f"Error: {response.status_code}, {response.text}")
+            return None
+    except requests.RequestException as e:
+        print(f"Request failed: {e}")
+        return None

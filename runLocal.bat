@@ -9,3 +9,4 @@ echo Starting Flask...
 call set PYTHON_APP=backend\app.py
 call flask db upgrade
 python backend\app.py
+pause

@@ -2,7 +2,6 @@
 <template>
   <div class="progress-container flex-col">
     <h1 class="page-title">{{ pageEmoji }} Your Progress</h1>
-
     <div class="button-container">
       <MenuButton class="square-button" label="<" @click="changePage(-1)" />
       <p class="section-title">{{ pageTitle }}</p>
@@ -54,7 +53,8 @@
                 <span class="stat-value">{{ percentCompletedLessons }}%</span>
               </td>
               <td>
-                <span class="stat-value">{{ percentCompletedChallenges }}%</span
+                <span class="stat-value"
+                  >{{ percentCompletedChallenges }}%</span
                 >
               </td>
             </tr>

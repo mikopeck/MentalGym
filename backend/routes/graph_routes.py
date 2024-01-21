@@ -2,6 +2,7 @@ from flask import jsonify
 from flask_login import login_required, current_user
 
 from stats import get_line_graph_data, get_pie_chart_data, get_stats
+from knowledge_net.graph_calc import get_graph_data
 
 def init_graph_routes(app):
 
@@ -34,3 +35,13 @@ def init_graph_routes(app):
             "progress": data
         })  
 
+
+    @app.route('/api/knowledge-net', methods=['GET'])
+    def get_knowledge_graph():
+        print("iainga")
+        data = get_graph_data(current_user.id)
+        print(data)
+        return jsonify({
+            "status": "success",
+            "data": data
+        })  

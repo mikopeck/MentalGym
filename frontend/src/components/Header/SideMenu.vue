@@ -33,9 +33,9 @@
     />
     <MenuButton
       v-if="loggedIn"
-      label="Achievements🏅"
-      @click="openRoute('/achievements')"
-      :isSelected="isRouteActive('/achievements')"
+      label="Knowledge Net🕸"
+      @click="openRoute('/knowledge')"
+      :isSelected="isRouteActive('/knowledge')"
     />
     <MenuButton
       v-if="loggedIn"

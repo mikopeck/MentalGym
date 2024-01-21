@@ -54,7 +54,7 @@ def system_message(user_id, file_name = None ):
         system_message = file.read()
 
     if "{user-profile}" in system_message:
-        profile_content = json.dumps(db.get_user_context(user_id))
+        profile_content = json.dumps(db.get_user_info(user_id))
         if profile_content:
             system_message = system_message.replace("{user-profile}", profile_content)
 
