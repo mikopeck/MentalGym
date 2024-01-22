@@ -45,8 +45,8 @@ export default {
     },
     renderGraph() {
       console.log("rendering");
-      const width = 800;
-      const height = 600;
+      const width = window.innerWidth * 0.7;
+      const height = window.innerHeight * 0.6;
       let currentZoomScale = 1;
 
       const svg = d3
