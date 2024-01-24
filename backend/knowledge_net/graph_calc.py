@@ -1,105 +1,19 @@
 import numpy as np
 
 from openapi import get_embeddings
-from database.db_handlers import get_user_info
+from database.db_handlers import user_knowledge_net_info
 
 def get_graph_data(user_id):
-    # # Completed Lessons (40)
-    # completed_lessons = [
-    #     "Introduction to Classical Mechanics: Newton's Laws",
-    #     "Exploring Quantum Theory: Basics and Applications",
-    #     "The Fundamentals of Thermodynamics: Heat and Energy",
-    #     "Electricity and Magnetism: Understanding Electromagnetic Fields",
-    #     "The Wonders of Light: Optics and Wave Theory",
-    #     "Advanced Calculus: Differential Equations and Applications",
-    #     "Introduction to Astrophysics: Stars and Galaxies",
-    #     "The Chemical Bond: Fundamentals of Molecular Interaction",
-    #     "Organic Chemistry: Structures, Bonds, and Reactions",
-    #     "Biology of Cells: Structure and Function",
-    #     "Human Anatomy: Exploring the Musculoskeletal System",
-    #     "Environmental Science: Ecosystems and Biodiversity",
-    #     "Introduction to Psychology: Understanding the Mind",
-    #     "Foundations of Sociology: Society and Culture",
-    #     "World History: Ancient Civilizations to Modern Times",
-    #     "Understanding Economics: Markets and States",
-    #     "Political Science: Governments and Policies",
-    #     "Philosophy: Ethics, Logic, and Existence",
-    #     "Literature Analysis: Themes and Techniques",
-    #     "Creative Writing: Crafting Compelling Narratives",
-    #     "Basic Programming: Introduction to Python",
-    #     "Web Development: HTML, CSS, and JavaScript",
-    #     "Data Science: Statistics and Machine Learning",
-    #     "Artificial Intelligence: Concepts and Applications",
-    #     "Robotics: Design and Programming Basics",
-    #     "Engineering Principles: Design and Analysis",
-    #     "Physics of Sound: Acoustics and Music",
-    #     "Renewable Energy: Solar and Wind Power",
-    #     "Aerospace Engineering: Principles of Flight",
-    #     "Civil Engineering: Building and Infrastructure",
-    #     "Medical Science: Diseases and Treatments",
-    #     "Nursing Essentials: Patient Care and Ethics",
-    #     "Pharmacology: Drugs and Their Effects",
-    #     "Veterinary Science: Animal Health and Welfare",
-    #     "Nutrition Science: Diet and Health",
-    #     "Physical Education: Fitness and Wellness",
-    #     "Art History: Renaissance to Contemporary",
-    #     "Painting Techniques: Styles and Mediums",
-    #     "Sculpture: Form, Technique, and Expression",
-    #     "Music Theory: Harmony and Composition"
-    # ]
-
-    # # Active Lessons (8)
-    # active_lessons = [
-    #     "Film Studies: Analysis and Criticism",
-    #     "Theater Arts: Performance and Production",
-    #     "Dance: Techniques and Cultural Styles",
-    #     "Photography: Capturing Light and Moments",
-    #     "Graphic Design: Visual Communication and Branding",
-    #     "Game Design: Mechanics and Storytelling",
-    #     "Cybersecurity Fundamentals: Protecting Digital Assets",
-    #     "Cloud Computing: Technologies and Services"
-    # ]
-
-    # # Completed Challenges (12)
-    # completed_challenges = [
-    #     "Master Quantum Mechanics Challenge",
-    #     "Thermodynamics Expert Challenge",
-    #     "Electromagnetism Solver Challenge",
-    #     "Optics and Light Master Challenge",
-    #     "Advanced Calculus Problem Solver",
-    #     "Astrophysics Explorer Challenge",
-    #     "Molecular Interaction Specialist",
-    #     "Organic Chemistry Reaction Expert",
-    #     "Cell Biology Mastery Challenge",
-    #     "Musculoskeletal Anatomy Expert",
-    #     "Environmental Ecosystem Guardian",
-    #     "Psychology Fundamentals Explorer"
-    # ]
-
-    # # Active Challenges (4)
-    # active_challenges = [
-    #     "Renewable Energy Innovator Challenge",
-    #     "Flight Dynamics Challenge",
-    #     "Infrastructure Design Challenge",
-    #     "Digital Asset Cybersecurity Challenge"
-    # ]
-
-    # # Mock user data as per the as_dict function
-    # user_data = {
-    #     "profile": None,
-    #     "active_challenges": active_challenges, # lists of names 
-    #     "completed_challenges": completed_challenges,
-    #     "active_lessons": active_lessons,
-    #     "completed_lessons": completed_lessons,
-    #     "latest_action": None
-    # }
-
-    user_data = get_user_info(user_id)
+    user_data = user_knowledge_net_info(user_id)
 
     # Concatenating all strings from lessons and challenges
-    all_strings = user_data['completed_lessons'] + user_data['active_lessons'] + \
-                user_data['completed_challenges'] + user_data['active_challenges']
+    all_strings = [lesson['name'] for lesson in user_data['completed_lessons']] + \
+              [lesson['name'] for lesson in user_data['active_lessons']] + \
+              [challenge['name'] for challenge in user_data['completed_challenges']] + \
+              [challenge['name'] for challenge in user_data['active_challenges']] + \
+              user_data['offered_lessons'] + user_data['offered_challenges']
 
+    print(all_strings)
     # Retrieve embeddings for all strings
     embeddings = get_embeddings(all_strings)
     similarities = calculate_cosine_similarities(embeddings)
@@ -174,28 +88,36 @@ def compose_data(user_data, edges):
     """
     graph_data = {"nodes": [], "edges": []}
 
-    # Combine all items into a single list for easy indexing
-    all_items = user_data['completed_lessons'] + user_data['active_lessons'] + \
-                user_data['completed_challenges'] + user_data['active_challenges']
+    # Combine all items into a single list for easy indexing, with IDs for those that have them
+    all_items = []
+    for category_key in ['completed_lessons', 'active_lessons', 'completed_challenges', 'active_challenges']:
+        for item in user_data[category_key]:
+            item_data = {
+                "name": item['name'],
+                "category": category_key[:-1],  # Removes the plural 's'
+                "id": item.get('id')  # Adds the ID if present
+            }
+            all_items.append(item_data)
 
-    # Adding nodes with their categories
+    # Add offered lessons and challenges without IDs
+    for lesson in user_data['offered_lessons']:
+        all_items.append({"name": lesson, "category": "offered_lesson"})
+    for challenge in user_data['offered_challenges']:
+        all_items.append({"name": challenge, "category": "offered_challenge"})
+
+    # Adding nodes with their categories and IDs
     for item in all_items:
-        category = "completed_lesson" if item in user_data['completed_lessons'] else \
-                   "active_lesson" if item in user_data['active_lessons'] else \
-                   "completed_challenge" if item in user_data['completed_challenges'] else \
-                   "active_challenge"
-        graph_data['nodes'].append({
-            "name": item,
-            "category": category
-        })
+        graph_data['nodes'].append(item)
 
     # Adding edges with similarity strength
     for edge in edges:
         node1_index, node2_index, similarity = edge
-        graph_data['edges'].append({
-            "from": all_items[node1_index],
-            "to": all_items[node2_index],
-            "similarity": similarity
-        })
+        # Ensure the indices are within the range of all_items
+        if 0 <= node1_index < len(all_items) and 0 <= node2_index < len(all_items):
+            graph_data['edges'].append({
+                "from": all_items[node1_index]['name'],
+                "to": all_items[node2_index]['name'],
+                "similarity": similarity
+            })
 
     return graph_data

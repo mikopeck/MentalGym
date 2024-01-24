@@ -38,7 +38,6 @@ def init_graph_routes(app):
 
     @app.route('/api/knowledge-net', methods=['GET'])
     def get_knowledge_graph():
-        print("iainga")
         data = get_graph_data(current_user.id)
         print(data)
         return jsonify({

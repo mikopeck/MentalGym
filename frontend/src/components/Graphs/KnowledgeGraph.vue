@@ -10,6 +10,12 @@ export default {
   data() {
     return {
       graphData: null,
+      selectedNode: null,
+      regular_font: 14,
+      selected_font: 22,
+      regular_node: 8,
+      selected_node: 14,
+      currentZoomScale: 1,
     };
   },
   mounted() {
@@ -45,9 +51,8 @@ export default {
     },
     renderGraph() {
       console.log("rendering");
-      const width = window.innerWidth * 0.7;
+      const width = window.innerWidth * 0.85;
       const height = window.innerHeight * 0.6;
-      let currentZoomScale = 1;
 
       const svg = d3
         .select("#graph")
@@ -62,11 +67,9 @@ export default {
         active_lesson: "#ff7f0e",
         completed_challenge: "#2ca02c",
         active_challenge: "#d62728",
+        offered_lesson: "#9467bd",
+        offered_challenge: "#8c564b",
       };
-      const regular_font = 14;
-      const selected_font = 22;
-      const regular_node = 8;
-      const selected_node = 14;
 
       // Create the force simulation
       const simulation = d3
@@ -95,9 +98,6 @@ export default {
         .attr("stroke", linkColor)
         .attr("stroke-width", (d) => Math.sqrt(d.value));
 
-      // Add a variable to store the currently selected node
-      let selectedNode = null;
-
       // Render nodes
       const node = graphGroup
         .append("g")
@@ -108,12 +108,12 @@ export default {
         .append("circle")
         .attr("r", (d) =>
           d.selected
-            ? selected_node / currentZoomScale
-            : regular_node / currentZoomScale
+            ? this.selected_node / this.currentZoomScale
+            : this.regular_node / this.currentZoomScale
         )
         .attr("fill", (d) => colorScale[d.category])
-        .on("click", function (_event, d) {
-          selectNode(d, this);
+        .on("click", (_event, d) => {
+          this.selectNode(d, _event.currentTarget);
         })
         .call(
           d3
@@ -133,7 +133,7 @@ export default {
         .append("text")
         .text((d) => d.name)
         .attr("x", (d) => d.x)
-        .attr("y", (d) => d.y - 10 / currentZoomScale)
+        .attr("y", (d) => d.y - 10 / this.currentZoomScale)
         .attr("text-anchor", "middle")
         .style(
           "fill",
@@ -149,95 +149,31 @@ export default {
             .on("drag", dragged)
             .on("end", dragended)
         )
-        .on("click", function (_event, d) {
-          selectNode(d, this);
+        .on("click", (_event, d) => {
+          this.selectNode(d, _event.currentTarget);
         });
 
-      function selectNode(nodeData, clickedRef) {
-        if (selectedNode) {
-          // Deselect previously selected node
-          selectedNode.selected = false;
-          d3.select(selectedNode.domRef)
-            .transition()
-            .duration(300)
-            .attr("r", regular_node / currentZoomScale);
-          d3.select(selectedNode.labelRef)
-            .transition()
-            .duration(300)
-            .style("font-size", `${regular_font / currentZoomScale}px`);
-        }
-
-        // Toggle the selection state
-        nodeData.selected = !nodeData.selected;
-        selectedNode = nodeData.selected ? nodeData : null;
-
-        // Update node and label references if necessary
-        if (clickedRef.tagName === "circle") {
-          nodeData.domRef = clickedRef;
-          // Find the corresponding label element if not already stored
-          if (!nodeData.labelRef) {
-            nodeData.labelRef = d3
-              .selectAll("text")
-              .nodes()
-              .find((label) => d3.select(label).datum() === nodeData);
-          }
-        } else if (clickedRef.tagName === "text") {
-          nodeData.labelRef = clickedRef;
-          // Find the corresponding node element if not already stored
-          if (!nodeData.domRef) {
-            nodeData.domRef = d3
-              .selectAll("circle")
-              .nodes()
-              .find((node) => d3.select(node).datum() === nodeData);
-          }
-        }
-
-        // Update node style
-        d3.select(nodeData.domRef)
-          .transition()
-          .duration(300)
-          .attr(
-            "r",
-            nodeData.selected
-              ? selected_node / currentZoomScale
-              : regular_node / currentZoomScale
-          );
-
-        // Update label style
-        if (nodeData.labelRef) {
-          d3.select(nodeData.labelRef)
-            .transition()
-            .duration(300)
-            .style(
-              "font-size",
-              nodeData.selected
-                ? `${selected_font / currentZoomScale}px`
-                : `${regular_font / currentZoomScale}px`
-            );
-        }
-      }
-
       const zoom = d3.zoom().on("zoom", (event) => {
-        currentZoomScale = event.transform.k;
+        this.currentZoomScale = event.transform.k;
         graphGroup.attr("transform", event.transform);
 
         node.each(function (d) {
           d3.select(this).attr(
             "r",
             d.selected
-              ? selected_node / currentZoomScale
-              : regular_node / currentZoomScale
+              ? this.selected_node / this.currentZoomScale
+              : this.regular_node / this.currentZoomScale
           );
         });
 
         labels.each(function (d) {
           const fontSize = d.selected
-            ? selected_font / currentZoomScale
-            : regular_font / currentZoomScale;
+            ? this.selected_font / this.currentZoomScale
+            : this.regular_font  / this.currentZoomScale;
           d3.select(this).style("font-size", `${fontSize}px`);
         });
 
-        labels.attr("y", (d) => d.y - 10 / currentZoomScale);
+        labels.attr("y", (d) => d.y - 10 / this.currentZoomScale);
       });
       svg.call(zoom);
 
@@ -252,7 +188,7 @@ export default {
         node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
         labels
           .attr("x", (d) => d.x)
-          .attr("y", (d) => d.y - 10 / currentZoomScale);
+          .attr("y", (d) => d.y - 10 / this.currentZoomScale);
       });
 
       function dragstarted(event, d) {
@@ -267,13 +203,90 @@ export default {
         labels
           .filter((ld) => ld === d)
           .attr("x", d.x)
-          .attr("y", d.y - 10 / currentZoomScale);
+          .attr("y", d.y - 10 / this.currentZoomScale);
       }
 
       function dragended(event, d) {
         if (!event.active) simulation.alphaTarget(0);
         d.fx = null;
         d.fy = null;
+      }
+    },
+    selectNode(nodeData, clickedRef) {
+      if (this.selectedNode) {
+        if (this.selectedNode === nodeData && nodeData.id) {
+          let path;
+          if (nodeData.category.includes("lesson")) {
+            path = `/lesson/${nodeData.id}`;
+          } else if (nodeData.category.includes("challenge")) {
+            path = `/challenge/${nodeData.id}`;
+          }
+          console.log("pathins" + path);
+          if (path) {
+            this.$router.push(path);
+          }
+          return;
+        }
+
+        // Deselect previously selected node
+        this.selectedNode.selected = false;
+        d3.select(this.selectedNode.domRef)
+          .transition()
+          .duration(300)
+          .attr("r", this.regular_node / this.currentZoomScale);
+        d3.select(this.selectedNode.labelRef)
+          .transition()
+          .duration(300)
+          .style("font-size", `${this.regular_font  / this.currentZoomScale}px`);
+      }
+
+      // Toggle the selection state
+      nodeData.selected = !nodeData.selected;
+      this.selectedNode = nodeData.selected ? nodeData : null;
+
+      // Update node and label references if necessary
+      if (clickedRef.tagName === "circle") {
+        nodeData.domRef = clickedRef;
+        // Find the corresponding label element if not already stored
+        if (!nodeData.labelRef) {
+          nodeData.labelRef = d3
+            .selectAll("text")
+            .nodes()
+            .find((label) => d3.select(label).datum() === nodeData);
+        }
+      } else if (clickedRef.tagName === "text") {
+        nodeData.labelRef = clickedRef;
+        // Find the corresponding node element if not already stored
+        if (!nodeData.domRef) {
+          nodeData.domRef = d3
+            .selectAll("circle")
+            .nodes()
+            .find((node) => d3.select(node).datum() === nodeData);
+        }
+      }
+
+      // Update node style
+      d3.select(nodeData.domRef)
+        .transition()
+        .duration(300)
+        .attr(
+          "r",
+          nodeData.selected
+            ? this.selected_node / this.currentZoomScale
+            : this.regular_node / this.currentZoomScale
+        );
+
+      // Update label style
+      if (nodeData.labelRef) {
+        d3.select(nodeData.labelRef)
+          .transition()
+          .duration(300)
+          .style(
+            "font-size",
+            nodeData.selected
+              ? `${this.selected_font / this.currentZoomScale}px`
+              : `${this.regular_font  / this.currentZoomScale}px`
+          );
       }
     },
   },

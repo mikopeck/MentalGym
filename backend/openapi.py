@@ -9,7 +9,7 @@ delay = 3
 request_timeout = 60  # Timeout for API requests in seconds
 
 TOKEN_CAP = 500
-LESSON_TOKENS = 1000
+LESSON_TOKENS = 1500
 
 GPT3_5 = "gpt-3.5-turbo-0613"
 GPT4 = "gpt-4"

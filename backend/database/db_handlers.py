@@ -401,6 +401,62 @@ def get_all_user_emails():
     return email_list
 
 
+### GRAPHS ###
+
+def get_offered_lessons(user_id):
+    actions = UserAction.query.filter_by(user_id=user_id).filter(UserAction.action.like('Start lesson:%')).all()
+    offered_lessons = [action.action.split('Start lesson:')[1].strip() for action in actions]
+    return offered_lessons
+
+def get_offered_challenges(user_id):
+    actions = UserAction.query.filter_by(user_id=user_id).filter(UserAction.action.like('Accept challenge:%')).all()
+    offered_challenges = [action.action.split('Accept challenge:')[1].strip() for action in actions]
+    return offered_challenges
+
+def user_knowledge_net_info(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return None
+
+    user_data = {
+        "profile": user.profile,
+        "active_challenges": [{
+            'id': challenge.id,
+            'name': challenge.challenge_name
+        } for challenge in sorted(
+            [c for c in user.challenges if not c.completion_date], 
+            key=lambda x: x.id, reverse=True)[:5]
+        ],
+        "completed_challenges": [{
+            'id': challenge.id,
+            'name': challenge.challenge_name
+        } for challenge in sorted(
+            [c for c in user.challenges if c.completion_date], 
+            key=lambda x: x.id, reverse=True)[:5]
+        ],
+        "active_lessons": [{
+            'id': lesson.id,
+            'name': lesson.lesson_name
+        } for lesson in sorted(
+            [l for l in user.lessons if not l.completion_date], 
+            key=lambda x: x.id, reverse=True)[:5]
+        ],
+        "completed_lessons": [{
+            'id': lesson.id,
+            'name': lesson.lesson_name
+        } for lesson in sorted(
+            [l for l in user.lessons if l.completion_date], 
+            key=lambda x: x.id, reverse=True)[:5]
+        ],
+        "latest_action": user.current_content
+    }
+
+    # Add offered lessons and challenges
+    user_data['offered_lessons'] = get_offered_lessons(user_id)
+    user_data['offered_challenges'] = get_offered_challenges(user_id)
+
+    return user_data
+
 ### CLEAR ###
 
 def clear_user_chat_history(user_id):
