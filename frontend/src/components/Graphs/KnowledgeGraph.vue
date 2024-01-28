@@ -16,6 +16,8 @@ export default {
       regular_node: 8,
       selected_node: 14,
       currentZoomScale: 1,
+      width: 0,
+      height: 0,
     };
   },
   mounted() {
@@ -51,14 +53,14 @@ export default {
     },
     renderGraph() {
       console.log("rendering");
-      const width = window.innerWidth * 0.85;
-      const height = window.innerHeight * 0.6;
+      this.width = window.innerWidth * 0.85;
+      this.height = window.innerHeight * 0.6;
 
       const svg = d3
         .select("#graph")
         .append("svg")
-        .attr("width", width)
-        .attr("height", height);
+        .attr("width", this.width)
+        .attr("height", this.height);
 
       const graphGroup = svg.append("g");
 
@@ -82,7 +84,7 @@ export default {
             .strength((d) => d.value)
         )
         .force("charge", d3.forceManyBody())
-        .force("center", d3.forceCenter(width / 2, height / 2));
+        .force("center", d3.forceCenter(this.width / 2, this.height / 2));
 
       // Render links
       const linkColor = getComputedStyle(document.documentElement)
@@ -153,28 +155,32 @@ export default {
           this.selectNode(d, _event.currentTarget);
         });
 
+      const vm = this; // Store a reference to the Vue instance
+
       const zoom = d3.zoom().on("zoom", (event) => {
-        this.currentZoomScale = event.transform.k;
+        vm.currentZoomScale = event.transform.k;
         graphGroup.attr("transform", event.transform);
 
         node.each(function (d) {
+          // Use function to get the correct 'this' for DOM element
           d3.select(this).attr(
             "r",
             d.selected
-              ? this.selected_node / this.currentZoomScale
-              : this.regular_node / this.currentZoomScale
+              ? vm.selected_node / vm.currentZoomScale // Use 'vm' to access Vue instance properties
+              : vm.regular_node / vm.currentZoomScale
           );
         });
 
         labels.each(function (d) {
           const fontSize = d.selected
-            ? this.selected_font / this.currentZoomScale
-            : this.regular_font  / this.currentZoomScale;
+            ? vm.selected_font / vm.currentZoomScale
+            : vm.regular_font / vm.currentZoomScale;
           d3.select(this).style("font-size", `${fontSize}px`);
         });
 
-        labels.attr("y", (d) => d.y - 10 / this.currentZoomScale);
+        labels.attr("y", (d) => d.y - 10 / vm.currentZoomScale);
       });
+
       svg.call(zoom);
 
       // Update positions on each tick
@@ -212,23 +218,13 @@ export default {
         d.fy = null;
       }
     },
-    selectNode(nodeData, clickedRef) {
-      if (this.selectedNode) {
-        if (this.selectedNode === nodeData && nodeData.id) {
-          let path;
-          if (nodeData.category.includes("lesson")) {
-            path = `/lesson/${nodeData.id}`;
-          } else if (nodeData.category.includes("challenge")) {
-            path = `/challenge/${nodeData.id}`;
-          }
-          console.log("pathins" + path);
-          if (path) {
-            this.$router.push(path);
-          }
-          return;
-        }
 
-        // Deselect previously selected node
+    selectNode(nodeData, clickedRef) {
+      // Remove existing buttons if any
+      d3.selectAll(".node-buttons").remove();
+
+      // Deselect previously selected node
+      if (this.selectedNode) {
         this.selectedNode.selected = false;
         d3.select(this.selectedNode.domRef)
           .transition()
@@ -237,7 +233,7 @@ export default {
         d3.select(this.selectedNode.labelRef)
           .transition()
           .duration(300)
-          .style("font-size", `${this.regular_font  / this.currentZoomScale}px`);
+          .style("font-size", `${this.regular_font / this.currentZoomScale}px`);
       }
 
       // Toggle the selection state
@@ -285,13 +281,90 @@ export default {
             "font-size",
             nodeData.selected
               ? `${this.selected_font / this.currentZoomScale}px`
-              : `${this.regular_font  / this.currentZoomScale}px`
+              : `${this.regular_font / this.currentZoomScale}px`
           );
       }
+
+      // If a node is selected, create and show buttons
+      if (nodeData.selected) {
+        this.createButtons(nodeData);
+      }
+    },
+
+    createButtons(nodeData) {
+      const canvasSize = { width: this.width, height: this.height };
+      const buttonSize = { width: 100, height: 30 };
+      const buttonGroup = d3
+        .select("#graph svg")
+        .append("g")
+        .classed("node-buttons", true)
+        .attr(
+          "transform",
+          `translate(0, ${canvasSize.height - buttonSize.height - 20})`
+        );
+
+      // "Go to" Button
+      buttonGroup
+        .append("foreignObject")
+        .attr("width", buttonSize.width)
+        .attr("height", buttonSize.height+16)
+        .attr("x", canvasSize.width / 2 - buttonSize.width - 16)
+        .attr("y", 0)
+        .append("xhtml:div")
+        .attr("class", "menu-button")
+        .text("Go to")
+        .on("click", () => this.goToNode(nodeData));
+
+      // "Explore" Button
+      buttonGroup
+        .append("foreignObject")
+        .attr("width", buttonSize.width)
+        .attr("height", buttonSize.height+16)
+        .attr("x", canvasSize.width / 2 + 16)
+        .attr("y", 0)
+        .append("xhtml:div")
+        .attr("class", "menu-button")
+        .text("Explore")
+        .on("click", () => this.exploreNode(nodeData));
+    },
+
+    goToNode(nodeData) {
+      let path;
+      if (nodeData.category.includes("lesson")) {
+        path = `/lesson/${nodeData.id}`;
+      } else if (nodeData.category.includes("challenge")) {
+        path = `/challenge/${nodeData.id}`;
+      }
+      console.log("Navigating to " + path);
+      if (path) {
+        this.$router.push(path);
+      }
+    },
+
+    exploreNode(nodeData) {
+      // Logic for "Explore" button will be implemented here
+      console.log("Explore functionality for node " + nodeData.id);
     },
   },
 };
 </script>
 
 <style>
+.menu-button {
+  padding: 8px 16px;
+  margin: 4px;
+  background-color: var(--background-color-1t);
+  border: 1px solid var(--text-color);
+  border-radius: 8px;
+  display: inline-block;
+  backdrop-filter: blur(8px);
+  transition: transform 0.1s, background-color 0.1s;
+}
+
+.menu-button:hover {
+  background-color: var(--element-color-1);
+}
+.menu-button.selected {
+  background-color: var(--element-color-1);
+}
 </style>
