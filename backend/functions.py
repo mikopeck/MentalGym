@@ -1,3 +1,5 @@
+import json
+
 Profile = {
     "name": "create_profile",
     "description": "Create a profile for the user. Also use if the user would like to move on to learning or setting challenges.",
@@ -272,3 +274,55 @@ CreateQuiz = {
         "required": ["question_1", "question_2", "question_3", "question_4", "question_5"]
     },
 }
+
+ExploreTopic = {
+    "name": "generate_lesson_suggestions",
+    "description": "Generates three personalized lesson suggestions based on the user's profile and learning history.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "lesson_suggestions": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "lesson_name": {
+                            "type": "string",
+                            "description": "A concise but complete description of the lesson suggestion. Up to 12 words."
+                        },
+                        "lesson_emoji": {
+                            "type": "string",
+                            "description": "A single, valid Unicode emoji representing the lesson topic. Must be within standard Unicode emoji ranges."
+                        }
+                    },
+                    "required": ["lesson_name", "lesson_emoji"]
+                },
+                "minItems": 3,
+                "maxItems": 3,
+                "description": "An array of three objects, each containing a name and an emoji representing the topic of the lesson suggestions."
+            },
+        },
+        "required": ["lesson_suggestions"],
+    },
+}
+
+def try_get_object(fcn, response_message):
+    if response_message["function_call"]["name"] == fcn['name']:
+        profile_args = json.loads(response_message["function_call"]["arguments"])
+        
+        # Extract required keys from the function definition
+        required_keys = fcn['parameters']['required']
+
+        # Check if all required keys are present and have non-empty values
+        all_required_present = all(key in profile_args and (profile_args[key] is not None and (profile_args[key] or profile_args[key] == 0)) for key in required_keys)
+
+        if all_required_present:
+            # Extract all keys (both required and optional) for parameters
+            all_keys = list(fcn['parameters']['properties'].keys())
+
+            # Filter profile arguments to only include valid keys
+            return {k: profile_args.get(k) for k in all_keys if profile_args.get(k) is not None}
+        else:
+            return None
+
+    return None

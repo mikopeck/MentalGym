@@ -40,16 +40,16 @@ def update_system_role(user_id, role: roles, lesson_id=None):
     db.remove_latest_system_message(user_id, lesson_id)
     db.add_system_message(user_id, system_message(user_id, role), lesson_id)
 
-def system_message(user_id, file_name = None ):
+def system_message(user_id, role_name = None ):
     current_script_directory = os.path.dirname(os.path.abspath(__file__))
 
-    if not file_name:
-        file_name = db.get_system_role(user_id)
+    if not role_name:
+        role_name = db.get_system_role(user_id)
 
     system_prompts_path = os.path.join(current_script_directory, 'SystemPrompts')
 
     # Read the system message template
-    system_message_path = os.path.join(system_prompts_path, f'{file_name}.txt')
+    system_message_path = os.path.join(system_prompts_path, f'{role_name}.txt')
     with open(system_message_path, 'r') as file:
         system_message = file.read()
 

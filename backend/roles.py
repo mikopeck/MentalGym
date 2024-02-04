@@ -17,3 +17,5 @@ QuizGrade = "QuizGrade"
 ChallengeGuide = "ChallengeGuide"
 
 AfterContent = "AfterContent"
+
+ExploreTopic = "ExploreTopic"

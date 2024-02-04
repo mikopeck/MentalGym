@@ -29,7 +29,7 @@ def gather_profile(user_id):
         if not response_message.get("function_call"):
             return response, None
         
-        profile_data = try_get_object(fns.Profile, response_message)
+        profile_data = fns.try_get_object(fns.Profile, response_message)
         if profile_data:
             db.set_profile(user_id, json.dumps(profile_data))
             mh.update_system_role(user_id, roles.SuggestContent)
@@ -59,7 +59,7 @@ def suggest_content(user_id, set_challenge = False, set_lesson = True):
             identify_content(user_id, response_message['content'])
             return response, None
         
-        challenge_data = try_get_object(fns.Challenge, response_message)
+        challenge_data = fns.try_get_object(fns.Challenge, response_message)
         if challenge_data:
             challenge_emoji = extract_single_emoji(challenge_data.get('challenge_emoji'))
             if challenge_emoji:
@@ -70,7 +70,7 @@ def suggest_content(user_id, set_challenge = False, set_lesson = True):
             mh.update_system_role(user_id, roles.AfterContent)
             return after_content(user_id)
 
-        lesson_data = try_get_object(fns.Lesson, response_message)
+        lesson_data = fns.try_get_object(fns.Lesson, response_message)
         if lesson_data:
             lesson_emoji = extract_single_emoji(lesson_data.get('lesson_emoji'))
             if lesson_emoji:
@@ -101,7 +101,7 @@ def challenge_progress(user_id, challenge_id):
         response = generate_response(user_id, messages, functions, function_call)
         response_message = response["choices"][0]["message"]
         if response_message.get("function_call"):
-            completion = try_get_object(fns.ChallengeCompletion, response_message)
+            completion = fns.try_get_object(fns.ChallengeCompletion, response_message)
             if completion:
                 if completion.get('completion') == True:
                     db.update_challenge(user_id, challenge_id)
@@ -192,27 +192,6 @@ def quiz_feedback(user_id, lesson_id):
 
 #### private ####
 
-def try_get_object(fcn, response_message):
-    if response_message["function_call"]["name"] == fcn['name']:
-        profile_args = json.loads(response_message["function_call"]["arguments"])
-        
-        # Extract required keys from the function definition
-        required_keys = fcn['parameters']['required']
-
-        # Check if all required keys are present and have non-empty values
-        all_required_present = all(key in profile_args and (profile_args[key] is not None and (profile_args[key] or profile_args[key] == 0)) for key in required_keys)
-
-        if all_required_present:
-            # Extract all keys (both required and optional) for parameters
-            all_keys = list(fcn['parameters']['properties'].keys())
-
-            # Filter profile arguments to only include valid keys
-            return {k: profile_args.get(k) for k in all_keys if profile_args.get(k) is not None}
-        else:
-            return None
-
-    return None
-
 def extract_valid_quiz_questions(quiz_response):
     try:
         quiz_data = json.loads(quiz_response["function_call"]["arguments"])
@@ -256,7 +235,7 @@ def identify_content(user_id, message):
         print("No content suggested...")
         return
 
-    content_data = try_get_object(fns.Content, response_message)
+    content_data = fns.try_get_object(fns.Content, response_message)
     if content_data:
         lesson_descriptions = content_data.get("lesson_descriptions", [])
         challenge_descriptions = content_data.get("challenge_descriptions", [])

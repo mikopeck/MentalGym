@@ -11,13 +11,24 @@ export default {
     return {
       graphData: null,
       selectedNode: null,
+      showingSuggestions: false,
+
+      width: 0,
+      height: 0,
+      currentZoomScale: 1,
+
       regular_font: 14,
       selected_font: 22,
       regular_node: 8,
       selected_node: 14,
-      currentZoomScale: 1,
-      width: 0,
-      height: 0,
+      colorScale: {
+        completed_lesson: "#1f77b4",
+        active_lesson: "#ff7f0e",
+        completed_challenge: "#2ca02c",
+        active_challenge: "#d62728",
+        offered_lesson: "#9467bd",
+        offered_challenge: "#8c564b",
+      },
     };
   },
   mounted() {
@@ -53,8 +64,8 @@ export default {
     },
     renderGraph() {
       console.log("rendering");
-      this.width = window.innerWidth * 0.85;
-      this.height = window.innerHeight * 0.6;
+      this.width = window.innerWidth - 42;
+      this.height = window.innerHeight - 250;
 
       const svg = d3
         .select("#graph")
@@ -63,15 +74,6 @@ export default {
         .attr("height", this.height);
 
       const graphGroup = svg.append("g");
-
-      const colorScale = {
-        completed_lesson: "#1f77b4",
-        active_lesson: "#ff7f0e",
-        completed_challenge: "#2ca02c",
-        active_challenge: "#d62728",
-        offered_lesson: "#9467bd",
-        offered_challenge: "#8c564b",
-      };
 
       // Create the force simulation
       const simulation = d3
@@ -113,7 +115,7 @@ export default {
             ? this.selected_node / this.currentZoomScale
             : this.regular_node / this.currentZoomScale
         )
-        .attr("fill", (d) => colorScale[d.category])
+        .attr("fill", (d) => this.colorScale[d.category])
         .on("click", (_event, d) => {
           this.selectNode(d, _event.currentTarget);
         })
@@ -307,8 +309,8 @@ export default {
       buttonGroup
         .append("foreignObject")
         .attr("width", buttonSize.width)
-        .attr("height", buttonSize.height+16)
-        .attr("x", canvasSize.width / 2 - buttonSize.width - 16)
+        .attr("height", buttonSize.height + 16)
+        .attr("x", canvasSize.width / 2 + 16)
         .attr("y", 0)
         .append("xhtml:div")
         .attr("class", "menu-button")
@@ -319,11 +321,11 @@ export default {
       buttonGroup
         .append("foreignObject")
         .attr("width", buttonSize.width)
-        .attr("height", buttonSize.height+16)
-        .attr("x", canvasSize.width / 2 + 16)
+        .attr("height", buttonSize.height + 16)
+        .attr("x", canvasSize.width / 2 - buttonSize.width - 16)
         .attr("y", 0)
         .append("xhtml:div")
-        .attr("class", "menu-button")
+        .attr("class", "menu-button explore-button")
         .text("Explore")
         .on("click", () => this.exploreNode(nodeData));
     },
@@ -342,8 +344,71 @@ export default {
     },
 
     exploreNode(nodeData) {
-      // Logic for "Explore" button will be implemented here
-      console.log("Explore functionality for node " + nodeData.id);
+      if (this.showingSuggestions) {
+        d3.select("#graph svg").selectAll(".node-suggestions").remove();
+        this.showingSuggestions = false;
+        this.updateExploreButtonText("Explore");
+      } else {
+        this.updateExploreButtonText("Loading");
+
+        fetch(`/api/explore?name=${nodeData.name}`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data && data.suggestions) {
+              this.showSuggestions(data.suggestions);
+              this.showingSuggestions = true;
+              this.updateExploreButtonText("Hide");
+            } else {
+              console.log("No suggestions received for node " + nodeData.id);
+              this.updateExploreButtonText("Explore");
+            }
+          })
+          .catch((error) => {
+            console.error("Error exploring node " + nodeData.id + ": ", error);
+            this.updateExploreButtonText("Explore");
+          });
+      }
+    },
+
+    updateExploreButtonText(newText) {
+      d3.select("#graph svg").select(".explore-button").text(newText);
+    },
+
+    showSuggestions(suggestions) {
+      const canvasSize = { width: this.width, height: this.height };
+      const buttonSize = { width: 180, height: 50 };
+      const suggestionGroup = d3
+        .select("#graph svg")
+        .append("g")
+        .classed("node-suggestions", true)
+        .attr("transform", `translate(10, 0)`);
+
+      const buttonSpacing = 32;
+      const totalHeight =
+        suggestions.length * buttonSize.height +
+        (suggestions.length - 1) * buttonSpacing;
+      const startYPosition = canvasSize.height - 80 - totalHeight;
+
+      suggestions.forEach((suggestion, index) => {
+        const xPosition = 0;
+        const yPosition =
+          startYPosition + index * (buttonSize.height + buttonSpacing);
+
+        suggestionGroup
+          .append("foreignObject")
+          .attr("width", buttonSize.width)
+          .attr("height", buttonSize.height + 24)
+          .attr("x", xPosition)
+          .attr("y", yPosition)
+          .append("xhtml:div")
+          .attr("class", "content-button")
+          .text(suggestion)
+          .on("click", () => this.handleSuggestionClick(suggestion));
+      });
+    },
+    handleSuggestionClick(suggestion) {
+      console.log("Selected suggestion: " + suggestion);
+      // You can add additional logic here, like navigating to the lesson or challenge
     },
   },
 };
@@ -356,6 +421,7 @@ export default {
   background-color: var(--background-color-1t);
   border: 1px solid var(--text-color);
   border-radius: 8px;
+  cursor: pointer;
   display: inline-block;
   backdrop-filter: blur(8px);
   transition: transform 0.1s, background-color 0.1s;
@@ -366,5 +432,21 @@ export default {
 }
 .menu-button.selected {
   background-color: var(--element-color-1);
+}
+
+.content-button {
+  padding: 0.5rem 1rem;
+  background: var(--element-color-1);
+  border: 2px solid var(--background-color-1t);
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-block;
+  transition: border-color 0.3s ease;
+  font-size: 14px;
+  text-align: center;
+}
+
+.content-button:hover {
+  border-color: #6a2bc2b3;
 }
 </style>
