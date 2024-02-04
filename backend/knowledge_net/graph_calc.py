@@ -48,7 +48,7 @@ def calculate_cosine_similarities(embeddings):
 
 def calculate_edges(similarities):
     num_nodes = similarities.shape[0]
-    base_threshold = 0.50
+    base_threshold = 0.35
     threshold_increase_per_edge = 0.05
 
     # Initialize thresholds and edge counts for each node
