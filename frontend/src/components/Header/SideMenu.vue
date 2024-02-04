@@ -122,7 +122,7 @@ export default {
   top: 44px;
   right: -300px;
   height: fit-content;
-  width: 300px;
+  width: 240px;
   transition: right 0.3s ease;
   z-index: 200;
 }

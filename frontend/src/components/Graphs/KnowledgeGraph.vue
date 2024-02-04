@@ -67,6 +67,7 @@ export default {
       console.log("rendering");
       this.width = window.innerWidth - 42;
       this.height = window.innerHeight - 250;
+      const vm = this; // Store a reference to the Vue instance
 
       const svg = d3
         .select("#graph")
@@ -101,7 +102,10 @@ export default {
         .enter()
         .append("line")
         .attr("stroke", linkColor)
-        .attr("stroke-width", (d) => Math.sqrt(d.value));
+        .attr(
+          "stroke-width",
+          (d) => (5 * Math.sqrt(d.value)) / this.currentZoomScale
+        );
 
       // Render nodes
       const node = graphGroup
@@ -158,18 +162,15 @@ export default {
           this.selectNode(d, _event.currentTarget);
         });
 
-      const vm = this; // Store a reference to the Vue instance
-
       const zoom = d3.zoom().on("zoom", (event) => {
         vm.currentZoomScale = event.transform.k;
         graphGroup.attr("transform", event.transform);
 
         node.each(function (d) {
-          // Use function to get the correct 'this' for DOM element
           d3.select(this).attr(
             "r",
             d.selected
-              ? vm.selected_node / vm.currentZoomScale // Use 'vm' to access Vue instance properties
+              ? vm.selected_node / vm.currentZoomScale
               : vm.regular_node / vm.currentZoomScale
           );
         });
@@ -179,6 +180,13 @@ export default {
             ? vm.selected_font / vm.currentZoomScale
             : vm.regular_font / vm.currentZoomScale;
           d3.select(this).style("font-size", `${fontSize}px`);
+        });
+
+        link.each(function () {
+          d3.select(this).attr(
+            "stroke-width",
+            (d) => (5 * Math.sqrt(d.value)) / vm.currentZoomScale
+          );
         });
 
         labels.attr("y", (d) => d.y - 10 / vm.currentZoomScale);
@@ -212,7 +220,7 @@ export default {
         labels
           .filter((ld) => ld === d)
           .attr("x", d.x)
-          .attr("y", d.y - 10 / this.currentZoomScale);
+          .attr("y", d.y - 10 / vm.currentZoomScale);
       }
 
       function dragended(event, d) {
@@ -223,8 +231,10 @@ export default {
     },
 
     selectNode(nodeData, clickedRef) {
-      // Remove existing buttons if any
+      // Remove existing
       d3.selectAll(".node-buttons").remove();
+      d3.select("#graph svg").selectAll(".node-suggestions").remove();
+      this.showingSuggestions = false;
 
       // Deselect previously selected node
       if (this.selectedNode) {
