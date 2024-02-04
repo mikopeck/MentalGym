@@ -174,9 +174,12 @@ def complete_quiz_message(user_id, lesson_id, score):
     db.session.commit()
 
 def add_action(user_id, action_name, lesson_id=None):
-    action = UserAction(user_id=user_id, action=action_name, lesson_id=lesson_id)
-    db.session.add(action)
-    db.session.commit()
+    existing_action = UserAction.query.filter_by(user_id=user_id, action=action_name, lesson_id=lesson_id).first()
+    if not existing_action:
+        action = UserAction(user_id=user_id, action=action_name, lesson_id=lesson_id)
+        db.session.add(action)
+        db.session.commit()
+
 
 def get_actions(user_id, lesson_id=None):
     actions = UserAction.query.filter_by(user_id=user_id, lesson_id=lesson_id).all()

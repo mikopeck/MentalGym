@@ -4,6 +4,7 @@
 
 <script>
 import * as d3 from "d3";
+import { useMessageStore } from "@/store/messageStore";
 
 export default {
   name: "KnowledgeGraph",
@@ -406,9 +407,25 @@ export default {
           .on("click", () => this.handleSuggestionClick(suggestion));
       });
     },
-    handleSuggestionClick(suggestion) {
+    async handleSuggestionClick(suggestion) {
       console.log("Selected suggestion: " + suggestion);
-      // You can add additional logic here, like navigating to the lesson or challenge
+      const messageStore = useMessageStore();
+
+      try {
+        const response = await messageStore.sendMessage(
+          "Start lesson: " + suggestion,
+          "/"
+        );
+        console.log("Response: ", response);
+
+        if (response && this.$router) {
+          this.$router.push(response);
+        } else {
+          console.error("Router is undefined or response is invalid");
+        }
+      } catch (error) {
+        console.error("Error in sendMessage: ", error);
+      }
     },
   },
 };
