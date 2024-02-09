@@ -1,6 +1,6 @@
 <template>
   <div class="page-main-container">
-    <h1 class="page-title">Knowledge Net</h1>
+    <h1 class="page-title">Lesson Plan🗺️</h1>
     <knowledge-graph/>
   </div>
 </template>

@@ -114,7 +114,6 @@ export default {
     adjustHeight() {
       this.$nextTick(() => {
         const textarea = this.$refs.messageInput;
-        textarea.style.height = "auto";
         textarea.style.height = textarea.scrollHeight + "px";
       });
     },
@@ -284,6 +283,7 @@ textarea:focus {
 }
 
 .action-icon {
+  background-color: transparent;
   font-weight: 900;
 }
 

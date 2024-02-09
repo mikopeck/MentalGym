@@ -41,6 +41,15 @@ h2 {
     padding-left: 1rem;
 }
 
+h3 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-left: 4px solid var(--element-color-1);
+  padding-left: 1rem;
+}
+
 .flex-row {
     display: flex;
     flex-direction: row;
