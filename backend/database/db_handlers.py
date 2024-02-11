@@ -298,7 +298,7 @@ def update_lesson(user_id, lesson_id, completion_date=None, system_role=None):
             set_user_content(user_id, f"completed lesson {lesson.lesson_name}")
             lesson.completion_date = completion_date
         elif system_role:
-            if lesson.system_role == "LessonCreate":
+            if system_role == "LessonCreate":
                 set_user_content(user_id, f"started lesson {lesson.lesson_name}")
             else:
                 set_user_content(user_id, f"worked on but not completed lesson {lesson.lesson_name}")
@@ -431,28 +431,28 @@ def user_knowledge_net_info(user_id):
             'name': challenge.challenge_name
         } for challenge in sorted(
             [c for c in user.challenges if not c.completion_date], 
-            key=lambda x: x.id, reverse=True)[:5]
+            key=lambda x: x.id, reverse=True)[:10]
         ],
         "completed_challenges": [{
             'id': challenge.id,
             'name': challenge.challenge_name
         } for challenge in sorted(
             [c for c in user.challenges if c.completion_date], 
-            key=lambda x: x.id, reverse=True)[:5]
+            key=lambda x: x.id, reverse=True)[:20]
         ],
         "active_lessons": [{
             'id': lesson.id,
             'name': lesson.lesson_name
         } for lesson in sorted(
             [l for l in user.lessons if not l.completion_date], 
-            key=lambda x: x.id, reverse=True)[:5]
+            key=lambda x: x.id, reverse=True)[:30]
         ],
         "completed_lessons": [{
             'id': lesson.id,
             'name': lesson.lesson_name
         } for lesson in sorted(
             [l for l in user.lessons if l.completion_date], 
-            key=lambda x: x.id, reverse=True)[:5]
+            key=lambda x: x.id, reverse=True)[:100]
         ],
         "latest_action": user.current_content
     }

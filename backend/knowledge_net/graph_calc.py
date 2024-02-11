@@ -48,8 +48,8 @@ def calculate_cosine_similarities(embeddings):
 
 def calculate_edges(similarities):
     num_nodes = similarities.shape[0]
-    base_threshold = 0.35
-    threshold_increase_per_edge = 0.05
+    base_threshold = 0.3
+    threshold_increase_factor = 0.1
 
     # Initialize thresholds and edge counts for each node
     thresholds = np.full(num_nodes, base_threshold)
@@ -63,8 +63,8 @@ def calculate_edges(similarities):
     final_edges = []
 
     for i, j, similarity in potential_edges:
-        # Check if both nodes can still form an edge
-        if similarity >= thresholds[i] and similarity >= thresholds[j]:
+        # Check if node can still form an edge
+        if similarity >= thresholds[i] or similarity >= thresholds[j]:
             # Calculate scaled similarity
             scaled_similarity = 0.1 + 0.9 * (similarity - base_threshold) / (1 - base_threshold)
             final_edges.append((i, j, scaled_similarity * scaled_similarity))
@@ -72,8 +72,8 @@ def calculate_edges(similarities):
             # Update edge counts and thresholds for involved nodes
             edge_counts[i] += 1
             edge_counts[j] += 1
-            thresholds[i] = min(base_threshold + edge_counts[i] * threshold_increase_per_edge, 1)
-            thresholds[j] = min(base_threshold + edge_counts[j] * threshold_increase_per_edge, 1)
+            thresholds[i] = thresholds[i] + ((1 - thresholds[i]) * threshold_increase_factor)
+            thresholds[j] = thresholds[j] + ((1 - thresholds[j]) * threshold_increase_factor)
 
     return final_edges
 

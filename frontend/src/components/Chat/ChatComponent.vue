@@ -1,18 +1,18 @@
 <!-- ChatComponent.vue -->
 <template>
   <div class="main-container">
-    <div class="message-history">
-      <ChatConversation/>
+    <div class="message-history" ref="msgHistory">
+      <ChatConversation />
     </div>
-    <MessageInput
-      class="message-input"
-    />
+    <MessageInput class="message-input" />
   </div>
 </template>
 
 <script>
 import MessageInput from "./MessageInput.vue";
 import ChatConversation from "./ChatConversation.vue";
+import { useScrollStore } from "@/store/scrollStore";
+import eventBus from "@/eventBus";
 
 export default {
   name: "ChatComponent",
@@ -20,7 +20,38 @@ export default {
     MessageInput,
     ChatConversation,
   },
-  setup() {
+  mounted() {
+    eventBus.on("scroll-to-message", this.handleScrollToMessage);
+  },
+  unmounted() {
+    eventBus.off("scroll-to-message");
+  },
+  computed: {
+    // scrollPosition() {
+    //   const scrollStore = useScrollStore();
+    //   return scrollStore.scrollTop;
+    // },
+  },
+  watch: {
+    // scrollPosition(newValue) {
+    //   console.log("appscrol" + newValue +this.$refs.msgHistory);
+    //   this.$refs.msgHistory.scrollTop = newValue;
+    //   console.log("appscrolll" + this.$refs.scrollableElement.scrollTop);
+    // },
+  },
+  methods: {
+    handleScrollToMessage(topPosition) {
+      console.log("handleScrollToMessage" + topPosition);
+      const scrollStore = useScrollStore();
+      scrollStore.scrollTop = topPosition;
+      this.$refs.msgHistory.scrollTop = topPosition;
+
+      // Try another 4px
+      topPosition = topPosition - 4;
+      scrollStore.scrollTop = topPosition;
+      this.$refs.msgHistory.scrollTop = topPosition;
+
+    },
   },
 };
 </script>

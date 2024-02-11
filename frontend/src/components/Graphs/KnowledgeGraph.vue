@@ -342,6 +342,11 @@ export default {
     },
 
     goToNode(nodeData) {
+      if (!nodeData.id){
+        this.handleSuggestionClick(nodeData.name);
+        return;
+      }
+
       let path;
       if (nodeData.category.includes("lesson")) {
         path = `/lesson/${nodeData.id}`;

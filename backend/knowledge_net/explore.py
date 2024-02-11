@@ -39,7 +39,7 @@ def suggest_lessons(user_id, selected_node):
     return lesson_names
 
 def construct_user_message(user_id, selected_node):
-    return get_user_activities(user_id) + f"\nThat is my topic history.\nSuggest lessons connected to: {selected_node}."
+    return get_user_activities(user_id) + f"\nThat is my history.\nSuggest lessons connected to: {selected_node}."
 
 def get_user_activities(user_id):
     # Collect the results from each function
@@ -48,8 +48,12 @@ def get_user_activities(user_id):
     completed_lessons = dbh.get_completed_lessons(user_id)
     active_lessons = dbh.get_active_lessons(user_id)
 
-    # Combine all the results into a single list
-    all_activities = completed_challenges + active_challenges + completed_lessons + active_lessons
+    # Extract only the names of challenges and lessons
+    challenge_names = [challenge['challenge_name'] for challenge in completed_challenges + active_challenges]
+    lesson_names = [lesson['lesson_name'] for lesson in completed_lessons + active_lessons]
 
-    # Convert the list of dictionaries to a string with comma-separated values
-    return ', '.join(str(activity) for activity in all_activities)
+    # Combine all the names into a single list
+    all_activity_names = challenge_names + lesson_names
+
+    # Convert the list of names to a string with comma-separated values
+    return ', '.join(all_activity_names)

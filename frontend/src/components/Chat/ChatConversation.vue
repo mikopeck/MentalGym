@@ -40,12 +40,19 @@ import ContentButton from "./ContentButton.vue";
 import CompleteButton from "./CompleteButton.vue";
 import { useMessageStore } from "@/store/messageStore";
 import { useInputStore } from "@/store/inputStore";
+import eventBus from "@/eventBus";
 
 export default {
   components: {
     ContentButton,
     CompleteButton,
     QuizComponent,
+  },
+  mounted() {
+    eventBus.on("message-recieved", this.handleNewMessage);
+  },
+  unmounted() {
+    eventBus.off("message-recieved");
   },
   computed: {
     filteredMessages() {
@@ -55,11 +62,20 @@ export default {
         return [];
       }
       const inputStore = useInputStore();
-      inputStore.show();
       var msgs = messageStore.messages.filter(
         (message) => message.role !== "system"
       );
       msgs = msgs.filter((message) => message.role !== "app");
+
+      if (msgs.length > 0) {
+        const lastMessage = msgs[msgs.length - 1];
+        if (lastMessage.type === "quiz" || lastMessage.role === "complete") {
+          inputStore.hide("chatconversation");
+        } else {
+          inputStore.show();
+        }
+      }
+
       const tempMessage = {
         role: "app",
         content: "",
@@ -69,6 +85,19 @@ export default {
     },
   },
   methods: {
+    handleNewMessage() {
+      console.log("handling new message");
+      this.$nextTick(() => {
+        setTimeout(() => {
+          const messages = this.$el.querySelectorAll(".chat-bubble");
+          console.log(messages);
+          if (messages.length > 1) {
+            const secondLastMessage = messages[messages.length - 2];
+            eventBus.emit("scroll-to-message", secondLastMessage.offsetTop);
+          }
+        }, 300);
+      });
+    },
     formatMessageContent(content) {
       let regex;
 
@@ -149,7 +178,6 @@ export default {
     isCompletionMessage(message) {
       let result = message.role == "complete";
       if (result) {
-        console.log(this.filteredMessages);
         const inputStore = useInputStore();
         inputStore.hide();
       }

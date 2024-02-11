@@ -1,6 +1,8 @@
 
 import { defineStore } from 'pinia';
 import axios from 'axios';
+
+import eventBus from '@/eventBus';
 import { usePopupStore } from "@/store/popupStore";
 import { useAdsStore } from "@/store/adsStore";
 
@@ -76,11 +78,9 @@ export const useMessageStore = defineStore('messageStore', {
             const isLesson = currentPath.includes("/lesson/");
             const isChallenge = currentPath.includes("/challenge/");
             if (sanitizedMessage === "Leave challenge." && isChallenge) {
-                // Logic to handle leaving a challenge
                 return "/";
             }
             if (sanitizedMessage === "Leave lesson." && isLesson) {
-                // Logic to handle leaving a lesson
                 return "/";
             }
 
@@ -124,6 +124,7 @@ export const useMessageStore = defineStore('messageStore', {
             } finally {
                 adStore.loaded();
                 this.sending = false;
+                eventBus.emit('message-recieved');
             }
         },
     },

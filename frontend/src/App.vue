@@ -62,7 +62,7 @@ export default {
       popupStore.showWelcomePopup();
       const mentorStore = useMentorStore();
       mentorStore.show();
-      router.push('/');
+      router.push("/");
     }
 
     const path = window.location.pathname;

@@ -77,7 +77,7 @@ export default {
     sending() {
       const messageStore = useMessageStore();
       return messageStore.sending;
-    }
+    },
   },
   watch: {
     message(newVal) {
