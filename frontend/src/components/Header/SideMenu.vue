@@ -33,7 +33,7 @@
     />
     <MenuButton
       v-if="loggedIn"
-      label="Lesson Plan🗺️"
+      label="Knowledge Map🗺️"
       @click="openRoute('/knowledge')"
       :isSelected="isRouteActive('/knowledge')"
     />

@@ -273,7 +273,7 @@ export default {
 }
 
 .next-button{
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .next-button:hover, .share-button:hover ,.feedback-button:hover {

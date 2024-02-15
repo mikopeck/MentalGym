@@ -45,7 +45,8 @@ export default {
           console.log(this.graphData);
 
           this.prepareGraphData();
-          this.renderGraph();
+          const nodeId = this.$route.query.node;
+          this.renderGraph(nodeId);
         })
         .catch((error) => console.error("Error fetching graph data:", error));
     },
@@ -63,7 +64,7 @@ export default {
         };
       });
     },
-    renderGraph() {
+    renderGraph(nodeId) {
       console.log("rendering");
       this.width = window.innerWidth - 42;
       this.height = window.innerHeight - 250;
@@ -193,6 +194,15 @@ export default {
       });
 
       svg.call(zoom);
+      if (nodeId) {
+        const nodeToSelect = this.graphData.nodes.find(
+          (node) => node.id.toString() === nodeId
+        );
+        console.log("Node to Select:", nodeToSelect);
+        if (nodeToSelect) {
+          this.selectNode(nodeToSelect, null);
+        }
+      }
 
       // Update positions on each tick
       simulation.on("tick", () => {
@@ -254,36 +264,52 @@ export default {
       this.selectedNode = nodeData.selected ? nodeData : null;
 
       // Update node and label references if necessary
-      if (clickedRef.tagName === "circle") {
-        nodeData.domRef = clickedRef;
-        // Find the corresponding label element if not already stored
-        if (!nodeData.labelRef) {
-          nodeData.labelRef = d3
-            .selectAll("text")
-            .nodes()
-            .find((label) => d3.select(label).datum() === nodeData);
+      if (clickedRef) {
+        if (clickedRef.tagName === "circle") {
+          nodeData.domRef = clickedRef;
+          if (!nodeData.labelRef) {
+            nodeData.labelRef = d3
+              .selectAll("text")
+              .nodes()
+              .find((label) => d3.select(label).datum() === nodeData);
+          }
+        } else if (clickedRef.tagName === "text") {
+          nodeData.labelRef = clickedRef;
+          if (!nodeData.domRef) {
+            nodeData.domRef = d3
+              .selectAll("circle")
+              .nodes()
+              .find((node) => d3.select(node).datum() === nodeData);
+          }
         }
-      } else if (clickedRef.tagName === "text") {
-        nodeData.labelRef = clickedRef;
-        // Find the corresponding node element if not already stored
+      } else {
+        // For programmatic selection, find both references if not already set
         if (!nodeData.domRef) {
           nodeData.domRef = d3
             .selectAll("circle")
             .nodes()
             .find((node) => d3.select(node).datum() === nodeData);
         }
+        if (!nodeData.labelRef) {
+          nodeData.labelRef = d3
+            .selectAll("text")
+            .nodes()
+            .find((label) => d3.select(label).datum() === nodeData);
+        }
       }
 
       // Update node style
-      d3.select(nodeData.domRef)
-        .transition()
-        .duration(300)
-        .attr(
-          "r",
-          nodeData.selected
-            ? this.selected_node / this.currentZoomScale
-            : this.regular_node / this.currentZoomScale
-        );
+      if (nodeData.domRef) {
+        d3.select(nodeData.domRef)
+          .transition()
+          .duration(300)
+          .attr(
+            "r",
+            nodeData.selected
+              ? this.selected_node / this.currentZoomScale
+              : this.regular_node / this.currentZoomScale
+          );
+      }
 
       // Update label style
       if (nodeData.labelRef) {
@@ -342,7 +368,7 @@ export default {
     },
 
     goToNode(nodeData) {
-      if (!nodeData.id){
+      if (!nodeData.id) {
         this.handleSuggestionClick(nodeData.name);
         return;
       }
@@ -392,36 +418,41 @@ export default {
 
     showSuggestions(suggestions) {
       const canvasSize = { width: this.width, height: this.height };
-      const buttonSize = { width: 180, height: 50 };
+      const minButtonHeight = 64;
+      const buttonWidth = 200;
+      const buttonSpacing = 24;
+
       const suggestionGroup = d3
         .select("#graph svg")
         .append("g")
         .classed("node-suggestions", true)
         .attr("transform", `translate(10, 0)`);
 
-      const buttonSpacing = 32;
-      const totalHeight =
-        suggestions.length * buttonSize.height +
-        (suggestions.length - 1) * buttonSpacing;
-      const startYPosition = canvasSize.height - 80 - totalHeight;
+      let currentYPosition = canvasSize.height - 80;
 
-      suggestions.forEach((suggestion, index) => {
-        const xPosition = 0;
-        const yPosition =
-          startYPosition + index * (buttonSize.height + buttonSpacing);
+      suggestions.forEach((suggestion) => {
+        const estimatedLineCount = Math.ceil(suggestion.length / 25);
+        const buttonHeight = Math.max(
+          minButtonHeight,
+          estimatedLineCount * 20 + 24
+        );
+
+        currentYPosition -= buttonHeight + buttonSpacing;
 
         suggestionGroup
           .append("foreignObject")
-          .attr("width", buttonSize.width)
-          .attr("height", buttonSize.height + 24)
-          .attr("x", xPosition)
-          .attr("y", yPosition)
+          .attr("width", buttonWidth)
+          .attr("height", buttonHeight)
+          .attr("x", 0)
+          .attr("y", currentYPosition)
           .append("xhtml:div")
           .attr("class", "content-button")
+          .style("height", `${buttonHeight}px`)
           .text(suggestion)
           .on("click", () => this.handleSuggestionClick(suggestion));
       });
     },
+
     async handleSuggestionClick(suggestion) {
       console.log("Selected suggestion: " + suggestion);
       const messageStore = useMessageStore();
