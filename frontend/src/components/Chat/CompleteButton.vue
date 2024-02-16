@@ -1,22 +1,42 @@
 <template>
   <div class="completion-container">
     <div class="celebratory-message">🎉 Congratulations! 🎉</div>
+    <div v-if="suggestions.length" class="suggestions-container">
+      <div>Continue with...</div>
+      <ContentButton
+        v-for="(suggestion, index) in suggestions"
+        :key="index"
+        :name="suggestion"
+        :content="suggestion"
+        :showType="false"
+        @navigate="startSuggestion(suggestion)"
+        class="suggestion-button"
+      ></ContentButton>
+    </div>
     <div v-if="loggedIn" class="what-next-container">
-      <button class="next-button" @click="navigateToContent">
-        🔙Return to main Chat
-      </button>
-      <button class="share-button" @click="toggleShare">
-        {{ isSharing ? "Copy Link" : "Share" }}
-      </button>
-      <div v-if="isSharing" class="share-container">
-        <input v-model="shareLink" readonly class="share-link-input" />
-        <button @click="copyToClipboard" class="copy-button">
-          {{ copyButtonText }}
+      <div class="nav-row">
+        <button class="nav-button" @click="navigateBack">🔙Back</button>
+        <div class="separator">|</div>
+        <button class="nav-button" @click="navigateExplore">🔍Explore</button>
+        <div class="separator">|</div>
+        <button class="nav-button" @click="navigateMap">🗺️Map</button>
+      </div>
+
+      <div class="nav-row">
+        <button class="share-button" @click="toggleShare">
+          {{ isSharing ? "Link" : "🔗Share" }}
+        </button>
+        <div v-if="isSharing" class="share-container">
+          <input v-model="shareLink" readonly class="share-link-input" />
+          <button @click="copyToClipboard" class="copy-button">
+            {{ copyButtonText }}
+          </button>
+        </div>
+        <div class="separator">|</div>
+        <button class="feedback-button" @click="toggleFeedback">
+          {{ showFeedback ? "Hide Feedback⬆️" : "Feedback⤵️" }}
         </button>
       </div>
-      <button class="feedback-button" @click="toggleFeedback">
-        {{ showFeedback ? "Hide Feedback⬆️" : "Give Feedback⤵️" }}
-      </button>
     </div>
     <div class="rating-feedback">
       <div v-show="showFeedback" class="feedback-form">
@@ -54,6 +74,8 @@
 import axios from "axios";
 import { usePopupStore } from "@/store/popupStore";
 import { useAuthStore } from "@/store/authStore";
+import { useMessageStore } from "@/store/messageStore";
+import ContentButton from "../Chat/ContentButton.vue";
 
 export default {
   data() {
@@ -65,7 +87,11 @@ export default {
       isSharing: false,
       shareLink: window.location.href,
       copyButtonText: "Copy",
+      suggestions: [],
     };
+  },
+  components: {
+    ContentButton
   },
   computed: {
     isValid() {
@@ -75,11 +101,65 @@ export default {
       const authStore = useAuthStore();
       authStore.checkAuth();
       return authStore.loggedIn;
-    }
+    },
   },
   methods: {
-    navigateToContent() {
+    navigateBack() {
       this.$router.push("/");
+    },
+    navigateExplore() {
+      const messageStore = useMessageStore();
+      const url = `/api/explore?name=${messageStore.subheading}`;
+      axios
+        .get(url)
+        .then((response) => {
+          if (response.data && response.data.suggestions) {
+            this.suggestions = response.data.suggestions;
+          } else {
+            console.log("No suggestions received");
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching suggestions: ", error);
+        });
+    },
+    async startSuggestion(suggestion) {
+      console.log("Selected suggestion: " + suggestion);
+      const messageStore = useMessageStore();
+
+      try {
+        const response = await messageStore.sendMessage(
+          "Start lesson: " + suggestion,
+          "/"
+        );
+        console.log("Response: ", response);
+
+        if (response && this.$router) {
+          this.$router.push(response);
+        } else {
+          console.error("Router is undefined or response is invalid");
+        }
+      } catch (error) {
+        console.error("Error in sendMessage: ", error);
+      }
+    },
+    navigateMap() {
+      const path = this.$route.path;
+      const lessonMatch = path.match(/\/lesson\/(\d+)/);
+      const challengeMatch = path.match(/\/challenge\/(\d+)/);
+
+      let id;
+      if (lessonMatch && lessonMatch[1]) {
+        id = lessonMatch[1];
+      } else if (challengeMatch && challengeMatch[1]) {
+        id = challengeMatch[1];
+      }
+
+      if (id) {
+        this.$router.push("/knowledge?node=" + id);
+      } else {
+        console.error("ID not found in the URL");
+      }
     },
     toggleFeedback() {
       this.showFeedback = !this.showFeedback;
@@ -137,7 +217,7 @@ export default {
     submitFeedback() {
       const sanitizeInput = (input) => {
         const div = document.createElement("div");
-        div.textContent = input;
+        div.textContent = input + this.shareLink;
         return div.innerHTML;
       };
       const sanitizedMessage = sanitizeInput(this.feedback);
@@ -212,10 +292,18 @@ export default {
 .what-next-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
   padding-top: 2em;
+  font-weight: 700;
   opacity: 0.8;
-  font-size: 1.2em;
+  font-size: 0.8em;
   transition: opacity 2s;
+}
+
+.nav-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
 }
 
 .share-container {
@@ -265,18 +353,22 @@ export default {
   color: #ffc107;
 }
 
-.next-button, .share-button, .feedback-button {
+.next-button,
+.share-button,
+.feedback-button {
   padding: 4px;
   font-weight: 700;
   color: var(--text-color);
   transition: color 0.2s;
 }
 
-.next-button{
+.next-button {
   font-weight: 700;
 }
 
-.next-button:hover, .share-button:hover ,.feedback-button:hover {
+.next-button:hover,
+.share-button:hover,
+.feedback-button:hover {
   color: var(--highlight-color);
 }
 
@@ -324,5 +416,20 @@ export default {
 .submit-btn:hover:not(:disabled) {
   background-color: #5c2d91;
 }
+
+.separator {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.suggestions-container {
+  padding-top: 1em;
+  display: flex;
+  flex-direction: column;
+}
+
+.suggestion-button {
+    margin: 2px;
+  }
 </style>
 

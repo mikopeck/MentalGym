@@ -13,6 +13,8 @@ export default {
       graphData: null,
       selectedNode: null,
       showingSuggestions: false,
+      svg: null,
+      zoom: null,
 
       width: 0,
       height: 0,
@@ -70,13 +72,13 @@ export default {
       this.height = window.innerHeight - 250;
       const vm = this; // Store a reference to the Vue instance
 
-      const svg = d3
+      this.svg = d3
         .select("#graph")
         .append("svg")
         .attr("width", this.width)
         .attr("height", this.height);
 
-      const graphGroup = svg.append("g");
+      const graphGroup = this.svg.append("g");
 
       // Create the force simulation
       const simulation = d3
@@ -163,7 +165,7 @@ export default {
           this.selectNode(d, _event.currentTarget);
         });
 
-      const zoom = d3.zoom().on("zoom", (event) => {
+      this.zoom = d3.zoom().on("zoom", (event) => {
         vm.currentZoomScale = event.transform.k;
         graphGroup.attr("transform", event.transform);
 
@@ -193,16 +195,7 @@ export default {
         labels.attr("y", (d) => d.y - 10 / vm.currentZoomScale);
       });
 
-      svg.call(zoom);
-      if (nodeId) {
-        const nodeToSelect = this.graphData.nodes.find(
-          (node) => node.id.toString() === nodeId
-        );
-        console.log("Node to Select:", nodeToSelect);
-        if (nodeToSelect) {
-          this.selectNode(nodeToSelect, null);
-        }
-      }
+      this.svg.call(this.zoom);
 
       // Update positions on each tick
       simulation.on("tick", () => {
@@ -237,6 +230,43 @@ export default {
         if (!event.active) simulation.alphaTarget(0);
         d.fx = null;
         d.fy = null;
+      }
+
+      // Afterstuff
+      if (nodeId) {
+        const nodeToSelect = this.graphData.nodes.find(
+          (node) => node.id.toString() === nodeId
+        );
+        console.log("Node to Select:", nodeToSelect);
+        if (nodeToSelect) {
+          this.selectNode(nodeToSelect, null);
+        }
+      }
+      setTimeout(() => {
+        this.zoomToNode(nodeId);
+      }, 1000);
+    },
+    zoomToNode(nodeId) {
+      if (nodeId) {
+        const node = this.graphData.nodes.find(
+          (n) => n.id.toString() === nodeId
+        );
+        if (node) {
+          const zoomLevel = 4;
+          const translateX = (this.width / 2) - node.x * zoomLevel;
+          const translateY = (this.height / 2) - node.y * zoomLevel;
+
+          console.log(this.width / 2 + "," + this.height / 2);
+          console.log(node.x + "," + node.y);
+          console.log(translateX + "," + translateY);
+          this.svg
+            .transition()
+            .duration(3000)
+            .call(
+              this.zoom.transform,
+              d3.zoomIdentity.translate(translateX, translateY).scale(zoomLevel)
+            );
+        }
       }
     },
 

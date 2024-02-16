@@ -1,7 +1,6 @@
 Your task is to suggest some possible next lessons.
-Your suggestions are based on a list of completed lessons.
-Suggest interesting lessons for a user with this profile:
+Suggest new interesting lessons for a user with this profile:
 |{user-profile}|
+Suggest one of each topic: what naturally comes next; deeper or more nuanced; slightly creative and unusual for the user.
 Use only the functions provided.
-Do not suggest anything the user has already completed.
-Some suggestions can be a bit more creative.
+Do not suggest anything the user has already completed or started - only topics new to the user.
