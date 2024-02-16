@@ -3,11 +3,10 @@ import { createApp, defineAsyncComponent } from 'vue';
 import { createPinia } from 'pinia'
 import App from './App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
-import { useInputStore} from "@/store/inputStore"
+// import { useInputStore} from "@/store/inputStore"
 import { useAuthStore } from "@/store/authStore";
 import { usePopupStore } from "@/store/popupStore";
 import { useMentorStore } from "@/store/mentorStore";
-// import { useMessageStore } from "@/store/messageStore";
 
 import './assets/styles.css';
 import './assets/themes.css';
@@ -39,8 +38,8 @@ router.beforeEach((to, from, next) => {
     mentorStore.show();
     next('/');
   }
-  const inputStore = useInputStore();
-  inputStore.show();
+  // const inputStore = useInputStore();
+  // inputStore.show("main");
   const authStore = useAuthStore();
 
   const isLessonOrChallenge = to.path.startsWith('/lesson/') || to.path.startsWith('/challenge/');

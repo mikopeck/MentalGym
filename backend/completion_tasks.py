@@ -179,7 +179,7 @@ def quiz_feedback(user_id, lesson_id):
     answer_msg = answers_part.split(": ")[1]
     if score == "100%":
         db.remove_score_from_answer(user_id, answer_msg)
-        db.complete_quiz_message(user_id, lesson_id, score)
+        db.complete_quiz_message(user_id, lesson_id, score+answers_part+" | ")
         db.update_lesson(user_id, lesson_id, datetime.utcnow())
         db.add_completion_message(user_id, lesson_id=lesson_id)
         return None, lesson_id
@@ -187,7 +187,7 @@ def quiz_feedback(user_id, lesson_id):
     messages = mh.prepare_session_messages(user_id, lesson_id) 
     response = generate_response(user_id, messages)
     db.remove_score_from_answer(user_id, answer_msg)
-    db.complete_quiz_message(user_id, lesson_id, score)
+    db.complete_quiz_message(user_id, lesson_id, score+answers_part+" | ")
     return response, lesson_id
 
 #### private ####

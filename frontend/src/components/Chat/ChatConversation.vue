@@ -61,27 +61,41 @@ export default {
         console.log("No messages!");
         return [];
       }
+
       const inputStore = useInputStore();
       var msgs = messageStore.messages.filter(
-        (message) => message.role !== "system"
+        (message) => message.role !== "system" && message.role !== "app"
       );
-      msgs = msgs.filter((message) => message.role !== "app");
 
-      if (msgs.length > 0) {
-        const lastMessage = msgs[msgs.length - 1];
-        if (lastMessage.type === "quiz" || lastMessage.role === "complete") {
-          inputStore.hide("chatconversation");
-        } else {
-          inputStore.show();
+      let wasLastQuiz = false;
+      const filteredMsgs = [];
+      for (let i = 0; i < msgs.length; i++) {
+        const message = msgs[i];
+        if (wasLastQuiz) {
+          wasLastQuiz = false;
+          continue;
         }
+
+        if (message.type === "quiz") {
+          wasLastQuiz = true;
+        }
+
+        if (message.type === "quiz" || message.role === "complete") {
+          inputStore.hide();
+        } else {
+          inputStore.show("chat");
+        }
+        filteredMsgs.push(message);
       }
 
+      // Hack extra spacing
       const tempMessage = {
         role: "app",
         content: "",
       };
-      msgs.push(tempMessage);
-      return msgs;
+      filteredMsgs.push(tempMessage);
+
+      return filteredMsgs;
     },
   },
   methods: {

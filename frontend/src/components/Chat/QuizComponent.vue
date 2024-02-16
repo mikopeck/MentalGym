@@ -82,7 +82,7 @@ export default {
   },
   unmounted() {
     const inputStore = useInputStore();
-    inputStore.show();
+    inputStore.show("unmount");
   },
   computed: {
     isAnyOptionSelected() {
@@ -97,8 +97,7 @@ export default {
     rawQuizData: {
       immediate: true,
       handler(newValue) {
-        this.questions = this.parseQuizQuestions(newValue);
-        this.userAnswers = Array(this.questions.length).fill(null);
+        this.parseQuizQuestions(newValue);
       },
     },
   },
@@ -115,12 +114,21 @@ export default {
     parseQuizQuestions(content) {
       console.log(content);
 
+      let extractedAnswers = [];
       const scoreMatch = content.match(/^(\d+%)*/);
       if (scoreMatch && scoreMatch[0]) {
         this.isScore = true;
         this.scoreText = scoreMatch[0];
         this.quizSubmitted = true;
+
         content = content.substring(scoreMatch[0].length);
+        const splitContent = content.split(" | ");
+        if (splitContent.length > 0) {
+          extractedAnswers = splitContent[0].substring("Answers: ".length).split(", ");
+          if (splitContent.length > 1) {
+            content = splitContent[1];
+          }
+        }
       } else {
         const inputStore = useInputStore();
         inputStore.hide();
@@ -131,10 +139,13 @@ export default {
         quizData = JSON.parse(content);
       } catch (e) {
         console.error("Error parsing quiz content:", e);
-        return [];
       }
-      return Object.keys(quizData).map((key) => {
+
+      this.questions = Object.keys(quizData).map((key, index) => {
         const questionObj = quizData[key];
+        this.userAnswers[index] = this.quizSubmitted
+          ? extractedAnswers[index]
+          : null;
         const isMultipleChoice = Object.prototype.hasOwnProperty.call(
           questionObj,
           "wrong_choices"
@@ -201,12 +212,14 @@ export default {
         this.submitText = "Finished";
         this.quizSubmitted = true;
         const inputStore = useInputStore();
-        inputStore.show();
+        inputStore.show("sent");
       }
     },
     submitQuiz() {
-      this.checkAnswers();
-      console.log("Quiz submitted with answers:", this.userAnswers);
+      if (!this.quizSubmitted) {
+        this.checkAnswers();
+        console.log("Quiz submitted with answers:", this.userAnswers);
+      }
     },
     shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
@@ -273,7 +286,6 @@ export default {
 .quiz-radio:checked + .radio-dot {
   background-color: var(--element-color-1);
 }
-
 
 .selected-choice {
   transition: opacity 0.3s;

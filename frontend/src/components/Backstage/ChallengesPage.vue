@@ -9,7 +9,7 @@
           <tr v-for="challenge in challenges.active" :key="challenge.id">
             <td>
               <ContentButton
-              :showType="false"
+                :showType="false"
                 :content="challenge.challenge_name"
                 :role="challenge.id"
                 :content_type="'challenge'"
@@ -38,7 +38,7 @@
           >
             <td>
               <ContentButton
-              :showType="false"
+                :showType="false"
                 :content="challenge.challenge_name"
                 :role="challenge.id + '?completed'"
                 :content_type="'challenge'"
@@ -96,7 +96,7 @@ export default {
       this.$router.push(`/challenge/${challengeId}`);
     },
     deleteChallenge(challengeId) {
-      console.log(challengeId)
+      console.log(challengeId);
       const popupStore = usePopupStore();
       popupStore.showPopup("Coming soon..");
     },

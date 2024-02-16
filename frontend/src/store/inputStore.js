@@ -10,10 +10,14 @@ export const useInputStore = defineStore({
         toggleVisibility() {
             this.isInputFieldVisible = !this.isInputFieldVisible;
         },
-        show() {
+        show(origin) {
+            if (origin){
+                console.log("showing"+origin);
+            }
             this.isInputFieldVisible = true;
         },
         hide() {
+            console.log("hiding");
             this.isInputFieldVisible = false;
         },
     },

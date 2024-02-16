@@ -46,8 +46,8 @@ export default {
       scrollStore.scrollTop = topPosition;
       this.$refs.msgHistory.scrollTop = topPosition;
 
-      // Try another 4px
-      topPosition = topPosition - 4;
+      // Try another bit
+      topPosition = topPosition - 12;
       scrollStore.scrollTop = topPosition;
       this.$refs.msgHistory.scrollTop = topPosition;
 
