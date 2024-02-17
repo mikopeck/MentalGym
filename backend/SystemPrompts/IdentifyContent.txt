@@ -1,6 +1,8 @@
-Your task is to identify any lessons or challenges presented in the message.
+Your task is to identify any lessons or challenges offered in the message.
 The content is offered to a user with the following profile:
 |{user-profile}|
 
-Your output should be different from any lesson or challenge the user already has in their profile - slightly more advanced or nuanced.
+Your output must be different from any lesson or challenge the user already has.
+Output only lessons or challenges which are offered in the message.
+Output exactly what is offered.
 

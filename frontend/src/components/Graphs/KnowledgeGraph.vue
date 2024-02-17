@@ -1,4 +1,5 @@
 <template>
+  <div v-if="loading" id="loadingCloud" class="cloud-animation">☁️</div>
   <div id="graph"></div>
 </template>
 
@@ -10,6 +11,7 @@ export default {
   name: "KnowledgeGraph",
   data() {
     return {
+      loading: true,
       graphData: null,
       selectedNode: null,
       showingSuggestions: false,
@@ -48,6 +50,7 @@ export default {
 
           this.prepareGraphData();
           const nodeId = this.$route.query.node;
+          this.loading = false;
           this.renderGraph(nodeId);
         })
         .catch((error) => console.error("Error fetching graph data:", error));
@@ -147,12 +150,7 @@ export default {
         .attr("x", (d) => d.x)
         .attr("y", (d) => d.y - 10 / this.currentZoomScale)
         .attr("text-anchor", "middle")
-        .style(
-          "fill",
-          getComputedStyle(document.documentElement)
-            .getPropertyValue("--text-color")
-            .trim()
-        )
+        .attr("class", "node-text")
         .style("font-size", `14px`)
         .call(
           d3
@@ -246,6 +244,7 @@ export default {
         this.zoomToNode(nodeId);
       }, 1000);
     },
+
     zoomToNode(nodeId) {
       if (nodeId) {
         const node = this.graphData.nodes.find(
@@ -253,8 +252,8 @@ export default {
         );
         if (node) {
           const zoomLevel = 4;
-          const translateX = (this.width / 2) - node.x * zoomLevel;
-          const translateY = (this.height / 2) - node.y * zoomLevel;
+          const translateX = this.width / 2 - node.x * zoomLevel;
+          const translateY = this.height / 2 - node.y * zoomLevel;
 
           console.log(this.width / 2 + "," + this.height / 2);
           console.log(node.x + "," + node.y);
@@ -541,5 +540,38 @@ export default {
 
 .content-button:hover {
   border-color: #6a2bc2b3;
+}
+
+.node-text {
+  fill: var(--text-color);
+}
+
+@keyframes cloudMove {
+  0% {
+    opacity: 0;
+    transform: translateX(-25vw) translateY(-2vh);
+  }
+  25% {
+    transform: translateX(-12.5vw) translateY(2vh);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(0vw) translateY(-2vh);
+  }
+  75% {
+    transform: translateX(12.5vw) translateY(2vh);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(25vw) translateY(-2vh);
+  }
+}
+
+.cloud-animation {
+  font-size: 3em;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  animation: cloudMove 3s linear infinite;
 }
 </style>
