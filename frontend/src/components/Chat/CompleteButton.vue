@@ -26,18 +26,20 @@
         <button class="share-button" @click="toggleShare">
           {{ isSharing ? "Link" : "🔗Share" }}
         </button>
-        <div v-if="isSharing" class="share-container">
-          <input v-model="shareLink" readonly class="share-link-input" />
-          <button @click="copyToClipboard" class="copy-button">
-            {{ copyButtonText }}
-          </button>
-        </div>
         <div class="separator">|</div>
         <button class="feedback-button" @click="toggleFeedback">
           {{ showFeedback ? "Hide Feedback⬆️" : "Feedback⤵️" }}
         </button>
       </div>
     </div>
+
+    <div v-if="isSharing" class="share-container">
+      <input v-model="shareLink" readonly class="share-link-input" />
+      <button @click="copyToClipboard" class="copy-button">
+        {{ copyButtonText }}
+      </button>
+    </div>
+
     <div class="rating-feedback">
       <div v-show="showFeedback" class="feedback-form">
         <p>Rate your experience:</p>
@@ -75,6 +77,7 @@ import axios from "axios";
 import { usePopupStore } from "@/store/popupStore";
 import { useAuthStore } from "@/store/authStore";
 import { useMessageStore } from "@/store/messageStore";
+import { useInputStore } from "@/store/inputStore";
 import ContentButton from "../Chat/ContentButton.vue";
 
 export default {
@@ -91,7 +94,15 @@ export default {
     };
   },
   components: {
-    ContentButton
+    ContentButton,
+  },
+  mounted() {
+    const inputStore = useInputStore();
+    inputStore.hide();
+  },
+  unmounted() {
+    const inputStore = useInputStore();
+    inputStore.show();
   },
   computed: {
     isValid() {
@@ -429,7 +440,7 @@ export default {
 }
 
 .suggestion-button {
-    margin: 2px;
-  }
+  margin: 2px;
+}
 </style>
 
