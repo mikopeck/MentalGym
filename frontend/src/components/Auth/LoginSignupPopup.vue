@@ -1,7 +1,8 @@
 <!-- LoginSignupPopup.vue -->
 <template>
   <div v-if="!loggedIn" class="popup-overlay">
-    <div class="popup-content">
+    <div v-if="loading" id="loadingCloud" class="cloud-animation">☁️</div>
+    <div v-else class="popup-content">
       <transition name="fade" mode="out-in">
         <LoginForm
           v-if="showLoginForm"
@@ -14,7 +15,11 @@
           key="signupForm"
         />
       </transition>
-  <button class="toggle-btn" @click="toggleForms" v-html="toggleButtonText"></button>
+      <button
+        class="toggle-btn"
+        @click="toggleForms"
+        v-html="toggleButtonText"
+      ></button>
 
       <div ref="googleButton"></div>
     </div>
@@ -36,7 +41,8 @@ export default {
   },
   data() {
     return {
-      showLoginForm: true,
+      showLoginForm: false,
+      loggingIn: false,
     };
   },
   mounted() {
@@ -102,7 +108,9 @@ export default {
     },
 
     handleCredentialResponse(response) {
+      this.loggingIn = true;
       this.sendTokenToBackend(response.credential);
+      this.loggingIn = false;
     },
     sendTokenToBackend(id_token) {
       axios
@@ -203,6 +211,35 @@ export default {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+}
+
+@keyframes cloudMove {
+  0% {
+    opacity: 0;
+    transform: translateX(-25vw) translateY(-2vh);
+  }
+  25% {
+    transform: translateX(-12.5vw) translateY(2vh);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(0vw) translateY(-2vh);
+  }
+  75% {
+    transform: translateX(12.5vw) translateY(2vh);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(25vw) translateY(-2vh);
+  }
+}
+
+.cloud-animation {
+  font-size: 3em;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  animation: cloudMove 3s linear infinite;
 }
 </style>
   

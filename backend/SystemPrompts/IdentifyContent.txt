@@ -5,4 +5,4 @@ The content is offered to a user with the following profile:
 Your output must be different from any lesson or challenge the user already has.
 Output only lessons or challenges which are offered in the message.
 Output exactly what is offered.
-
+If nothing is offered, do not output anything.
