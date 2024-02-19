@@ -51,7 +51,7 @@
         >Terms and Policies</router-link
       >
       <span class="separator">·</span>
-      <p>© 2023 Ascendance.</p></div>
+      <p>© 2024 Ascendance.</p></div>
       <div><p class="sincere-msg">Made with ❤️ for knowing and doing.</p></div>
     </div>
   </div>
