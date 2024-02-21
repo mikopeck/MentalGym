@@ -1,7 +1,7 @@
 <!-- LoginSignupPopup.vue -->
 <template>
   <div v-if="!loggedIn" class="popup-overlay">
-    <div v-if="loading" id="loadingCloud" class="cloud-animation">☁️</div>
+    <div v-if="loggingIn" id="loadingCloud" class="cloud-animation">☁️</div>
     <div v-else class="popup-content">
       <transition name="fade" mode="out-in">
         <LoginForm
