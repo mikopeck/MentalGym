@@ -110,7 +110,6 @@ export default {
     handleCredentialResponse(response) {
       this.loggingIn = true;
       this.sendTokenToBackend(response.credential);
-      this.loggingIn = false;
     },
     sendTokenToBackend(id_token) {
       axios
@@ -126,6 +125,9 @@ export default {
         })
         .catch((error) => {
           console.error("Error authenticating", error);
+        })
+        .finally(() => {
+          this.loggingIn = false;
         });
     },
   },
