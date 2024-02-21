@@ -39,7 +39,7 @@ def suggest_lessons(user_id, selected_node):
     return lesson_names
 
 def construct_user_message(user_id, selected_node):
-    return get_user_activities(user_id) + f"\nThat is my history.\nSuggest lessons connected to: {selected_node}."
+    return get_user_activities(user_id) + f"\nThat is my history.\nSuggest new lessons connected to: {selected_node}."
 
 def get_user_activities(user_id):
     # Collect the results from each function
