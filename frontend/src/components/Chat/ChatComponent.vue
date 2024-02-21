@@ -2,7 +2,7 @@
 <template>
   <div class="main-container">
     <div class="message-history" ref="msgHistory">
-      <ChatConversation />
+      <ChatConversation/>
     </div>
     <MessageInput class="message-input" />
   </div>
@@ -50,13 +50,11 @@ export default {
       topPosition = topPosition - 12;
       scrollStore.scrollTop = topPosition;
       this.$refs.msgHistory.scrollTop = topPosition;
-
     },
   },
 };
 </script>
 
-  
   <style scoped>
 .main-container {
   display: flex;

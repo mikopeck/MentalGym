@@ -95,6 +95,11 @@ export default {
       };
       filteredMsgs.push(tempMessage);
 
+      // Single-message
+      if (filteredMsgs.length === 2) {
+        this.handleNewMessage()
+      }
+
       return filteredMsgs;
     },
   },
@@ -104,7 +109,6 @@ export default {
       this.$nextTick(() => {
         setTimeout(() => {
           const messages = this.$el.querySelectorAll(".chat-bubble");
-          console.log(messages);
           if (messages.length > 1) {
             const secondLastMessage = messages[messages.length - 2];
             eventBus.emit("scroll-to-message", secondLastMessage.offsetTop);
