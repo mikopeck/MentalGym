@@ -19,12 +19,12 @@
       @click="openRoute('/lessons')"
       :isSelected="isRouteActive('/lessons', '^/lesson/\\w+')"
     />
-    <MenuButton
+    <!-- <MenuButton
       v-if="loggedIn"
       label="Challenges🎯"
       @click="openRoute('/challenges')"
       :isSelected="isRouteActive('/challenges', '^/challenge/\\w+')"
-    />
+    /> -->
     <MenuButton
       v-if="loggedIn"
       label="Progress📈"

@@ -34,7 +34,7 @@
             <tr>
               <th></th>
               <th>📖</th>
-              <th>🎯</th>
+              <!-- <th>🎯</th> -->
             </tr>
           </thead>
           <tbody>
@@ -43,38 +43,38 @@
               <td>
                 <span class="stat-value">{{ totalLessons }}</span>
               </td>
-              <td>
+              <!-- <td>
                 <span class="stat-value">{{ totalChallenges }}</span>
-              </td>
+              </td> -->
             </tr>
             <tr>
               <td><span class="stat-label">Percentage Completed</span></td>
               <td>
                 <span class="stat-value">{{ percentCompletedLessons }}%</span>
               </td>
-              <td>
+              <!-- <td>
                 <span class="stat-value"
                   >{{ percentCompletedChallenges }}%</span
                 >
-              </td>
+              </td> -->
             </tr>
             <tr>
               <td><span class="stat-label">Completed</span></td>
               <td>
                 <span class="stat-value">{{ completedLessons }}</span>
               </td>
-              <td>
+              <!-- <td>
                 <span class="stat-value">{{ completedChallenges }}</span>
-              </td>
+              </td> -->
             </tr>
             <tr>
               <td><span class="stat-label">Active</span></td>
               <td>
                 <span class="stat-value">{{ activeLessons }}</span>
               </td>
-              <td>
+              <!-- <td>
                 <span class="stat-value">{{ activeChallenges }}</span>
-              </td>
+              </td> -->
             </tr>
           </tbody>
         </table>

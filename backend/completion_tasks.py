@@ -48,8 +48,8 @@ def suggest_content(user_id, set_challenge = False, set_lesson = True):
         return response, None
 
     functions = [fns.Lesson]
-    if set_challenge:
-        functions += [fns.Challenge]
+    # if set_challenge:
+    #     functions += [fns.Challenge]
     function_call = "auto"
 
     for attempt in range(function_max_retries):
