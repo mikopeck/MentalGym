@@ -3,7 +3,7 @@
 :root {
     --background-color: #0e0c14;
     --background-color-rgb: 14, 12, 20;
-    --background-haze: #0e0c14fd;
+    --background-haze: #0e0c14ef;
     --background-color-1t: #4a148c42;
     --background-color-2t: #6a34b942;
     --element-color-1: #4a148c;
@@ -17,7 +17,7 @@
 .light-theme {
     --background-color: #f0f8ff;
     --background-color-rgb: 240, 248, 255;
-    --background-haze: #f0f8fffd;
+    --background-haze: #f0f8ffef;
     --background-color-1t: #2a14ff42;
     --background-color-2t: #c8a0ff42;
     --element-color-1: #5503d169;

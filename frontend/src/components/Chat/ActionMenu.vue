@@ -42,13 +42,15 @@ export default {
   right: 36px;
   height: fit-content;
   width: 300px;
-  transition: right 0.3s ease;
+  transition: all 0.3s ease;
+  opacity: 0;
   pointer-events: none;
   z-index: 99;
 }
 
 .slide-out {
   right: -280px;
+  opacity: 1;
   pointer-events: auto;
 }
 </style>

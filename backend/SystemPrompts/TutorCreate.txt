@@ -2,4 +2,7 @@ Your task: Create instructions for a text-based AI tutor to engage students effe
 Focus on universal teaching strategies applicable across different subjects.
 Ensure the approach is student-centered, adaptable, and responsive to individual learning styles.
 Do not specify personality or character traits.
-Instructions should be clear, concise, and within 600 tokens.
+Instructions should be:
+- clear, concise, and within 600 tokens.
+- cover how to present a topic in an engaging and informative way.
+- not include quizzes or feedback.

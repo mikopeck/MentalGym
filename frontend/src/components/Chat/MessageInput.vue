@@ -1,6 +1,7 @@
 <!-- MessageInput.vue -->
 <template>
-  <div class="message-input-container" v-if="inputVisible">
+<div class="message-area" v-if="inputVisible">
+  <div class="message-input-container" >
     <div class="action-container">
       <button
         v-if="actionAvailable"
@@ -34,7 +35,8 @@
         <span></span>
       </div>
     </button>
-  </div>
+  <div v-if="sending" id="loadingCloud" class="cloud-animation">☁️</div>
+  </div></div>
 </template>
 
 <script>
@@ -138,6 +140,11 @@ export default {
 </script>
   
 <style scoped>
+.message-area{
+  display: flex;
+  align-items: center;
+}
+
 .message-input-container {
   transition: all 0.3s ease-in-out;
   display: flex;
@@ -149,6 +156,9 @@ export default {
   position: relative;
   margin-top: auto;
   width: 100%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
   padding-left: 16px;
   padding-right: 16px;
   border: 1px solid var(--element-color-1);
@@ -289,6 +299,35 @@ textarea:focus {
 
 .action-icon.bounce {
   animation: bounce 2s infinite;
+}
+
+@keyframes cloudMove {
+  0% {
+    opacity: 0;
+    transform: translateX(-16vw) translateY(-0.5vh);
+  }
+  25% {
+    transform: translateX(-8vw) translateY(0.5vh);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(0vw) translateY(-0.5vh);
+  }
+  75% {
+    transform: translateX(8vw) translateY(0.5vh);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(16vw) translateY(-0.5vh);
+  }
+}
+
+.cloud-animation {
+  font-size: 3em;
+  position: absolute;
+  top: 0%;
+  left: 50%;
+  animation: cloudMove 3s linear infinite;
 }
 </style>
   

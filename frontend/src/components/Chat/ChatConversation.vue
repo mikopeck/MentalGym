@@ -32,6 +32,7 @@
       <CompleteButton v-if="isCompletionMessage(message)"></CompleteButton>
     </div>
   </div>
+  <div v-if="hasNoMessages" id="loadingCloud" class="cloud-animation">☁️</div>
 </template>
 
 <script>
@@ -97,10 +98,13 @@ export default {
 
       // Single-message
       if (filteredMsgs.length === 2) {
-        this.handleNewMessage()
+        this.handleNewMessage();
       }
 
       return filteredMsgs;
+    },
+    hasNoMessages() {
+      return this.filteredMessages.length === 0;
     },
   },
   methods: {
@@ -267,5 +271,34 @@ export default {
 .complete {
   width: auto;
   max-width: 100%;
+}
+
+@keyframes cloudMove {
+  0% {
+    opacity: 0;
+    transform: translateX(-25vw) translateY(-2vh);
+  }
+  25% {
+    transform: translateX(-12.5vw) translateY(2vh);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(0vw) translateY(-2vh);
+  }
+  75% {
+    transform: translateX(12.5vw) translateY(2vh);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(25vw) translateY(-2vh);
+  }
+}
+
+.cloud-animation {
+  font-size: 3em;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  animation: cloudMove 3s linear infinite;
 }
 </style>
