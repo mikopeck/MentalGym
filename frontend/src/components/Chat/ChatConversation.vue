@@ -112,7 +112,7 @@ export default {
       console.log("handling new message");
       this.$nextTick(() => {
         setTimeout(() => {
-          const messages = this.$el.querySelectorAll(".chat-bubble");
+          const messages = document.querySelectorAll(".chat-bubble");
           if (messages.length > 1) {
             const secondLastMessage = messages[messages.length - 2];
             eventBus.emit("scroll-to-message", secondLastMessage.offsetTop);

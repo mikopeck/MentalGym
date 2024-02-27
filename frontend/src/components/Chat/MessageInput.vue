@@ -304,28 +304,28 @@ textarea:focus {
 @keyframes cloudMove {
   0% {
     opacity: 0;
-    transform: translateX(-16vw) translateY(-0.5vh);
+    transform: translateX(-25vw) translateY(-0.5vh);
   }
   25% {
-    transform: translateX(-8vw) translateY(0.5vh);
+    transform: translateX(-12.5vw) translateY(0.5vh);
   }
   50% {
     opacity: 1;
     transform: translateX(0vw) translateY(-0.5vh);
   }
   75% {
-    transform: translateX(8vw) translateY(0.5vh);
+    transform: translateX(12.5vw) translateY(0.5vh);
   }
   100% {
     opacity: 0;
-    transform: translateX(16vw) translateY(-0.5vh);
+    transform: translateX(25vw) translateY(-0.5vh);
   }
 }
 
 .cloud-animation {
-  font-size: 3em;
+  font-size: 1.5em;
   position: absolute;
-  top: 0%;
+  top: 20%;
   left: 50%;
   animation: cloudMove 3s linear infinite;
 }

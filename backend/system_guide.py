@@ -8,6 +8,8 @@ import message_handler as mh
 def progress_chat(user_id, user_message):
     db.add_user_message(user_id, user_message)
     lesson_id, no_redirect = detect_content_actions(user_id, user_message)
+    if lesson_id and no_redirect:
+        return lesson_id
     return progress(user_id, lesson_id, no_redirect)
 
 def progress_lesson(user_id, user_message, lesson_id):
@@ -51,6 +53,9 @@ def progress(user_id, lesson_id, no_redirect = False):
         else:
             print(" Unknown role!!", current_sys_role)
             response, lesson_id = cts.suggest_content(user_id)
+            
+    if not response:
+        return lesson_id
 
     # Progress roles and add actions
     current_sys_role = db.get_system_role(user_id, lesson_id)
@@ -103,8 +108,11 @@ def detect_content_actions(user_id, user_message):
 
     if action.lower() == "start lesson":
         if user_message in current_actions:
-            lesson_id = db.add_lesson(user_id, content_name)
+            created, lesson_id = db.add_lesson(user_id, content_name)
             db.remove_user_action(user_id,user_message)
+            if not created:
+                db.remove_latest_message_by_role(user_id, "user")
+                return lesson_id, True
             db.add_action(user_id, "Continue...")
             mh.update_system_role(user_id, roles.LessonCreate, lesson_id)
             return lesson_id, False

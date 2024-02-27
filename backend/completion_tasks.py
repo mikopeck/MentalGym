@@ -77,7 +77,9 @@ def suggest_content(user_id, set_challenge = False, set_lesson = True):
                 lesson_name = remove_emojis_except_first(lesson_emoji + lesson_data.get('lesson_name'))
             else:
                 lesson_name = remove_emojis_except_first(lesson_data.get('lesson_name'))
-            lesson_id = db.add_lesson(user_id, lesson_name)
+            created, lesson_id = db.add_lesson(user_id, lesson_name)
+            if not created:
+                return None, lesson_id
             db.add_action(user_id, "Continue...")
             mh.update_system_role(user_id, roles.LessonCreate, lesson_id)
             return lesson_create(user_id, lesson_id, lesson_name)
@@ -89,7 +91,6 @@ def suggest_content(user_id, set_challenge = False, set_lesson = True):
 
 def after_content(user_id):
     response = generate_response(user_id, mh.prepare_session_messages(user_id))
-    identify_content(user_id, response["choices"][0]["message"]['content'])
     return response, None
 
 def challenge_progress(user_id, challenge_id):
@@ -120,6 +121,7 @@ def challenge_progress(user_id, challenge_id):
 def lesson_create(user_id, lesson_id, lesson_name = None):
     if not lesson_name:
         lesson_name = db.get_lesson_name(lesson_id)
+        #if lesson name already exists, navigate to that lesson
     profile = db.get_profile(user_id)
     ##### TODO: generate improved tutor #####
     if not db.get_tutor(user_id):

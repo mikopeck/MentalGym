@@ -155,7 +155,7 @@ def remove_latest_message_by_role(user_id, role):
     if latest_message:
         db.session.delete(latest_message)
         db.session.commit()
-
+        
 def get_latest_message_by_role(user_id, role):
     latest_message = ChatHistory.query.filter_by(user_id=user_id, role=role).order_by(ChatHistory.id.desc()).first()
     return latest_message.message if latest_message else None
@@ -279,6 +279,10 @@ def is_challenge_complete(challenge_id):
 
 
 def add_lesson(user_id, lesson_name, user_started = True):
+    existing_lesson = Lesson.query.filter_by(user_id=user_id, lesson_name=lesson_name).first()
+    if existing_lesson:
+        return False, existing_lesson.id
+    
     if not extract_single_emoji(lesson_name):
         lesson_name = f"🤔{lesson_name}"
     lesson = Lesson(user_id=user_id, lesson_name=lesson_name, completion_date=None, system_role=None)
@@ -289,7 +293,7 @@ def add_lesson(user_id, lesson_name, user_started = True):
         set_user_content(user_id, f"started lesson {lesson_name}")
     else:
         set_user_content(user_id, f"was given (by you) lesson {lesson_name}")
-    return lesson.id
+    return True, lesson.id
 
 def update_lesson(user_id, lesson_id, completion_date=None, system_role=None):
     lesson = Lesson.query.filter_by(user_id=user_id, id=lesson_id).first()
@@ -369,6 +373,10 @@ def get_completed_lessons(user_id):
 def get_active_lessons(user_id):
     active_lessons = Lesson.query.filter_by(user_id=user_id).filter(Lesson.completion_date.is_(None)).all()
     return [lesson.as_dict() for lesson in active_lessons]
+
+def get_user_lesson_names(user_id):
+    lessons = Lesson.query.filter_by(user_id=user_id).all()
+    return [lesson.lesson_name for lesson in lessons]
 
 def share_challenge(challenge_id, user_id):
         challenge = Challenge.query.get(challenge_id)

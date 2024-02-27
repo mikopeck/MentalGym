@@ -92,7 +92,7 @@ Challenge = {
 
 Content = {
     "name": "offered_content",
-    "description": "Returns descriptions and emojis for any lessons or challenges being offered.",
+    "description": "Returns descriptions and emojis for any lessons being offered.",
     "parameters": {
         "type": "object",
         "properties": {
@@ -113,24 +113,6 @@ Content = {
                     "required": ["lesson_name", "lesson_emoji"]
                 },
                 "description": "An array of objects, each containing a name and an emoji representing the topic of the lessons offered."
-            },
-            "challenge_descriptions": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "challenge_name": {
-                            "type": "string",
-                            "description": "A concise but complete description of the challenge. Up to 12 words."
-                        },
-                        "challenge_emoji": {
-                            "type": "string",
-                            "description": "A single, valid Unicode emoji representing the challenge topic. Must be within standard Unicode emoji ranges."
-                        }
-                    },
-                    "required": ["challenge_name", "challenge_emoji"]
-                },
-                "description": "An array of objects, each containing a name and an emoji representing the topic of the challenges offered."
             },
         },
         "required": [],
