@@ -2,7 +2,7 @@ import json
 
 Profile = {
     "name": "create_profile",
-    "description": "Create a profile for the user. Also use if the user would like to move on to learning or setting challenges.",
+    "description": "Create a profile for the user. Also use if the user would like to move on to learning.",
     "parameters": {
         "type": "object",
         "properties": {

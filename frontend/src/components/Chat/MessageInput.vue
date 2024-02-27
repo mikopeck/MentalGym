@@ -323,9 +323,9 @@ textarea:focus {
 }
 
 .cloud-animation {
-  font-size: 1.5em;
+  font-size: 1em;
   position: absolute;
-  top: 20%;
+  top: 15%;
   left: 50%;
   animation: cloudMove 3s linear infinite;
 }
