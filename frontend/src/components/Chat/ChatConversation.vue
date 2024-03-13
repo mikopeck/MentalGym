@@ -155,7 +155,7 @@ export default {
       content = content.replace(regex, '<a href="$2$3">$1</a>');
 
       // Unordered lists
-      regex = /(?:^|\n)\s*-\s(.+?)(?=\n|$)/gm;
+      regex = /(?:^|\n)?\s*-\s(.+?)(?=\n|$)/gm;
       content = content.replace(regex, "<ul><li>$1</li></ul>");
       content = content.replace(/<\/ul>\n<ul>/g, "");
 

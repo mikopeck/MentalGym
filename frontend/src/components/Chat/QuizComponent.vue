@@ -211,8 +211,6 @@ export default {
       } else {
         this.submitText = "Finished";
         this.quizSubmitted = true;
-        const inputStore = useInputStore();
-        inputStore.show("sent");
       }
     },
     submitQuiz() {
