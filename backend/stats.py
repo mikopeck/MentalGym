@@ -1,36 +1,38 @@
 from datetime import datetime, timedelta
-from database.models import db, Challenge, Lesson
 from sqlalchemy import func, extract
 from collections import defaultdict
+from database.models import db, Challenge, Lesson
+from utils import extract_single_emoji
 
 def get_pie_chart_data(user_id):
     lessons_by_topic = db.session.query(
-        func.substr(Lesson.lesson_name, 1, 1).label('emoji'),
-        func.count(Lesson.id).label('count')
-    ).filter_by(user_id=user_id).group_by(
-        func.substr(Lesson.lesson_name, 1, 1)
-    ).all()
+        Lesson.lesson_name
+    ).filter_by(user_id=user_id).all()
 
     challenges_by_topic = db.session.query(
-        func.substr(Challenge.challenge_name, 1, 1).label('emoji'),
-        func.count(Challenge.id).label('count')
-    ).filter_by(user_id=user_id).group_by(
-        func.substr(Challenge.challenge_name, 1, 1)
-    ).all()
+        Challenge.challenge_name
+    ).filter_by(user_id=user_id).all()
 
     topic_counts = defaultdict(int)
-    for item in lessons_by_topic + challenges_by_topic:
-        topic_counts[item.emoji] += item.count
+    for lesson_name in lessons_by_topic:
+        emoji = extract_single_emoji(lesson_name[0])
+        if emoji:
+            topic_counts[emoji] += 1
+
+    for challenge_name in challenges_by_topic:
+        emoji = extract_single_emoji(challenge_name[0])
+        if emoji:
+            topic_counts[emoji] += 1
 
     sorted_topics = sorted(topic_counts.items(), key=lambda x: x[1], reverse=True)
-    top_5_topics = sorted_topics[:5]
-    other_count = sum([count for _, count in sorted_topics[5:]])
+    top_10_topics = sorted_topics[:10]
+    other_count = sum([count for _, count in sorted_topics[10:]])
     
     if other_count > 0:
-        top_5_topics.append(('Others', other_count))
+        top_10_topics.append(('Others', other_count))
 
-    labels = [emoji for emoji, _ in top_5_topics]
-    data_values = [count for _, count in top_5_topics]
+    labels = [emoji for emoji, _ in top_10_topics]
+    data_values = [count for _, count in top_10_topics]
     backgroundColors = ['#b284e0', '#84e0c1','#d8c58c','#9384e0', '#84e0b2', '#84b2e0']
 
     pie_chart_data = {
