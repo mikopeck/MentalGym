@@ -23,7 +23,7 @@
           </div>
         </div>
         <MenuButton
-          label="Confirm Selection"
+          label="Select Tutor"
           @click="mentorStore.confirmSelection"
         />
         <MenuButton label="Exit" @click="mentorStore.hide" />

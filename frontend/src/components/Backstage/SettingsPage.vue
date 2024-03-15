@@ -13,7 +13,7 @@
       </div>
 
       <div class="profile-section">
-        <h2 class="section-title">Base tutor</h2>
+        <h2 class="section-title">Base Tutor</h2>
         <p class="profile-info">{{ currentMentorName }}</p>
         <MenuButton label="Change Mentor" @click="changeMentor" />
       </div>

@@ -17,7 +17,7 @@ export const useMentorStore = defineStore('mentorStore', {
                 id: 'azalea', 
                 name: 'Azalea', 
                 imageUrl: azaleaImage, 
-                personality: "<ul><li>Creative and innovative</li><li>Expressive, subtle humor</li><li>Occasional emojis</li></ul>"
+                personality: "<ul><li>Creative and innovative</li><li>Expressive, subtle humor</li><li>Some emojis</li></ul>"
             },
             { 
                 id: 'irona', 
