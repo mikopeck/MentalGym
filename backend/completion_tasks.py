@@ -165,23 +165,26 @@ def quiz_create(user_id, lesson_id):
 
 def quiz_feedback(user_id, lesson_id):
     answer_msg = db.get_latest_message_by_role(user_id, "user")
+    
+    try:
+        data = json.loads(answer_msg)
+        if 'score' in data and 'answers' in data:
+            score = data['score']
+            answers = data['answers']
 
-    print(answer_msg)
-    if "Score:" in answer_msg and "Answers:" in answer_msg:
-        print("scored")
-    else:
-        print("Error: no quiz score.")
+            print("Score:", score)
+            print("Answers:", answers)
+        else:
+            print("Error: Invalid data received.")
+            return None, lesson_id
+    except json.JSONDecodeError:
+        print("Error: Unable to decode JSON.")
         return None, lesson_id
     
-    parts = answer_msg.split(" | ")
-    score_part = parts[0]  # "Score: [score]%"
-    answers_part = parts[1]  # "Answers: [answers]"
-
-    score = score_part.split(": ")[1]
-    answer_msg = answers_part.split(": ")[1]
-    if score == "100%":
+    if score == 100:
         db.remove_score_from_answer(user_id, answer_msg)
-        db.complete_quiz_message(user_id, lesson_id, score+answers_part+" | ")
+        feedback_msg = json.dumps({"score": score, "answers": answers})
+        db.complete_quiz_message(user_id, lesson_id, feedback_msg+" | ")
         db.update_lesson(user_id, lesson_id, datetime.utcnow())
         db.add_completion_message(user_id, lesson_id=lesson_id)
         return None, lesson_id
@@ -189,7 +192,8 @@ def quiz_feedback(user_id, lesson_id):
     messages = mh.prepare_session_messages(user_id, lesson_id) 
     response = generate_response(user_id, messages)
     db.remove_score_from_answer(user_id, answer_msg)
-    db.complete_quiz_message(user_id, lesson_id, score+answers_part+" | ")
+    feedback_msg = json.dumps({"score": score, "answers": answers})
+    db.complete_quiz_message(user_id, lesson_id, feedback_msg+" | ")
     return response, lesson_id
 
 #### private ####

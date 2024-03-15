@@ -24,7 +24,7 @@
             class="quiz-radio"
             :disabled="quizSubmitted"
           />
-          <span class="radio-dot"></span>
+          <span :class="getRadioDotClass(index, choice)"></span>
           {{ choice }}
         </label>
       </div>
@@ -53,7 +53,7 @@
     </div>
   </div>
   <div v-if="isScore" class="score-display">
-    <p class="centered-score">Quiz score: {{ scoreText }}</p>
+    <p class="centered-score">Quiz score: {{ scoreText }}%</p>
   </div>
   <button
     v-else
@@ -92,6 +92,13 @@ export default {
       const messageStore = useMessageStore();
       return messageStore.sending;
     },
+    questionResults() {
+      return this.questions.map((question, index) => {
+        const userAnswer = this.userAnswers[index];
+        const isCorrect = userAnswer === question.correctAnswer;
+        return { userAnswer, isCorrect };
+      });
+    },
   },
   watch: {
     rawQuizData: {
@@ -114,20 +121,26 @@ export default {
     parseQuizQuestions(content) {
       console.log(content);
 
-      let extractedAnswers = [];
-      const scoreMatch = content.match(/^(\d+%)*/);
-      if (scoreMatch && scoreMatch[0]) {
-        this.isScore = true;
-        this.scoreText = scoreMatch[0];
-        this.quizSubmitted = true;
-
-        content = content.substring(scoreMatch[0].length);
-        const splitContent = content.split(" | ");
-        if (splitContent.length > 0) {
-          extractedAnswers = splitContent[0].substring("Answers: ".length).split(", ");
-          if (splitContent.length > 1) {
-            content = splitContent[1];
+      let extractedAnswers;
+      const contentParts = content.split(" | ");
+      if (contentParts.length >= 2) {
+        try {
+          extractedAnswers = JSON.parse(contentParts[0]);
+          if (
+            extractedAnswers &&
+            extractedAnswers.score &&
+            extractedAnswers.answers
+          ) {
+            this.isScore = true;
+            this.scoreText = extractedAnswers.score;
+            this.quizSubmitted = true;
+          } else {
+            throw new Error("Invalid quiz data format");
           }
+
+          content = contentParts[1];
+        } catch (e) {
+          console.error("Error parsing quiz data:", e);
         }
       } else {
         const inputStore = useInputStore();
@@ -144,7 +157,7 @@ export default {
       this.questions = Object.keys(quizData).map((key, index) => {
         const questionObj = quizData[key];
         this.userAnswers[index] = this.quizSubmitted
-          ? extractedAnswers[index]
+          ? extractedAnswers.answers[index]
           : null;
         const isMultipleChoice = Object.prototype.hasOwnProperty.call(
           questionObj,
@@ -200,9 +213,13 @@ export default {
         (correctCount / this.questions.length) * 100
       );
       const messageStore = useMessageStore();
+      const jsonData = {
+        score: scorePercentage,
+        answers: this.userAnswers,
+      };
       let response;
       response = await messageStore.sendMessage(
-        `Score: ${scorePercentage}% | Answers: ${this.userAnswers.join(", ")}`,
+        JSON.stringify(jsonData),
         this.$route.path
       );
 
@@ -211,6 +228,10 @@ export default {
       } else {
         this.submitText = "Finished";
         this.quizSubmitted = true;
+        if (scorePercentage !== 100) {
+          const inputStore = useInputStore();
+          inputStore.show();
+        }
       }
     },
     submitQuiz() {
@@ -223,6 +244,31 @@ export default {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
+      }
+    },
+    getRadioDotClass(questionIndex, choice) {
+      const isSubmitted = this.quizSubmitted;
+      const isSelected = this.userAnswers[questionIndex] === choice;
+      const result = this.questionResults[questionIndex];
+      if (isSubmitted) {
+        if (isSelected) {
+          return {
+            "radio-dot": true,
+            "correct-choice": result.isCorrect,
+            "incorrect-choice": !result.isCorrect,
+          };
+        } else {
+          return {
+            "radio-dot": true,
+            "default-dot": true,
+          };
+        }
+      } else {
+        return {
+          "radio-dot": true,
+          "selected-not-submitted": isSelected,
+          "default-dot": !isSelected,
+        };
       }
     },
   },
@@ -270,21 +316,6 @@ export default {
   cursor: pointer;
 }
 
-.radio-dot {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 25px;
-  width: 25px;
-  background-color: var(--text-color);
-  border-radius: 50%;
-  transition: background-color 0.3s;
-}
-
-.quiz-radio:checked + .radio-dot {
-  background-color: var(--element-color-1);
-}
-
 .selected-choice {
   transition: opacity 0.3s;
   opacity: 1;
@@ -328,4 +359,32 @@ button:hover:not(:disabled) {
   text-align: center;
   font-size: 24px;
 }
+
+.radio-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  background-color: var(--text-color);
+  transition: background-color 0.3s;
+}
+
+.selected-not-submitted {
+  background-color: var(--element-color-1);
+}
+
+.correct-choice {
+  background-color: #4caf50;
+}
+
+.incorrect-choice {
+  background-color: #f44336;
+}
+
+.default-dot {
+  background-color: var(--text-color);
+}
+
 </style>
