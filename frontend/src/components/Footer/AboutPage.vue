@@ -251,11 +251,9 @@ export default {
 
 .landing-subtitle{
   text-align: center;
-  font-family: serif;
-  font-weight: 500;
+  font-weight: 900;
   opacity: 0.9;
-  font-size: 2em;
-  font-style: italic;
+  font-size: 1.5em;
   margin: 0;
   color: linear-gradient(
     to right,
@@ -375,7 +373,7 @@ export default {
     font-size: 3em;
   }
   .landing-subtitle {
-    font-size: 1.8em;
+    font-size: 1.3em;
   }
   .value-content {
     padding-right: 20%;
@@ -418,7 +416,7 @@ export default {
     font-size: 2em;
   }
   .landing-subtitle {
-    font-size: 1.5em;
+    font-size: 1.1em;
   }
 }
 
