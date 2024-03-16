@@ -45,7 +45,7 @@ export default {
       if (this.$route.path !== "/about") {
         return true;
       }
-      return this.scrollTop > 80;
+      return this.scrollTop > 48;
     },
     logoPath() {
       const themeStore = useThemeStore();

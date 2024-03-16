@@ -1,6 +1,6 @@
 <template>
   <div class="faq-container">
-    <h1>F.A.Q.</h1>
+    <h1> F.A.Q.</h1>
     <div
       v-for="(faq, index) in faqs"
       :key="index"
@@ -124,12 +124,12 @@ export default {
   justify-content: space-between;
   padding: 10px 20px;
   border: solid 1px var(--element-color-2);
-  border-radius: 20px;
+  border-radius: 8px;
   color: var(--text-color);
   background-image: linear-gradient(
     to right,
-    var(--element-color-1),
-    var(--element-color-2)
+    #00000000,
+    var(--background-color-1t)
   );
   cursor: pointer;
   outline: none;

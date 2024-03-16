@@ -5,6 +5,7 @@
         <div class="background-gradient-container">
           <div class="content-container">
             <div class="landing-title">Ascendance·☁️</div>
+            <div class="landing-subtitle">Your Personal AI Tutor</div>
             <div class="buttons">
               <div
                 v-for="(item, index) in items"
@@ -23,13 +24,11 @@
                 key="content-0"
               >
                 <div class="value-explainer">
-                  Personalized AI-driven exploration.
+                  Your personal learning journey.
                 </div>
                 <div class="value-text">
-                  Gain experience in a new way. Complete custom lessons, because
-                  knowledge is power. Dare to accept challenges tailored to push
-                  <i>your</i>
-                  limits. Discover your potential.
+                  YOU decide what to learn. Choose any topic you can describe,
+                  or jump into lessons offered based on your goals and preferences.
                 </div>
               </div>
               <div
@@ -42,8 +41,7 @@
                 </div>
                 <div class="value-text">
                   Embark on a personalized learning adventure with interactive
-                  lessons and fun quizzes. Master skills through daily
-                  challenges and real-world tasks in a game-like setting.
+                  lessons and fun quizzes.
                 </div>
               </div>
               <div
@@ -54,8 +52,7 @@
                 <div class="value-explainer">Stats, graphs, streaks...</div>
                 <div class="value-text">
                   Seeing progress gives us the rewarding feeling hard work
-                  deserves. Track your gains with graphs and stats. Build a
-                  habit of growth by keeping up that daily lesson streak.
+                  deserves. Track your gains with graphs and stats.
                 </div>
               </div>
             </transition>
@@ -101,7 +98,7 @@ export default {
   },
   data() {
     return {
-      items: ["Discover.", "Learn.", "Grow."],
+      items: ["Learn.", "Discover.", "Grow."],
       activeIndex: 0,
       popupMessage: "",
       backgroundImages: [
@@ -198,7 +195,7 @@ export default {
   background-position: center top;
   background-size: cover;
   transition: background-image 0.5s ease-in-out;
-  width: auto;
+  width: 100%;
   height: 84vh;
   max-width: 1024px;
 }
@@ -246,8 +243,25 @@ export default {
   text-align: center;
   font-weight: 700;
   font-size: 4em;
-  margin: 1em 0;
+  margin-top: 1em;
   color: var(--text-color);
+  text-shadow: 0px 0px 10px var(--background-color),
+    0px 0px 20px var(--background-color), 0px 0px 30px var(--background-color);
+}
+
+.landing-subtitle{
+  text-align: center;
+  font-family: serif;
+  font-weight: 500;
+  opacity: 0.9;
+  font-size: 2em;
+  font-style: italic;
+  margin: 0;
+  color: linear-gradient(
+    to right,
+    var(--text-color),
+    var(--highlight-color)
+  );
   text-shadow: 0px 0px 10px var(--background-color),
     0px 0px 20px var(--background-color), 0px 0px 30px var(--background-color);
 }
@@ -263,7 +277,7 @@ export default {
   cursor: pointer;
   opacity: 0.4;
   margin-right: 10px;
-  font-size: 2em;
+  font-size: 1.6em;
   text-shadow: none;
   transition: all 0.3s ease;
 }
@@ -287,6 +301,7 @@ export default {
   font-size: 1.2em;
   font-weight: 700;
   transition: all 0.3s ease;
+  margin-bottom: 0.2em;
 }
 
 .value-text {
@@ -359,6 +374,9 @@ export default {
   .landing-title {
     font-size: 3em;
   }
+  .landing-subtitle {
+    font-size: 1.8em;
+  }
   .value-content {
     padding-right: 20%;
   }
@@ -398,6 +416,9 @@ export default {
 @media only screen and (max-width: 350px) {
   .landing-title {
     font-size: 2em;
+  }
+  .landing-subtitle {
+    font-size: 1.5em;
   }
 }
 
