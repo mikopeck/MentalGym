@@ -43,6 +43,11 @@ import { useMentorStore } from "@/store/mentorStore";
 
 export default {
   name: "App",
+  data() {
+    return {
+      lastVisible: new Date(),
+    };
+  },
   components: {
     TopBar,
     SideMenu,
@@ -54,6 +59,20 @@ export default {
     MentorSelection,
   },
   mounted() {
+    this.handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        const now = new Date();
+        const timeDifference = (now - this.lastVisible) / 1000 / 60;
+        if (timeDifference >= 2) { // 2 minutes afk to reload
+          window.location.reload();
+        }
+      } else {
+        this.lastVisible = new Date();
+      }
+    };
+
+    document.addEventListener("visibilitychange", this.handleVisibilityChange);
+
     const authStore = useAuthStore();
     const router = this.$router;
     if (window.location.search === "?awake") {
@@ -74,6 +93,12 @@ export default {
       const messageStore = useMessageStore();
       messageStore.fetchRecentMessages(path);
     }
+  },
+  unmounted() {
+    document.removeEventListener(
+      "visibilitychange",
+      this.handleVisibilityChange
+    );
   },
   computed: {
     forceUpdateKey() {
@@ -157,6 +182,9 @@ export default {
     onScroll(event) {
       const scrollStore = useScrollStore();
       scrollStore.scrollTop = event.target.scrollTop;
+    },
+    refreshApp() {
+      window.location.reload();
     },
   },
 };

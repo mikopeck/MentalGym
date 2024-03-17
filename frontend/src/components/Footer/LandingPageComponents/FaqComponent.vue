@@ -152,10 +152,14 @@ export default {
   opacity: 0;
   text-align: left;
   border: none;
-  background-color: var(--background-color-1t);
+  background-image: linear-gradient(
+    to right,
+    var(--background-color-1t),
+    #00000000
+  );
   width: 100%;
   max-width: 720px;
-  border-radius: 20px;
+  border-radius: 8px;
   overflow: hidden;
   max-height: 0;
   transition: all 0.3s ease-out;

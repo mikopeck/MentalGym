@@ -1,23 +1,25 @@
 <template>
   <div class="page-main-container">
-    <h1 class="page-title">Profile</h1>
-    <div class="page-main-section">
-      <div class="profile-section">
-        <h2 class="section-title">Email</h2>
-        <p class="profile-info">{{ profile.email }}</p>
-      </div>
+    <h1 class="page-title">Settings</h1>
+    <div class="profile-section">
+      <h2 class="section-title">Email</h2>
+      <p class="profile-info">{{ profile.email }}</p>
+    </div>
 
-      <div class="profile-section">
-        <h2 class="section-title">Subscription Tier</h2>
-        <p class="profile-info">{{ profile.tier }}</p>
-      </div>
+    <div class="profile-section">
+      <h2 class="section-title">Subscription Tier</h2>
+      <a href="/plan"
+        ><p class="profile-info">{{ profile.tier }}</p></a
+      >
+    </div>
 
-      <div class="profile-section">
-        <h2 class="section-title">Base Tutor</h2>
-        <p class="profile-info">{{ currentMentorName }}</p>
-        <MenuButton label="Change Mentor" @click="changeMentor" />
-      </div>
-      <br />
+    <div class="profile-section">
+      <h2 class="section-title">Base Tutor</h2>
+      <p class="profile-info">{{ currentMentorName }}</p>
+      <MenuButton label="Change Mentor" @click="changeMentor" />
+    </div>
+
+    <div class="profile-section">
       <h2 class="section-title">User Profile</h2>
       <textarea
         ref="userTextarea"
@@ -28,8 +30,8 @@
       </textarea>
       <MenuButton label="Update User Profile" @click="updateProfile('user')" />
     </div>
-    <br />
-    <div class="page-main-section">
+
+    <div class="profile-section">
       <h2 class="section-title">Tutor Profile</h2>
       <textarea
         ref="tutorTextarea"
@@ -43,13 +45,12 @@
         @click="updateProfile('tutor')"
       />
     </div>
-  </div>
-  <div class="page-main-container">
-    <h1>Settings</h1>
 
-    <div class="settings-buttons">
-      <MenuButton label="Reset" @click="resetConversation" />
-      <MenuButton label="Logout" @click="logout" />
+    <div class="profile-section">
+      <div class="settings-buttons">
+        <MenuButton label="Reset" @click="resetConversation" />
+        <MenuButton label="Logout" @click="logout" />
+      </div>
     </div>
   </div>
 </template>
@@ -171,8 +172,10 @@ export default {
 
 .profile-section {
   margin-top: 16px;
+  padding-bottom: 16px;
   width: 100%;
   max-width: 720px;
+  border-bottom: 2px solid var(--background-color-1t);
 }
 
 .profile-info {

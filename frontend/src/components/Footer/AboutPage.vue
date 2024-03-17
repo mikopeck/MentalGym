@@ -4,8 +4,10 @@
       <div class="landing-page">
         <div class="background-gradient-container">
           <div class="content-container">
-            <div class="landing-title">Ascendance·☁️</div>
-            <div class="landing-subtitle">Your Personal AI Tutor</div>
+            <div class="landing-titles-container">
+              <div class="landing-title">Ascendance·☁️</div>
+              <div class="landing-subtitle">Your Personal AI Tutor</div>
+            </div>
             <div class="buttons">
               <div
                 v-for="(item, index) in items"
@@ -27,8 +29,9 @@
                   Your personal learning journey.
                 </div>
                 <div class="value-text">
-                  YOU decide what to learn. Choose any topic you can describe,
-                  or jump into lessons offered based on your goals and preferences.
+                  <b>You</b> decide what to learn. Choose any topic you can
+                  describe, or jump into lessons offered based on your goals and
+                  preferences.
                 </div>
               </div>
               <div
@@ -233,10 +236,15 @@ export default {
   display: flex;
   height: 100%;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
   padding: 0 0.5em;
   position: relative;
   z-index: 1;
+}
+
+.landing-titles-container{
+  display: flex;
+  flex-direction: column;
 }
 
 .landing-title {
@@ -249,17 +257,13 @@ export default {
     0px 0px 20px var(--background-color), 0px 0px 30px var(--background-color);
 }
 
-.landing-subtitle{
+.landing-subtitle {
   text-align: center;
   font-weight: 900;
   opacity: 0.9;
   font-size: 1.5em;
   margin: 0;
-  color: linear-gradient(
-    to right,
-    var(--text-color),
-    var(--highlight-color)
-  );
+  color: linear-gradient(to right, var(--text-color), var(--highlight-color));
   text-shadow: 0px 0px 10px var(--background-color),
     0px 0px 20px var(--background-color), 0px 0px 30px var(--background-color);
 }

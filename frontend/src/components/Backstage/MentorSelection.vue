@@ -7,19 +7,25 @@
             v-for="mentor in mentorStore.mentors"
             :key="mentor.id"
             class="mentor-item"
+            :class="{ selected: mentorStore.selectedMentorId === mentor.name }"
           >
             <img
               :src="mentor.imageUrl"
               :alt="mentor.name"
-              @click="mentorStore.selectMentor(mentor.name)"
+              @click="selectMentor(mentor.name)"
               class="mentor-image"
-              :class="{
-                selected: mentorStore.selectedMentorId === mentor.name,
-                active: mentorStore.currentMentor === mentor.name,
-              }"
             />
-            <div class="mentor-name">{{ mentor.name }}</div>
-            <div class="mentor-personality" v-html="mentor.personality"></div>
+            <div
+              class="mentor-name"
+              @click="selectMentor(mentor.name)"
+            >
+              {{ mentor.name }}
+            </div>
+            <div
+              class="mentor-personality"
+              v-html="mentor.personality"
+              @click="selectMentor(mentor.name)"
+            ></div>
           </div>
         </div>
         <MenuButton
@@ -46,10 +52,15 @@ export default {
     const mentorStore = useMentorStore();
     mentorStore.getCurrentMentorName();
 
-    return { mentorStore };
+    const selectMentor = (name) => {
+      mentorStore.selectMentor(name);
+    };
+
+    return { mentorStore, selectMentor };
   },
 };
 </script>
+
 
 <style>
 .popup {
@@ -98,6 +109,13 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  border: 3px solid var(--background-color);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.mentor-item.selected {
+  background-color: var(--background-color-1t);
 }
 
 .mentor-image {
