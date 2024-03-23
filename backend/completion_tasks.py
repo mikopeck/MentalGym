@@ -146,7 +146,7 @@ def lesson_guide(user_id, lesson_id):
     return response, lesson_id
 
 def quiz_create(user_id, lesson_id):
-    messages = mh.prepare_quiz_messages(user_id, lesson_id) 
+    messages = mh.prepare_session_messages(user_id, lesson_id) 
     function = [fns.CreateQuiz]
     function_call = {"name": function[0]['name']}
 

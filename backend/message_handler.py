@@ -99,9 +99,6 @@ def prepare_session_messages(user_id, lesson_id=None, challenge_id=None, limit=N
     messages = system_messages + limited_messages if not has_system_message else limited_messages
     return messages
 
-def prepare_quiz_messages(user_id, lesson_id):
-    return create_message(system_message(user_id, roles.QuizCreate), db.get_lesson_message(user_id, lesson_id))
-
 def quiz_to_message(quiz):
     response = {}
     response["choices"] = [{}]

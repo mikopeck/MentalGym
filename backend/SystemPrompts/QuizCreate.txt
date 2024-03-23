@@ -4,3 +4,4 @@ Quiz only the information provided; however, test understanding more than memory
 This is a profile of the user: 
 |{user-profile}|
 Create a short, personalized, engaging quiz for them.
+If there are quizzes in previous messages, make yours different.

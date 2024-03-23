@@ -27,7 +27,7 @@ def generate_response(user_id, messages, functions=None, function_call="none", m
                 "user": str(user_id),
                 "model": model,
                 "messages": messages,
-                "temperature": 0.1 if functions else 0.2,
+                "temperature": 0.1 if functions else 0.4,
                 "max_tokens": tokens
             }
 

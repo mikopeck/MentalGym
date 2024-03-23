@@ -91,10 +91,6 @@ def get_content_messages(lesson_id, challenge_id, limit=history_limit):
     recent_messages = recent_messages[::-1]
     return [{"role": msg.role, "content": msg.message, "type": msg.message_type} for msg in recent_messages]
 
-def get_lesson_message(user_id, lesson_id):
-    message = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, message_type="lesson").first()
-    return message.message if message else None
-
 def get_api_messages(user_id, lesson_id=None, challenge_id=None, limit=history_limit):
     query = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, challenge_id=challenge_id)
     
