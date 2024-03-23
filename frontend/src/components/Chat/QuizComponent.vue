@@ -46,7 +46,7 @@
             class="quiz-radio"
             :disabled="quizSubmitted"
           />
-          <span class="radio-dot"></span>
+          <span :class="getRadioDotClass(index, choice)"></span>
           {{ choice }}
         </label>
       </div>
@@ -94,10 +94,12 @@ export default {
     },
     questionResults() {
       return this.questions.map((question, index) => {
-        const userAnswer = this.userAnswers[index];
-        const isCorrect = userAnswer === question.correctAnswer;
-        return { userAnswer, isCorrect };
-      });
+      const userAnswer = this.userAnswers[index];
+      const userAnswerStr = userAnswer !== null ? userAnswer.toString().toLowerCase() : '';
+      const correctAnswerStr = question.correctAnswer.toString().toLowerCase();
+      const isCorrect = userAnswerStr === correctAnswerStr;
+      return { userAnswer: userAnswerStr, isCorrect };
+    });
     },
   },
   watch: {
@@ -247,9 +249,12 @@ export default {
       }
     },
     getRadioDotClass(questionIndex, choice) {
+      console.log(questionIndex, choice);
       const isSubmitted = this.quizSubmitted;
       const isSelected = this.userAnswers[questionIndex] === choice;
+      console.log("dotclass",isSubmitted,isSelected)
       const result = this.questionResults[questionIndex];
+      console.log(result);
       if (isSubmitted) {
         if (isSelected) {
           return {
@@ -386,5 +391,4 @@ button:hover:not(:disabled) {
 .default-dot {
   background-color: var(--text-color);
 }
-
 </style>
