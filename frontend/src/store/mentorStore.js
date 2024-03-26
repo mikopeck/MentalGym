@@ -39,7 +39,7 @@ export const useMentorStore = defineStore('mentorStore', {
             },
         ],               
         currentMentor: null,
-        selectedMentorId: null,
+        selectedMentorName: null,
         isVisible: false,
     }),
     actions: {
@@ -51,16 +51,16 @@ export const useMentorStore = defineStore('mentorStore', {
                 })
                 .catch(error => console.error('Error fetching selected mentor:', error));
         },
-        selectMentor(mentorId) {
-            this.selectedMentorId = mentorId;
-        },
-        confirmSelection() {
-            if (this.isVisible === false) { console.log("wowww"); return; }
+        confirmSelection(name) {
+            this.selectedMentorName = name;
+            if (!this.isVisible) { console.log("wowww"); return; }
+            if (!this.selectedMentorName) {
+                this.selectedMentorName = 'azalea';
+            }
             this.hide();
-            axios.post('/api/mentor', { mentorId: this.selectedMentorId })
+            axios.post('/api/mentor', { mentorId: this.selectedMentorName })
                 .then(() => {
-                    this.currentMentor = this.selectedMentorId;
-                    console.log(this.selectedMentorId);
+                    this.currentMentor = this.selectedMentorName;
                     const popupStore = usePopupStore();
                     popupStore.showPopup(`Mentor personality set to ${this.currentMentor}.<br/>This change will affect the main chat and any new lessons or challenges.`);
                     const messageStore = useMessageStore();

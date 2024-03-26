@@ -27,15 +27,15 @@
     /> -->
     <MenuButton
       v-if="loggedIn"
-      label="Progress📈"
-      @click="openRoute('/progress')"
-      :isSelected="isRouteActive('/progress')"
-    />
-    <MenuButton
-      v-if="loggedIn"
       label="Knowledge Map🗺️"
       @click="openRoute('/knowledge')"
       :isSelected="isRouteActive('/knowledge')"
+    />
+    <MenuButton
+      v-if="loggedIn"
+      label="Progress📈"
+      @click="openRoute('/progress')"
+      :isSelected="isRouteActive('/progress')"
     />
     <MenuButton
       v-if="loggedIn"
