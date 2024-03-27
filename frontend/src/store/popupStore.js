@@ -19,7 +19,7 @@ export const usePopupStore = defineStore('popup', {
     },
     showWelcomePopup() {
       this.isVisible = true
-      this.message = "Welcome to Ascendance·☁️!<br/>As you chat with your AI mentor, they will build a profile for you and offer personalized lessons. Please keep in mind this app is still in development and may contain bugs. If you find any, or just want to share your thoughts, I would greatly appreciate your <a href='/contact'>feedback</a>."
+      this.message = "<h4>Welcome to Ascendance·☁️!</h4><div style='text-align: left;'><br/><ul><li>Chat with your tutor to create a profile</li><li>Start learning through personalized lessons</li><li>Complete quizzes to build your Knowledge Map</li><li>This app is still in development and may contain bugs</li><li>Any <a href='/contact'>feedback</a> is greatly appreciated!</li></ul></div>"
     }
   }
 })
