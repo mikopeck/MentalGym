@@ -2,7 +2,6 @@
   <button 
     class="menu-button" 
     :class="{ selected: isSelected }" 
-    @click="$emit('click')"
   >
     {{ label }}
   </button>

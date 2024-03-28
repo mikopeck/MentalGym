@@ -61,12 +61,13 @@ export const useMentorStore = defineStore('mentorStore', {
             axios.post('/api/mentor', { mentorId: this.selectedMentorName })
                 .then(() => {
                     this.currentMentor = this.selectedMentorName;
-                    const popupStore = usePopupStore();
-                    popupStore.showPopup(`Mentor personality set to ${this.currentMentor}.<br/>This change will affect the main chat and any new lessons or challenges.`);
-                    const messageStore = useMessageStore();
                     const path = window.location.pathname;
+                    if (path === "/settings"){
+                        const popupStore = usePopupStore();
+                        popupStore.showPopup(`Mentor personality set to ${this.currentMentor}.<br/>This change will affect the main chat and any new lessons or challenges.`);
+                    }
+                    const messageStore = useMessageStore();
                     messageStore.fetchRecentMessages(path);
-                    return;
                 })
                 .catch((error) => {                    
                     const popupStore = usePopupStore();

@@ -8,7 +8,16 @@ def initialize_messages(user_id):
     db.clear_user_chat_history(user_id)
     update_system_role(user_id, roles.ProfileGather)
     name = db.get_mentor_name(user_id)
-    message = f"Hello! I'm {name}, and I'm here to help you grow and achieve your goals. Is there anything you like to learn about today?"
+    message = f"Hello! I'm {name}, and I'm here to help you grow and achieve your goals. What's your name?"
+    if (name == "Azalea"):
+        message = f"🐙 Hello there! I'm Azalea, your AI octopus guide to the wonders of learning. Imagine each of my tentacles as a path to new knowledge and skills! What's your name, and what exciting adventures can we embark on together in your learning journey?"
+    elif (name == "Bubbles"):
+        message = f"🌊 Hi there! I'm Bubbles, your AI otter guide in the river of knowledge. Let's splash into learning with joy and curiosity! 🦦 What's your name, and what are you excited to discover today?"
+    elif (name == "Irona"):
+        message = f"🦊 Welcome. I am Irona, your AI fox tutor. Here, discipline is key and humor sharp. Tell me your name and your ambition. Are you ready to push your limits and achieve excellence?"
+    elif (name == "Sterling"):
+        message = "Greetings, I am Sterling, your AI horse guide. My approach is professional and direct. Please tell me your name and the subject you wish to excel in. Together, we'll pursue knowledge with precision and clarity."
+
     db.add_ai_message(user_id, message, roles.ProfileGather)
 
 def create_message(system_message, user_message):

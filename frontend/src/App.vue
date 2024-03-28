@@ -7,7 +7,7 @@
       :key="forceUpdateKey"
     />
     <SideMenu />
-    <MentorSelection v-if="loggedIn" />
+    <MentorSelection v-if="loggedIn"/>
 
     <div class="main-content">
       <div class="another" @scroll="onScroll">
@@ -60,10 +60,11 @@ export default {
   },
   mounted() {
     this.handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState === "visible") {
         const now = new Date();
         const timeDifference = (now - this.lastVisible) / 1000 / 60;
-        if (timeDifference >= 2) { // 2 minutes afk to reload
+        if (timeDifference >= 2) {
+          // 2 minutes afk to reload
           window.location.reload();
         }
       } else {
@@ -76,11 +77,13 @@ export default {
     const authStore = useAuthStore();
     const router = this.$router;
     if (window.location.search === "?awake") {
+      console.log("awakapp");
       authStore.login();
       const popupStore = usePopupStore();
       popupStore.showWelcomePopup();
       const mentorStore = useMentorStore();
       mentorStore.show();
+      console.log(mentorStore.isVisible, "app");
       router.push("/");
     }
 
@@ -162,8 +165,8 @@ export default {
 
       const menuStore = useMenuStore();
       menuStore.hideActionMenu();
-      const mentorStore = useMentorStore();
-      mentorStore.hide();
+      // const mentorStore = useMentorStore();
+      // mentorStore.hide();
       if (window.innerWidth < 1750) {
         menuStore.hideSideMenu();
       }
