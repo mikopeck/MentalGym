@@ -26,22 +26,9 @@ export default {
   unmounted() {
     eventBus.off("scroll-to-message");
   },
-  computed: {
-    // scrollPosition() {
-    //   const scrollStore = useScrollStore();
-    //   return scrollStore.scrollTop;
-    // },
-  },
-  watch: {
-    // scrollPosition(newValue) {
-    //   console.log("appscrol" + newValue +this.$refs.msgHistory);
-    //   this.$refs.msgHistory.scrollTop = newValue;
-    //   console.log("appscrolll" + this.$refs.scrollableElement.scrollTop);
-    // },
-  },
   methods: {
     handleScrollToMessage(topPosition) {
-      console.log("handleScrollToMessage" + topPosition);
+      // console.log("handleScrollToMessage" + topPosition);
       const scrollStore = useScrollStore();
       scrollStore.scrollTop = topPosition;
       this.$refs.msgHistory.scrollTop = topPosition;

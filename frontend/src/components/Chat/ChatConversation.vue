@@ -59,7 +59,7 @@ export default {
     filteredMessages() {
       const messageStore = useMessageStore();
       if (!messageStore.messages) {
-        console.log("No messages!");
+        // console.log("No messages!");
         return [];
       }
 
@@ -109,7 +109,7 @@ export default {
   },
   methods: {
     handleNewMessage() {
-      console.log("handling new message");
+      // console.log("handling new message");
       this.$nextTick(() => {
         setTimeout(() => {
           const messages = document.querySelectorAll(".chat-bubble");

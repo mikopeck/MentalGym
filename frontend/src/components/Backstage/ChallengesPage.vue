@@ -96,7 +96,7 @@ export default {
       this.$router.push(`/challenge/${challengeId}`);
     },
     deleteChallenge(challengeId) {
-      console.log(challengeId);
+      // console.log(challengeId);
       const popupStore = usePopupStore();
       popupStore.showPopup("Coming soon..");
     },

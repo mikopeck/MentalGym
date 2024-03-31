@@ -9,7 +9,7 @@ export const useAuthStore = defineStore('auth', {
   }),
   actions: {
     async checkAuth() {
-      console.log("Checking authentication");
+      // console.log("Checking authentication");
       try {
         const response = await axios.get('/api/check-auth');
         this.userTier = response.data.userTier;
@@ -23,7 +23,7 @@ export const useAuthStore = defineStore('auth', {
         console.error('Error checking auth status:', error);
         this.logout();
       }
-      console.log("Auth:" + this.loggedIn);
+      // console.log("Auth:" + this.loggedIn);
     },
     login() {
       this.loggedIn = true;

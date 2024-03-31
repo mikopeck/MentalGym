@@ -121,7 +121,7 @@ export default {
       return this.userAnswers.every((answer) => answer !== null);
     },
     parseQuizQuestions(content) {
-      console.log(content);
+      // console.log(content);
 
       let extractedAnswers;
       const contentParts = content.split(" | ");
@@ -190,7 +190,7 @@ export default {
     },
     async checkAnswers() {
       let correctCount = 0;
-      console.log(this.userAnswers);
+      // console.log(this.userAnswers);
       this.questions.forEach((question, index) => {
         let userAnswer =
           typeof this.userAnswers[index] === "boolean"
@@ -239,7 +239,7 @@ export default {
     submitQuiz() {
       if (!this.quizSubmitted) {
         this.checkAnswers();
-        console.log("Quiz submitted with answers:", this.userAnswers);
+        // console.log("Quiz submitted with answers:", this.userAnswers);
       }
     },
     shuffleArray(array) {
@@ -249,12 +249,12 @@ export default {
       }
     },
     getRadioDotClass(questionIndex, choice) {
-      console.log(questionIndex, choice);
+      // console.log(questionIndex, choice);
       const isSubmitted = this.quizSubmitted;
       const isSelected = this.userAnswers[questionIndex] === choice;
-      console.log("dotclass",isSubmitted,isSelected)
+      // console.log("dotclass",isSubmitted,isSelected)
       const result = this.questionResults[questionIndex];
-      console.log(result);
+      // console.log(result);
       if (isSubmitted) {
         if (isSelected) {
           return {

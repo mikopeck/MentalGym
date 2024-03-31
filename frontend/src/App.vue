@@ -77,13 +77,13 @@ export default {
     const authStore = useAuthStore();
     const router = this.$router;
     if (window.location.search === "?awake") {
-      console.log("awakapp");
+      // console.log("awakapp");
       authStore.login();
       const popupStore = usePopupStore();
       popupStore.showWelcomePopup();
       const mentorStore = useMentorStore();
       mentorStore.show();
-      console.log(mentorStore.isVisible, "app");
+      // console.log(mentorStore.isVisible, "app");
       router.push("/");
     }
 
@@ -148,14 +148,14 @@ export default {
         this.$router.push("/login");
       }
       if (newValue && this.shouldShowChat) {
-        console.log("login fetch");
+        // console.log("login fetch");
 
         const messageStore = useMessageStore();
         messageStore.fetchRecentMessages(this.$route.path);
       }
     },
     "$route.path": function () {
-      console.log(this.$route.path);
+      // console.log(this.$route.path);
       if (this.shouldShowChat) {
         const messageStore = useMessageStore();
         messageStore.fetchRecentMessages(this.$route.path);

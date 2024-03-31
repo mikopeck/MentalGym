@@ -12,12 +12,12 @@ export const useInputStore = defineStore({
         },
         show(origin) {
             if (origin){
-                console.log("showing"+origin);
+                // console.log("showing"+origin);
             }
             this.isInputFieldVisible = true;
         },
         hide() {
-            console.log("hiding");
+            // console.log("hiding");
             this.isInputFieldVisible = false;
         },
     },

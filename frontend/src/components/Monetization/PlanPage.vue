@@ -104,7 +104,7 @@ export default {
       axios
         .get("/api/plan")
         .then((response) => {
-          console.log(response.data);
+          // console.log(response.data);
           this.userTier = response.data.tier;
         })
         .catch((error) => {

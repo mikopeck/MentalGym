@@ -30,14 +30,14 @@ const router = createRouter({
   routes,
 });
 router.beforeEach((to, from, next) => {
-  console.log("mainjs"+from+to.fullPath);
+  // console.log("mainjs"+from+to.fullPath);
   if (to.fullPath === "/?awake") {
-    console.log("awakmain");
+    // console.log("awakmain");
     const popupStore = usePopupStore();
     popupStore.showWelcomePopup();
     const mentorStore = useMentorStore();
     mentorStore.show();
-    console.log(mentorStore.isVisible,"main");
+    // console.log(mentorStore.isVisible,"main");
     next('/');
   }
   // const inputStore = useInputStore();

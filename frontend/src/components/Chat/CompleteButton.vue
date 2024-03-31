@@ -127,7 +127,7 @@ export default {
           if (response.data && response.data.suggestions) {
             this.suggestions = response.data.suggestions;
           } else {
-            console.log("No suggestions received");
+            // console.log("No suggestions received");
           }
         })
         .catch((error) => {
@@ -135,7 +135,7 @@ export default {
         });
     },
     async startSuggestion(suggestion) {
-      console.log("Selected suggestion: " + suggestion);
+      // console.log("Selected suggestion: " + suggestion);
       const messageStore = useMessageStore();
 
       try {
@@ -143,7 +143,7 @@ export default {
           "Start lesson: " + suggestion,
           "/"
         );
-        console.log("Response: ", response);
+        // console.log("Response: ", response);
 
         if (response && this.$router) {
           this.$router.push(response);

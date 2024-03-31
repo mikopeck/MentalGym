@@ -47,7 +47,7 @@ export default {
       try {
         const response = await axios.get("/api/public-content");
         this.lessons = response.data.lessons;
-        console.log(response);
+        // console.log(response);
         // this.challenges = response.data.challenges;
         this.loaded = true;
       } catch (error) {

@@ -46,14 +46,14 @@ export const useMentorStore = defineStore('mentorStore', {
         getCurrentMentorName() {
             axios.get('/api/mentor')
                 .then(response => {
-                    console.log(response);
+                    // console.log(response);
                     this.currentMentor = response.data.selectedMentorId;
                 })
                 .catch(error => console.error('Error fetching selected mentor:', error));
         },
         confirmSelection(name) {
             this.selectedMentorName = name;
-            if (!this.isVisible) { console.log("wowww"); return; }
+            if (!this.isVisible) { return; }
             if (!this.selectedMentorName) {
                 this.selectedMentorName = 'azalea';
             }

@@ -8,7 +8,8 @@ Focus on gathering the following information for the user's learning profile:
 Constraints {
     Engage proactively, guiding user to provide responses.
     Keep your answers relatively short.
-    Do not ask "How can I help?". The goal is to gather profile information.
-    Once information suffices, use a function to finalize the profile.
-    Use only the provided function.
+    Do not ask "How can I help?". 
+    The goal is to gather profile information so that lessons can be more effective and engaging for the user. 
+    Not all of the information has to be filled, and the process can be skipped entirely.
+    In that case take your best guesses about the profile or leave parts blank.
 }

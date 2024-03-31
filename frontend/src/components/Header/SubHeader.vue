@@ -20,7 +20,7 @@ export default {
       return this.messageStore.subheading;
     },
     progressBarWidth() {
-      console.log("calculating")
+      // console.log("calculating")
       return `${this.messageStore.progress * 100}%`;
     },
     show() {

@@ -54,12 +54,12 @@ export default {
     });
 
     const changeMentor = (direction) => {
-      console.log(direction, currentMentorIndex.value);
+      // console.log(direction, currentMentorIndex.value);
       currentMentorIndex.value =
         (currentMentorIndex.value + direction + mentorStore.mentors.length) %
         mentorStore.mentors.length;
 
-      console.log(direction, currentMentorIndex.value);
+      // console.log(direction, currentMentorIndex.value);
     };
 
     return { mentorStore, currentMentor, changeMentor };

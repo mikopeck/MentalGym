@@ -17,10 +17,11 @@ Profile = {
             # },
 
 # personal
-            "prior_knowledge": {
+            "education_level": {
                 "type": "string",
-                "description": "Prior knowledge and level. For example: Basic spanish, intermediate algebra, advanced geology.",
+                "description": "Prior knowledge and education. For example: Just started school, starting university next year , completed basic education __ years ago, pursuing a PhD in theoretical physics.",
             },
+
             "interests": {
                 "type": "string",
                 "description": "Personal interests which can make learning more engaging if used to tailor examples and explanations.",

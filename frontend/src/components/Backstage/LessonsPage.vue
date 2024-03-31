@@ -90,7 +90,7 @@ export default {
       this.$router.push(`/lesson/${lessonId}`);
     },
     deleteLesson(lessonId) {
-      console.log(lessonId)
+      // console.log(lessonId)
       const popupStore = usePopupStore();
       popupStore.showPopup("Coming soon..");
     },

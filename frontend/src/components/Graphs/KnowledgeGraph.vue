@@ -45,8 +45,8 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           this.graphData = data.data;
-          console.log(data);
-          console.log(this.graphData);
+          // console.log(data);
+          // console.log(this.graphData);
 
           this.prepareGraphData();
           const nodeId = this.$route.query.node;
@@ -70,7 +70,7 @@ export default {
       });
     },
     renderGraph(nodeId) {
-      console.log("rendering");
+      // console.log("rendering");
       this.width = window.innerWidth - 42;
       this.height = window.innerHeight - 250;
       const vm = this; // Store a reference to the Vue instance
@@ -235,7 +235,7 @@ export default {
         const nodeToSelect = this.graphData.nodes.find(
           (node) => node.id.toString() === nodeId
         );
-        console.log("Node to Select:", nodeToSelect);
+        // console.log("Node to Select:", nodeToSelect);
         if (nodeToSelect) {
           this.selectNode(nodeToSelect, null);
         }
@@ -255,9 +255,9 @@ export default {
           const translateX = this.width / 2 - node.x * zoomLevel;
           const translateY = this.height / 2 - node.y * zoomLevel;
 
-          console.log(this.width / 2 + "," + this.height / 2);
-          console.log(node.x + "," + node.y);
-          console.log(translateX + "," + translateY);
+          // console.log(this.width / 2 + "," + this.height / 2);
+          // console.log(node.x + "," + node.y);
+          // console.log(translateX + "," + translateY);
           this.svg
             .transition()
             .duration(3000)
@@ -408,7 +408,7 @@ export default {
       } else if (nodeData.category.includes("challenge")) {
         path = `/challenge/${nodeData.id}`;
       }
-      console.log("Navigating to " + path);
+      // console.log("Navigating to " + path);
       if (path) {
         this.$router.push(path);
       }
@@ -430,7 +430,7 @@ export default {
               this.showingSuggestions = true;
               this.updateExploreButtonText("Hide");
             } else {
-              console.log("No suggestions received for node " + nodeData.id);
+              // console.log("No suggestions received for node " + nodeData.id);
               this.updateExploreButtonText("Explore");
             }
           })
@@ -483,7 +483,7 @@ export default {
     },
 
     async handleSuggestionClick(suggestion) {
-      console.log("Selected suggestion: " + suggestion);
+      // console.log("Selected suggestion: " + suggestion);
       const messageStore = useMessageStore();
 
       try {
@@ -491,7 +491,7 @@ export default {
           "Start lesson: " + suggestion,
           "/"
         );
-        console.log("Response: ", response);
+        // console.log("Response: ", response);
 
         if (response && this.$router) {
           this.$router.push(response);

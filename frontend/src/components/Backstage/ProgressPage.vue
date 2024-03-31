@@ -177,7 +177,7 @@ export default {
         this.topTopics = response.data.progress.topTopics;
         this.maxStreak = response.data.progress.maxStreak;
         this.currentStreak = response.data.progress.currentStreak;
-        console.log(response.data);
+        // console.log(response.data);
         this.dataLoaded = true;
       } else {
         console.error("Failed to fetch user progress");
