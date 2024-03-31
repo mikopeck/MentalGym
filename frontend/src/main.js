@@ -3,7 +3,6 @@ import { createApp, defineAsyncComponent } from 'vue';
 import { createPinia } from 'pinia'
 import App from './App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
-// import { useInputStore} from "@/store/inputStore"
 import { useAuthStore } from "@/store/authStore";
 import { usePopupStore } from "@/store/popupStore";
 import { useMentorStore } from "@/store/mentorStore";
@@ -13,7 +12,6 @@ import './assets/themes.css';
 
 const routes = [
   { path: '/lessons', component: defineAsyncComponent(() => import('./components/Backstage/LessonsPage.vue')) },
-  { path: '/challenges', component: defineAsyncComponent(() => import('./components/Backstage/ChallengesPage.vue')) },
   { path: '/progress', component: defineAsyncComponent(() => import('./components/Backstage/ProgressPage.vue')) },
   { path: '/knowledge', component: defineAsyncComponent(() => import('./components/Backstage/KnowledgePage.vue')) },
   { path: '/about', component: defineAsyncComponent(() => import('./components/Footer/AboutPage.vue')) },
@@ -30,7 +28,7 @@ const router = createRouter({
   routes,
 });
 router.beforeEach((to, from, next) => {
-  // console.log("mainjs"+from+to.fullPath);
+  console.log("mainjs"+from+to.fullPath);
   if (to.fullPath === "/?awake") {
     // console.log("awakmain");
     const popupStore = usePopupStore();
@@ -40,8 +38,6 @@ router.beforeEach((to, from, next) => {
     // console.log(mentorStore.isVisible,"main");
     next('/');
   }
-  // const inputStore = useInputStore();
-  // inputStore.show("main");
   const authStore = useAuthStore();
 
   const isLessonOrChallenge = to.path.startsWith('/lesson/') || to.path.startsWith('/challenge/');
