@@ -131,7 +131,7 @@ def lesson_create(user_id, lesson_id, lesson_name = None):
         db.set_tutor(user_id, response['choices'][0]['message']['content'])
 
     lesson_msgs = mh.prepare_session_messages(user_id, lesson_id)+mh.user_message("Lesson topic: "+lesson_name)
-    return generate_response(user_id, lesson_msgs, tokens=LESSON_TOKENS), lesson_id # TODO: for paid model=GPT4
+    return generate_response(user_id, lesson_msgs, tokens=LESSON_TOKENS, model= GPT4), lesson_id # TODO: for paid model=GPT4
 
 def lesson_guide(user_id, lesson_id):
     messages = mh.prepare_session_messages(user_id, lesson_id) 

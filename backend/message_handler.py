@@ -16,7 +16,7 @@ def initialize_messages(user_id):
     elif (name == "Irona"):
         message = f"🦊 Welcome. I am Irona, your AI fox tutor. Here, discipline is key and humor sharp. Tell me your name and your ambition. Are you ready to push your limits and achieve excellence?"
     elif (name == "Sterling"):
-        message = "Greetings, I am Sterling, your AI horse guide. My approach is professional and direct. Please tell me your name and the subject you wish to excel in. Together, we'll pursue knowledge with precision and clarity."
+        message = "Greetings, I am Sterling, your AI horse tutor. My approach is professional and direct. Please tell me your name and the subject you wish to excel in. Together, we'll pursue knowledge with precision and clarity."
 
     db.add_ai_message(user_id, message, roles.ProfileGather)
 

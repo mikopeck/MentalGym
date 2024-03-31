@@ -144,7 +144,7 @@ export default {
       content = content.replace(regex, "<del>$1</del>");
 
       // Headers
-      regex = /^(#{1,6})\s*([^\n]+)\n/gm;
+      regex = /^(#{1,6})\s*([^\n]+?)(?=\n|$)/gm;
       content = content.replace(regex, function (_match, hashes, text) {
         let level = hashes.length;
         return `<h${level}>${text.trim()}</h${level}>`;
