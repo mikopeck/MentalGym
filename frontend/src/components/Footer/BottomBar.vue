@@ -52,7 +52,7 @@
       >
       <span class="separator">·</span>
       <p>© 2024 Ascendance.</p></div>
-      <div><p class="sincere-msg">Made with ❤️ for knowing and doing.</p></div>
+      <!-- <div><p class="sincere-msg">Made with ❤️ for knowing and doing.</p></div> -->
     </div>
   </div>
 </template>
