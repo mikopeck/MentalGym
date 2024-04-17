@@ -98,7 +98,7 @@ export default {
 
       // Render links
       const linkColor = getComputedStyle(document.documentElement)
-        .getPropertyValue("--background-color-1t")
+        .getPropertyValue("--element-color-1")
         .trim();
       const link = graphGroup
         .append("g")
