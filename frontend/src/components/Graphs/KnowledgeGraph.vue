@@ -508,6 +508,7 @@ export default {
 
 <style>
 .menu-button {
+  margin: 0px;
   padding: 8px 16px;
   background-color: var(--background-color-1t);
   border: 1px solid var(--text-color);
