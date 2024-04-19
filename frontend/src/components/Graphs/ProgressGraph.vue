@@ -1,13 +1,13 @@
 <!-- ProgressGraph.vue -->
 <template>
   <div class="progress-graph">
-    <Line :data="data" :options="options"></Line>
+    <LineGraph :data="data" :options="options"></LineGraph>
   </div>
 </template>
 
 <script>
 import { useThemeStore } from "@/store/themeStore";
-import { Line } from "vue-chartjs";
+import { Line as LineGraph } from "vue-chartjs";
 import {
   Chart as ChartJS,
   Title,
@@ -31,7 +31,7 @@ ChartJS.register(
 
 export default {
   name: "ProgressGraph",
-  components: { Line },
+  components: { LineGraph },
   props: {
     data: {
       type: Object,
