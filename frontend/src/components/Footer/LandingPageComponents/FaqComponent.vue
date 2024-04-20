@@ -27,20 +27,20 @@ export default {
         {
           question: "What is Ascendance and who can benefit from using it?",
           answer:
-            "Ascendance is a personalized AI-driven learning platform designed to offer custom lessons tailored to individual learning styles and goals. It's ideal for anyone seeking a flexible and adaptive way to learn new topics, enhance skills, or pursue personal and professional development.",
+            "Ascendance is defined as the act of rising up. Ascendance·☁️ is a personalized AI-driven learning platform that makes education accessible to everyone. Our mission is to deliver a tailored tutoring experience to anyone curious about the world. Whether you're looking to explore new subjects, boost your skills, or advance your career, Ascendance provides a flexible and adaptive learning environment suited for all your personal and professional development needs.",
           isOpen: false,
         },
         {
           question: "How does Ascendance personalize my learning experience?",
           answer:
-            "Ascendance uses advanced algorithms to analyze your learning style, pace, and preferences. Based on this analysis, it customizes lessons to suit your unique needs, ensuring an engaging and effective learning journey.",
+            "At Ascendance, your learning experience is entirely customized to fit you. Your AI tutor adapts lessons to match your learning style and preferences, and creates engaging content based on your interests and motivations. Learn your way, with quizzes and lessons that adapt to you.",
           isOpen: false,
         },
         {
           question:
             "Is there a subscription model and what are the payment options?",
           answer:
-            "Ascendance offers both free and <a href='/plan'>paid subscription plans</a>. The paid plans feature higher message limits and use more powerful AI models. Payment can be made via major credit cards, and other digital wallets, depending on your region.",
+            "Ascendance offers both free and <a href='/plan'>paid subscription plans</a>. The paid plans feature increased message limits and use more powerful AI models. Payment can be made via major credit cards, and other digital wallets, depending on your region.",
           isOpen: false,
         },
         {
