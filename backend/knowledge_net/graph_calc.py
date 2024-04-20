@@ -1,4 +1,5 @@
 import numpy as np
+import re
 
 from openapi import get_embeddings
 from database.db_handlers import user_knowledge_net_info
@@ -15,7 +16,7 @@ def get_graph_data(user_id):
 
     print(all_strings)
     # Retrieve embeddings for all strings
-    embeddings = get_embeddings(all_strings)
+    embeddings = get_embeddings(sanitize(all_strings))
     similarities = calculate_cosine_similarities(embeddings)
     
     edges = calculate_edges(similarities)
@@ -121,3 +122,19 @@ def compose_data(user_data, edges):
             })
 
     return graph_data
+
+def sanitize(lessons):
+    # Expanded list of words to remove, including some variations
+    removal_list = [
+        "advanced", "introduction", "basic", "basics",
+        "fundamental", "fundamentals", "beginner", "intermediate",
+        "intro", "essentials", "core"
+    ]
+
+    # Regular expression pattern to match any of the words in removal_list
+    pattern = re.compile(r'\b(' + '|'.join(removal_list) + r')\b', re.IGNORECASE)
+
+    # Sanitize the list by removing the specified words
+    sanitized_lessons = [pattern.sub('', lesson).strip() for lesson in lessons]
+    
+    return sanitized_lessons
