@@ -27,20 +27,20 @@ export default {
         {
           question: "What is Ascendance and who can benefit from using it?",
           answer:
-            "Ascendance is a personalized AI-driven learning platform designed to offer custom lessons and challenges tailored to individual learning styles and goals. It's ideal for anyone seeking a flexible and adaptive way to learn new topics, enhance skills, or pursue personal and professional development.",
+            "Ascendance is a personalized AI-driven learning platform designed to offer custom lessons tailored to individual learning styles and goals. It's ideal for anyone seeking a flexible and adaptive way to learn new topics, enhance skills, or pursue personal and professional development.",
           isOpen: false,
         },
         {
           question: "How does Ascendance personalize my learning experience?",
           answer:
-            "Ascendance uses advanced algorithms to analyze your learning style, pace, and preferences. Based on this analysis, it customizes lessons and challenges to suit your unique needs, ensuring an engaging and effective learning journey.",
+            "Ascendance uses advanced algorithms to analyze your learning style, pace, and preferences. Based on this analysis, it customizes lessons to suit your unique needs, ensuring an engaging and effective learning journey.",
           isOpen: false,
         },
         {
           question:
             "Is there a subscription model and what are the payment options?",
           answer:
-            "Ascendance offers free, <a href='/plan'>paid and premium subscription plans</a>. The paid plans feature higher message limits and use more powerful AI models. Payment can be made via major credit cards, and other digital wallets, depending on your region.",
+            "Ascendance offers both free and <a href='/plan'>paid subscription plans</a>. The paid plans feature higher message limits and use more powerful AI models. Payment can be made via major credit cards, and other digital wallets, depending on your region.",
           isOpen: false,
         },
         {
