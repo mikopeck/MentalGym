@@ -67,12 +67,13 @@
       </div>
     </div>
     <div class="landing-page-2">
+      <div class="features-container">
+        <FeaturesComponent />
+      </div>
       <div class="stat-infos">
-        <!-- <div class="stat-info">🤝Join 20+ Ascendants!</div> -->
         <div class="stat-info">📖200+ Custom Lessons generated.</div>
         <div class="small-text">Check out these shared lessons ↓</div>
         <div class="shared-content"><SharedContent /></div>
-        <!-- <div class="stat-info">🎯60+ Unique Challenges accepted.</div> -->
       </div>
       <img :src="openaiPath" alt="Powered by OpenAI" class="openai" />
       <div class="faq-container">
@@ -91,6 +92,7 @@ import { useThemeStore } from "@/store/themeStore";
 import CtaButton from "./LandingPageComponents/CtaButton.vue";
 import FaqComponent from "./LandingPageComponents/FaqComponent.vue";
 import SharedContent from "./LandingPageComponents/SharedContent.vue";
+import FeaturesComponent from "./LandingPageComponents/FeaturesComponent.vue";
 
 export default {
   name: "AboutPage",
@@ -98,6 +100,7 @@ export default {
     CtaButton,
     FaqComponent,
     SharedContent,
+    FeaturesComponent,
   },
   data() {
     return {
@@ -154,6 +157,24 @@ export default {
         this.backgroundImages[this.activeIndex]
       })`;
     },
+    observeFeatures() {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 1,
+        }
+      );
+
+      const features = document.querySelectorAll(".feature");
+      features.forEach((feature) => observer.observe(feature));
+    },
     observeStatInfos() {
       const observer = new IntersectionObserver(
         (entries, observer) => {
@@ -178,6 +199,7 @@ export default {
   mounted() {
     this.updateBackgroundImage();
     this.observeStatInfos();
+    this.observeFeatures();
   },
   beforeUnmount() {
     clearInterval(this.interval);
@@ -242,7 +264,7 @@ export default {
   z-index: 1;
 }
 
-.landing-titles-container{
+.landing-titles-container {
   display: flex;
   flex-direction: column;
 }
@@ -259,7 +281,7 @@ export default {
 
 .landing-subtitle {
   text-align: center;
-  font-weight: 900;
+  font-weight: 800;
   opacity: 0.9;
   font-size: 1.5em;
   margin: 0;
@@ -349,6 +371,11 @@ export default {
   justify-content: center;
   flex-direction: column;
   justify-content: space-around;
+}
+
+.features-container {
+    display: flex;
+    justify-content: center;
 }
 
 .faq-container {
