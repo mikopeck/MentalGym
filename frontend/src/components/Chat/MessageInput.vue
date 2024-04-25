@@ -104,14 +104,16 @@ export default {
         this.$route.path
       );
 
-      if (response === "not sent") {
+      if (response && response === "not sent") {
         console.error("No response or message not sent");
         return;
       }
 
       this.message = "";
       this.adjustHeight();
-      this.$router.push(response);
+      if (response){
+        this.$router.push(response);
+      }
     },
     adjustHeight() {
       this.$nextTick(() => {
