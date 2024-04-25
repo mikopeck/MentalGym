@@ -238,6 +238,7 @@ export default {
     },
     submitQuiz() {
       if (!this.quizSubmitted) {
+        this.submitText = "Checking answers...";
         this.checkAnswers();
         // console.log("Quiz submitted with answers:", this.userAnswers);
       }

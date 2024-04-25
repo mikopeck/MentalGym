@@ -19,8 +19,7 @@
           <div v-else>Please <a href="/login">log in</a> to submit feedback and bugs.</div>
           <br />
           <div>
-            To reach us, join the Discord community at the bottom of the page or
-            email <b>miko@ascendance.cloud</b>.
+            To reach us, join the Discord <a href="https://discord.gg/SSGygda5DX" target="_blank">community</a> or email <b>miko@ascendance.cloud</b>.
           </div>
         </div>
       </div>

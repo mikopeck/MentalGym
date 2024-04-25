@@ -41,12 +41,12 @@ export default {
   setup() {
     const ads = useAdsStore();
     const messages = ref([
-      '<a href="/plan">Paid plans</a> use the most accurate and powerful AI models available.',
+      '<a href="/plan" target="_blank">Paid plans</a> use the most accurate and powerful AI models available.',
       'Complete at least one lesson daily to keep a streak!',
       "Generating lessons and quizzes takes about 2-3× longer than regular replies. Thank you for your patience.",
-      'Your ad could appear here.. <a href="/contact">get in touch.</a>',
+      'Your ad could appear here.. <a href="/contact" target="_blank">get in touch.</a>',
       'Grow personally and professionally by making learning a fun part of your daily life.',
-      'Would you recommend us to a friend? <br><a href="/contact">What could we do to make that happen?</a>',
+      'Would you recommend us to a friend? <br><a href="/contact" target="_blank">What could we do to make that happen?</a>',
       'Join our community on <a target="_blank" href="https://twitter.com/AscendanceCloud">𝕏</a> and <a target="_blank" href="https://discord.gg/SSGygda5DX">Discord</a> to stay up-to-date with the latest features.',
       'Please consider <a target="_blank" href="https://donate.stripe.com/fZe8Ao9hl63qe9GeUX">donating</a> to help this app grow faster!',
     ]);
