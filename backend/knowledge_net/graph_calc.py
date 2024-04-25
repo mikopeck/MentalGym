@@ -128,7 +128,7 @@ def sanitize(lessons):
     removal_list = [
         "advanced", "introduction", "basic", "basics",
         "fundamental", "fundamentals", "beginner", "intermediate",
-        "intro", "essentials", "core"
+        "intro", "essentials", "core", "effective"
     ]
 
     # Regular expression pattern to match any of the words in removal_list

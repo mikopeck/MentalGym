@@ -26,6 +26,10 @@ def is_within_limit(user):
         minutes, _ = divmod(remainder, 60)
         message = f"Daily limit ({daily_limit}) exceeded. Please <a href='/plan' target='_blank'>upgrade your plan</a> or wait {hours} hours and {minutes} minutes before you send another message."
         return False, message
+    
+    if user.last_request_time:
+        if isinstance(user.last_request_time, datetime) and user.last_request_time.tzinfo is None:
+            user.last_request_time = user.last_request_time.replace(tzinfo=timezone.utc)
 
     if user.last_request_time and (now - user.last_request_time) <= timedelta(seconds=2):
         return False, "Cooldown triggered. Please wait a few seconds and try again."

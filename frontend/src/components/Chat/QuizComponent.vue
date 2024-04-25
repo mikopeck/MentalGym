@@ -94,12 +94,15 @@ export default {
     },
     questionResults() {
       return this.questions.map((question, index) => {
-      const userAnswer = this.userAnswers[index];
-      const userAnswerStr = userAnswer !== null ? userAnswer.toString().toLowerCase() : '';
-      const correctAnswerStr = question.correctAnswer.toString().toLowerCase();
-      const isCorrect = userAnswerStr === correctAnswerStr;
-      return { userAnswer: userAnswerStr, isCorrect };
-    });
+        const userAnswer = this.userAnswers[index];
+        const userAnswerStr =
+          userAnswer !== null ? userAnswer.toString().toLowerCase() : "";
+        const correctAnswerStr = question.correctAnswer
+          .toString()
+          .toLowerCase();
+        const isCorrect = userAnswerStr === correctAnswerStr;
+        return { userAnswer: userAnswerStr, isCorrect };
+      });
     },
   },
   watch: {
@@ -225,7 +228,8 @@ export default {
         this.$route.path
       );
 
-      if (response === "not sent") {
+      if (!response || response === "not sent") {
+        console.error("No response or message not sent");
         return;
       } else {
         this.submitText = "Finished";

@@ -1,42 +1,43 @@
 <!-- MessageInput.vue -->
 <template>
-<div class="message-area" v-if="inputVisible">
-  <div class="message-input-container" >
-    <div class="action-container">
-      <button
-        v-if="actionAvailable"
-        @click="toggleMenu"
-        class="action-btn"
-        v-tooltip="'Actions available...'"
-      >
-        <div class="action-icon" :class="actionIconClass">?</div>
-      </button>
+  <div class="message-area" v-if="inputVisible">
+    <div class="message-input-container">
+      <div class="action-container">
+        <button
+          v-if="actionAvailable"
+          @click="toggleMenu"
+          class="action-btn"
+          v-tooltip="'Actions available...'"
+        >
+          <div class="action-icon" :class="actionIconClass">?</div>
+        </button>
 
-      <ActionMenu @actionSelected="handleAction" />
-    </div>
-
-    <textarea
-      ref="messageInput"
-      id="messageInput"
-      v-model="message"
-      @input="adjustHeight"
-      @keydown.enter="sendMessage"
-      placeholder="Type a message..."
-      rows="1"
-      :readonly="sending"
-    >
-    </textarea>
-
-    <button @click="sendMessage" class="send-btn">
-      <div v-if="!sending" class="send-icon">></div>
-      <div v-else class="loading-dots">
-        <span></span>
-        <span></span>
-        <span></span>
+        <ActionMenu @actionSelected="handleAction" />
       </div>
-    </button>
-  <div v-if="sending" id="loadingCloud" class="cloud-animation">☁️</div>
-  </div></div>
+
+      <textarea
+        ref="messageInput"
+        id="messageInput"
+        v-model="message"
+        @input="adjustHeight"
+        @keydown.enter="sendMessage"
+        placeholder="Type a message..."
+        rows="1"
+        :readonly="sending"
+      >
+      </textarea>
+
+      <button @click="sendMessage" class="send-btn">
+        <div v-if="!sending" class="send-icon">></div>
+        <div v-else class="loading-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+      <div v-if="sending" id="loadingCloud" class="cloud-animation">☁️</div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -103,15 +104,14 @@ export default {
         this.$route.path
       );
 
-      if (response === "not sent") {
+      if (!response || response === "not sent") {
+        console.error("No response or message not sent");
         return;
       }
 
       this.message = "";
       this.adjustHeight();
-      if (response) {
-        this.$router.push(response);
-      }
+      this.$router.push(response);
     },
     adjustHeight() {
       this.$nextTick(() => {
@@ -140,7 +140,7 @@ export default {
 </script>
   
 <style scoped>
-.message-area{
+.message-area {
   display: flex;
   align-items: center;
 }

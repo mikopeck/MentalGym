@@ -361,7 +361,7 @@ export default {
 
     createButtons(nodeData) {
       const canvasSize = { width: this.width, height: this.height };
-      const buttonSize = { width: 100, height: 30 };
+      const buttonSize = { width: 120, height: 30 };
       const buttonGroup = d3
         .select("#graph svg")
         .append("g")
@@ -379,8 +379,8 @@ export default {
         .attr("x", canvasSize.width / 2 + 16)
         .attr("y", 0)
         .append("xhtml:div")
-        .attr("class", "menu-button")
-        .text("Go to")
+        .attr("class", "menu-button goto-button")
+        .text("📖Go to")
         .on("click", () => this.goToNode(nodeData));
 
       // "Explore" Button
@@ -392,7 +392,7 @@ export default {
         .attr("y", 0)
         .append("xhtml:div")
         .attr("class", "menu-button explore-button")
-        .text("Explore")
+        .text("🔍Explore")
         .on("click", () => this.exploreNode(nodeData));
     },
 
@@ -418,9 +418,9 @@ export default {
       if (this.showingSuggestions) {
         d3.select("#graph svg").selectAll(".node-suggestions").remove();
         this.showingSuggestions = false;
-        this.updateExploreButtonText("Explore");
+        this.updateExploreButtonText("🔍Explore");
       } else {
-        this.updateExploreButtonText("Loading");
+        this.updateExploreButtonText("⏳Loading");
 
         fetch(`/api/explore?name=${nodeData.name}`)
           .then((response) => response.json())
@@ -428,21 +428,25 @@ export default {
             if (data && data.suggestions) {
               this.showSuggestions(data.suggestions);
               this.showingSuggestions = true;
-              this.updateExploreButtonText("Hide");
+              this.updateExploreButtonText("🔽Hide");
             } else {
               // console.log("No suggestions received for node " + nodeData.id);
-              this.updateExploreButtonText("Explore");
+              this.updateExploreButtonText("🔍Explore");
             }
           })
           .catch((error) => {
             console.error("Error exploring node " + nodeData.id + ": ", error);
-            this.updateExploreButtonText("Explore");
+            this.updateExploreButtonText("🔍Explore");
           });
       }
     },
 
     updateExploreButtonText(newText) {
       d3.select("#graph svg").select(".explore-button").text(newText);
+    },
+
+    updateGoToButtonText(newText) {
+      d3.select("#graph svg").select(".goto-button").text(newText);
     },
 
     showSuggestions(suggestions) {
@@ -485,7 +489,10 @@ export default {
     async handleSuggestionClick(suggestion) {
       // console.log("Selected suggestion: " + suggestion);
       const messageStore = useMessageStore();
-
+      if (this.loading) return;
+      this.loading = true;
+      this.updateGoToButtonText("⏳Loading")
+      console.log(this.loading)
       try {
         const response = await messageStore.sendMessage(
           "Start lesson: " + suggestion,
@@ -493,12 +500,23 @@ export default {
         );
         // console.log("Response: ", response);
 
-        if (response && this.$router) {
+        if (!response || response === "not sent") {
+          console.error("No response or message not sent");
+          this.updateGoToButtonText("📖Go to")
+          this.loading = false;
+          return;
+        }
+        if (this.$router) {
+          this.loading = false;
           this.$router.push(response);
         } else {
-          console.error("Router is undefined or response is invalid");
+          this.loading = false;
+          this.updateGoToButtonText("📖Go to")
+          console.error("Router is undefined");
         }
       } catch (error) {
+        this.loading = false;
+          this.updateGoToButtonText("📖Go to")
         console.error("Error in sendMessage: ", error);
       }
     },
@@ -508,6 +526,7 @@ export default {
 
 <style>
 .menu-button {
+  text-align: center;
   margin: 0px;
   padding: 8px 16px;
   background-color: var(--background-color-1t);

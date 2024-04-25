@@ -154,10 +154,15 @@ export default {
         );
         // console.log("Response: ", response);
 
-        if (response && this.$router) {
+        if (!response || response === "not sent") {
+          console.error("No response or message not sent");
+          return;
+        }
+
+        if (this.$router) {
           this.$router.push(response);
         } else {
-          console.error("Router is undefined or response is invalid");
+          console.error("Router is undefined");
         }
       } catch (error) {
         console.error("Error in sendMessage: ", error);
