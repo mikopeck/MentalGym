@@ -104,7 +104,7 @@ export default {
         this.$route.path
       );
 
-      if (!response || response === "not sent") {
+      if (response === "not sent") {
         console.error("No response or message not sent");
         return;
       }
@@ -116,7 +116,9 @@ export default {
     adjustHeight() {
       this.$nextTick(() => {
         const textarea = this.$refs.messageInput;
+        console.log(textarea.style.height);
         textarea.style.height = textarea.scrollHeight + "px";
+        console.log(textarea.style.height);
       });
     },
     focusTextarea() {
