@@ -110,10 +110,20 @@ export default {
       }
 
       this.message = "";
-      this.adjustHeight();
-      if (response){
+      this.$nextTick(() => {
+        this.resetHeight();
+      });
+      if (response) {
         this.$router.push(response);
       }
+    },
+    resetHeight() {
+      this.$nextTick(() => {
+        const textarea = this.$refs.messageInput;
+        console.log(textarea.style.height);
+        textarea.style.height = "54px";
+        console.log(textarea.style.height);
+      });
     },
     adjustHeight() {
       this.$nextTick(() => {
