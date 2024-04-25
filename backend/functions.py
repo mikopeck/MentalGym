@@ -11,10 +11,10 @@ Profile = {
                 "type": "string",
                 "description": "The users preferred names, nicknames, or the designation they feel most connected to.",
             },
-            # "language": {
-            #     "type": "string",
-            #     "description": "The users preferred language - never ask for this, but assume from the language the user uses.",
-            # },
+            "language": {
+                "type": "string",
+                "description": "The users preferred language - never ask for this, but assume from the language the user replies in.",
+            },
 
 # personal
             "education_level": {
@@ -26,24 +26,24 @@ Profile = {
                 "type": "string",
                 "description": "Personal interests which can make learning more engaging if used to tailor examples and explanations.",
             },
-            "motivation": {
-                "type": "string",
-                "description": "What motivates the user to set and attempt challenges and learn.",
-            },
+            # "motivation": {
+            #     "type": "string",
+            #     "description": "What motivates the user to set and attempt challenges and learn.",
+            # },
 
 # learning
             "study_habits": {
                 "type": "string",
                 "description": "Any habits which help the user study like: highlighting and note-taking, review and preview, spaced repetition, Use of Analogies and real-world examples.",
             },
-            "pacing": {
-                "type": "string",
-                "description": "Some may require a slower, more detailed explanation, while others prefer quick summaries.",
-            },
-            "feedback_style": {
-                "type": "string",
-                "description": "Type, frequency, and tone of feedback. Some students thrive on positive reinforcement, while others might need constructive criticism.",
-            },
+            # "pacing": {
+            #     "type": "string",
+            #     "description": "Some may require a slower, more detailed explanation, while others prefer quick summaries.",
+            # },
+            # "feedback_style": {
+            #     "type": "string",
+            #     "description": "Type, frequency, and tone of feedback. Some students thrive on positive reinforcement, while others might need constructive criticism.",
+            # },
             "learning_goals": {
                 "type": "string",
                 "description": "The user's specific objectives or what they aim to achieve with the tutoring. For example: 'Pass the math exam', 'Become fluent in Spanish'."
