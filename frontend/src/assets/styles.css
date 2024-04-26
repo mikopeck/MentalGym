@@ -15,7 +15,7 @@ html, body{
     background-color: #00000042;
     text-align: left;
     padding: 1rem;
-    border-radius: 5px;
+    border-radius: 4px;
     font-family: "Courier New", Courier, monospace;
     overflow-x: auto;
     word-wrap: break-word;
@@ -162,7 +162,7 @@ a:hover {
   
   ::-webkit-scrollbar-thumb {
     background-color: transparent;
-    border-radius: 6px;
+    border-radius: 4px;
     transition: background-color 0.3s ease;
   }
   

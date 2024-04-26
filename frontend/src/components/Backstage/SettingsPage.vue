@@ -4,25 +4,28 @@
     <div class="profile-section">
       <h2 class="section-title">Email</h2>
       <p class="profile-info">{{ profile.email }}</p>
-      <div class="profile-section">
-        <div class="settings-buttons">
-          <MenuButton label="Reset" @click="resetConversation" />
+        <div class="settings-buttons half-n-half">
+          <MenuButton label="Reset" @click="resetConversation" class="red" />
           <MenuButton label="Logout" @click="logout" />
         </div>
-      </div>
     </div>
 
     <div class="profile-section">
       <h2 class="section-title">Subscription Tier</h2>
-      <a href="/plan"
-        ><p class="profile-info">{{ profile.tier }}</p></a
-      >
+      <div class="half-n-half">
+        <p class="profile-info">
+          <a href="/plan">{{ displayTierName }}</a>
+        </p>
+        <MenuButton label="Change Subscription" @click="redirectPlan" />
+      </div>
     </div>
 
     <div class="profile-section">
       <h2 class="section-title">Base Tutor</h2>
-      <p class="profile-info">{{ currentMentorName }}</p>
-      <MenuButton label="Change Tutor" @click="changeMentor" />
+      <div class="half-n-half">
+        <p class="profile-info">{{ currentMentorName }}</p>
+        <MenuButton label="Change Tutor" @click="changeMentor" />
+      </div>
     </div>
 
     <div class="profile-section">
@@ -85,7 +88,17 @@ export default {
       const mentorStore = useMentorStore();
       return mentorStore.currentMentor;
     },
+    displayTierName() {
+      const tierCode = this.profile.tier;
+      const tierNameMap = {
+        free: "Aspirant (free)",
+        paid: "Awakened",
+        pro: "Ascendant",
+      };
+      return tierNameMap[tierCode] || "Unknown Tier";
+    },
   },
+
   methods: {
     async fetchProfile() {
       try {
@@ -142,7 +155,11 @@ export default {
       }
     },
     async resetConversation() {
-      if (!confirm("Are you sure you want to reset your whole account? This will delete all history and you can start anew.")){
+      if (
+        !confirm(
+          "Are you sure you want to reset your whole account? This will delete all history and you can start anew."
+        )
+      ) {
         return;
       }
       try {
@@ -155,6 +172,9 @@ export default {
       } catch (error) {
         console.error("Error resetting conversation:", error);
       }
+    },
+    redirectPlan() {
+      this.$router.push("/plan");
     },
     autoGrow(event) {
       const textarea = event.target;
@@ -181,8 +201,15 @@ export default {
 }
 
 .profile-info {
+  width: 100%;
+  height: 48px;
   font-size: 16px;
   color: var(--text-color);
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--element-color-1);
+  border-radius: 4px;
 }
 
 .section-title {
@@ -213,5 +240,14 @@ export default {
 
 .update-btn:hover {
   background-color: var(--element-color-2);
+}
+
+.half-n-half {
+  display: flex;
+  flex-direction: row;
+}
+
+.red {
+  background-color: red;
 }
 </style>
