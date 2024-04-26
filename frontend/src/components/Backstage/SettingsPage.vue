@@ -4,6 +4,12 @@
     <div class="profile-section">
       <h2 class="section-title">Email</h2>
       <p class="profile-info">{{ profile.email }}</p>
+      <div class="profile-section">
+        <div class="settings-buttons">
+          <MenuButton label="Reset" @click="resetConversation" />
+          <MenuButton label="Logout" @click="logout" />
+        </div>
+      </div>
     </div>
 
     <div class="profile-section">
@@ -16,7 +22,7 @@
     <div class="profile-section">
       <h2 class="section-title">Base Tutor</h2>
       <p class="profile-info">{{ currentMentorName }}</p>
-      <MenuButton label="Change Mentor" @click="changeMentor" />
+      <MenuButton label="Change Tutor" @click="changeMentor" />
     </div>
 
     <div class="profile-section">
@@ -44,13 +50,6 @@
         label="Update Tutor Profile"
         @click="updateProfile('tutor')"
       />
-    </div>
-
-    <div class="profile-section">
-      <div class="settings-buttons">
-        <MenuButton label="Reset" @click="resetConversation" />
-        <MenuButton label="Logout" @click="logout" />
-      </div>
     </div>
   </div>
 </template>
@@ -143,6 +142,9 @@ export default {
       }
     },
     async resetConversation() {
+      if (!confirm("Are you sure you want to reset your whole account? This will delete all history and you can start anew.")){
+        return;
+      }
       try {
         let response = await axios.get("/api/reset");
         if (response.data.status === "success") {
