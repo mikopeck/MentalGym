@@ -48,6 +48,7 @@ def get_pie_chart_data(user_id):
     return pie_chart_data
 
 def get_line_graph_data(user_id):
+    # Query the database for lessons completed by day, month, and year
     lessons_over_time = db.session.query(
         extract('day', Lesson.completion_date),
         extract('month', Lesson.completion_date),
@@ -59,45 +60,24 @@ def get_line_graph_data(user_id):
         extract('year', Lesson.completion_date)
     ).all()
 
-    challenges_over_time = db.session.query(
-        extract('day', Challenge.completion_date),
-        extract('month', Challenge.completion_date),
-        extract('year', Challenge.completion_date),
-        func.count(Challenge.id).label('challenges_count')
-    ).filter_by(user_id=user_id).group_by(
-        extract('day', Challenge.completion_date),
-        extract('month', Challenge.completion_date),
-        extract('year', Challenge.completion_date)
-    ).all()
-    
-    # Find the earliest and latest date across both datasets
-    start_date = min([datetime(year, month, day) for day, month, year, _ in lessons_over_time + challenges_over_time if day and month and year])
-    end_date = max([datetime(year, month, day) for day, month, year, _ in lessons_over_time + challenges_over_time if day and month and year])
+    # If there are no lessons completed, return None
+    if not lessons_over_time:
+        return None
 
-    # Initialize merged_data with all dates in the range and zero counts
-    merged_data = {start_date + timedelta(days=x): {"lessons": 0, "challenges": 0} for x in range((end_date - start_date).days + 1)}
-
-    # Aggregate lessons and challenges data
+    # Initialize a dictionary to store data for each date with zero lessons count
+    merged_data = {}
     for day, month, year, count in lessons_over_time:
         if day is None or month is None or year is None:
             continue
         date_key = datetime(year, month, day)
-        merged_data[date_key]["lessons"] = count
+        merged_data[date_key] = {"lessons": count}
 
-    for day, month, year, count in challenges_over_time:
-        if day is None or month is None or year is None:
-            continue
-        date_key = datetime(year, month, day)
-        merged_data[date_key]["challenges"] = count
-
-    # Prepare final dataset
-    data = [{"date": key.strftime('%Y-%m-%d'), "lessons": value["lessons"], "challenges": value["challenges"]} for key, value in merged_data.items()]
+    # Prepare the final dataset
+    data = [{"date": key.strftime('%Y-%m-%d'), "lessons": value["lessons"]} for key, value in merged_data.items()]
     data = sorted(data, key=lambda x: x["date"])
     dates = [item['date'] for item in data]
     lessons = [item['lessons'] for item in data]
-    challenges = [item['challenges'] for item in data]
     cumulative_lessons = [sum(lessons[:i+1]) for i in range(len(lessons))]
-    cumulative_challenges = [sum(challenges[:i+1]) for i in range(len(challenges))]
 
     return {
         "labels": dates,
@@ -107,11 +87,6 @@ def get_line_graph_data(user_id):
             "data": cumulative_lessons,
             "backgroundColor": '#84b2e0',
             "borderColor": '#84b2e0',
-        }, {
-            "label": "Challenges🎯",
-            "data": cumulative_challenges,
-            'backgroundColor':'#84e0b2',
-            "borderColor": '#84e0b2',
         }]
     }
 

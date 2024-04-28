@@ -213,7 +213,7 @@ export default {
   margin-top: 16px;
   width: 100%;
   max-width: 720px;
-  background-color: #77777713;
+  background-color: var(--background-color-1t);
   border-radius: 8px;
 }
 
