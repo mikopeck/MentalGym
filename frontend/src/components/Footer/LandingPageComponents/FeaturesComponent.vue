@@ -74,7 +74,7 @@ export default {
 }
 
 .feature.visible {
-  animation: fadeSlideIn 0.8s ease-out forwards;
+  animation: fadeSlideIn 0.3s ease-out forwards;
 }
 
 .feature-title {

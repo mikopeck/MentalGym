@@ -1,79 +1,79 @@
-<!-- SideMenu.vue -->
 <template>
   <aside :class="{ 'slide-out': sideMenuOpen }" class="side-menu">
-    <MenuButton
+    <SideMenuButton
       v-if="!loggedIn"
-      label="Log in🔏"
-      @click="openRoute('/login')"
+      label="Log in"
       :isSelected="isRouteActive('/login')"
-    />
-    <MenuButton
+      @click="openRoute('/login')"
+    >
+      <template v-slot:icon>&#128274;</template>
+    </SideMenuButton>
+    <SideMenuButton
       v-if="loggedIn"
-      label="Chat💬"
-      @click="openRoute('/')"
+      label="Chat"
       :isSelected="isRouteActive('/')"
-    />
-    <MenuButton
+      @click="openRoute('/')"
+    >
+      <template v-slot:icon>&#128172;</template>
+    </SideMenuButton>
+    <SideMenuButton
       v-if="loggedIn"
-      label="Lessons📖"
-      @click="openRoute('/lessons')"
-      :isSelected="isRouteActive('/lessons', '^/lesson/\\w+')"
-    />
-    <!-- <MenuButton
-      v-if="loggedIn"
-      label="Challenges🎯"
-      @click="openRoute('/challenges')"
-      :isSelected="isRouteActive('/challenges', '^/challenge/\\w+')"
-    /> -->
-    <MenuButton
-      v-if="loggedIn"
-      label="Knowledge Map🗺️"
-      @click="openRoute('/knowledge')"
+      label="Knowledge Map"
       :isSelected="isRouteActive('/knowledge')"
-    />
-    <MenuButton
+      @click="openRoute('/knowledge')"
+    >
+      <template v-slot:icon>&#128506;</template>
+    </SideMenuButton>
+    <SideMenuButton
       v-if="loggedIn"
-      label="Progress📈"
-      @click="openRoute('/progress')"
+      label="Progress"
       :isSelected="isRouteActive('/progress')"
-    />
-    <MenuButton
+      @click="openRoute('/progress')"
+    >
+      <template v-slot:icon>&#128200;</template>
+    </SideMenuButton>
+    <SideMenuButton
       v-if="loggedIn"
-      label="Settings🔧"
-      @click="openRoute('/settings')"
+      label="Settings"
       :isSelected="isRouteActive('/settings')"
-    />
-    <TierButton v-if="loggedIn" />
-    <br />
-    <MenuButton
-      label="About👀"
-      @click="openRoute('/about')"
+      @click="openRoute('/settings')"
+    >
+      <template v-slot:icon>&#128295;</template>
+    </SideMenuButton>
+    <SideMenuButton
+      label="About"
       :isSelected="isRouteActive('/about')"
-    />
-    <MenuButton
-      label="Contact📧"
-      @click="openRoute('/contact')"
+      @click="openRoute('/about')"
+    >
+      <template v-slot:icon>&#128065;</template>
+    </SideMenuButton>
+    <SideMenuButton
+      label="Contact"
       :isSelected="isRouteActive('/contact')"
-    />
-    <MenuButton
-      label="Terms & Policies🤝"
-      @click="openRoute('/terms')"
+      @click="openRoute('/contact')"
+    >
+      <template v-slot:icon>&#9993;</template>
+    </SideMenuButton>
+    <SideMenuButton
+      label="Terms & Policies"
       :isSelected="isRouteActive('/terms')"
-    />
+      @click="openRoute('/terms')"
+    >
+      <template v-slot:icon>&#128279;</template>
+    </SideMenuButton>
   </aside>
 </template>
 
+
 <script>
-import MenuButton from "@/components/Menus/MenuButton.vue";
-import TierButton from "@/components/Menus/TierButton.vue";
+import SideMenuButton from "@/components/Menus/SideMenuButton.vue";
 import { useMenuStore } from "@/store/menuStore";
 import { useAuthStore } from "@/store/authStore";
 
 export default {
   name: "SideMenu",
   components: {
-    MenuButton,
-    TierButton,
+    SideMenuButton,
   },
   computed: {
     sideMenuOpen() {
@@ -122,7 +122,7 @@ export default {
   top: 44px;
   right: -300px;
   height: fit-content;
-  width: 240px;
+  width: 210px;
   transition: right 0.3s ease;
   z-index: 200;
 }
