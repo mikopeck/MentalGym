@@ -46,7 +46,8 @@ router.beforeEach((to, from, next) => {
     next('/about');
   } else if (!authStore.loggedIn && !isLessonOrChallenge && 
             to.path !== '/about' && to.path !== '/login' && 
-            to.path !== '/terms' && to.path !== '/contact') {
+            to.path !== '/terms' && to.path !== '/contact' && 
+            to.path !== '/plan') {
     next('/login');
   } else {
     next();

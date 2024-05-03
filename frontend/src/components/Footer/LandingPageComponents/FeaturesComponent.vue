@@ -83,8 +83,8 @@ export default {
 }
 
 .feature-icon {
-  left: 1px;
-  top: 1px;
+  left: 3px;
+  top: 3px;
   font-size: 24px;
   position: absolute;
 }

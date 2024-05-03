@@ -4,9 +4,9 @@
     @click="navigateToContent(role)"
     :class="['content-button', isCompleted ? 'completed-button' : '']"
   >
-    <span v-if="showType" class="emoji-indicator">{{
+    <!-- <span v-if="showType" class="emoji-indicator">{{
       getEmojiForContentType
-    }}</span>
+    }}</span> -->
     <div class="content-name">{{ contentWithoutEmoji }}</div>
     <span v-if="hasContentEmoji" class="emoji-indicator">{{
       extractedEmoji
