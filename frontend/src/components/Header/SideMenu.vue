@@ -22,7 +22,7 @@
       :isSelected="isRouteActive('/knowledge')"
       @click="openRoute('/knowledge')"
     >
-      <template v-slot:icon>&#128506;</template>
+      <template v-slot:icon>🗺️</template>
     </SideMenuButton>
     <SideMenuButton
       v-if="loggedIn"

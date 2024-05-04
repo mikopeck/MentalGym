@@ -1,21 +1,20 @@
 <template>
   <div class="page-main-container">
     <h1 class="page-title">Settings</h1>
+
     <div class="profile-section">
       <h2 class="section-title">Email</h2>
       <p class="profile-info">{{ profile.email }}</p>
-        <div class="settings-buttons half-n-half">
-          <MenuButton label="Reset" @click="resetConversation" class="red" />
-          <MenuButton label="Logout" @click="logout" />
-        </div>
+      <div class="settings-buttons half-n-half">
+        <MenuButton label="Reset" @click="resetConversation" class="red" />
+        <MenuButton label="Logout" @click="logout" />
+      </div>
     </div>
 
     <div class="profile-section">
       <h2 class="section-title">Subscription Tier</h2>
       <div class="half-n-half">
-        <p class="profile-info">
-          <a href="/plan">{{ displayTierName }}</a>
-        </p>
+        <TierButton />
         <MenuButton label="Change Subscription" @click="redirectPlan" />
       </div>
     </div>
@@ -60,6 +59,7 @@
   <script>
 import axios from "axios";
 import MenuButton from "@/components/Menus/MenuButton.vue";
+import TierButton from "@/components/Menus/TierButton.vue";
 import { useMentorStore } from "@/store/mentorStore";
 import { useAuthStore } from "@/store/authStore";
 import { usePopupStore } from "@/store/popupStore";
@@ -78,6 +78,7 @@ export default {
   },
   components: {
     MenuButton,
+    TierButton,
   },
   async mounted() {
     this.fetchProfile();
@@ -202,14 +203,15 @@ export default {
 
 .profile-info {
   width: 100%;
-  height: 48px;
+  margin-top: 4px;
+  height: 42px;
   font-size: 16px;
   color: var(--text-color);
   justify-content: center;
   display: flex;
   align-items: center;
   border: 1px solid var(--element-color-1);
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 .section-title {

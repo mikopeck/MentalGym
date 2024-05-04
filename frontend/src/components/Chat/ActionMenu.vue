@@ -2,19 +2,19 @@
 <template>
   <aside :class="{ 'slide-out': actionsMenuOpen }" class="action-menu">
     <div v-for="action in actions" :key="action" @click="handleAction(action)" class="action-wrapper">
-      <MenuButton :label="action" @navigate="handleAction(action)"/>
+      <ActionMenuButton :label="action" @navigate="handleAction(action)"/>
     </div>
   </aside>
 </template>
   
   <script>
-import MenuButton from "../Menus/MenuButton.vue";
+import ActionMenuButton from "../Menus/ActionMenuButton.vue";
 import { useMenuStore } from "@/store/menuStore";
 import { useMessageStore } from "@/store/messageStore";
 
 export default {
   components: {
-    MenuButton,
+    ActionMenuButton,
   },
   computed: {
     actionsMenuOpen() {

@@ -36,6 +36,7 @@ export default {
 
 <style scoped>
 .tier-button {
+  width: 100%;
   padding: 8px 16px;
   margin: 4px;
   border-radius: 8px;
