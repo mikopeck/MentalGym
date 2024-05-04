@@ -3,6 +3,9 @@
 @import 'tailwindcss/utilities';
 
 html, body{
+  overflow: overlay;
+  scrollbar-width: auto;
+    scrollbar-color: transparent transparent;
     display: flex;
     height: 100%;
     width: 100vw;
