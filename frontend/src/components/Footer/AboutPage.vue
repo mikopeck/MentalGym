@@ -346,6 +346,7 @@ export default {
 
 .shared-content {
   display: flex;
+  max-width: 1024px;
 }
 
 .stat-info {
