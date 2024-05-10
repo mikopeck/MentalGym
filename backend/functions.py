@@ -85,7 +85,7 @@ Content = {
                     "properties": {
                         "lesson_name": {
                             "type": "string",
-                            "description": "A concise but complete description of the lesson. Up to 10 words."
+                            "description": "A concise but complete description of the lesson. Up to 12 words."
                         },
                         "lesson_emoji": {
                             "type": "string",

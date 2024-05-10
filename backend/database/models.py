@@ -125,7 +125,7 @@ class Challenge(db.Model):
 class Lesson(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    lesson_name = db.Column(db.String(100), nullable=False)
+    lesson_name = db.Column(db.String(200), nullable=False)
     completion_date = db.Column(db.DateTime, nullable=True)
     system_role = db.Column(db.String(100), default='')
     shared = db.Column(db.Boolean, default=False)
