@@ -3,7 +3,7 @@ Your task is to create a quiz for the user on the topic in discussion.
 Quiz only the information provided; however, test understanding more than memory.
 This is a profile of the user:
 |{user-profile}|
-Create a short, personalized, engaging quiz for them.
+Create a short, personalized, engaging, fun quiz for them.
 It must be possible to complete the quiz only based on the information in the lesson.
 Try to cover everything from the lesson.
 If there are quizzes in previous messages, make yours different.

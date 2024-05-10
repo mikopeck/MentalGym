@@ -32,10 +32,10 @@ Profile = {
             # },
 
 # learning
-            "study_habits": {
-                "type": "string",
-                "description": "Any habits which help the user study like: highlighting and note-taking, review and preview, spaced repetition, Use of Analogies and real-world examples.",
-            },
+            # "study_habits": {
+            #     "type": "string",
+            #     "description": "Any habits which help the user study like: highlighting and note-taking, review and preview, spaced repetition, Use of Analogies and real-world examples.",
+            # },
             # "pacing": {
             #     "type": "string",
             #     "description": "Some may require a slower, more detailed explanation, while others prefer quick summaries.",
@@ -72,25 +72,6 @@ Lesson = {
     },
 }
 
-Challenge = {
-    "name": "accept_challenge",
-    "description": "When a user wants to set a challenge for themselves. The user must agree to an offer to accept this specific challenge.",
-    "parameters": {
-        "type": "object",
-        "properties": {
-            "challenge_name": {
-                "type": "string",
-                "description": "A concise but complete description of the challenge. Up to 12 words.",
-            },
-            "challenge_emoji": {
-                "type": "string",
-                "description": "A single, valid Unicode emoji representing the challenge topic. Must be within standard Unicode emoji ranges.",
-            }
-        },
-        "required": ["challenge_name", "challenge_emoji"],
-    },
-}
-
 Content = {
     "name": "offered_content",
     "description": "Returns descriptions and emojis for any lessons being offered.",
@@ -104,7 +85,7 @@ Content = {
                     "properties": {
                         "lesson_name": {
                             "type": "string",
-                            "description": "A concise but complete description of the lesson. Up to 12 words."
+                            "description": "A concise but complete description of the lesson. Up to 10 words."
                         },
                         "lesson_emoji": {
                             "type": "string",
@@ -117,21 +98,6 @@ Content = {
             },
         },
         "required": [],
-    },
-}
-
-ChallengeCompletion = {
-    "name": "complete_challenge",
-    "description": "Used when a user has completed the challenge.",
-    "parameters": {
-        "type": "object",
-        "properties": {
-            "completion": {
-                "type": "boolean",
-                "description": "Has the user really completed the challenge?"
-            }
-        },
-        "required": ["completion"],
     },
 }
 
