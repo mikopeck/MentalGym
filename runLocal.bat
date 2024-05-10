@@ -6,7 +6,7 @@ cd ..
 echo Activating virtual environment...
 call venv\scripts\activate
 echo Starting Flask...
-call set PYTHON_APP=backend\app.py
+call set FLASK_APP=backend\app.py
 call flask db upgrade
 python backend\app.py
 pause
