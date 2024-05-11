@@ -48,8 +48,6 @@ def suggest_content(user_id, set_challenge = False, set_lesson = True):
         return response, None
 
     functions = [fns.Lesson]
-    # if set_challenge:
-    #     functions += [fns.Challenge]
     function_call = "auto"
 
     for attempt in range(function_max_retries):
@@ -58,17 +56,6 @@ def suggest_content(user_id, set_challenge = False, set_lesson = True):
         if not response_message.get("function_call"):
             identify_content(user_id, response_message['content'])
             return response, None
-        
-        challenge_data = fns.try_get_object(fns.Challenge, response_message)
-        if challenge_data:
-            challenge_emoji = extract_single_emoji(challenge_data.get('challenge_emoji'))
-            if challenge_emoji:
-                challenge_name = remove_emojis_except_first(challenge_emoji + challenge_data.get('challenge_name'))
-            else:
-                challenge_name = remove_emojis_except_first(challenge_data.get('challenge_name'))
-            db.add_challenge(user_id, challenge_name)
-            mh.update_system_role(user_id, roles.AfterContent)
-            return after_content(user_id)
 
         lesson_data = fns.try_get_object(fns.Lesson, response_message)
         if lesson_data:
@@ -92,31 +79,6 @@ def suggest_content(user_id, set_challenge = False, set_lesson = True):
 def after_content(user_id):
     response = generate_response(user_id, mh.prepare_session_messages(user_id))
     return response, None
-
-def challenge_progress(user_id, challenge_id):
-    messages = mh.prepare_session_messages(user_id, challenge_id=challenge_id)
-    functions = [fns.ChallengeCompletion]
-    function_call = "auto"
-
-    for attempt in range(function_max_retries):
-        response = generate_response(user_id, messages, functions, function_call)
-        response_message = response["choices"][0]["message"]
-        if response_message.get("function_call"):
-            completion = fns.try_get_object(fns.ChallengeCompletion, response_message)
-            if completion:
-                if completion.get('completion') == True:
-                    db.update_challenge(user_id, challenge_id)
-                    db.add_completion_message(user_id, challenge_id=challenge_id)
-                    mh.update_system_role(user_id, roles.AfterContent)
-                    return None
-                else:
-                    print("failed completion- respond without completion function")
-                    return generate_response(user_id, messages)
-        else:
-            print("no completion - word response")
-            return response
-    print("incorrect challenge completion function use, defaulting to no function") 
-    return generate_response(user_id, messages)
 
 def lesson_create(user_id, lesson_id, lesson_name = None):
     if not lesson_name:
