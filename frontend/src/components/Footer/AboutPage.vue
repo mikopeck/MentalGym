@@ -107,11 +107,6 @@ export default {
       items: ["Learn.", "Discover.", "Grow."],
       activeIndex: 0,
       popupMessage: "",
-      backgroundImages: [
-        require("@/assets/images/discover.webp"),
-        require("@/assets/images/learn.webp"),
-        require("@/assets/images/grow.webp"),
-      ],
     };
   },
   created() {
@@ -149,13 +144,6 @@ export default {
     },
     rotateActiveIndex() {
       this.activeIndex = (this.activeIndex + 1) % this.items.length;
-      this.updateBackgroundImage();
-    },
-    updateBackgroundImage() {
-      const landingPage = document.querySelector(".landing-page");
-      landingPage.style.backgroundImage = `url(${
-        this.backgroundImages[this.activeIndex]
-      })`;
     },
     observeFeatures() {
       const observer = new IntersectionObserver(
@@ -346,7 +334,7 @@ export default {
 
 .shared-content {
   display: flex;
-  max-width: 1024px;
+  justify-content: center;
 }
 
 .stat-info {
@@ -375,8 +363,8 @@ export default {
 }
 
 .features-container {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .faq-container {

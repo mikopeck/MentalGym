@@ -66,10 +66,7 @@ export default {
 <style scoped>
 .preview-box {
   width: 100%;
-  /* display: flex;
-  white-space: nowrap;
-  flex-direction: row;
-  justify-content: space-around; */
+  max-width: 1024px;
   overflow-x: hidden;
 }
 
