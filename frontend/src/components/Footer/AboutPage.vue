@@ -436,7 +436,7 @@ export default {
   }
 
   .button {
-    font-size: 1.8em;
+    font-size: 1.3em;
   }
   .openai {
     padding: 32px 15%;
