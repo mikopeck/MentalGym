@@ -67,7 +67,7 @@ export default {
           price: "$20/month",
           features: [
             "All features in Awakened",
-            "The best available AI models",
+            "Always the best AI model by OpenAI",
             "2000 daily message limit",
             "Up to 1000 lessons daily",
             "Early access to new features",
