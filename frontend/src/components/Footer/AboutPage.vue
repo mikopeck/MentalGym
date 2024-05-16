@@ -346,7 +346,7 @@ export default {
 
 .shared-content {
   display: flex;
-  max-width: 1024px;
+  justify-content: center;
 }
 
 .stat-info {
@@ -375,8 +375,8 @@ export default {
 }
 
 .features-container {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .faq-container {
