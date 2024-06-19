@@ -1,5 +1,5 @@
 <template>
-  <div class="grid-item">
+  <div :class="['grid-item', randomBackgroundClass]">
     <div class="grid-text">{{ name }}</div>
   </div>
 </template>
@@ -11,6 +11,12 @@ export default {
     name: {
       type: String,
       required: true
+    }
+  },
+  computed: {
+    randomBackgroundClass() {
+      const randomIndex = Math.floor(Math.random() * 8)+1;
+      return `background-${randomIndex}`;
     }
   }
 };
@@ -38,7 +44,6 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('@/assets/images/room.jpeg');
   background-size: cover;
   background-position: center;
   opacity: 0.6;
@@ -54,6 +59,40 @@ export default {
   position: relative;
   z-index: 2;
   text-shadow: 0px 0px 5px var(--background-color),
-    0px 0px 10px var(--background-color), 0px 0px 15px var(--background-color), 0px 0px 20px var(--background-color), 0px 0px 25px var(--background-color);;
+    0px 0px 10px var(--background-color), 0px 0px 15px var(--background-color),
+    0px 0px 20px var(--background-color), 0px 0px 25px var(--background-color);
 }
+
+.background-1::before {
+  background-image: url('@/assets/images/room1.webp');
+}
+
+.background-2::before {
+    background-image: url('@/assets/images/room2.webp');
+}
+
+.background-3::before {
+    background-image: url('@/assets/images/room3.webp');
+}
+
+.background-4::before {
+    background-image: url('@/assets/images/room4.webp');
+}
+
+.background-5::before {
+    background-image: url('@/assets/images/room5.webp');
+}
+
+.background-6::before {
+    background-image: url('@/assets/images/room6.webp');
+}
+
+.background-7::before {
+    background-image: url('@/assets/images/room7.webp');
+}
+
+.background-8::before {
+    background-image: url('@/assets/images/room8.webp');
+}
+
 </style>
