@@ -34,30 +34,18 @@ class User(db.Model, UserMixin):
     confirm_sent_at = db.Column(db.DateTime, nullable=True)
 
     def as_dict(self):
-        active_challenges = [challenge.challenge_name for challenge in sorted(
-            [c for c in self.challenges if not c.completion_date], 
-            key=lambda x: x.id, reverse=True)[:10]
-        ]
-
-        completed_challenges = [challenge.challenge_name for challenge in sorted(
-            [c for c in self.challenges if c.completion_date], 
-            key=lambda x: x.id, reverse=True)[:10]
-        ]
-
         active_lessons = [lesson.lesson_name for lesson in sorted(
             [l for l in self.lessons if not l.completion_date], 
-            key=lambda x: x.id, reverse=True)[:20]
+            key=lambda x: x.id, reverse=True)[:50]
         ]
 
         completed_lessons = [lesson.lesson_name for lesson in sorted(
             [l for l in self.lessons if l.completion_date], 
-            key=lambda x: x.id, reverse=True)[:50]
+            key=lambda x: x.id, reverse=True)[:100]
         ]
 
         user_data = {
             "profile": self.profile,
-            "active_challenges": active_challenges,
-            "completed_challenges": completed_challenges,
             "active_lessons": active_lessons,
             "completed_lessons": completed_lessons
         }

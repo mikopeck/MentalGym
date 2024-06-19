@@ -48,7 +48,7 @@ from routes.chat_routes import init_chat_routes
 from routes.graph_routes import init_graph_routes
 from routes.feedback_routes import init_feedback_routes
 from routes.admin_routes import init_admin_routes
-
+from routes.library_routes import init_library_routes
 
 init_auth_routes(app)
 init_profile_routes(app)
@@ -57,6 +57,7 @@ init_chat_routes(app)
 init_graph_routes(app)
 init_feedback_routes(app)
 init_admin_routes(app)
+init_library_routes(app)
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

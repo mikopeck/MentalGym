@@ -19,3 +19,8 @@ ChallengeGuide = "ChallengeGuide"
 AfterContent = "AfterContent"
 
 ExploreTopic = "ExploreTopic"
+
+#lib
+GenerateRooms = "GenerateRooms"
+GenerateShelves = "GenerateShelves"
+GenerateDoor = "GenerateDoor"

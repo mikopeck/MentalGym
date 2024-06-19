@@ -3,6 +3,7 @@ import re
 
 from openapi import get_embeddings
 from database.db_handlers import user_knowledge_net_info
+from knowledge_net.math_utils import calculate_cosine_similarities
 
 def get_graph_data(user_id):
     user_data = user_knowledge_net_info(user_id)
@@ -25,27 +26,6 @@ def get_graph_data(user_id):
     return graph_data
 
 ###### priv ######
-
-def cosine_similarity(vecA, vecB):
-    vectorA = np.array(vecA['embedding'])
-    vectorB = np.array(vecB['embedding'])
-
-    dot_product = np.dot(vectorA, vectorB)
-    normA = np.linalg.norm(vectorA)
-    normB = np.linalg.norm(vectorB)
-    return dot_product / (normA * normB)
-
-def calculate_cosine_similarities(embeddings):
-    num_embeddings = len(embeddings)
-    similarities = np.zeros((num_embeddings, num_embeddings))
-
-    for i in range(num_embeddings):
-        for j in range(i, num_embeddings):
-            sim = cosine_similarity(embeddings[i], embeddings[j])
-            similarities[i, j] = sim
-            similarities[j, i] = sim
-
-    return similarities
 
 def calculate_edges(similarities):
     num_nodes = similarities.shape[0]

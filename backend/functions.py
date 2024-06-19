@@ -255,6 +255,33 @@ ExploreTopic = {
     },
 }
 
+GenerateRooms = {
+    "name": "generate_library_archive_rooms",
+    "description": "Generates the room names of a library archive for a given topic.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "room_names": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "room_name": {
+                            "type": "string",
+                            "description": "A name for the library room which includes the topic description. Up to 12 words."
+                        },
+                    },
+                    "required": ["room_name"]
+                },
+                "minItems": 24,
+                "maxItems": 24,
+                "description": "An array of twenty four room names."
+            },
+        },
+        "required": ["room_names"],
+    },
+}
+
 def try_get_object(fcn, response_message):
     if response_message["function_call"]["name"] == fcn['name']:
         profile_args = json.loads(response_message["function_call"]["arguments"])

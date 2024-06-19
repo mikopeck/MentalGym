@@ -4,8 +4,9 @@
 </template>
 
 <script>
+import axios from 'axios';
 import * as d3 from "d3";
-import { useMessageStore } from "@/store/messageStore";
+import { useGameStore } from '@/store/gameStore';
 
 export default {
   name: "KnowledgeGraph",
@@ -487,37 +488,31 @@ export default {
     },
 
     async handleSuggestionClick(suggestion) {
-      // console.log("Selected suggestion: " + suggestion);
-      const messageStore = useMessageStore();
+      console.log("Selected suggestion: " + suggestion);
       if (this.loading) return;
-      this.loading = true;
-      this.updateGoToButtonText("⏳Loading")
-      console.log(this.loading)
-      try {
-        const response = await messageStore.sendMessage(
-          "Start lesson: " + suggestion,
-          "/"
-        );
-        // console.log("Response: ", response);
 
-        if (!response || response === "not sent") {
-          console.error("No response or message not sent");
-          this.updateGoToButtonText("📖Go to")
-          this.loading = false;
-          return;
-        }
-        if (this.$router) {
-          this.loading = false;
-          this.$router.push(response);
-        } else {
-          this.loading = false;
-          this.updateGoToButtonText("📖Go to")
-          console.error("Router is undefined");
-        }
+      this.loading = true;
+      this.updateGoToButtonText("⏳Loading");
+      console.log(this.loading);
+
+      try {
+        // Making the POST request to the library generate route
+        const libraryResponse = await axios.post("/api/library/generate", {
+          topic: suggestion,
+        });
+
+        console.log("Library generation response:", libraryResponse.data);
+        const roomNames = libraryResponse.data.data.flat();
+
+        // Set the room names in the store
+        const gameStore = useGameStore();
+        gameStore.setRoomNames(roomNames);
+        
+        this.$router.push("/library");
       } catch (error) {
         this.loading = false;
-          this.updateGoToButtonText("📖Go to")
-        console.error("Error in sendMessage: ", error);
+        this.updateGoToButtonText("📖Go to");
+        console.error("Error in sending request to library:", error);
       }
     },
   },
