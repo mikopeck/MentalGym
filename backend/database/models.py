@@ -121,3 +121,35 @@ class Lesson(db.Model):
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+class Library(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    library_topic = db.Column(db.String(100), nullable=False)
+    room_names = db.Column(db.JSON, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    factoids = db.relationship('LibraryFactoid', backref='library')
+
+class LibraryFactoid(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    library_id = db.Column(db.Integer, db.ForeignKey('library.id'), nullable=False)
+    room_name = db.Column(db.String(100), nullable=False)
+    factoid_content = db.Column(db.Text, nullable=False)
+
+    questions = db.relationship('LibraryQuestion', backref='factoid')
+
+class LibraryQuestion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    factoid_id = db.Column(db.Integer, db.ForeignKey('library_factoid.id'), nullable=False)
+    question_text = db.Column(db.Text, nullable=False)
+    user_answers = db.relationship('UserLibraryQuestionAnswer', backref='question')
+
+class UserLibraryQuestionAnswer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey('library_question.id'), nullable=False)
+    answered = db.Column(db.Boolean, default=False)
+    answered_at = db.Column(db.DateTime, nullable=True)
+
+    user = db.relationship('User', backref=db.backref('library_answers', lazy=True))

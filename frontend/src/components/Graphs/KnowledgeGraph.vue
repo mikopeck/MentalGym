@@ -4,9 +4,9 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 import * as d3 from "d3";
-import { useGameStore } from '@/store/gameStore';
+import { useGameStore } from "@/store/gameStore";
 
 export default {
   name: "KnowledgeGraph",
@@ -502,13 +502,13 @@ export default {
         });
 
         console.log("Library generation response:", libraryResponse.data);
-        const roomNames = libraryResponse.data.data.flat();
+        const libraryId = libraryResponse.data.id;
 
         // Set the room names in the store
         const gameStore = useGameStore();
-        gameStore.setRoomNames(roomNames);
-        
-        this.$router.push("/library");
+        gameStore.setId(libraryId);
+
+        this.$router.push(`/library/${libraryId}`);
       } catch (error) {
         this.loading = false;
         this.updateGoToButtonText("📖Go to");

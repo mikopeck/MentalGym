@@ -15,6 +15,8 @@
 <script>
 import { useGameStore } from "@/store/gameStore";
 import GameTile from "./GameTile.vue";
+import { onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
 export default {
   name: "GameWindow",
@@ -43,10 +45,16 @@ export default {
       // Implement your click logic here
     },
   },
-  created() {
-    this.tiles = this.gameStore.roomNames;
-    console.log("created"+this.tiles);
-  },
+  setup() {
+    const gameStore = useGameStore();
+    const route = useRoute();
+
+    onMounted(async () => {
+      const libraryId = route.params.id;
+      console.log("fetching library")
+      await gameStore.fetchRoomNames(libraryId);
+    });
+  }
 };
 </script>
 

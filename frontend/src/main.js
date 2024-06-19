@@ -14,7 +14,7 @@ const routes = [
   { path: '/lessons', component: defineAsyncComponent(() => import('./components/Backstage/LessonsPage.vue')) },
   { path: '/progress', component: defineAsyncComponent(() => import('./components/Backstage/ProgressPage.vue')) },
   { path: '/knowledge', component: defineAsyncComponent(() => import('./components/Backstage/KnowledgePage.vue')) },
-  { path: '/library', component: defineAsyncComponent(() => import('./components/Game/GamePage.vue')) },
+  { path: '/library/:id', component: defineAsyncComponent(() => import('./components/Game/GamePage.vue')) },
   { path: '/about', component: defineAsyncComponent(() => import('./components/Footer/AboutPage.vue')) },
   { path: '/contact', component: defineAsyncComponent(() => import('./components/Footer/ContactPage.vue')) },
   { path: '/settings', component: defineAsyncComponent(() => import('./components/Backstage/SettingsPage.vue')) },
@@ -48,7 +48,7 @@ router.beforeEach((to, from, next) => {
   } else if (!authStore.loggedIn && !isLessonOrChallenge && 
             to.path !== '/about' && to.path !== '/login' && 
             to.path !== '/terms' && to.path !== '/contact' && 
-            to.path !== '/plan' && to.path !== '/game') {
+            to.path !== '/plan') {
     next('/login');
   } else {
     next();
