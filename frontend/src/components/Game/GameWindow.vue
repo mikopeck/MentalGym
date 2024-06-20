@@ -1,11 +1,11 @@
 <template>
   <div class="page-main-container">
-    <div class="grid">
+    <div class="grid" :class="{ 'is-expanded': expandedTile !== null }">
       <GameTile
         v-for="(tile, index) in tiles"
         :key="index"
         :name="tile"
-        :class="'grid-item'"
+        :class="['grid-item', { 'is-expanded': expandedTile === index }]"
         @click="handleTileClick(index)"
       />
     </div>
@@ -24,6 +24,7 @@ export default {
   data() {
     return {
       tiles: Array(25).fill(null),
+      expandedTile: null,
     };
   },
   computed: {
@@ -41,8 +42,8 @@ export default {
   },
   methods: {
     handleTileClick(index) {
-      console.log(`Tile ${index} clicked`);
-      // Implement your click logic here
+      console.log(`Tile ${index} clicked from ${this.expandedTile}`);
+      this.expandedTile = this.expandedTile === index ? null : index;
     },
   },
   setup() {
@@ -64,23 +65,39 @@ export default {
   justify-content: center;
   align-items: center;
   height: 80vh;
+  transition: all 0.3s ease;
 }
 
 .grid {
   display: grid;
-  border: 1px solid var(--highlight-color);
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(5, 1fr);
   height: 100%;
   aspect-ratio: 1 / 1;
   max-width: 80vmin;
   max-height: 80vmin;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .grid-item {
-  border: 1px solid var(--highlight-color);
+  border: 4px dotted var(--background-color-2t);
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
+
+.grid-item.is-expanded {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+}
+
 </style>

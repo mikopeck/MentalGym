@@ -15,6 +15,7 @@ export const useGameStore = defineStore("gameStore", {
       try {
         const response = await axios.get(`/api/library/${libraryId}`);
         if (response.data.status === "success") {
+            console.log(response.data)
           this.roomNames = response.data.data.room_names;
         } else {
           console.error("Failed to fetch room names");

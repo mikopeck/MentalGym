@@ -15,7 +15,7 @@ export default {
   },
   computed: {
     randomBackgroundClass() {
-      const randomIndex = Math.floor(Math.random() * 8)+1;
+      const randomIndex = Math.floor(Math.random() * 8) + 1;
       return `background-${randomIndex}`;
     }
   }
@@ -28,7 +28,6 @@ export default {
   justify-content: center;
   align-items: flex-end;
   text-align: center;
-  border: 1px solid var(--text-color);
   height: 100%;
   width: 100%;
   cursor: pointer;
@@ -68,31 +67,30 @@ export default {
 }
 
 .background-2::before {
-    background-image: url('@/assets/images/room2.webp');
+  background-image: url('@/assets/images/room2.webp');
 }
 
 .background-3::before {
-    background-image: url('@/assets/images/room3.webp');
+  background-image: url('@/assets/images/room3.webp');
 }
 
 .background-4::before {
-    background-image: url('@/assets/images/room4.webp');
+  background-image: url('@/assets/images/room4.webp');
 }
 
 .background-5::before {
-    background-image: url('@/assets/images/room5.webp');
+  background-image: url('@/assets/images/room5.webp');
 }
 
 .background-6::before {
-    background-image: url('@/assets/images/room6.webp');
+  background-image: url('@/assets/images/room6.webp');
 }
 
 .background-7::before {
-    background-image: url('@/assets/images/room7.webp');
+  background-image: url('@/assets/images/room7.webp');
 }
 
 .background-8::before {
-    background-image: url('@/assets/images/room8.webp');
+  background-image: url('@/assets/images/room8.webp');
 }
-
 </style>
