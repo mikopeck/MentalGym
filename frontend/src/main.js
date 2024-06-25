@@ -48,7 +48,8 @@ router.beforeEach((to, from, next) => {
   } else if (!authStore.loggedIn && !isLessonOrChallenge && 
             to.path !== '/about' && to.path !== '/login' && 
             to.path !== '/terms' && to.path !== '/contact' && 
-            to.path !== '/plan') {
+            to.path !== '/plan' && !to.path.startsWith('/library/')) {
+              console.log("login from main");
     next('/login');
   } else {
     next();

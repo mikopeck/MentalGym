@@ -1,7 +1,7 @@
 # library_routes.py
 
 from flask import request, jsonify
-from flask_login import current_user
+from flask_login import current_user, AnonymousUserMixin
 
 import database.db_handlers as dbh
 import database.library_handlers as lbh
@@ -15,7 +15,8 @@ def init_library_routes(app):
         if not topic:
             return jsonify(status="error", message="No topic provided"), 400
 
-        result = lgn.suggest_library_wing(current_user.id, topic)
+        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
+        result = lgn.suggest_library_wing(user_id, topic)
         
         room_names = [room for sublist in result for room in sublist]
         library_response, status_code = lbh.create_library(current_user.id, topic, room_names)
@@ -32,15 +33,19 @@ def init_library_routes(app):
         if not subtopic:
             return jsonify(status="error", message="No subtopic provided"), 400
         
+        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
+        
         # Placeholder for your secret function 2 implementation
-        result = dbh.secret_function_2(current_user.id, subtopic)
+        result = dbh.secret_function_2(user_id, subtopic)
         
         return jsonify(status="success", data=result)
 
     @app.route("/api/library/<int:library_id>", methods=["GET"])
     def get_library(library_id):
-        library = lbh.get_library(library_id)
+        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
+        library = lbh.get_library(library_id, user_id)
         if library:
             return jsonify(status="success", data=library.get_json())
         else:
             return jsonify(status="error", message="Library not found"), 404
+        

@@ -122,14 +122,15 @@ class Lesson(db.Model):
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+###lib###
 class Library(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     library_topic = db.Column(db.String(100), nullable=False)
     room_names = db.Column(db.JSON, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     factoids = db.relationship('LibraryFactoid', backref='library')
+    doors = db.relationship('LibraryDoor', backref='library')
 
 class LibraryFactoid(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -153,3 +154,12 @@ class UserLibraryQuestionAnswer(db.Model):
     answered_at = db.Column(db.DateTime, nullable=True)
 
     user = db.relationship('User', backref=db.backref('library_answers', lazy=True))
+
+class LibraryDoor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    library_id = db.Column(db.Integer, db.ForeignKey('library.id'), nullable=False)
+    room_name1 = db.Column(db.String(100), nullable=False)
+    room_name2 = db.Column(db.String(100), nullable=False)
+    state = db.Column(db.Integer, default=0) # 0-locked, 1-unlocked, 2-opened
+

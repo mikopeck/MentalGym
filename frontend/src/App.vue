@@ -128,6 +128,7 @@ export default {
     shouldShowLogin() {
       const path = this.$route.path;
       return !(
+        path.startsWith("/library/") ||
         path === "/terms" ||
         path === "/about" ||
         path === "/contact" ||
@@ -145,6 +146,7 @@ export default {
   watch: {
     loggedIn(newValue) {
       if (!newValue) {
+        console.log("login from app");
         this.$router.push("/login");
       }
       if (newValue && this.shouldShowChat) {

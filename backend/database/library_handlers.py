@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import jsonify
-from database.models import db, Library, LibraryFactoid, LibraryQuestion, UserLibraryQuestionAnswer
+from database.models import db, Library, LibraryFactoid, LibraryQuestion, UserLibraryQuestionAnswer, LibraryDoor
 
 def create_library(user_id, library_topic, room_names):
     try:
@@ -32,12 +32,21 @@ def add_question_to_factoid(factoid_id, question_text):
         db.session.rollback()
         return jsonify({"message": str(e)}), 400
 
-def get_library(library_id):
+def get_library(library_id, user_id=None):
     library = Library.query.get(library_id)
-    if library:
-        return jsonify(library.as_dict())
-    else:
+    if not library:
         return jsonify({"message": "Library not found"}), 404
+
+    library_data = library.as_dict()
+    
+    # Include door states if user_id is provided
+    if user_id:
+        doors = LibraryDoor.query.filter_by(library_id=library_id).all()
+        library_data['doors'] = [{'room_name1': door.room_name1, 'room_name2': door.room_name2, 'state': door.state} for door in doors]
+    print(library_data)
+    
+    return jsonify(library_data)
+
 
 def get_factoid(factoid_id):
     factoid = LibraryFactoid.query.get(factoid_id)
@@ -78,6 +87,18 @@ def get_user_answer_for_question(user_id, question_id):
         return jsonify(answer.as_dict())
     else:
         return jsonify({"message": "Answer not found"}), 404
+
+def get_specific_door(user_id, library_id, room_name1, room_name2):
+    door = LibraryDoor.query.filter_by(
+        user_id=user_id,
+        library_id=library_id,
+        room_name1=room_name1,
+        room_name2=room_name2
+    ).first()
+    return door
+
+
+
 
 # Utility function to convert a model instance to a dictionary
 def model_to_dict(model_instance):
