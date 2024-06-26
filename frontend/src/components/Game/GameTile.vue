@@ -1,5 +1,5 @@
 <template>
-  <div :class="['grid-item', randomBackgroundClass]">
+  <div :class="['grid-item', randomBackgroundClass, tileClass]">
     <div class="grid-text">{{ name }}</div>
   </div>
 </template>
@@ -12,8 +12,24 @@ export default {
       type: String,
       required: true
     },
+    state: {
+      type: Number,
+      required: true
+    }
   },
   computed: {
+    tileClass() {
+      switch (this.state) {
+        case 0: // Locked
+          return 'locked';
+        case 1: // Unlocked
+          return 'unlocked';
+        case 2: // Open
+          return 'open';
+        default:
+          return '';
+      }
+    },
     randomBackgroundClass() {
       const randomIndex = Math.floor(Math.random() * 8) + 1;
       return `background-${randomIndex}`;
@@ -22,7 +38,40 @@ export default {
 };
 </script>
 
+
 <style scoped>
+
+.locked::before {
+  border: 4px dotted var(--background-color-2t);
+  filter: brightness(15%);
+}
+.locked{
+  opacity: 0.4;
+}
+
+.locked:hover::before {
+  border: 4px dotted var(--background-color-2t);
+  filter: brightness(40%);
+}
+.locked:hover{
+  opacity: 0.9;
+}
+
+.unlocked::before {
+  border: 2px dotted var(--element-color-1);
+  filter: brightness(70%);
+}
+
+.unlocked:hover::before {
+  filter: brightness(90%);
+  border: 2px dotted var(--element-color-2);
+}
+
+.open::before {
+  filter: brightness(100%);
+  border: none;
+}
+
 .grid-item {
   display: flex;
   justify-content: center;

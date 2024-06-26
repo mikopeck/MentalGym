@@ -79,7 +79,6 @@ export default {
 }
 
 .grid-item {
-  border: 4px dotted var(--background-color-2t);
   display: flex;
   justify-content: center;
   align-items: center;
