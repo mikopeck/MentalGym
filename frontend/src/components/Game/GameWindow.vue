@@ -6,6 +6,7 @@
         :key="index"
         :name="tile.name"
         :state="tile.state"
+        :loading="tile.loading"
         :class="['grid-item', { 'is-expanded': expandedTile === index }]"
         @click="handleTileClick(index)"
       />
@@ -16,7 +17,7 @@
 <script>
 import { useGameStore } from "@/store/gameStore";
 import GameTile from "./GameTile.vue";
-import { onMounted } from 'vue';
+import { onMounted, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 
 export default {
@@ -25,6 +26,7 @@ export default {
   data() {
     return {
       expandedTile: null,
+      loadingStates: reactive({}), 
     };
   },
   computed: {
@@ -34,14 +36,27 @@ export default {
     tiles() {
       return this.gameStore.roomNames.map((name) => ({
         name,
-        state: this.gameStore.roomStates[name] || 0  // Default to 0 if no state is found
+        state: this.gameStore.roomStates[name] || 0 ,
+        loading: !!this.loadingStates[name],
       }));
     }
   },
   methods: {
-    handleTileClick(index) {
-      console.log(`Tile ${index} clicked from ${this.expandedTile}`);
-      this.expandedTile = this.expandedTile === index ? null : index;
+    async handleTileClick(index) {
+      const tile = this.tiles[index];
+      console.log(tile);
+
+      if (tile.state === 2) {
+        this.expandedTile = this.expandedTile === index ? null : index;
+      } else if (tile.state === 1 && !tile.loading) {
+        this.loadingStates[tile.name] = true;
+        this.gameStore.unlockRoom(tile.name);
+        try {
+          await this.gameStore.unlockRoom(tile.name);
+        } finally {
+          this.loadingStates[tile.name] = false; // Clear loading state
+        }
+      }
     },
   },
   setup() {

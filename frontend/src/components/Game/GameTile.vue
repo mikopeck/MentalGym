@@ -1,6 +1,13 @@
 <template>
   <div :class="['grid-item', randomBackgroundClass, tileClass]">
-    <div class="grid-text">{{ name }}</div>
+    <div class="grid-text">
+      <template v-if="loading">
+        <div class="loader"></div>
+      </template>
+      <template v-else>
+        {{ name }}
+      </template>
+    </div>
   </div>
 </template>
 
@@ -15,6 +22,10 @@ export default {
     state: {
       type: Number,
       required: true
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -38,14 +49,12 @@ export default {
 };
 </script>
 
-
 <style scoped>
-
 .locked::before {
   border: 4px dotted var(--background-color-2t);
   filter: brightness(15%);
 }
-.locked{
+.locked {
   opacity: 0.4;
 }
 
@@ -53,7 +62,7 @@ export default {
   border: 4px dotted var(--background-color-2t);
   filter: brightness(40%);
 }
-.locked:hover{
+.locked:hover {
   opacity: 0.9;
 }
 
@@ -141,5 +150,20 @@ export default {
 
 .background-8::before {
   background-image: url('@/assets/images/room8.webp');
+}
+
+/* Add loader styles */
+.loader {
+  border: 4px solid var(--background-color);
+  border-top: 4px solid var(--element-color-1);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
