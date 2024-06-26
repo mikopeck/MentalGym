@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import jsonify
-from database.models import db, Library, LibraryFactoid, LibraryQuestion, UserLibraryQuestionAnswer, LibraryDoor
+from database.models import db, Library, LibraryFactoid, LibraryQuestion, UserLibraryQuestionAnswer, LibraryRoomState
 
 def create_library(user_id, library_topic, room_names):
     try:
@@ -11,6 +11,27 @@ def create_library(user_id, library_topic, room_names):
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": str(e)}), 400
+
+def visit_library(user_id, library_id):
+    library = Library.query.get(library_id)
+    if not library:
+        return jsonify({"message": "Library not found"}), 404
+
+    # Initialize room states with the center open and adjacent rooms unlocked
+    room_names = library.room_names  # Assume this is a 5x5 matrix
+    center_x, center_y = len(room_names) // 2, len(room_names[0]) // 2  # Calculate center
+    for i in range(len(room_names)):
+        for j in range(len(room_names[i])):
+            state = 0  # Default locked
+            if (i == center_x and j == center_y):
+                state = 2  # Opened
+            elif (abs(i - center_x) <= 1 and abs(j - center_y) <= 1):
+                state = 1  # Unlocked
+            room_state = LibraryRoomState(user_id=user_id, library_id=library_id, room_name=room_names[i][j], state=state)
+            db.session.add(room_state)
+    db.session.commit()
+
+    return get_library(library_id, user_id)
 
 def add_factoid_to_library(library_id, room_name, factoid_content):
     try:
@@ -38,13 +59,31 @@ def get_library(library_id, user_id=None):
         return jsonify({"message": "Library not found"}), 404
 
     library_data = library.as_dict()
-    
-    # Include door states if user_id is provided
+
     if user_id:
-        doors = LibraryDoor.query.filter_by(library_id=library_id).all()
-        library_data['doors'] = [{'room_name1': door.room_name1, 'room_name2': door.room_name2, 'state': door.state} for door in doors]
-    print(library_data)
-    
+        room_states = LibraryRoomState.query.filter_by(library_id=library_id, user_id=user_id).all()
+        if not room_states:
+            visit_library(user_id, library_id)
+            room_states = LibraryRoomState.query.filter_by(library_id=library_id, user_id=user_id).all()
+        library_data['room_states'] = {room.room_name: room.state for room in room_states}
+    else:
+        room_names = library.room_names  # Assuming a flat list of 25 room names
+        matrix_size = int(len(room_names) ** 0.5)  # Assume square matrix, calculate size (e.g., 5 for 25 rooms)
+        center_index = len(room_names) // 2  # Find the center index (e.g., 12 for 25 rooms)
+        center_x, center_y = center_index % matrix_size, center_index // matrix_size
+        
+        room_states = []
+        for index, room_name in enumerate(room_names):
+            i, j = index % matrix_size, index // matrix_size
+            state = 0  # Default locked
+            if index == center_index:
+                state = 2  # Opened
+            elif abs(i - center_x) <= 1 and abs(j - center_y) <= 1:
+                state = 1  # Unlocked
+            room_states.append({'room_name': room_name, 'state': state})
+
+        library_data['room_states'] = {room['room_name']: room['state'] for room in room_states}
+
     return jsonify(library_data)
 
 
@@ -87,16 +126,6 @@ def get_user_answer_for_question(user_id, question_id):
         return jsonify(answer.as_dict())
     else:
         return jsonify({"message": "Answer not found"}), 404
-
-def get_specific_door(user_id, library_id, room_name1, room_name2):
-    door = LibraryDoor.query.filter_by(
-        user_id=user_id,
-        library_id=library_id,
-        room_name1=room_name1,
-        room_name2=room_name2
-    ).first()
-    return door
-
 
 
 

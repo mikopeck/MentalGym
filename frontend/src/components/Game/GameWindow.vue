@@ -4,7 +4,8 @@
       <GameTile
         v-for="(tile, index) in tiles"
         :key="index"
-        :name="tile"
+        :name="tile.name"
+        :state="tile.state"
         :class="['grid-item', { 'is-expanded': expandedTile === index }]"
         @click="handleTileClick(index)"
       />
@@ -23,7 +24,6 @@ export default {
   components: { GameTile },
   data() {
     return {
-      tiles: Array(25).fill(null),
       expandedTile: null,
     };
   },
@@ -31,14 +31,12 @@ export default {
     gameStore() {
       return useGameStore();
     },
-  },
-  watch: {
-    "gameStore.roomNames": {
-      handler(newNames) {
-        this.tiles = newNames;
-      },
-      immediate: true,
-    },
+    tiles() {
+      return this.gameStore.roomNames.map((name) => ({
+        name,
+        state: this.gameStore.roomStates[name] || 0  // Default to 0 if no state is found
+      }));
+    }
   },
   methods: {
     handleTileClick(index) {
@@ -52,8 +50,8 @@ export default {
 
     onMounted(async () => {
       const libraryId = route.params.id;
-      console.log("fetching library")
-      await gameStore.fetchRoomNames(libraryId);
+      console.log("fetching library details");
+      await gameStore.fetchLibraryDetails(libraryId);
     });
   }
 };
