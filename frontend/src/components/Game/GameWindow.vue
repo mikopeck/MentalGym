@@ -50,9 +50,9 @@ export default {
         this.expandedTile = this.expandedTile === index ? null : index;
       } else if (tile.state === 1 && !tile.loading) {
         this.loadingStates[tile.name] = true;
-        this.gameStore.unlockRoom(tile.name);
+        this.gameStore.openRoom(tile.name);
         try {
-          await this.gameStore.unlockRoom(tile.name);
+          await this.gameStore.openRoom(tile.name);
         } finally {
           this.loadingStates[tile.name] = false; // Clear loading state
         }

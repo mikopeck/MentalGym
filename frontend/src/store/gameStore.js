@@ -6,6 +6,7 @@ export const useGameStore = defineStore("gameStore", {
     state: () => ({
         roomNames: [],
         roomStates: {},
+        currentRoom: null,
         libraryId: null,
     }),
     actions: {
@@ -13,6 +14,7 @@ export const useGameStore = defineStore("gameStore", {
             this.libraryId = libraryId;
         },
         async fetchLibraryDetails(libraryId) {
+            this.setId(libraryId);
             try {
                 const response = await axios.get(`/api/library/${libraryId}`);
                 if (response.data.status === "success") {
@@ -26,16 +28,23 @@ export const useGameStore = defineStore("gameStore", {
                 console.error("Error fetching library details:", error);
             }
         },
-        async unlockRoom(room_name) {
+        async openRoom(room_name) {
             try {
-                // Simulate a 5-second delay
-                await new Promise((resolve) => setTimeout(resolve, 5000));
-                // Simulate a successful unlock
+                if (this.roomStates[room_name] === 2) {
+                    this.currentRoom = room_name;
+                }
                 if (this.roomStates[room_name] === 1) {
-                    this.roomStates[room_name] = 2;
+                    const subtopic = room_name;
+                    console.log(this.libraryId);
+                    const response = await axios.post("/api/library/shelves", { libraryId: this.libraryId, subtopic });
+                    if (response.data.status === "success") {
+                        console.log(`Room ${room_name} unlock data:`, response.data.data);
+                        this.roomStates[room_name] = 2;
+                        console.log(`Room ${room_name} opened successfully`);
+                    } else {
+                        console.error(`Failed to unlock room ${room_name}: ${response.data.message}`);
+                    }
                     console.log(`Room ${room_name} unlocked successfully`);
-                } else {
-                    console.error("Room is not in an unlockable state");
                 }
             } catch (error) {
                 console.error("Error unlocking room:", error);

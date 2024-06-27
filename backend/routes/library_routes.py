@@ -3,7 +3,6 @@
 from flask import request, jsonify
 from flask_login import current_user, AnonymousUserMixin
 
-import database.db_handlers as dbh
 import database.library_handlers as lbh
 import knowledge_net.library_generator as lgn
 
@@ -27,19 +26,6 @@ def init_library_routes(app):
         else:
             return library_response
 
-    @app.route("/api/library/shelves", methods=["POST"])
-    def generate_shelves():
-        subtopic = request.json.get("subtopic")
-        if not subtopic:
-            return jsonify(status="error", message="No subtopic provided"), 400
-        
-        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
-        
-        # Placeholder for your secret function 2 implementation
-        result = dbh.secret_function_2(user_id, subtopic)
-        
-        return jsonify(status="success", data=result)
-
     @app.route("/api/library/<int:library_id>", methods=["GET"])
     def get_library(library_id):
         user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
@@ -49,3 +35,16 @@ def init_library_routes(app):
         else:
             return jsonify(status="error", message="Library not found"), 404
         
+    @app.route("/api/library/shelves", methods=["POST"])
+    def generate_shelves():
+        data = request.get_json()
+        subtopic = data.get("subtopic")
+        library_id = data.get("libraryId")
+        if not subtopic:
+            return jsonify(status="error", message="No subtopic provided"), 400
+        if not library_id:
+            return jsonify(status="error", message="No library ID provided"), 400
+
+        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
+        result = lgn.fill_room(user_id, subtopic, library_id)
+        return jsonify(status="success", data=result)

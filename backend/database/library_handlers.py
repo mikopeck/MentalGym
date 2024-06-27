@@ -119,6 +119,20 @@ def get_user_answer_for_question(user_id, question_id):
         return jsonify(answer.as_dict())
     else:
         return jsonify({"message": "Answer not found"}), 404
+    
+def get_library_room_names(library_id):
+    library = Library.query.get(library_id)
+    if not library:
+        return jsonify({"message": "Library not found"}), 404
+    return jsonify({"room_names": library.room_names}).json["room_names"], 200
+
+def get_library_content(library_id):
+    library = Library.query.get(library_id)
+    if not library:
+        return jsonify({"message": "Library not found"}), 404
+    factoids = LibraryFactoid.query.filter_by(library_id=library_id).all()
+    content = {factoid.room_name: factoid.factoid_content for factoid in factoids}
+    return jsonify({"library_content": content}).json["library_content"], 200
 
 
 

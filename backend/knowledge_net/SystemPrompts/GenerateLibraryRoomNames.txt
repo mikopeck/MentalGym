@@ -2,10 +2,7 @@ Objective:
 Generate a list of 24 creative and thematic names for library rooms based on any given topic. 
 Each name should be a sub-topic of the main topic.
 
-Think of new interesting topics for a user with this profile:
-|{user-profile}|
-
-Avoid topics which the user has already started or finished.
+{library-settings}
 
 Example names for main topic of "Travelling in Great Britain":
 The Great Halls of the Highlands Natural Wonders,

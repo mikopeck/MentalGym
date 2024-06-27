@@ -1,15 +1,15 @@
 import numpy as np
 from openapi import generate_response, get_embeddings
-from message_handler import create_message, system_message
+from message_handler import create_message
+from knowledge_net.SystemPrompts.prompt_utils import sys_library, sys_lib_room
 import roles, functions
-import database.db_handlers as dbh
 from knowledge_net.math_utils import calculate_cosine_similarities
 
 def suggest_library_wing(user_id, selected_node):
     def generate_rooms():
-        system_msg = system_message(user_id, roles.GenerateRooms)
+        system_msg = sys_library()
         user_msg = f"Library Wing main topic: {selected_node}."
-        function = [functions.GenerateRooms]
+        function = [functions.GenerateLibraryRoomNames]
         function_call = {"name": function[0]['name']}
         messages = create_message(system_msg, user_msg)
         response = generate_response(user_id, messages, function, function_call)
@@ -117,3 +117,32 @@ def print_grid(grid):
                 row_str += f"[{cell[:24]}]"
         print(row_str)
     print("\n")
+
+
+# rooms
+    
+def fill_room(user_id, room_name, library_id):
+    def generate_room_contents():
+        system_msg = sys_lib_room(library_id)
+        user_msg = room_name
+        function = [functions.GenerateLibraryRoom]
+        function_call = {"name": function[0]['name']}
+        messages = create_message(system_msg, user_msg)
+        response = generate_response(user_id, messages, function, function_call)
+        response_message = response["choices"][0]["message"]
+        if not response_message.get("function_call"):
+            return []
+        room_contents = functions.try_get_object(function[0], response_message)
+        if not room_contents:
+            return []
+        return room_contents
+    
+    attempts = 0
+    max_attempts = 5
+    room_contents = generate_room_contents()
+
+    while not room_contents and attempts < max_attempts:
+        room_contents = generate_room_contents()
+        attempts += 1
+
+    return room_contents

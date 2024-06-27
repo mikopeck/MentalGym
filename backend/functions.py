@@ -255,7 +255,7 @@ ExploreTopic = {
     },
 }
 
-GenerateRooms = {
+GenerateLibraryRoomNames = {
     "name": "generate_library_archive_rooms",
     "description": "Generates the room names of a library archive for a given topic.",
     "parameters": {
@@ -281,6 +281,57 @@ GenerateRooms = {
         "required": ["room_names"],
     },
 }
+
+GenerateLibraryRoom = {
+    "name": "generate_library_room",
+    "description": "Generates a library room with 4 factoids and corresponding multiple-choice questions. Each factoid is an interesting snippet related to the room's theme, and each question tests understanding of its associated factoid.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "factoids": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "factoid_text": {
+                            "type": "string",
+                            "description": "A snippet of an interesting fact related to the library room's theme, up to 200 tokens in length."
+                        },
+                        "question": {
+                            "type": "object",
+                            "properties": {
+                                "text": {
+                                    "type": "string",
+                                    "description": "The text of the question associated with the factoid."
+                                },
+                                "correct_choice": {
+                                    "type": "string",
+                                    "description": "The correct choice for the question."
+                                },
+                                "wrong_choices": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "minItems": 3,
+                                    "maxItems": 3,
+                                    "description": "Three incorrect choices for the question."
+                                }
+                            },
+                            "required": ["text", "correct_choice", "wrong_choices"]
+                        }
+                    },
+                    "required": ["factoid_text", "question"]
+                },
+                "minItems": 4,
+                "maxItems": 4,
+                "description": "An array of four objects, each containing a factoid and its corresponding multiple-choice question."
+            }
+        },
+        "required": ["factoids"]
+    },
+}
+
 
 def try_get_object(fcn, response_message):
     if response_message["function_call"]["name"] == fcn['name']:
