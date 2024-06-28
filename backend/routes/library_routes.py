@@ -36,15 +36,29 @@ def init_library_routes(app):
             return jsonify(status="error", message="Library not found"), 404
         
     @app.route("/api/library/shelves", methods=["POST"])
-    def generate_shelves():
+    def generate_or_retrieve_shelves():
         data = request.get_json()
         subtopic = data.get("subtopic")
         library_id = data.get("libraryId")
+
         if not subtopic:
             return jsonify(status="error", message="No subtopic provided"), 400
         if not library_id:
             return jsonify(status="error", message="No library ID provided"), 400
 
+        # Attempt to retrieve existing room contents
+        existing_content = lbh.retrieve_library_room_contents(library_id, subtopic)
+        if existing_content:
+            return jsonify(status="success", data=existing_content)
+
+        # If no content exists, generate new content
         user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
-        result = lgn.fill_room(user_id, subtopic, library_id)
-        return jsonify(status="success", data=result)
+        generated_content = lgn.fill_room(user_id, subtopic, library_id)
+
+        # Save the new content if generated
+        if generated_content:
+            lbh.save_library_room_contents(library_id, subtopic, generated_content)
+            return jsonify(status="success", data=generated_content)
+        else:
+            return jsonify(status="error", message="Failed to generate content"), 500
+

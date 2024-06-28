@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import jsonify
-from database.models import db, Library, LibraryFactoid, LibraryQuestion, UserLibraryQuestionAnswer, LibraryRoomState
+from database.models import db, Library, LibraryFactoid, LibraryQuestion, UserLibraryQuestionAnswer, LibraryRoomState,LibraryQuestionChoice
 
 def create_library(user_id, library_topic, room_names):
     try:
@@ -59,6 +59,56 @@ def get_library(library_id, user_id=None):
     library_data['room_states'] = {room['room_name']: room['state'] for room in room_states}
     return jsonify(library_data)
 
+def save_library_room_contents(library_id, room_name, factoids):
+    responses = []
+    for item in factoids['factoids']:
+        factoid_content = item['factoid_text']
+        question_data = item['question']
+        
+        # Add factoid to library
+        factoid_response, status_code = add_factoid_to_library(library_id, room_name, factoid_content)
+        if status_code != 201:
+            return factoid_response 
+        factoid_id = factoid_response.json['factoid_id']
+        
+        # Add question to factoid
+        question_text = question_data['text']
+        correct_choice = question_data['correct_choice']
+        wrong_choices = question_data['wrong_choices']
+        question_response,status_code  = add_question_to_factoid(factoid_id, question_text, correct_choice, wrong_choices)
+        if status_code != 201:
+            return question_response 
+        responses.append({
+            "factoid_response": factoid_response.json,
+            "question_response": question_response.json
+        })
+    
+    return jsonify(status="success", data=responses)
+
+
+def retrieve_library_room_contents(library_id, room_name):
+    factoids = LibraryFactoid.query.filter_by(library_id=library_id, room_name=room_name).all()
+    if len(factoids) < 4:
+        return None
+    
+    room_contents = []
+    for factoid in factoids:
+        questions = []
+        for question in factoid.questions:
+            choices = [choice.choice_text for choice in question.choices if not choice.is_correct]
+            correct_choice = next((choice.choice_text for choice in question.choices if choice.is_correct), None)
+            questions.append({
+                "question_text": question.question_text,
+                "correct_choice": correct_choice,
+                "wrong_choices": choices
+            })
+        room_contents.append({
+            "factoid_text": factoid.factoid_content,
+            "questions": questions
+        })
+    
+    return {"room_name": room_name, "factoids": room_contents}
+
 
 def add_factoid_to_library(library_id, room_name, factoid_content):
     try:
@@ -70,15 +120,21 @@ def add_factoid_to_library(library_id, room_name, factoid_content):
         db.session.rollback()
         return jsonify({"message": str(e)}), 400
 
-def add_question_to_factoid(factoid_id, question_text):
+def add_question_to_factoid(factoid_id, question_text, correct_choice, wrong_choices):
     try:
-        question = LibraryQuestion(factoid_id=factoid_id, question_text=question_text)
+        question = LibraryQuestion(factoid_id=factoid_id, question_text=question_text, correct_choice=correct_choice)
         db.session.add(question)
+        db.session.flush()  # Flush to get the question_id before commit
+
+        # Add choices to the question
+        add_choices_to_question(question.id, correct_choice, wrong_choices)
+        
         db.session.commit()
-        return jsonify({"message": "Question added successfully", "question_id": question.id}), 201
+        return jsonify({"message": "Question and choices added successfully", "question_id": question.id}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": str(e)}), 400
+
 
 def get_factoid(factoid_id):
     factoid = LibraryFactoid.query.get(factoid_id)
@@ -93,6 +149,24 @@ def get_question(question_id):
         return jsonify(question.as_dict())
     else:
         return jsonify({"message": "Question not found"}), 404
+    
+def add_choices_to_question(question_id, correct_choice, wrong_choices):
+    try:
+        # Add correct choice
+        correct = LibraryQuestionChoice(question_id=question_id, choice_text=correct_choice, is_correct=True)
+        db.session.add(correct)
+
+        # Add wrong choices
+        for choice in wrong_choices:
+            wrong = LibraryQuestionChoice(question_id=question_id, choice_text=choice, is_correct=False)
+            db.session.add(wrong)
+        
+        db.session.commit()
+        return jsonify({"message": "Choices added successfully"}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": str(e)}), 400
+
 
 def answer_question(user_id, question_id, answered=True):
     try:
@@ -136,6 +210,7 @@ def get_library_content(library_id):
 
 
 
+
 # Utility function to convert a model instance to a dictionary
 def model_to_dict(model_instance):
     return {c.name: getattr(model_instance, c.name) for c in model_instance.__table__.columns}
@@ -146,3 +221,4 @@ LibraryFactoid.as_dict = lambda self: model_to_dict(self)
 LibraryQuestion.as_dict = lambda self: model_to_dict(self)
 UserLibraryQuestionAnswer.as_dict = lambda self: model_to_dict(self)
 LibraryRoomState.as_dict = lambda self: model_to_dict(self)
+LibraryQuestionChoice.as_dict = lambda self: model_to_dict(self)

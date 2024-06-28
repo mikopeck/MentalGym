@@ -335,7 +335,8 @@ GenerateLibraryRoom = {
 
 def try_get_object(fcn, response_message):
     if response_message["function_call"]["name"] == fcn['name']:
-        profile_args = json.loads(response_message["function_call"]["arguments"])
+        thingy = response_message["function_call"]["arguments"]
+        profile_args = json.loads(thingy)
         
         # Extract required keys from the function definition
         required_keys = fcn['parameters']['required']

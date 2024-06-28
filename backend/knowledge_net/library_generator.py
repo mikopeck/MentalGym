@@ -1,8 +1,8 @@
 import numpy as np
-from openapi import generate_response, get_embeddings
+from openapi import generate_response, get_embeddings, LESSON_TOKENS
 from message_handler import create_message
 from knowledge_net.SystemPrompts.prompt_utils import sys_library, sys_lib_room
-import roles, functions
+import functions
 from knowledge_net.math_utils import calculate_cosine_similarities
 
 def suggest_library_wing(user_id, selected_node):
@@ -12,7 +12,7 @@ def suggest_library_wing(user_id, selected_node):
         function = [functions.GenerateLibraryRoomNames]
         function_call = {"name": function[0]['name']}
         messages = create_message(system_msg, user_msg)
-        response = generate_response(user_id, messages, function, function_call)
+        response = generate_response(user_id, messages, function, function_call, tokens=LESSON_TOKENS)
         response_message = response["choices"][0]["message"]
         if not response_message.get("function_call"):
             return []
@@ -128,7 +128,7 @@ def fill_room(user_id, room_name, library_id):
         function = [functions.GenerateLibraryRoom]
         function_call = {"name": function[0]['name']}
         messages = create_message(system_msg, user_msg)
-        response = generate_response(user_id, messages, function, function_call)
+        response = generate_response(user_id, messages, function, function_call, tokens=LESSON_TOKENS)
         response_message = response["choices"][0]["message"]
         if not response_message.get("function_call"):
             return []
@@ -146,3 +146,5 @@ def fill_room(user_id, room_name, library_id):
         attempts += 1
 
     return room_contents
+    
+ 

@@ -34,9 +34,10 @@ def generate_response(user_id, messages, functions=None, function_call="none", m
             if functions:
                 data["functions"] = functions
                 data["function_call"] = function_call
-                print(f"Requesting {model} response with {functions} mode {function_call}: \n{messages}")
-            else:
-                print("Requesting AI response: ", messages)
+            #     print(f"Requesting {model} response..")
+            #     print(f"{functions} mode {function_call}: \n{messages}")
+            # else:
+            #     print(f"Requesting {model} response: ", messages)
 
             response = requests.post(
                 "https://api.openai.com/v1/chat/completions",
