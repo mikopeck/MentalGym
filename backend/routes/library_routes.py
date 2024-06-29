@@ -46,17 +46,21 @@ def init_library_routes(app):
         if not library_id:
             return jsonify(status="error", message="No library ID provided"), 400
 
+        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
         # Attempt to retrieve existing room contents
         existing_content = lbh.retrieve_library_room_contents(library_id, subtopic)
         if existing_content:
+            if user_id:
+                lbh.update_library_room_state(user_id, library_id, subtopic, 2)
             return jsonify(status="success", data=existing_content)
 
         # If no content exists, generate new content
-        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
         generated_content = lgn.fill_room(user_id, subtopic, library_id)
 
         # Save the new content if generated
         if generated_content:
+            if user_id:
+                lbh.update_library_room_state(user_id, library_id, subtopic, 2)
             lbh.save_library_room_contents(library_id, subtopic, generated_content)
             return jsonify(status="success", data=generated_content)
         else:

@@ -4,10 +4,11 @@ import axios from "axios";
 
 export const useGameStore = defineStore("gameStore", {
     state: () => ({
+        libraryId: null,
         roomNames: [],
         roomStates: {},
         currentRoom: null,
-        libraryId: null,
+        factoids: [],
     }),
     actions: {
         setId(libraryId) {
@@ -21,6 +22,12 @@ export const useGameStore = defineStore("gameStore", {
                     console.log(response.data)
                     this.roomNames = response.data.data.room_names || [];
                     this.roomStates = response.data.data.room_states || {};
+
+                    await Promise.all(
+                        this.roomNames
+                            .filter(room_name => this.roomStates[room_name] === 2)
+                            .map(room_name => this.loadRoom(room_name))
+                    );
                 } else {
                     console.error("Failed to fetch library details");
                 }
@@ -39,12 +46,31 @@ export const useGameStore = defineStore("gameStore", {
                     const response = await axios.post("/api/library/shelves", { libraryId: this.libraryId, subtopic });
                     if (response.data.status === "success") {
                         console.log(`Room ${room_name} unlock data:`, response.data.data);
+                        this.factoids = response.data.data.factoids;
                         this.roomStates[room_name] = 2;
                         console.log(`Room ${room_name} opened successfully`);
                     } else {
                         console.error(`Failed to unlock room ${room_name}: ${response.data.message}`);
                     }
-                    console.log(`Room ${room_name} unlocked successfully`);
+                }
+            } catch (error) {
+                console.error("Error unlocking room:", error);
+            }
+        },
+        async loadRoom(room_name) {
+            try {
+                if (this.roomStates[room_name] !== 2) {
+                    console.error(`Loading unopened room ${room_name}`);
+                    return;
+                }
+                const subtopic = room_name;
+                const response = await axios.post("/api/library/shelves", { libraryId: this.libraryId, subtopic });
+                if (response.data.status === "success") {
+                    console.log(`Room ${room_name} data:`, response.data.data);
+                    this.factoids = response.data.data.factoids; // Store factoids data
+                    console.log(`Room ${room_name} loaded successfully`);
+                } else {
+                    console.error(`Failed to load room ${room_name}: ${response.data.message}`);
                 }
             } catch (error) {
                 console.error("Error unlocking room:", error);

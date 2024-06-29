@@ -41,6 +41,30 @@ def initialize_room_states(user_id, library_id, commit=False):
     
     return room_states
 
+def update_library_room_state(user_id, library_id, room_name, new_state):
+    try:
+        room_state = LibraryRoomState.query.filter_by(user_id=user_id, library_id=library_id, room_name=room_name).first()
+        if not room_state:
+            return jsonify({"message": "Room state not found"}), 404
+        
+        room_state.state = new_state
+        db.session.add(room_state)
+        db.session.commit()
+        return jsonify({"message": "Room state updated successfully", "room_state": room_state.as_dict()}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": str(e)}), 400
+
+def get_room_state(user_id, library_id, room_name):
+    try:
+        room_state = LibraryRoomState.query.filter_by(user_id=user_id, library_id=library_id, room_name=room_name).first()
+        if not room_state:
+            return jsonify({"message": "Room state not found"}), 404
+        return jsonify(room_state.as_dict()), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 400
+
+
 def get_library(library_id, user_id=None):
     library = Library.query.get(library_id)
     if not library:
@@ -95,12 +119,13 @@ def retrieve_library_room_contents(library_id, room_name):
     for factoid in factoids:
         questions = []
         for question in factoid.questions:
-            choices = [choice.choice_text for choice in question.choices if not choice.is_correct]
-            correct_choice = next((choice.choice_text for choice in question.choices if choice.is_correct), None)
+            question_choices = question.choices.all() if question.choices else []
+            wrong_choices = [choice.choice_text for choice in question_choices if not choice.is_correct]
+            correct_choice = next((choice.choice_text for choice in question_choices if choice.is_correct), None)
             questions.append({
                 "question_text": question.question_text,
                 "correct_choice": correct_choice,
-                "wrong_choices": choices
+                "wrong_choices": wrong_choices
             })
         room_contents.append({
             "factoid_text": factoid.factoid_content,

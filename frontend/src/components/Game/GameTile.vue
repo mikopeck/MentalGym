@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { useGameStore } from "@/store/gameStore";
+
 export default {
   name: "GameTile",
   props: {
@@ -29,6 +31,9 @@ export default {
     }
   },
   computed: {
+    gameStore() {
+      return useGameStore();
+    },
     tileClass() {
       switch (this.state) {
         case 0: // Locked
@@ -40,6 +45,9 @@ export default {
         default:
           return '';
       }
+    },
+    getFactoid(){
+      this.gameStore.factoids//get the ones for this room
     },
     randomBackgroundClass() {
       const randomIndex = Math.floor(Math.random() * 8) + 1;
