@@ -54,7 +54,6 @@ export default {
   font-size: 24px;
   color: var(--text-color);
   cursor: pointer;
-  border-radius:50%;
   width: 3em;
   height: 3em;
   text-shadow: 0px 0px 5px var(--background-color),
@@ -79,17 +78,17 @@ export default {
 
 .arrow-right {
   top: 50%;
-  right: 1%;
+  right: -5%;
 }
 
 .arrow-bottom {
-  bottom: -1%;
+  bottom: -5%;
   left: 50%;
 }
 
 .arrow-left {
   top: 50%;
-  left: 4%;
+  left: 5%;
 }
 
 .exclamation-top-left {
@@ -99,17 +98,17 @@ export default {
 
 .exclamation-top-right {
   top: 18%;
-  right: 18%;
+  right: 8%;
 }
 
 .exclamation-bottom-left {
-  bottom: 13%;
+  bottom: 8%;
   left: 18%;
 }
 
 .exclamation-bottom-right {
-  bottom: 13%;
-  right: 18%;
+  bottom: 8%;
+  right: 8%;
 }
 
 .question-mark {
