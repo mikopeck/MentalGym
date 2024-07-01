@@ -7,26 +7,31 @@
         :name="tile.name"
         :state="tile.state"
         :loading="tile.loading"
+        :isExpanded="expandedTile === index"
         :class="['grid-item', { 'is-expanded': expandedTile === index }]"
         @click="handleTileClick(index)"
       />
+      <div v-if="expandedTile !== null" class="room-zoom">
+        <RoomTile />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { reactive, watch } from "vue";
+import { useRoute } from "vue-router";
 import { useGameStore } from "@/store/gameStore";
 import GameTile from "./GameTile.vue";
-import { onMounted, reactive } from 'vue';
-import { useRoute } from 'vue-router';
+import RoomTile from "./RoomTile.vue";
 
 export default {
   name: "GameWindow",
-  components: { GameTile },
+  components: { GameTile, RoomTile },
   data() {
     return {
       expandedTile: null,
-      loadingStates: reactive({}), 
+      loadingStates: reactive({}),
     };
   },
   computed: {
@@ -36,10 +41,10 @@ export default {
     tiles() {
       return this.gameStore.roomNames.map((name) => ({
         name,
-        state: this.gameStore.roomStates[name] || 0 ,
+        state: this.gameStore.roomStates[name] || 0,
         loading: !!this.loadingStates[name],
       }));
-    }
+    },
   },
   methods: {
     async handleTileClick(index) {
@@ -53,21 +58,43 @@ export default {
         try {
           await this.gameStore.openRoom(tile.name);
         } finally {
-          this.loadingStates[tile.name] = false; // Clear loading state
+          this.loadingStates[tile.name] = false;
         }
       }
     },
   },
-  setup() {
-    const gameStore = useGameStore();
+  mounted() {
     const route = useRoute();
+    const gameStore = this.gameStore;
 
-    onMounted(async () => {
+    (async () => {
       const libraryId = route.params.id;
       console.log("fetching library details");
       await gameStore.fetchLibraryDetails(libraryId);
-    });
-  }
+    })();
+
+    watch(
+      () => gameStore.currentRoom,
+      (newRoom) => {
+        const newExpandedTile = this.tiles.findIndex(
+          (tile) => tile.name === newRoom
+        );
+        this.expandedTile = newExpandedTile !== -1 ? newExpandedTile : null;
+        console.log(this.expandedTile + newExpandedTile);
+      }
+    );
+
+    watch(
+      () => this.expandedTile,
+      (newIndex) => {
+        if (newIndex === null) {
+          gameStore.currentRoom = null;
+        } else {
+          gameStore.currentRoom = this.tiles[newIndex].name;
+        }
+      }
+    );
+  },
 };
 </script>
 
@@ -109,6 +136,20 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 100;
+  opacity: 1;
+  filter: none;
 }
 
+.room-zoom {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 101;
+  transition: all 0.3s ease;
+}
 </style>

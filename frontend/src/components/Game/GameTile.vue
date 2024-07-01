@@ -1,59 +1,46 @@
 <template>
-  <div :class="['grid-item', randomBackgroundClass, tileClass]">
-    <div class="grid-text">
-      <template v-if="loading">
-        <div class="loader"></div>
-      </template>
-      <template v-else>
-        {{ name }}
-      </template>
-    </div>
+<div :class="['grid-item', randomBackgroundClass, tileClass, noBefore]">
+  <div class="grid-text">
+    <template v-if="loading">
+      <div class="loader"></div>
+    </template>
+    <template v-else>
+      {{ name }}
+    </template>
   </div>
+</div>
 </template>
 
 <script>
-import { useGameStore } from "@/store/gameStore";
-
 export default {
   name: "GameTile",
   props: {
-    name: {
-      type: String,
-      required: true
-    },
-    state: {
-      type: Number,
-      required: true
-    },
-    loading: {
-      type: Boolean,
-      default: false
-    }
+    name: String,
+    state: Number,
+    loading: Boolean,
+    isExpanded: Boolean,
   },
   computed: {
-    gameStore() {
-      return useGameStore();
-    },
     tileClass() {
       switch (this.state) {
         case 0: // Locked
-          return 'locked';
+          return "locked";
         case 1: // Unlocked
-          return 'unlocked';
+          return "unlocked";
         case 2: // Open
-          return 'open';
+          return "open";
         default:
-          return '';
+          return "";
       }
-    },
-    getFactoid(){
-      this.gameStore.factoids//get the ones for this room
     },
     randomBackgroundClass() {
       const randomIndex = Math.floor(Math.random() * 8) + 1;
       return `background-${randomIndex}`;
-    }
-  }
+    },
+    noBefore() {
+      return this.isExpanded ? "no-before" : "";
+    },
+  },
 };
 </script>
 
@@ -103,7 +90,7 @@ export default {
 }
 
 .grid-item::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -120,6 +107,10 @@ export default {
   opacity: 1;
 }
 
+.grid-item.no-before::before {
+  opacity: 1;
+}
+
 .grid-text {
   position: relative;
   z-index: 2;
@@ -129,35 +120,35 @@ export default {
 }
 
 .background-1::before {
-  background-image: url('@/assets/images/room1.webp');
+  background-image: url("@/assets/images/room1.webp");
 }
 
 .background-2::before {
-  background-image: url('@/assets/images/room2.webp');
+  background-image: url("@/assets/images/room2.webp");
 }
 
 .background-3::before {
-  background-image: url('@/assets/images/room3.webp');
+  background-image: url("@/assets/images/room3.webp");
 }
 
 .background-4::before {
-  background-image: url('@/assets/images/room4.webp');
+  background-image: url("@/assets/images/room4.webp");
 }
 
 .background-5::before {
-  background-image: url('@/assets/images/room5.webp');
+  background-image: url("@/assets/images/room5.webp");
 }
 
 .background-6::before {
-  background-image: url('@/assets/images/room6.webp');
+  background-image: url("@/assets/images/room6.webp");
 }
 
 .background-7::before {
-  background-image: url('@/assets/images/room7.webp');
+  background-image: url("@/assets/images/room7.webp");
 }
 
 .background-8::before {
-  background-image: url('@/assets/images/room8.webp');
+  background-image: url("@/assets/images/room8.webp");
 }
 
 /* Add loader styles */
@@ -171,7 +162,11 @@ export default {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

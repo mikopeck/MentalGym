@@ -14,6 +14,22 @@ export const useGameStore = defineStore("gameStore", {
         setId(libraryId) {
             this.libraryId = libraryId;
         },
+        handleMapClick() {
+            console.log('Map clicked');
+            this.currentRoom = null;
+        },
+        handleDirectionClick(direction) {
+            console.log(`${direction} clicked`);
+            // call openroom on the room in that direction
+        },
+        handleExclamationClick() {
+            console.log('Exclamation clicked');
+            // display factoid_text
+        },
+        handleQuestionClick() {
+            console.log('Question clicked');
+            // display question & choices
+        },
         async fetchLibraryDetails(libraryId) {
             this.setId(libraryId);
             try {
@@ -75,6 +91,6 @@ export const useGameStore = defineStore("gameStore", {
             } catch (error) {
                 console.error("Error unlocking room:", error);
             }
-        }
+        },
     },
 });
