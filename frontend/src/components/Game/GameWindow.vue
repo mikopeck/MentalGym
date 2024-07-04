@@ -15,6 +15,8 @@
         <RoomTile />
       </div>
     </div>
+    <FactoidComponent />
+    <LibraryQuestion />
   </div>
 </template>
 
@@ -24,10 +26,12 @@ import { useRoute } from "vue-router";
 import { useGameStore } from "@/store/gameStore";
 import GameTile from "./GameTile.vue";
 import RoomTile from "./RoomTile.vue";
+import FactoidComponent from "./FactoidComponent.vue";
+import LibraryQuestion from "./LibraryQuestion.vue";
 
 export default {
   name: "GameWindow",
-  components: { GameTile, RoomTile },
+  components: { GameTile, RoomTile, FactoidComponent, LibraryQuestion },
   data() {
     return {
       expandedTile: null,
@@ -51,15 +55,16 @@ export default {
       const tile = this.tiles[index];
       console.log(tile);
 
-      if (tile.state === 2) {
-        this.expandedTile = this.expandedTile === index ? null : index;
-      } else if (tile.state === 1 && !tile.loading) {
+      if (tile.state === 2 || (tile.state === 1 && !tile.loading)) {
         this.loadingStates[tile.name] = true;
         try {
           await this.gameStore.openRoom(tile.name);
         } finally {
           this.loadingStates[tile.name] = false;
         }
+      }
+      else {
+        console.log("Loading or locked room");
       }
     },
   },

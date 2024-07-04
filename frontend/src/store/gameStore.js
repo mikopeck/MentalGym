@@ -9,26 +9,59 @@ export const useGameStore = defineStore("gameStore", {
         roomStates: {},
         currentRoom: null,
         factoids: [],
+        currentQuestion: 0,
+        questionVisible: false,
+        factoidVisible: null
     }),
     actions: {
         setId(libraryId) {
             this.libraryId = libraryId;
         },
         handleMapClick() {
-            console.log('Map clicked');
             this.currentRoom = null;
         },
         handleDirectionClick(direction) {
             console.log(`${direction} clicked`);
-            // call openroom on the room in that direction
+            if (!this.currentRoom) { return; }
+
+            const currentIndex = this.roomNames.indexOf(this.currentRoom);
+            if (currentIndex === -1) {
+                console.error('Current room not found in roomNames array.');
+                return;
+            }
+
+            let newIndex;
+            if (direction === 'right') {
+                newIndex = currentIndex + 1;
+            } else if (direction === 'left') {
+                newIndex = currentIndex - 1;
+            } else if (direction === 'up') {
+                newIndex = currentIndex - 5;
+            }else if (direction === 'down') {
+                newIndex = currentIndex + 5;
+            } else {
+                console.error('Invalid direction specified.');
+                return;
+            }
+
+            // Check if the new index is within the array bounds
+            if (newIndex < 0 || newIndex >= this.roomNames.length) {
+                console.error('New room index out of bounds.');
+                return;
+            }
+
+            const newRoomName = this.roomNames[newIndex];
+            if (newRoomName) {
+                this.openRoom(newRoomName);
+            }
         },
-        handleExclamationClick() {
-            console.log('Exclamation clicked');
-            // display factoid_text
+        handleExclamationClick(index) {
+            console.log(`Exclamation ${index}`);
+            this.factoidVisible = index;
         },
         handleQuestionClick() {
             console.log('Question clicked');
-            // display question & choices
+            this.questionVisible = true;
         },
         async fetchLibraryDetails(libraryId) {
             this.setId(libraryId);

@@ -5,10 +5,10 @@
     <button class="icon arrow-right" @click="directionClick('right')">→</button>
     <button class="icon arrow-bottom" @click="directionClick('down')">↓</button>
     <button class="icon arrow-left" @click="directionClick('left')">←</button>
-    <button class="icon exclamation-top-left" @click="exclamationClick">!</button>
-    <button class="icon exclamation-top-right" @click="exclamationClick">!</button>
-    <button class="icon exclamation-bottom-left" @click="exclamationClick">!</button>
-    <button class="icon exclamation-bottom-right" @click="exclamationClick">!</button>
+    <button class="icon exclamation-top-left" @click="exclamationClick(0)">!</button>
+    <button class="icon exclamation-top-right" @click="exclamationClick(1)">!</button>
+    <button class="icon exclamation-bottom-left" @click="exclamationClick(2)">!</button>
+    <button class="icon exclamation-bottom-right" @click="exclamationClick(3)">!</button>
     <button class="icon question-mark" @click="questionClick">?</button>
   </div>
 </template>
@@ -30,8 +30,8 @@ export default {
     directionClick(direction) {
       this.gameStore.handleDirectionClick(direction);
     },
-    exclamationClick() {
-      this.gameStore.handleExclamationClick();
+    exclamationClick(index) {
+      this.gameStore.handleExclamationClick(index);
     },
     questionClick() {
       this.gameStore.handleQuestionClick();
