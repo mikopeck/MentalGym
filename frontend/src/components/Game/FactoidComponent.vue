@@ -55,7 +55,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--background-color);
+  background-color: var(--background-haze);
   z-index: 1000;
 }
 
