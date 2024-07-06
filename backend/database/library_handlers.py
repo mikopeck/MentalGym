@@ -1,6 +1,7 @@
 from datetime import datetime
+import random
 from flask import jsonify
-from database.models import db, Library, LibraryFactoid, LibraryQuestion, UserLibraryQuestionAnswer, LibraryRoomState,LibraryQuestionChoice
+from database.models import db, Library, LibraryFactoid, LibraryQuestion, LibraryRoomState,LibraryQuestionChoice
 
 def create_library(user_id, library_topic, room_names):
     try:
@@ -28,17 +29,32 @@ def initialize_room_states(user_id, library_id, commit=False):
         state = 0  # Default locked
         if index == center_index:
             state = 2  # Opened
-        elif abs(i - center_x) + abs(j - center_y) <= 1 :
+        elif abs(i - center_x) + abs(j - center_y) <= 1:
             state = 1  # Unlocked
 
+        # Initialize the current question index randomly between 0 and 3
+        current_question_index = random.randint(0, 3)
+        
         if commit:
-            room_state = LibraryRoomState(user_id=user_id, library_id=library_id, room_name=room_name, state=state)
+            room_state = LibraryRoomState(
+                user_id=user_id, 
+                library_id=library_id, 
+                room_name=room_name, 
+                state=state,
+                current_question_index=current_question_index,
+                answered_questions=[]  # Initialize with empty list
+            )
             db.session.add(room_state)
-        room_states.append({'room_name': room_name, 'state': state})
+        room_states.append({
+            'room_name': room_name,
+            'state': state,
+            'current_question_index': current_question_index,
+            'answered_questions': []
+        })
 
     if commit:
         db.session.commit()
-    
+
     return room_states
 
 def update_library_room_state(user_id, library_id, room_name, new_state):
@@ -55,16 +71,6 @@ def update_library_room_state(user_id, library_id, room_name, new_state):
         db.session.rollback()
         return jsonify({"message": str(e)}), 400
 
-def get_room_state(user_id, library_id, room_name):
-    try:
-        room_state = LibraryRoomState.query.filter_by(user_id=user_id, library_id=library_id, room_name=room_name).first()
-        if not room_state:
-            return jsonify({"message": "Room state not found"}), 404
-        return jsonify(room_state.as_dict()), 200
-    except Exception as e:
-        return jsonify({"message": str(e)}), 400
-
-
 def get_library(library_id, user_id=None):
     library = Library.query.get(library_id)
     if not library:
@@ -80,7 +86,15 @@ def get_library(library_id, user_id=None):
         if not room_states:
             return jsonify({"message": "Error initializing room states"}), 500
         
-    library_data['room_states'] = {room['room_name']: room['state'] for room in room_states}
+    library_data['room_states'] = {
+        i: {
+            'room_name': room['room_name'],
+            'state': room['state'],
+            'current_question_index': room.get('current_question_index', 0),
+            'answered_questions': room.get('answered_questions', [])
+        } for i, room in enumerate(room_states)
+    }
+
     return jsonify(library_data)
 
 def save_library_room_contents(library_id, room_name, factoids):
@@ -192,33 +206,19 @@ def add_choices_to_question(question_id, correct_choice, wrong_choices):
         db.session.rollback()
         return jsonify({"message": str(e)}), 400
 
+def mark_current_question_as_answered(user_id, library_id, room_name):
+    room_state = LibraryRoomState.query.filter_by(user_id=user_id, library_id=library_id, room_name=room_name).first()
+    if room_state:
+        if room_state.current_question_index not in room_state.answered_questions:
+            room_state.answered_questions.append(room_state.current_question_index)
+            db.session.commit()
 
-def answer_question(user_id, question_id, answered=True):
-    try:
-        answer = UserLibraryQuestionAnswer.query.filter_by(user_id=user_id, question_id=question_id).first()
-        if not answer:
-            answer = UserLibraryQuestionAnswer(user_id=user_id, question_id=question_id, answered=answered)
-        else:
-            answer.answered = answered
-            answer.answered_at = datetime.utcnow() if answered else None
-        db.session.add(answer)
+def increment_current_question(user_id, library_id, room_name):
+    room_state = LibraryRoomState.query.filter_by(user_id=user_id, library_id=library_id, room_name=room_name).first()
+    if room_state:
+        room_state.current_question_index = (room_state.current_question_index + 1) % 4
         db.session.commit()
-        return jsonify({"message": "Answer status updated successfully", "answer_id": answer.id}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"message": str(e)}), 400
 
-def get_user_answers(user_id):
-    answers = UserLibraryQuestionAnswer.query.filter_by(user_id=user_id).all()
-    return jsonify([answer.as_dict() for answer in answers])
-
-def get_user_answer_for_question(user_id, question_id):
-    answer = UserLibraryQuestionAnswer.query.filter_by(user_id=user_id, question_id=question_id).first()
-    if answer:
-        return jsonify(answer.as_dict())
-    else:
-        return jsonify({"message": "Answer not found"}), 404
-    
 def get_library_room_names(library_id):
     library = Library.query.get(library_id)
     if not library:
@@ -244,6 +244,5 @@ def model_to_dict(model_instance):
 Library.as_dict = lambda self: model_to_dict(self)
 LibraryFactoid.as_dict = lambda self: model_to_dict(self)
 LibraryQuestion.as_dict = lambda self: model_to_dict(self)
-UserLibraryQuestionAnswer.as_dict = lambda self: model_to_dict(self)
 LibraryRoomState.as_dict = lambda self: model_to_dict(self)
 LibraryQuestionChoice.as_dict = lambda self: model_to_dict(self)

@@ -137,6 +137,8 @@ class LibraryRoomState(db.Model):
     library_id = db.Column(db.Integer, db.ForeignKey('library.id'), nullable=False)
     room_name = db.Column(db.String(100), nullable=False)
     state = db.Column(db.Integer, default=0)  # 0-locked, 1-unlocked, 2-opened
+    current_question_index = db.Column(db.Integer, nullable=True)  # Index of the current question
+    answered_questions = db.Column(db.JSON, default=list, nullable=False)
 
 class LibraryFactoid(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -153,23 +155,9 @@ class LibraryQuestion(db.Model):
     correct_choice = db.Column(db.String(100), nullable=False)
 
     choices = db.relationship('LibraryQuestionChoice', backref='question', lazy='dynamic')
-    user_answers = db.relationship('UserLibraryQuestionAnswer', backref='question')
 
 class LibraryQuestionChoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     question_id = db.Column(db.Integer, db.ForeignKey('library_question.id'), nullable=False)
     choice_text = db.Column(db.String(100), nullable=False)
-
     is_correct = db.Column(db.Boolean, default=False)
-
-class UserLibraryQuestionAnswer(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    question_id = db.Column(db.Integer, db.ForeignKey('library_question.id'), nullable=False)
-    choice_id = db.Column(db.Integer, db.ForeignKey('library_question_choice.id'), nullable=False)
-    answered = db.Column(db.Boolean, default=False)
-    answered_at = db.Column(db.DateTime, nullable=True)
-
-    user = db.relationship('User', backref=db.backref('library_answers', lazy=True))
-
-

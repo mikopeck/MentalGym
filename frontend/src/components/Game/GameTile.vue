@@ -156,8 +156,8 @@ export default {
   border: 4px solid var(--background-color);
   border-top: 4px solid var(--element-color-1);
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 2em;
+  height: 2em;
   animation: spin 1s linear infinite;
 }
 

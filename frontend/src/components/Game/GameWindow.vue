@@ -43,9 +43,10 @@ export default {
       return useGameStore();
     },
     tiles() {
+      console.log(this.gameStore.roomStates);
       return this.gameStore.roomNames.map((name) => ({
         name,
-        state: this.gameStore.roomStates[name] || 0,
+        state: this.gameStore.roomStates[name].state || 0,
         loading: !!this.loadingStates[name],
       }));
     },
@@ -118,13 +119,14 @@ export default {
   grid-template-rows: repeat(5, 1fr);
   height: 100%;
   aspect-ratio: 1 / 1;
-  max-width: 80vmin;
-  max-height: 80vmin;
+  max-width: 96vmin;
+  max-height: 96vmin;
   transition: all 0.3s ease;
   position: relative;
 }
 
 .grid-item {
+  font-size: 0.7em;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -135,6 +137,7 @@ export default {
 }
 
 .grid-item.is-expanded {
+  font-size: 1em;
   position: absolute;
   top: 0;
   left: 0;

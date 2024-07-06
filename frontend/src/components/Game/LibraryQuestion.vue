@@ -1,8 +1,11 @@
 <!-- LibraryQuestion.vue -->
 <template>
   <div v-if="questionVisible" class="question-overlay" @click="closeQuestion">
-    <div class="question-content">{{ question.text }}</div>
-    <div class="choices-container">
+    <div v-if="question === null" class="completion-message">
+      Congratulations, you've completed all questions in this room!
+    </div>
+    <div v-else class="question-content">{{ question.text }}</div>
+    <div v-if="question !== null" class="choices-container">
       <div v-for="(choice, index) in question.choices" :key="index">
         <button @click="submitAnswer(choice)">{{ choice }}</button>
       </div>
@@ -18,9 +21,8 @@ export default {
   methods: {
     submitAnswer(choice) {
       const store = useGameStore();
-      const correct =
-        store.factoids[store.currentQuestion].questions[0].correct_choice;
-      alert(choice === correct ? "Correct!" : "Wrong!");
+      const correct = store.factoids[store.currentQuestion]?.questions[0]?.correct_choice;
+      store.answerAttempt(correct === choice);
     },
     closeQuestion() {
       const store = useGameStore();
@@ -30,7 +32,12 @@ export default {
   computed: {
     question() {
       const store = useGameStore();
+      console.log(store.currentQuestion);
+      if (store.currentQuestion === null) return null;
+
       const currentFactoid = store.factoids[store.currentQuestion];
+      if (!currentFactoid) return null;
+
       const currentQuestion = currentFactoid.questions[0];
       return {
         text: currentQuestion.question_text,
@@ -49,6 +56,11 @@ export default {
 </script>
 
 <style scoped>
+.completion-message {
+  text-align: center;
+  font-size: 1.4em;
+  color: var(--highlight-color);
+}
 .question-overlay {
   position: absolute;
   width: 100%;
@@ -69,7 +81,7 @@ export default {
   max-width: 90%;
   padding: 20px;
   border-radius: 8px;
-  background-color: var(--background-color-2t);
+  background-image: linear-gradient(to right, var(--background-color-2t), var(--background-color-1t));
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 1001;
   font-size: 1.2em;
