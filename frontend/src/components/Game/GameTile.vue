@@ -1,15 +1,20 @@
 <template>
-<div :class="['grid-item', randomBackgroundClass, tileClass, noBefore]">
-  <div class="grid-text">
+  <div :class="['grid-item', randomBackgroundClass, tileClass, noBefore]">
     <template v-if="loading">
       <div class="loader"></div>
     </template>
-    <template v-else>
-      {{ name }}
-    </template>
+    <div class="grid-text">
+        <div class="room-text">{{ name }}</div>
+    </div>
+    <img
+      v-if="state === 3"
+      src="@/assets/images/light.webp"
+      class="light-icon"
+      alt="Completed"
+    />
   </div>
-</div>
 </template>
+
 
 <script>
 export default {
@@ -23,12 +28,14 @@ export default {
   computed: {
     tileClass() {
       switch (this.state) {
-        case 0: // Locked
+        case 0:
           return "locked";
-        case 1: // Unlocked
+        case 1:
           return "unlocked";
-        case 2: // Open
+        case 2:
           return "open";
+        case 3:
+          return "completed";
         default:
           return "";
       }
@@ -60,20 +67,24 @@ export default {
 .locked:hover {
   opacity: 0.9;
 }
-
 .unlocked::before {
   border: 2px dotted var(--element-color-1);
-  filter: brightness(70%);
+  filter: brightness(60%);
 }
 
 .unlocked:hover::before {
-  filter: brightness(90%);
   border: 2px dotted var(--element-color-2);
+  filter: brightness(80%);
 }
 
-.open::before {
-  filter: brightness(100%);
-  border: none;
+.light-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 9em;
+  height: auto;
+  z-index: 3;
 }
 
 .grid-item {
@@ -87,6 +98,7 @@ export default {
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  font-size: 0.7em;
 }
 
 .grid-item::before {
@@ -98,13 +110,7 @@ export default {
   height: 100%;
   background-size: cover;
   background-position: center;
-  opacity: 0.6;
-  transition: opacity 0.3s ease;
   z-index: 1;
-}
-
-.grid-item:hover::before {
-  opacity: 1;
 }
 
 .grid-item.no-before::before {
@@ -112,11 +118,21 @@ export default {
 }
 
 .grid-text {
+  transition: transform 0.1s ease;
   position: relative;
   z-index: 2;
   text-shadow: 0px 0px 5px var(--background-color),
     0px 0px 10px var(--background-color), 0px 0px 15px var(--background-color),
     0px 0px 20px var(--background-color), 0px 0px 25px var(--background-color);
+  padding-bottom: 1em;
+}
+
+.grid-item:hover .grid-text {
+  transform: scale(1.05);
+}
+
+.grid-item:hover .loader {
+  transform: none;
 }
 
 .background-1::before {

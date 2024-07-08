@@ -66,3 +66,34 @@ def init_library_routes(app):
         else:
             return jsonify(status="error", message="Failed to generate content"), 500
 
+# routes to update room states. return login pls if no user
+    @app.route("/api/library/<int:library_id>/room/update", methods=["POST"])
+    def update_room_state(library_id):
+        if isinstance(current_user, AnonymousUserMixin):
+            return jsonify({"status": "error", "message": "Please log in to update room states"}), 401
+
+        user_id = current_user.id
+        data = request.get_json()
+
+        # Single room update
+        if 'room_name' in data and 'new_state' in data:
+            room_name = data['room_name']
+            new_state = data['new_state']
+            response, status_code = lbh.update_library_room_state(user_id, library_id, room_name, new_state)
+            return response
+
+        # Multiple rooms update (assuming the data format includes a list of rooms with their new states)
+        elif 'rooms' in data:
+            responses = []
+            for room in data['rooms']:
+                room_name = room['room_name']
+                new_state = room['new_state']
+                response, status_code = lbh.update_library_room_state(user_id, library_id, room_name, new_state)
+                if status_code != 200:
+                    responses.append({"room_name": room_name, "status": "error", "message": response.get_json()['message']})
+                else:
+                    responses.append({"room_name": room_name, "status": "success"})
+            return jsonify({"rooms": responses}), 200
+
+        else:
+            return jsonify({"status": "error", "message": "Invalid data provided"}), 400

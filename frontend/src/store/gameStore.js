@@ -68,27 +68,31 @@ export const useGameStore = defineStore("gameStore", {
             if (correct) {
                 const room = this.roomStates[this.currentRoom];
                 room.answeredQuestions.push(this.currentQuestion);
-
+                console.log("answered" + room.answeredQuestions.length)
                 if (room.answeredQuestions.length === 4) {
-                    room.state = 3;  // all questions answered/completed
+                    room.state = 3; 
+                    this.saveRoomState(this.currentRoom, 3);
                     this.unlockAdjacentRooms();
                 }
 
                 this.currentQuestion = this.findNextUnansweredQuestion();
-                
+
             } else {
                 this.currentQuestion = (this.currentQuestion + 1) % 4;
             }
         },
 
         unlockAdjacentRooms() {
+            console.log("unlocking " + this.roomStates)
             const currentIndex = this.roomNames.indexOf(this.currentRoom);
             const adjacentIndices = [currentIndex - 1, currentIndex + 1, currentIndex - 5, currentIndex + 5];
-            adjacentIndices.forEach(index => {
+            adjacentIndices.forEach(async index => {
                 if (index >= 0 && index < this.roomNames.length && this.roomStates[this.roomNames[index]].state === 0) {
                     this.roomStates[this.roomNames[index]].state = 1;
+                    await this.saveRoomState(this.roomNames[index], 1);
                 }
             });
+            console.log("unlocked " + this.roomStates)
         },
 
         findNextUnansweredQuestion() {
@@ -100,6 +104,17 @@ export const useGameStore = defineStore("gameStore", {
                 }
             }
             return null;
+        },
+        async saveRoomState(room_name, new_state) {
+            try {
+                await axios.post(`/api/library/${this.libraryId}/room/update`, {
+                    room_name,
+                    new_state
+                });
+                console.log(`State for room ${room_name} saved successfully.`);
+            } catch (error) {
+                console.error(`Failed to save state for room ${room_name}:`, error);
+            }
         },
         async fetchLibraryDetails(libraryId) {
             this.setId(libraryId);
@@ -136,8 +151,8 @@ export const useGameStore = defineStore("gameStore", {
 
         async openRoom(room_name) {
             try {
-                console.log("opening"+room_name);
-                if (this.roomStates[room_name].state === 2) {
+                console.log("opening" + room_name);
+                if (this.roomStates[room_name].state > 1) {
                     await this.loadRoom(room_name);
                     this.currentRoom = room_name;
                 }
@@ -146,12 +161,9 @@ export const useGameStore = defineStore("gameStore", {
                     console.log(this.libraryId);
                     const response = await axios.post("/api/library/shelves", { libraryId: this.libraryId, subtopic });
                     if (response.data.status === "success") {
-                        console.log(`Room ${room_name} unlock data:`, response.data.data);
-                        this.factoids = response.data.data.factoids;
                         this.roomStates[room_name].state = 2;
-                        this.currentQuestion = this.roomStates[room_name].currentQuestionIndex;
-                        this.answered_questions = this.roomStates[room_name].answered_questions;
-                        console.log(`Room ${room_name} opened successfully`);
+                        await this.saveRoomState(room_name, 2);
+                        console.log(`Room ${room_name} unlocked successfully`);
                     } else {
                         console.error(`Failed to unlock room ${room_name}: ${response.data.message}`);
                     }
@@ -161,7 +173,7 @@ export const useGameStore = defineStore("gameStore", {
             }
         },
         async loadRoom(room_name) {
-            if (this.roomStates[room_name].state !== 2) {
+            if (this.roomStates[room_name].state < 2) {
                 console.error(`Loading unopened room ${room_name}`);
                 return;
             }

@@ -43,7 +43,6 @@ export default {
       return useGameStore();
     },
     tiles() {
-      console.log(this.gameStore.roomStates);
       return this.gameStore.roomNames.map((name) => ({
         name,
         state: this.gameStore.roomStates[name].state || 0,
@@ -54,9 +53,8 @@ export default {
   methods: {
     async handleTileClick(index) {
       const tile = this.tiles[index];
-      console.log(tile);
 
-      if (tile.state === 2 || (tile.state === 1 && !tile.loading)) {
+      if (tile.state > 1 || (tile.state === 1 && !tile.loading)) {
         this.loadingStates[tile.name] = true;
         try {
           await this.gameStore.openRoom(tile.name);
@@ -109,7 +107,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
+  height: 84vh;
   transition: all 0.3s ease;
 }
 
@@ -119,21 +117,10 @@ export default {
   grid-template-rows: repeat(5, 1fr);
   height: 100%;
   aspect-ratio: 1 / 1;
-  max-width: 96vmin;
-  max-height: 96vmin;
+  max-width: 98vmin;
+  max-height: 98vmin;
   transition: all 0.3s ease;
   position: relative;
-}
-
-.grid-item {
-  font-size: 0.7em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
 }
 
 .grid-item.is-expanded {
