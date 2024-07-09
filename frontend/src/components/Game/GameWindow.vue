@@ -1,5 +1,5 @@
 <template>
-  <div class="page-main-container">
+  <div class="library-game-container">
     <div class="grid" :class="{ 'is-expanded': expandedTile !== null }">
       <GameTile
         v-for="(tile, index) in tiles"
@@ -103,11 +103,11 @@ export default {
 </script>
 
 <style scoped>
-.page-main-container {
+.library-game-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 84vh;
+  height: 100%;
   transition: all 0.3s ease;
 }
 

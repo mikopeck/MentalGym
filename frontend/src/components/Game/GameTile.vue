@@ -4,7 +4,7 @@
       <div class="loader"></div>
     </template>
     <div class="grid-text">
-        <div class="room-text">{{ name }}</div>
+      <div class="room-text">{{ name }}</div>
     </div>
     <img
       v-if="state === 3"
@@ -14,7 +14,6 @@
     />
   </div>
 </template>
-
 
 <script>
 export default {
@@ -84,7 +83,17 @@ export default {
   transform: translate(-50%, -50%);
   width: 9em;
   height: auto;
-  z-index: 3;
+  z-index: 1;
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .grid-item {
@@ -124,7 +133,7 @@ export default {
   text-shadow: 0px 0px 5px var(--background-color),
     0px 0px 10px var(--background-color), 0px 0px 15px var(--background-color),
     0px 0px 20px var(--background-color), 0px 0px 25px var(--background-color);
-  padding-bottom: 1em;
+  padding-bottom: 1%;
 }
 
 .grid-item:hover .grid-text {
@@ -172,9 +181,11 @@ export default {
   border: 4px solid var(--background-color);
   border-top: 4px solid var(--element-color-1);
   border-radius: 50%;
-  width: 2em;
-  height: 2em;
   animation: spin 1s linear infinite;
+  z-index: 2;
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 @keyframes spin {

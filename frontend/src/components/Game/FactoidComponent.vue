@@ -48,9 +48,8 @@ export default {
 .factoid-overlay {
   position: absolute;
   height: 100%;
+  max-width: 100%;
   aspect-ratio: 1 / 1;
-  max-width: 98vmin;
-  max-height: 82vmin;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -61,7 +60,7 @@ export default {
 
 .factoid-content {
   text-align: left;
-  padding: 20px;
+  padding: 1em;
   z-index: 1001;
   font-size: 1.2em;
 }

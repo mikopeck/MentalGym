@@ -126,7 +126,7 @@ class Lesson(db.Model):
 class Library(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    library_topic = db.Column(db.String(100), nullable=False)
+    library_topic = db.Column(db.String(200), nullable=False)
     room_names = db.Column(db.JSON, nullable=False)
 
     factoids = db.relationship('LibraryFactoid', backref='library')
@@ -135,7 +135,7 @@ class LibraryRoomState(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     library_id = db.Column(db.Integer, db.ForeignKey('library.id'), nullable=False)
-    room_name = db.Column(db.String(100), nullable=False)
+    room_name = db.Column(db.String(200), nullable=False)
     state = db.Column(db.Integer, default=0)  # 0-locked, 1-unlocked, 2-opened
     current_question_index = db.Column(db.Integer, nullable=True)  # Index of the current question
     answered_questions = db.Column(db.JSON, default=list, nullable=False)
@@ -143,7 +143,7 @@ class LibraryRoomState(db.Model):
 class LibraryFactoid(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     library_id = db.Column(db.Integer, db.ForeignKey('library.id'), nullable=False)
-    room_name = db.Column(db.String(100), nullable=False)
+    room_name = db.Column(db.String(200), nullable=False)
     factoid_content = db.Column(db.Text, nullable=False)
 
     questions = db.relationship('LibraryQuestion', backref='factoid')
@@ -152,12 +152,12 @@ class LibraryQuestion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     factoid_id = db.Column(db.Integer, db.ForeignKey('library_factoid.id'), nullable=False)
     question_text = db.Column(db.Text, nullable=False)
-    correct_choice = db.Column(db.String(100), nullable=False)
+    correct_choice = db.Column(db.String(400), nullable=False)
 
     choices = db.relationship('LibraryQuestionChoice', backref='question', lazy='dynamic')
 
 class LibraryQuestionChoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     question_id = db.Column(db.Integer, db.ForeignKey('library_question.id'), nullable=False)
-    choice_text = db.Column(db.String(100), nullable=False)
+    choice_text = db.Column(db.String(400), nullable=False)
     is_correct = db.Column(db.Boolean, default=False)

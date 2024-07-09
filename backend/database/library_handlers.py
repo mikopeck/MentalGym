@@ -19,18 +19,13 @@ def initialize_room_states(user_id, library_id, commit=False):
         return None
 
     room_names = library.room_names
-    matrix_size = int(len(room_names) ** 0.5)
     center_index = len(room_names) // 2
-    center_x, center_y = center_index % matrix_size, center_index // matrix_size
 
     room_states = []
     for index, room_name in enumerate(room_names):
-        i, j = index % matrix_size, index // matrix_size
         state = 0  # Default locked
         if index == center_index:
-            state = 2  # Opened
-        elif abs(i - center_x) + abs(j - center_y) <= 1:
-            state = 1  # Unlocked
+            state = 1
 
         # Initialize the current question index randomly between 0 and 3
         current_question_index = random.randint(0, 3)

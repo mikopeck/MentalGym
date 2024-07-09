@@ -1,9 +1,11 @@
+from flask import jsonify
 import numpy as np
 from openapi import generate_response, get_embeddings, LESSON_TOKENS
 from message_handler import create_message
 from knowledge_net.SystemPrompts.prompt_utils import sys_library, sys_lib_room
 import functions
 from knowledge_net.math_utils import calculate_cosine_similarities
+import database.library_handlers as lbh
 
 def suggest_library_wing(user_id, selected_node):
     def generate_rooms():
@@ -139,10 +141,12 @@ def fill_room(user_id, room_name, library_id):
     
     attempts = 0
     max_attempts = 5
-    room_contents = generate_room_contents()
+    room_contents = None
+    result = jsonify(status="success")
 
-    while not room_contents and attempts < max_attempts:
+    while not room_contents and attempts <= max_attempts and result.status != "success" :
         room_contents = generate_room_contents()
+        result = lbh.save_library_room_contents(library_id, room_name, room_contents)
         attempts += 1
 
     return room_contents

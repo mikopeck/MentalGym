@@ -56,17 +56,15 @@ def init_library_routes(app):
 
         # If no content exists, generate new content
         generated_content = lgn.fill_room(user_id, subtopic, library_id)
-
-        # Save the new content if generated
+        print(generated_content)
         if generated_content:
             if user_id:
                 lbh.update_library_room_state(user_id, library_id, subtopic, 2)
-            lbh.save_library_room_contents(library_id, subtopic, generated_content)
             return jsonify(status="success", data=generated_content)
         else:
             return jsonify(status="error", message="Failed to generate content"), 500
 
-# routes to update room states. return login pls if no user
+
     @app.route("/api/library/<int:library_id>/room/update", methods=["POST"])
     def update_room_state(library_id):
         if isinstance(current_user, AnonymousUserMixin):

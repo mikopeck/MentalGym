@@ -67,9 +67,25 @@ export default {
       if (store.currentQuestion === null) return null;
 
       const currentFactoid = store.factoids[store.currentQuestion];
-      if (!currentFactoid) return null;
+      if (
+        !currentFactoid ||
+        !Array.isArray(currentFactoid.questions) ||
+        currentFactoid.questions.length === 0
+      ) {
+        console.error("No questions available or invalid questions format");
+        return null;
+      }
       console.log(currentFactoid);
       const currentQuestion = currentFactoid.questions[0];
+      if (
+        !currentQuestion ||
+        !currentQuestion.question_text ||
+        !currentQuestion.correct_choice ||
+        !Array.isArray(currentQuestion.wrong_choices)
+      ) {
+        console.error("Question structure is incomplete or invalid");
+        return null;
+      }
       return {
         text: currentQuestion.question_text,
         choices: [
@@ -97,8 +113,7 @@ export default {
   position: absolute;
   height: 100%;
   aspect-ratio: 1 / 1;
-  max-width: 98vmin;
-  max-height: 82vmin;
+  max-width: 100%;
   z-index: 1000;
   display: flex;
   justify-content: center;
@@ -108,14 +123,14 @@ export default {
 
 .question-backdrop {
   background-color: var(--background-haze);
-  padding: 2em;
+  padding: 1em;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  box-shadow: 0 16px 16px var(--background-color-2t), 0 -16px 16px var(--background-color-2t); 
+  box-shadow: 0 16px 16px var(--background-color-2t),
+    0 -16px 16px var(--background-color-2t);
 }
-
 
 .question-content {
   text-align: center;
