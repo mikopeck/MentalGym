@@ -24,10 +24,6 @@ export default {
     },
     completedRoom(){
       const room = this.gameStore.roomStates[this.gameStore.currentRoom]
-      console.log(this.gameStore.roomStates)
-      console.log(room)
-      console.log(room.answeredQuestions)
-      console.log(room.answeredQuestions.length === 4)
       return room.answeredQuestions.length === 4;
     }
   },
