@@ -47,21 +47,22 @@ export default {
 <style scoped>
 .factoid-overlay {
   position: absolute;
-  height: 100%;
-  max-width: 100%;
-  aspect-ratio: 1 / 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--background-haze);
-  box-shadow: 0 16px 16px var(--background-color-2t), 0 -16px 16px var(--background-color-2t); 
-  z-index: 1000;
+  width: 96%;
 }
 
 .factoid-content {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: left;
   padding: 1em;
   z-index: 1001;
   font-size: 1.2em;
+  background-color: var(--background-haze);
+  box-shadow: 0 16px 16px var(--background-color-2t), 0 -16px 16px var(--background-color-2t); 
 }
 </style>

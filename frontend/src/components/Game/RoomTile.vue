@@ -9,7 +9,7 @@
     <button class="icon exclamation-top-right" @click="exclamationClick(1)">!</button>
     <button class="icon exclamation-bottom-left" @click="exclamationClick(2)">!</button>
     <button class="icon exclamation-bottom-right" @click="exclamationClick(3)">!</button>
-    <button class="icon question-mark" @click="questionClick">?</button>
+    <button class="icon question-mark" v-if="!completedRoom" @click="questionClick">?</button>
   </div>
 </template>
 
@@ -22,6 +22,14 @@ export default {
     gameStore() {
       return useGameStore();
     },
+    completedRoom(){
+      const room = this.gameStore.roomStates[this.gameStore.currentRoom]
+      console.log(this.gameStore.roomStates)
+      console.log(room)
+      console.log(room.answeredQuestions)
+      console.log(room.answeredQuestions.length === 4)
+      return room.answeredQuestions.length === 4;
+    }
   },
   methods: {
     mapClick() {
@@ -50,79 +58,26 @@ export default {
 
 .icon {
   position: absolute;
-  transform: translate(-50%, -50%);
   font-size: 24px;
-  color: var(--text-color);
-  cursor: pointer;
+  line-height: 3em;
   width: 3em;
   height: 3em;
-  text-shadow: 0px 0px 5px var(--background-color),
-    0px 0px 10px var(--background-color), 0px 0px 15px var(--background-color),
-    0px 0px 20px var(--background-color), 0px 0px 25px var(--background-color);
-  transition: transform 0.3s ease, text-shadow 0.3s ease;
-}
-
-.icon:hover {
-  text-shadow: 0 0 10px var(--highlight-color);
-}
-
-.map {
-  top: 5%;
-  left: 7%;
-}
-
-.arrow-top {
-  top: 4%;
-  left: 50%;
-}
-
-.arrow-right {
-  top: 50%;
-  right: -5%;
-}
-
-.arrow-bottom {
-  bottom: -5%;
-  left: 50%;
-}
-
-.arrow-left {
-  top: 50%;
-  left: 5%;
-}
-
-.exclamation-top-left {
-  top: 18%;
-  left: 18%;
-}
-
-.exclamation-top-right {
-  top: 18%;
-  right: 8%;
-}
-
-.exclamation-bottom-left {
-  bottom: 8%;
-  left: 18%;
-}
-
-.exclamation-bottom-right {
-  bottom: 8%;
-  right: 8%;
-}
-
-.question-mark {
-  top: 56%;
-  left: 50%;
-}
-
-.room-name {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 18px;
-  font-weight: bold;
+  text-align: center;
   color: var(--text-color);
+  cursor: pointer;
+  pointer-events: auto;
+  text-shadow: 0px 0px 5px var(--background-color);
+  margin: -1.5em;
 }
+
+.map { top: 3%; left: 5%; }
+.arrow-top { top: 5%; left: 50%; }
+.arrow-right { top: 50%; right: 5%; }
+.arrow-bottom { bottom: 5%; left: 50%; }
+.arrow-left { top: 50%; left: 5%; }
+.exclamation-top-left { top: 18%; left: 18%; }
+.exclamation-top-right { top: 18%; right: 18%; }
+.exclamation-bottom-left { bottom: 18%; left: 18%; }
+.exclamation-bottom-right { bottom: 18%; right: 18%; }
+.question-mark { top: 50%; left: 50%; }
 </style>

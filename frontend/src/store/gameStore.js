@@ -71,7 +71,7 @@ export const useGameStore = defineStore("gameStore", {
                 console.log("answered" + room.answeredQuestions.length)
                 if (room.answeredQuestions.length === 4) {
                     room.state = 3; 
-                    this.saveRoomState(this.currentRoom, 3);
+                    //this.saveRoomState(this.currentRoom, 3);
                     this.unlockAdjacentRooms();
                 }
 
@@ -89,12 +89,11 @@ export const useGameStore = defineStore("gameStore", {
             adjacentIndices.forEach(async index => {
                 if (index >= 0 && index < this.roomNames.length && this.roomStates[this.roomNames[index]].state === 0) {
                     this.roomStates[this.roomNames[index]].state = 1;
-                    await this.saveRoomState(this.roomNames[index], 1);
+                    //await this.saveRoomState(this.roomNames[index], 1);
                 }
             });
             console.log("unlocked " + this.roomStates)
-        },
-
+        },        
         findNextUnansweredQuestion() {
             const room = this.roomStates[this.currentRoom];
             for (let i = 1; i <= 4; i++) {
@@ -105,15 +104,25 @@ export const useGameStore = defineStore("gameStore", {
             }
             return null;
         },
-        async saveRoomState(room_name, new_state) {
+        async broadcastRoomStates() {
             try {
-                await axios.post(`/api/library/${this.libraryId}/room/update`, {
+                const rooms = Object.keys(this.roomStates).map(room_name => ({
                     room_name,
-                    new_state
-                });
-                console.log(`State for room ${room_name} saved successfully.`);
+                    new_state: this.roomStates[room_name].state,
+                    answered_questions: this.roomStates[room_name].answeredQuestions,
+                    current_question_index: this.roomStates[room_name].currentQuestionIndex
+                }));
+                const response = await axios.post(`/api/library/${this.libraryId}/room/update`, { rooms });
+                if (response.data.rooms) {
+                    response.data.rooms.forEach(room => {
+                        if (room.status === "error") {
+                            console.error(`Failed to update state for room ${room.room_name}: ${room.message}`);
+                        }
+                    });
+                }
+                console.log("All room states updated successfully.");
             } catch (error) {
-                console.error(`Failed to save state for room ${room_name}:`, error);
+                console.error("Failed to broadcast room states:", error);
             }
         },
         async fetchLibraryDetails(libraryId) {
@@ -157,12 +166,13 @@ export const useGameStore = defineStore("gameStore", {
                     this.currentRoom = room_name;
                 }
                 if (this.roomStates[room_name].state === 1) {
+                    // Generating room
                     const subtopic = room_name;
                     console.log(this.libraryId);
                     const response = await axios.post("/api/library/shelves", { libraryId: this.libraryId, subtopic });
                     if (response.data.status === "success") {
                         this.roomStates[room_name].state = 2;
-                        await this.saveRoomState(room_name, 2);
+                        await this.broadcastRoomStates();
                         console.log(`Room ${room_name} unlocked successfully`);
                     } else {
                         console.error(`Failed to unlock room ${room_name}: ${response.data.message}`);

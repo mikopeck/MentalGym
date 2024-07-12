@@ -50,16 +50,12 @@ def init_library_routes(app):
         # Attempt to retrieve existing room contents
         existing_content = lbh.retrieve_library_room_contents(library_id, subtopic)
         if existing_content:
-            if user_id:
-                lbh.update_library_room_state(user_id, library_id, subtopic, 2)
             return jsonify(status="success", data=existing_content)
 
         # If no content exists, generate new content
         generated_content = lgn.fill_room(user_id, subtopic, library_id)
         print(generated_content)
         if generated_content:
-            if user_id:
-                lbh.update_library_room_state(user_id, library_id, subtopic, 2)
             return jsonify(status="success", data=generated_content)
         else:
             return jsonify(status="error", message="Failed to generate content"), 500
@@ -73,20 +69,15 @@ def init_library_routes(app):
         user_id = current_user.id
         data = request.get_json()
 
-        # Single room update
-        if 'room_name' in data and 'new_state' in data:
-            room_name = data['room_name']
-            new_state = data['new_state']
-            response, status_code = lbh.update_library_room_state(user_id, library_id, room_name, new_state)
-            return response
-
         # Multiple rooms update (assuming the data format includes a list of rooms with their new states)
-        elif 'rooms' in data:
+        if 'rooms' in data:
             responses = []
             for room in data['rooms']:
                 room_name = room['room_name']
                 new_state = room['new_state']
-                response, status_code = lbh.update_library_room_state(user_id, library_id, room_name, new_state)
+                answered_questions = room['answered_questions']
+                current_question_index = room['current_question_index']
+                response, status_code = lbh.update_library_room_state(user_id, library_id, room_name, new_state,answered_questions,current_question_index)
                 if status_code != 200:
                     responses.append({"room_name": room_name, "status": "error", "message": response.get_json()['message']})
                 else:

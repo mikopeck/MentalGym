@@ -52,13 +52,15 @@ def initialize_room_states(user_id, library_id, commit=False):
 
     return room_states
 
-def update_library_room_state(user_id, library_id, room_name, new_state):
+def update_library_room_state(user_id, library_id, room_name, new_state,answered_questions,current_question_index):
     try:
         room_state = LibraryRoomState.query.filter_by(user_id=user_id, library_id=library_id, room_name=room_name).first()
         if not room_state:
             return jsonify({"message": "Room state not found"}), 404
         
         room_state.state = new_state
+        room_state.answered_questions = answered_questions
+        room_state.current_question_index = current_question_index
         db.session.add(room_state)
         db.session.commit()
         return jsonify({"message": "Room state updated successfully", "room_state": room_state.as_dict()}), 200

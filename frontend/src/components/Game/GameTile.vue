@@ -4,7 +4,7 @@
       <div class="loader"></div>
     </template>
     <div class="grid-text">
-      <div class="room-text">{{ name }}</div>
+      {{ name }}
     </div>
     <img
       v-if="state === 3"
@@ -125,6 +125,12 @@ export default {
 .grid-item.no-before::before {
   opacity: 1;
 }
+
+.grid-item.no-before .grid-text {
+  text-align: left;
+  padding-left: 3%;
+}
+
 
 .grid-text {
   transition: transform 0.1s ease;

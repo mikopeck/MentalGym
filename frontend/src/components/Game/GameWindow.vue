@@ -61,8 +61,7 @@ export default {
         } finally {
           this.loadingStates[tile.name] = false;
         }
-      }
-      else {
+      } else {
         console.log("Loading or locked room");
       }
     },
@@ -133,6 +132,10 @@ export default {
   z-index: 100;
   opacity: 1;
   filter: none;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column-reverse;
 }
 
 .room-zoom {
