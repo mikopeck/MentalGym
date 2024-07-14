@@ -5,6 +5,7 @@ from flask_login import current_user, AnonymousUserMixin
 
 import database.library_handlers as lbh
 import knowledge_net.library_generator as lgn
+from database.user_handler import is_within_limit
 
 def init_library_routes(app):
 
@@ -35,8 +36,42 @@ def init_library_routes(app):
         else:
             return jsonify(status="error", message="Library not found"), 404
         
+    @app.route("/api/library/room", methods=["POST"])
+    def generate_room():
+        data = request.get_json()
+        subtopic = data.get("subtopic")
+        library_id = data.get("libraryId")
+
+        if not subtopic:
+            return jsonify(status="error", message="No subtopic provided"), 400
+        if not library_id:
+            return jsonify(status="error", message="No library ID provided"), 400
+
+        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
+
+        if user_id:
+            within_limit, message = is_within_limit(current_user)
+            if not within_limit:
+                return jsonify({"error": message}), 429
+        elif not lbh.is_center_room(library_id, subtopic):
+            return jsonify(status="error", message="Please login to continue."), 400
+
+
+        # Attempt to retrieve existing room contents
+        existing_content = lbh.retrieve_library_room_contents(library_id, subtopic)
+        if existing_content:
+            return jsonify(status="success", data=existing_content)
+
+        # If no content exists, generate new content
+        generated_content = lgn.fill_room(user_id, subtopic, library_id)
+        print(generated_content)
+        if generated_content:
+            return jsonify(status="success", data=generated_content)
+        else:
+            return jsonify(status="error", message="Failed to generate content"), 500
+        
     @app.route("/api/library/shelves", methods=["POST"])
-    def generate_or_retrieve_shelves():
+    def load_room():
         data = request.get_json()
         subtopic = data.get("subtopic")
         library_id = data.get("libraryId")

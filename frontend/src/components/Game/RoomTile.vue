@@ -1,17 +1,14 @@
 <template>
   <div class="room-tile">
-    <button class="icon map" @click="mapClick">Map</button>
-    <button class="icon arrow-top" @click="directionClick('up')">↑</button>
-    <button class="icon arrow-right" @click="directionClick('right')">→</button>
-    <button class="icon arrow-bottom" @click="directionClick('down')">↓</button>
-    <button class="icon arrow-left" @click="directionClick('left')">←</button>
-    <button class="icon exclamation-top-left" @click="exclamationClick(0)">!</button>
-    <button class="icon exclamation-top-right" @click="exclamationClick(1)">!</button>
-    <button class="icon exclamation-bottom-left" @click="exclamationClick(2)">!</button>
-    <button class="icon exclamation-bottom-right" @click="exclamationClick(3)">!</button>
-    <button class="icon question-mark" v-if="!completedRoom" @click="questionClick">?</button>
+    <button class="icon map" :class="{flashing: completedRoom}" @click="mapClick">◀️🏛</button>
+    <button class="icon exclamation-top-left" :class="{flashing: !completedRoom}" @click="exclamationClick(0)">!</button>
+    <button class="icon exclamation-top-right" :class="{flashing: !completedRoom}" @click="exclamationClick(1)">!</button>
+    <button class="icon exclamation-bottom-left" :class="{flashing: !completedRoom}" @click="exclamationClick(2)">!</button>
+    <button class="icon exclamation-bottom-right" :class="{flashing: !completedRoom}" @click="exclamationClick(3)">!</button>
+    <button class="icon question-mark" :class="{flashing: !completedRoom}" v-if="!completedRoom" @click="questionClick">?</button>
   </div>
 </template>
+
 
 <script>
 import { useGameStore } from "@/store/gameStore";
@@ -62,18 +59,26 @@ export default {
   color: var(--text-color);
   cursor: pointer;
   pointer-events: auto;
-  text-shadow: 0px 0px 5px var(--background-color);
+  font-weight: 900;
+  text-shadow: 0px 0px 10px var(--background-color), 0px 0px 20px var(--background-color), 0px 0px 30px var(--background-color), 0px 0px 40px var(--background-color);
+  transition: text-shadow 0.3s ease;
   margin: -1.5em;
 }
 
 .map { top: 3%; left: 5%; }
-.arrow-top { top: 5%; left: 50%; }
-.arrow-right { top: 50%; right: 5%; }
-.arrow-bottom { bottom: 5%; left: 50%; }
-.arrow-left { top: 50%; left: 5%; }
 .exclamation-top-left { top: 18%; left: 18%; }
 .exclamation-top-right { top: 18%; right: 18%; }
 .exclamation-bottom-left { bottom: 18%; left: 18%; }
 .exclamation-bottom-right { bottom: 18%; right: 18%; }
 .question-mark { top: 50%; left: 50%; }
+
+@keyframes flash-highlight {
+  0%, 100% { text-shadow: 0px 0px 10px var(--background-color), 0px 0px 20px var(--background-color), 0px 0px 30px var(--background-color), 0px 0px 40px var(--background-color); }
+  50% { text-shadow: 0px 0px 10px var(--highlight-color), 0px 0px 20px var(--highlight-color), 0px 0px 30px var(--highlight-color), 0px 0px 40px var(--highlight-color); }
+}
+
+.flashing {
+  animation: flash-highlight 2s infinite;
+}
+
 </style>

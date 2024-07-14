@@ -8,7 +8,7 @@ import pymysql.err as pymysql_err
 from oauth2client import client, crypt
 
 from database.models import db, User
-from database.user_handler import confirm, generate_confirmation_token, get_user_tier
+from database.user_handler import confirm, generate_confirmation_token, get_user_tier, get_daily_request_count
 from message_handler import initialize_messages
 from email_provider.resend_api import send_registration_email
 from email_provider.email_templates import Registration
@@ -37,7 +37,7 @@ def init_auth_routes(app):
     @app.route('/api/check-auth', methods=['GET'])
     def check_auth():
         if current_user.is_authenticated:
-            return jsonify({'loggedIn': True, 'userTier': get_user_tier(current_user.id)})
+            return jsonify({'loggedIn': True, 'userTier': get_user_tier(current_user.id), 'requestCount': get_daily_request_count(current_user.id)})
         else:
             return jsonify({'loggedIn': False, 'userTier': None})
         

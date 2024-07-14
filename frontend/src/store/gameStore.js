@@ -2,6 +2,8 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
+import { useAuthStore } from "@/store/authStore";
+
 export const useGameStore = defineStore("gameStore", {
     state: () => ({
         libraryId: null,
@@ -13,6 +15,9 @@ export const useGameStore = defineStore("gameStore", {
         answeredQuestions: [],
         questionVisible: false,
         factoidVisible: null,
+
+        score: 0,
+        multiplier: 5,
     }),
     actions: {
         setId(libraryId) {
@@ -66,19 +71,23 @@ export const useGameStore = defineStore("gameStore", {
         },
         answerAttempt(correct) {
             if (correct) {
+                this.score = this.score + this.multiplier;
+                this.multiplier = this.multiplier + 1;
+
                 const room = this.roomStates[this.currentRoom];
                 room.answeredQuestions.push(this.currentQuestion);
-                console.log("answered" + room.answeredQuestions.length)
+
                 if (room.answeredQuestions.length === 4) {
+                    this.score = this.score + this.multiplier
                     room.state = 3; 
-                    //this.saveRoomState(this.currentRoom, 3);
                     this.unlockAdjacentRooms();
                 }
 
                 this.currentQuestion = this.findNextUnansweredQuestion();
 
             } else {
-                this.currentQuestion = (this.currentQuestion + 1) % 4;
+                this.multiplier = 5;
+                this.currentQuestion = this.findNextUnansweredQuestion();
             }
         },
 
@@ -169,10 +178,12 @@ export const useGameStore = defineStore("gameStore", {
                     // Generating room
                     const subtopic = room_name;
                     console.log(this.libraryId);
-                    const response = await axios.post("/api/library/shelves", { libraryId: this.libraryId, subtopic });
+                    const response = await axios.post("/api/library/room", { libraryId: this.libraryId, subtopic });
                     if (response.data.status === "success") {
                         this.roomStates[room_name].state = 2;
                         await this.broadcastRoomStates();
+                        const authStore = useAuthStore();
+                        authStore.cloudTokens = authStore.cloudTokens + 1 ;
                         console.log(`Room ${room_name} unlocked successfully`);
                     } else {
                         console.error(`Failed to unlock room ${room_name}: ${response.data.message}`);
@@ -180,7 +191,9 @@ export const useGameStore = defineStore("gameStore", {
                 }
             } catch (error) {
                 console.error("Error unlocking room:", error);
+                return false;
             }
+            return true;
         },
         async loadRoom(room_name) {
             if (this.roomStates[room_name].state < 2) {

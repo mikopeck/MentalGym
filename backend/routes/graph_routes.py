@@ -40,12 +40,25 @@ def init_graph_routes(app):
     @app.route('/api/knowledge-net', methods=['GET'])
     @login_required
     def get_knowledge_graph():
-        data = get_graph_data(current_user.id)
-        print(data)
-        return jsonify({
-            "status": "success",
-            "data": data
-        })
+        try:
+            data = get_graph_data(current_user.id)
+            return jsonify({
+                "status": "success",
+                "data": data
+            })
+        except TypeError as e:
+            print(f"Error: {e}")
+            return jsonify({
+                "status": "error",
+                "message": "Keep learning and your knowledge will show here!"
+            }), 500
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            return jsonify({
+                "status": "error",
+                "message": "An unexpected error occurred."
+            }), 500
+
     
     @app.route('/api/explore', methods=['GET'])
     @login_required

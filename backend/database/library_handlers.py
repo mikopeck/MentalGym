@@ -230,6 +230,11 @@ def get_library_content(library_id):
     content = {factoid.room_name: factoid.factoid_content for factoid in factoids}
     return jsonify({"library_content": content}).json["library_content"], 200
 
+def is_center_room(library_id, room_name):
+    library = Library.query.get(library_id)
+    if not library:
+        return jsonify({"message": "Library not found"}), 404
+    return room_name == library.library_topic
 
 
 

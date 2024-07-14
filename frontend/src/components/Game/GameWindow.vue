@@ -1,5 +1,6 @@
 <template>
   <div class="library-game-container">
+    <GameToolbar />
     <div class="grid" :class="{ 'is-expanded': expandedTile !== null }">
       <GameTile
         v-for="(tile, index) in tiles"
@@ -28,10 +29,17 @@ import GameTile from "./GameTile.vue";
 import RoomTile from "./RoomTile.vue";
 import FactoidComponent from "./FactoidComponent.vue";
 import LibraryQuestion from "./LibraryQuestion.vue";
+import GameToolbar from "./GameToolbar.vue";
 
 export default {
   name: "GameWindow",
-  components: { GameTile, RoomTile, FactoidComponent, LibraryQuestion },
+  components: {
+    GameTile,
+    RoomTile,
+    FactoidComponent,
+    LibraryQuestion,
+    GameToolbar,
+  },
   data() {
     return {
       expandedTile: null,
@@ -57,7 +65,9 @@ export default {
       if (tile.state > 1 || (tile.state === 1 && !tile.loading)) {
         this.loadingStates[tile.name] = true;
         try {
-          await this.gameStore.openRoom(tile.name);
+          if (!(await this.gameStore.openRoom(tile.name))) {
+            this.$router.push("/login");
+          }
         } finally {
           this.loadingStates[tile.name] = false;
         }
@@ -104,10 +114,12 @@ export default {
 <style scoped>
 .library-game-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
   transition: all 0.3s ease;
+  overflow: hidden;
 }
 
 .grid {
