@@ -12,11 +12,7 @@
           @input="filterTopics"
           maxlength="200"
         />
-        <select v-if="filteredTopics.length" v-model="topic">
-          <option v-for="topic in filteredTopics" :key="topic" :value="topic">
-            {{ topic }}
-          </option>
-        </select>
+        <button class="randomize-btn" @click="randomizeTopic">🎲</button>
       </div>
 
       <!-- Language Picker -->
@@ -24,7 +20,7 @@
         <label for="languageSelect">Language:</label>
         <select id="languageSelect" v-model="language">
           <option
-            v-for="language in filteredLanguages"
+            v-for="language in filteredLanguages(topic)"
             :key="language.code"
             :value="language.code"
           >
@@ -80,7 +76,9 @@
 
 <script>
 import axios from "axios";
+import { mapState } from "pinia";
 
+import { useLibGenStore } from "../store/libGenStore";
 import CtaButton from "../Footer/LandingPageComponents/CtaButton.vue";
 
 export default {
@@ -93,53 +91,19 @@ export default {
       extraContext: "",
       languageDifficulty: 1,
       libraryDifficulty: 1,
-      topics: ["Science", "Art", "History", "Technology", "Mathematics"],
-      filteredTopics: [],
-      languages: [
-        { name: "English", code: "en" },
-        { name: "Spanish", code: "es" },
-        { name: "French", code: "fr" },
-        { name: "German", code: "de" },
-        { name: "Chinese", code: "zh" },
-        { name: "Japanese", code: "ja" },
-        { name: "Russian", code: "ru" },
-        { name: "Arabic", code: "ar" },
-        { name: "Portuguese", code: "pt" },
-        { name: "Italian", code: "it" },
-        { name: "Hindi", code: "hi" },
-        { name: "Bengali", code: "bn" },
-        { name: "Korean", code: "ko" },
-        { name: "Dutch", code: "nl" },
-        { name: "Greek", code: "el" },
-        { name: "Swedish", code: "sv" },
-        { name: "Turkish", code: "tr" },
-        { name: "Vietnamese", code: "vi" },
-        { name: "Polish", code: "pl" },
-        { name: "Czech", code: "cs" },
-        { name: "Ukrainian", code: "uk" },
-        { name: "Hebrew", code: "he" },
-        { name: "Thai", code: "th" },
-        { name: "Indonesian", code: "id" },
-        { name: "Malay", code: "ms" },
-        { name: "Norwegian", code: "no" },
-        { name: "Finnish", code: "fi" },
-        { name: "Danish", code: "da" },
-        { name: "Hungarian", code: "hu" },
-        { name: "Romanian", code: "ro" },
-      ],
-
-      filteredLanguages: [],
     };
+  },
+  computed: {
+    ...mapState(useLibGenStore, {
+      languages: (state) => state.languages,
+      topics: (state) => state.topics,
+      filteredLanguages: (state) => (searchTerm) => state.filteredLanguages(searchTerm),
+      filteredTopics: (state) => (searchTerm) => state.filteredTopics(searchTerm),
+    }),
   },
   methods: {
     filterTopics() {
-      if (!this.topic) {
-        this.filteredTopics = [];
-      } else {
-        this.filteredTopics = this.topics.filter((t) =>
-          t.toLowerCase().includes(this.topic.toLowerCase())
-        );
-      }
+      this.filteredTopics = this.filteredTopics(this.topic);
     },
     handleSubmit() {
       const postData = {
@@ -160,12 +124,13 @@ export default {
           // Handle error, e.g., display error message
         });
     },
+    randomizeTopic() {
+      // Put text of random topic into the input field
+    },
   },
   watch: {
     language(newVal) {
-      this.filteredLanguages = this.languages.filter((lang) =>
-        lang.name.toLowerCase().includes(newVal.toLowerCase())
-      );
+      this.filteredLanguages = this.filteredLanguages(newVal);
     },
   },
   mounted() {
@@ -197,7 +162,13 @@ export default {
 }
 
 .form-group {
+    display: flex;
+    flex-direction: row;
   width: 100%;
+}
+
+.randomize-btn {
+    background: #00000000;
 }
 
 .option {
