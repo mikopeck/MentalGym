@@ -1,26 +1,24 @@
 <template>
   <div class="library-gen-page">
     <div class="form-container">
+      <h1>Learn Anything!</h1>
       <!-- Topic Selection -->
       <div class="form-group topic-selection">
-        <label for="topicInput">Topic:</label>
+        <button class="randomize-btn" @click="randomizeTopic">🎲</button>
         <input
           type="text"
           id="topicInput"
           v-model="topic"
           placeholder="Type any topic, or get inspired →"
-          @input="filterTopics"
           maxlength="200"
         />
-        <button class="randomize-btn" @click="randomizeTopic">🎲</button>
       </div>
 
       <!-- Language Picker -->
       <div class="form-group language-picker">
-        <label for="languageSelect">Language:</label>
         <select id="languageSelect" v-model="language">
           <option
-            v-for="language in filteredLanguages(topic)"
+            v-for="language in languages"
             :key="language.code"
             :value="language.code"
           >
@@ -31,12 +29,12 @@
 
       <!-- Optional Extra Context -->
       <div class="form-group extra-context">
-        <label for="extraContext">Additional Context (Optional):</label>
+        <label for="extraContext">Extra:</label>
         <input
           type="text"
           id="extraContext"
           v-model="extraContext"
-          placeholder="Add any relevant information"
+          placeholder="Optional context..."
         />
       </div>
 
@@ -55,6 +53,8 @@
             <span>Easy</span><span>Intermediate</span><span>Hard</span>
           </div>
         </div>
+      </div>
+      <div class="form-group difficulty-sliders">
         <div class="slider-container">
           <label for="libraryDifficulty">Library Difficulty:</label>
           <input
@@ -69,7 +69,7 @@
           </div>
         </div>
       </div>
-        <CtaButton buttonText="Explore!" @click="handleSubmit" />
+      <CtaButton buttonText="Explore!" @click="handleSubmit" />
     </div>
   </div>
 </template>
@@ -77,8 +77,7 @@
 <script>
 import axios from "axios";
 import { mapState } from "pinia";
-
-import { useLibGenStore } from "../store/libGenStore";
+import { useLibGenStore } from "@/store/libGenStore.js";
 import CtaButton from "../Footer/LandingPageComponents/CtaButton.vue";
 
 export default {
@@ -87,7 +86,7 @@ export default {
   data() {
     return {
       topic: "",
-      language: "",
+      language: "English",
       extraContext: "",
       languageDifficulty: 1,
       libraryDifficulty: 1,
@@ -97,14 +96,9 @@ export default {
     ...mapState(useLibGenStore, {
       languages: (state) => state.languages,
       topics: (state) => state.topics,
-      filteredLanguages: (state) => (searchTerm) => state.filteredLanguages(searchTerm),
-      filteredTopics: (state) => (searchTerm) => state.filteredTopics(searchTerm),
     }),
   },
   methods: {
-    filterTopics() {
-      this.filteredTopics = this.filteredTopics(this.topic);
-    },
     handleSubmit() {
       const postData = {
         topic: this.topic,
@@ -125,53 +119,47 @@ export default {
         });
     },
     randomizeTopic() {
-      // Put text of random topic into the input field
+      const randomIndex = Math.floor(Math.random() * this.topics.length);
+      this.topic = this.topics[randomIndex];
     },
-  },
-  watch: {
-    language(newVal) {
-      this.filteredLanguages = this.filteredLanguages(newVal);
-    },
-  },
-  mounted() {
-    this.filteredLanguages = this.languages;
   },
 };
 </script>
-
 <style scoped>
 .library-gen-page {
   height: 100%;
   display: flex;
   align-items: center;
-  overflow: hidden;
+  background-color: var(--background-color-2t);
 }
 
 .form-container {
+  overflow: auto;
   display: flex;
   justify-content: space-around;
   flex-direction: column;
   align-items: center;
-  height: 98%;
+  height: 100%;
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
   padding: 1em;
-  background-color: var(--background-color-1t);
-  border-radius: 8px;
 }
 
 .form-group {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  align-items: baseline;
+  flex-direction: row;
   width: 100%;
 }
 
 .randomize-btn {
-    background: #00000000;
+    font-size: 1.5em;
+  background: #00000000;
 }
 
 .option {
+  background: #00000000;
   opacity: 0.8;
   color: var(--highlight-color);
 }
@@ -181,7 +169,18 @@ input[type="text"]::placeholder {
 }
 
 .input {
-  background-color: #00000000;
+  background-color: var(--background-color);
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.form-container input[type="text"] {
+  background-color: var(--background-color);
+  padding: 10px;
+  border: 1px solid var(--element-color-1);
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 select,
@@ -194,13 +193,72 @@ input[type="text"] {
   border: 1px solid var(--element-color-1);
 }
 
+.language-picker select {
+  background-color: var(--background-color);
+}
+
 .slider-container {
   width: 100%;
   margin-bottom: 20px;
 }
 
 input[type="range"] {
+  -webkit-appearance: none;
   width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--background-color);
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+input[type="range"]:hover {
+  opacity: 1;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 10px;
+  cursor: pointer;
+  background: var(--element-color-1);
+  border-radius: 5px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: 1px solid var(--element-color-2);
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: var(--highlight-color);
+  cursor: pointer;
+  margin-top: -5px; /* Offset to align with track */
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+  background: var(--element-color-3);
+}
+
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 10px;
+  cursor: pointer;
+  background: var(--element-color-1);
+  border-radius: 5px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  border: 1px solid var(--element-color-2);
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: var(--highlight-color);
+  cursor: pointer;
+}
+
+input[type="range"]:active::-moz-range-thumb {
+  background: var(--element-color-3);
 }
 
 .slider-labels {

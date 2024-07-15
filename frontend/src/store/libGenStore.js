@@ -35,7 +35,22 @@ export const useLibGenStore = defineStore('libGenStore', {
       { name: "Hungarian", code: "hu" },
       { name: "Romanian", code: "ro" },
     ],
-    topics: ["Science", "Art", "History", "Technology", "Mathematics"],
+    topics: [
+      "The Enigmatic World of Quantum Computing",
+      "AI's Subtle Influence on Our Daily Lives",
+      "Green Innovations for a Sustainable Future",
+      "The Rise and Fall of Cryptocurrency Empires",
+      "Dreaming Beyond Earth: The Era of Space Tourism",
+      "Guarding Secrets: Digital Privacy in a Connected World",
+      "Crafting Life: Breakthroughs in Genetic Engineering",
+      "Mindfulness Practices for a Chaotic Modern Life",
+      "Whispers of the Wind: Sustainable Architecture",
+      "Optimizing Daily Tasks and Chores for Efficiency",
+      "The Magic of Everyday Moments",
+      "Rediscovering Ancient Wisdom in Modern Times",
+      "The Art of Minimalist Living",
+      "Nature's Hidden Wonders"
+    ],
   }),
   getters: {
     filteredLanguages: (state) => (searchTerm) => {
