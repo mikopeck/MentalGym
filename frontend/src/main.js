@@ -12,6 +12,7 @@ import './assets/themes.css';
 
 const routes = [
   { path: '/lessons', component: defineAsyncComponent(() => import('./components/Backstage/LessonsPage.vue')) },
+  { path: '/library', component: defineAsyncComponent(() => import('./components/Game/LibraryCreator.vue')) },
   { path: '/progress', component: defineAsyncComponent(() => import('./components/Backstage/ProgressPage.vue')) },
   { path: '/knowledge', component: defineAsyncComponent(() => import('./components/Backstage/KnowledgePage.vue')) },
   { path: '/library/:id', component: defineAsyncComponent(() => import('./components/Game/GamePage.vue')) },

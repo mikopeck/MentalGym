@@ -127,6 +127,9 @@ class Library(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     library_topic = db.Column(db.String(200), nullable=False)
+    # langueage
+    # context optional string max 500
+
     room_names = db.Column(db.JSON, nullable=False)
 
     factoids = db.relationship('LibraryFactoid', backref='library')

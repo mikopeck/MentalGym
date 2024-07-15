@@ -4,7 +4,7 @@
       <button class="toolbar-btn back-button" @click="navigateToKnowledgeMap">
         ◀️🗺️
       </button>
-      <div class="toolbar-btn">Discovery points: {{ discovery }}</div>
+      <div class="toolbar-btn">☁️{{ discovery }}</div>
       <div
         :class="['toolbar-btn', 'score', { 'animating-score': isAnimating }]"
       >
@@ -35,7 +35,7 @@ export default {
           isAnimating.value = true;
           setTimeout(() => {
             isAnimating.value = false;
-          }, 500); // Matches the duration of your CSS transition
+          }, 300); // Matches the duration of your CSS transition
         }
       }
     );
@@ -105,11 +105,11 @@ export default {
 
 .score {
   font-weight: bold;
-  transition: color 0.5s ease-in-out;
+  transition: color 0.3s ease-in-out;
 }
 
 .animating-score {
-  animation: pulse 0.5s ease-in-out forwards;
+  animation: pulse 0.3s ease-in-out forwards;
 }
 
 @keyframes pulse {
@@ -130,6 +130,6 @@ export default {
 .progress-bar {
   height: 4px;
   background-color: var(--element-color-1);
-  transition: width 0.5s ease;
+  transition: width 0.3s ease;
 }
 </style>

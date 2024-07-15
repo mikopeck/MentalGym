@@ -128,7 +128,7 @@ export default {
     shouldShowLogin() {
       const path = this.$route.path;
       return !(
-        path.startsWith("/library/") ||
+        path.startsWith("/library") ||
         path === "/terms" ||
         path === "/about" ||
         path === "/contact" ||

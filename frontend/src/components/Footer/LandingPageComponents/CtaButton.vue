@@ -1,15 +1,20 @@
 <template>
   <div class="cta-container">
-    <button class="pill-button" >Start Learning!</button>
+    <button class="pill-button">{{ buttonText }}</button>
   </div>
 </template>
 
 <script>
 export default {
   name: "CtaButton",
+  props: {
+    buttonText: {
+      type: String,
+      default: "Start Learning!",
+    },
+  },
 };
 </script>
-
 
 <style scoped>
 .cta-container {

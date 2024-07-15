@@ -10,4 +10,5 @@ This is all the content the user has explored in the library thus far:
 
 Do not repeat previous factoids & questions.
 The answer to the question must always be in the associated factoid.
+The questions should test understanding as well as memory.
 Use only the function provided.
