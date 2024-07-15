@@ -1,91 +1,91 @@
 <template>
-  <div class="form-container">
-    <!-- Topic Selection -->
-    <div class="form-group topic-selection">
-      <label for="topicInput">Topic:</label>
-      <input
-        type="text"
-        id="topicInput"
-        v-model="topic"
-        placeholder="Type any topic, or get inspired →"
-        @input="filterTopics"
-        maxlength="200"
-      />
-      <select v-if="filteredTopics.length" v-model="topic">
-        <option v-for="topic in filteredTopics" :key="topic" :value="topic">
-          {{ topic }}
-        </option>
-      </select>
-    </div>
-
-    <!-- Language Picker -->
-    <div class="form-group language-picker">
-      <label for="languageSelect">Language:</label>
-      <select id="languageSelect" v-model="language">
-        <option
-          v-for="language in filteredLanguages"
-          :key="language.code"
-          :value="language.code"
-        >
-          {{ language.name }}
-        </option>
-      </select>
-    </div>
-
-    <!-- Optional Extra Context -->
-    <div class="form-group extra-context">
-      <label for="extraContext">Additional Context (Optional):</label>
-      <input
-        type="text"
-        id="extraContext"
-        v-model="extraContext"
-        placeholder="Add any relevant information"
-      />
-    </div>
-
-    <!-- Sliders for Difficulty Levels -->
-    <div class="form-group difficulty-sliders">
-      <div class="slider-container">
-        <label for="languageDifficulty">Language Difficulty:</label>
+  <div class="library-gen-page">
+    <div class="form-container">
+      <!-- Topic Selection -->
+      <div class="form-group topic-selection">
+        <label for="topicInput">Topic:</label>
         <input
-          type="range"
-          id="languageDifficulty"
-          min="1"
-          max="3"
-          v-model.number="languageDifficulty"
+          type="text"
+          id="topicInput"
+          v-model="topic"
+          placeholder="Type any topic, or get inspired →"
+          @input="filterTopics"
+          maxlength="200"
         />
-        <div class="slider-labels">
-          <span>Easy</span><span>Intermediate</span><span>Hard</span>
+        <select v-if="filteredTopics.length" v-model="topic">
+          <option v-for="topic in filteredTopics" :key="topic" :value="topic">
+            {{ topic }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Language Picker -->
+      <div class="form-group language-picker">
+        <label for="languageSelect">Language:</label>
+        <select id="languageSelect" v-model="language">
+          <option
+            v-for="language in filteredLanguages"
+            :key="language.code"
+            :value="language.code"
+          >
+            {{ language.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Optional Extra Context -->
+      <div class="form-group extra-context">
+        <label for="extraContext">Additional Context (Optional):</label>
+        <input
+          type="text"
+          id="extraContext"
+          v-model="extraContext"
+          placeholder="Add any relevant information"
+        />
+      </div>
+
+      <!-- Sliders for Difficulty Levels -->
+      <div class="form-group difficulty-sliders">
+        <div class="slider-container">
+          <label for="languageDifficulty">Language Difficulty:</label>
+          <input
+            type="range"
+            id="languageDifficulty"
+            min="1"
+            max="3"
+            v-model.number="languageDifficulty"
+          />
+          <div class="slider-labels">
+            <span>Easy</span><span>Intermediate</span><span>Hard</span>
+          </div>
+        </div>
+        <div class="slider-container">
+          <label for="libraryDifficulty">Library Difficulty:</label>
+          <input
+            type="range"
+            id="libraryDifficulty"
+            min="1"
+            max="3"
+            v-model.number="libraryDifficulty"
+          />
+          <div class="slider-labels">
+            <span>Easy</span><span>Intermediate</span><span>Hard</span>
+          </div>
         </div>
       </div>
-      <div class="slider-container">
-        <label for="libraryDifficulty">Library Difficulty:</label>
-        <input
-          type="range"
-          id="libraryDifficulty"
-          min="1"
-          max="3"
-          v-model.number="libraryDifficulty"
-        />
-        <div class="slider-labels">
-          <span>Easy</span><span>Intermediate</span><span>Hard</span>
-        </div>
-      </div>
-    </div>
-    <div class="cta-container" @click="redirectLogin">
-      <CtaButton buttonText="Explore!" @click="handleSubmit" />
+        <CtaButton buttonText="Explore!" @click="handleSubmit" />
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 import CtaButton from "../Footer/LandingPageComponents/CtaButton.vue";
 
 export default {
   name: "LibraryCreator",
-  components: CtaButton,
+  components: { CtaButton },
   data() {
     return {
       topic: "",
@@ -175,21 +175,42 @@ export default {
 </script>
 
 <style scoped>
+.library-gen-page {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
 .form-container {
   display: flex;
+  justify-content: space-around;
   flex-direction: column;
   align-items: center;
+  height: 98%;
+  width: 100%;
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
-  gap: 20px;
-  background-color: #f9f9f9;
+  padding: 1em;
+  background-color: var(--background-color-1t);
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
   width: 100%;
+}
+
+.option {
+  opacity: 0.8;
+  color: var(--highlight-color);
+}
+
+input[type="text"]::placeholder {
+  color: var(--highlight-color);
+}
+
+.input {
+  background-color: #00000000;
 }
 
 select,
@@ -199,7 +220,7 @@ input[type="text"] {
   margin-top: 5px;
   margin-bottom: 15px;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--element-color-1);
 }
 
 .slider-container {
@@ -216,14 +237,6 @@ input[type="range"] {
   justify-content: space-between;
   padding: 0 10px;
   font-size: 12px;
-  color: #666;
+  color: var(--highlight-color);
 }
-
-.cta-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
 </style>

@@ -18,7 +18,6 @@ export default {
 
 <style scoped>
 .cta-container {
-  margin-top: 4em;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,11 +25,9 @@ export default {
 
 .pill-button {
   font-size: 1.5em;
-  margin-top: 1.5em;
-  margin-bottom: 1em;
-  padding: 15px 30px;
+  padding: 8px 22px;
   border: solid 1px var(--element-color-2);
-  border-radius: 50px;
+  border-radius: 20px;
   color: var(--text-color);
   background-image: linear-gradient(
     to right,
