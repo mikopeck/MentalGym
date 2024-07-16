@@ -21,6 +21,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 1em;
 }
 
 .pill-button {

@@ -1,35 +1,67 @@
 <template>
   <div class="library-gen-page">
     <div class="form-container">
-      <h1>Learn Anything!</h1>
+      <h1>Create a Library to Explore</h1>
       <!-- Topic Selection -->
-      <div class="form-group topic-selection">
-        <button class="randomize-btn" @click="randomizeTopic">🎲</button>
-        <input
-          type="text"
-          id="topicInput"
-          v-model="topic"
-          placeholder="Type any topic, or get inspired →"
-          maxlength="200"
-        />
+      <div class="libgen-section">
+        <div class="form-group topic-selection">
+          <div class="libgen-title">Topic</div>
+          <div class="title-bar">
+            <input
+              type="text"
+              id="topicInput"
+              v-model="topic"
+              placeholder="Choose any topic"
+              maxlength="200"
+            />
+            <button class="randomize-btn" @click="randomizeTopic">🎲</button>
+          </div>
+        </div>
+        <div class="form-group difficulty-buttons">
+          <div class="button-container">
+            <button
+              v-for="level in difficultyLevels"
+              :key="level"
+              :class="{ selected: libraryDifficulty === level }"
+              @click="libraryDifficulty = level"
+            >
+              {{ level }}
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Language Picker -->
-      <div class="form-group language-picker">
-        <select id="languageSelect" v-model="language">
-          <option
-            v-for="language in languages"
-            :key="language.code"
-            :value="language.code"
-          >
-            {{ language.name }}
-          </option>
-        </select>
+      <div class="libgen-section">
+        <div class="form-group language-picker">
+          <div class="libgen-title">Language</div>
+          <select id="languageSelect" v-model="language">
+            <option
+              v-for="language in languages"
+              :key="language.code"
+              :value="language.code"
+            >
+              {{ language.name }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group difficulty-buttons">
+          <div class="button-container">
+            <button
+              v-for="level in difficultyLevels"
+              :key="level"
+              :class="{ selected: languageDifficulty === level }"
+              @click="languageDifficulty = level"
+            >
+              {{ level }}
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Optional Extra Context -->
       <div class="form-group extra-context">
-        <label for="extraContext">Extra:</label>
+        <div class="libgen-title">Extra</div>
         <input
           type="text"
           id="extraContext"
@@ -38,37 +70,6 @@
         />
       </div>
 
-      <!-- Sliders for Difficulty Levels -->
-      <div class="form-group difficulty-sliders">
-        <div class="slider-container">
-          <label for="languageDifficulty">Language Difficulty:</label>
-          <input
-            type="range"
-            id="languageDifficulty"
-            min="1"
-            max="3"
-            v-model.number="languageDifficulty"
-          />
-          <div class="slider-labels">
-            <span>Easy</span><span>Intermediate</span><span>Hard</span>
-          </div>
-        </div>
-      </div>
-      <div class="form-group difficulty-sliders">
-        <div class="slider-container">
-          <label for="libraryDifficulty">Library Difficulty:</label>
-          <input
-            type="range"
-            id="libraryDifficulty"
-            min="1"
-            max="3"
-            v-model.number="libraryDifficulty"
-          />
-          <div class="slider-labels">
-            <span>Easy</span><span>Intermediate</span><span>Hard</span>
-          </div>
-        </div>
-      </div>
       <CtaButton buttonText="Explore!" @click="handleSubmit" />
     </div>
   </div>
@@ -86,11 +87,17 @@ export default {
   data() {
     return {
       topic: "",
-      language: "English",
+      language: "",
       extraContext: "",
       languageDifficulty: 1,
       libraryDifficulty: 1,
+      difficultyLevels: ["Easy", "Intermediate", "Hard"],
     };
+  },
+  mounted() {
+    if (this.languages.length > 0) {
+      this.language = this.languages[0].code;
+    }
   },
   computed: {
     ...mapState(useLibGenStore, {
@@ -125,6 +132,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .library-gen-page {
   height: 100%;
@@ -133,28 +141,42 @@ export default {
   background-color: var(--background-color-2t);
 }
 
+.libgen-section {
+  width: 100%;
+}
+
 .form-container {
   overflow: auto;
   display: flex;
-  justify-content: space-around;
   flex-direction: column;
   align-items: center;
   height: 100%;
   width: 100%;
-  max-width: 800px;
+  max-width: 720px;
   margin: 0 auto;
   padding: 1em;
 }
 
 .form-group {
   display: flex;
-  align-items: baseline;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
 }
 
+.libgen-title {
+    margin-left:1em;
+    font-size: 0.8em;
+    opacity: 0.7;
+}
+
+.title-bar{
+    display: flex;
+    flex-direction: row;
+  align-items: baseline;
+}
+
 .randomize-btn {
-    font-size: 1.5em;
+  font-size: 1.5em;
   background: #00000000;
 }
 
@@ -176,96 +198,60 @@ input[type="text"]::placeholder {
 
 .form-container input[type="text"] {
   background-color: var(--background-color);
-  padding: 10px;
+  /* padding: 10px; */
   border: 1px solid var(--element-color-1);
   border-radius: 4px;
   width: 100%;
   box-sizing: border-box;
 }
 
-select,
-input[type="text"] {
-  width: 100%;
+select{
   padding: 10px;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  border-radius: 4px;
   border: 1px solid var(--element-color-1);
+}
+
+input[type="text"] {
+  padding: 8px;
 }
 
 .language-picker select {
   background-color: var(--background-color);
 }
 
-.slider-container {
+.button-container {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
   width: 100%;
   margin-bottom: 20px;
+  margin-top: 2px;
 }
-
-input[type="range"] {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 10px;
-  border-radius: 5px;
-  background: var(--background-color);
-  outline: none;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-}
-
-input[type="range"]:hover {
-  opacity: 1;
-}
-
-input[type="range"]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 10px;
-  cursor: pointer;
-  background: var(--element-color-1);
-  border-radius: 5px;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  border: 1px solid var(--element-color-2);
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: var(--highlight-color);
-  cursor: pointer;
-  margin-top: -5px; /* Offset to align with track */
-}
-
-input[type="range"]:active::-webkit-slider-thumb {
-  background: var(--element-color-3);
-}
-
-input[type="range"]::-moz-range-track {
-  width: 100%;
-  height: 10px;
-  cursor: pointer;
-  background: var(--element-color-1);
-  border-radius: 5px;
-}
-
-input[type="range"]::-moz-range-thumb {
-  border: 1px solid var(--element-color-2);
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: var(--highlight-color);
-  cursor: pointer;
-}
-
-input[type="range"]:active::-moz-range-thumb {
-  background: var(--element-color-3);
-}
-
-.slider-labels {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 10px;
-  font-size: 12px;
+button {
+  background: none;
+  border: none;
+  padding: 0 1em;
   color: var(--highlight-color);
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button.selected {
+  color: var(--text-color);
+  transform: scale(1.1);
+  font-weight: bold;
+}
+
+.randomize-btn {
+    padding: 0.25em;
+}
+
+.extra-context input {
+  width: 100%;
+}
+
+.extra-context {
+  display: flex;
+  flex-direction: column;
 }
 </style>
