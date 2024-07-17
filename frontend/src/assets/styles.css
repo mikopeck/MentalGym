@@ -2,46 +2,47 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-html, body{
+html,
+body {
   overflow: overlay;
   scrollbar-width: auto;
-    scrollbar-color: transparent transparent;
-    display: flex;
-    height: 100%;
-    width: 100vw;
-    margin: 0;
-    cursor: default;
-    font-family: "Helvetica", sans-serif;
+  scrollbar-color: transparent transparent;
+  display: flex;
+  height: 100%;
+  width: 100vw;
+  margin: 0;
+  cursor: default;
+  font-family: monospace;
 }
 
 .code-block {
-    background-color: #00000042;
-    text-align: left;
-    padding: 1rem;
-    border-radius: 4px;
-    font-family: "Courier New", Courier, monospace;
-    overflow-x: auto;
-    word-wrap: break-word;
-    white-space: pre-wrap;
+  background-color: #00000042;
+  text-align: left;
+  padding: 1rem;
+  border-radius: 4px;
+  font-family: "Courier New", Courier, monospace;
+  overflow-x: auto;
+  word-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    border-bottom: 2px solid var(--element-color-1);
-    padding-bottom: 0.5rem;
-    text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid var(--element-color-1);
+  padding-bottom: 0.5rem;
+  text-align: center;
 }
 
 h2 {
-    font-size: 1.3rem;
-    font-weight: 500;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    border-left: 4px solid var(--element-color-1);
-    padding-left: 1rem;
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-left: 4px solid var(--element-color-1);
+  padding-left: 1rem;
 }
 
 h3 {
@@ -61,24 +62,24 @@ h4 {
 }
 
 .flex-row {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .flex-col {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 li {
-    margin: 4px;
+  margin: 4px;
 }
 
 ul {
-    list-style-type: square;
-    padding-left: 20px;
-    margin-left: 0;
-    color: var(--text-color);
+  list-style-type: square;
+  padding-left: 20px;
+  margin-left: 0;
+  color: var(--text-color);
 }
 
 ol {
@@ -88,14 +89,14 @@ ol {
   color: var(--text-color);
 }
 
-ol > li {
+ol>li {
   display: block;
   margin-bottom: 0.5em;
   font-family: "Helvetica", sans-serif;
   position: relative;
 }
 
-ol > li:before {
+ol>li:before {
   content: counters(item, ".") " ";
   counter-increment: item;
   position: absolute;
@@ -106,82 +107,82 @@ ol > li:before {
 
 
 table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 th,
 td {
-    text-align: left;
+  text-align: left;
 }
 
 tr {
-    background-color: #00000000;
-    transition: background-color opacity 0.2s;
+  background-color: #00000000;
+  transition: background-color opacity 0.2s;
 }
 
 a {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 a:hover {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .page-main-container {
-    margin-top: 1em;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  margin-top: 1em;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .page-main-section {
-    margin-top: 16px;
-    width: 100%;
-    max-width: 720px;
+  margin-top: 16px;
+  width: 100%;
+  max-width: 720px;
 }
 
 .nav-bar {
-    transition: opacity 0.3s ease-in-out;
-    opacity: 1;
-    pointer-events: auto;
-  }
-  
-  .nav-bar-invisible {
-    opacity: 0;
-    pointer-events: none;
-  }
+  transition: opacity 0.3s ease-in-out;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nav-bar-invisible {
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* Webkit browsers (e.g., Chrome, Safari) scrollbar styles */
 ::-webkit-scrollbar {
-    width: 12px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: transparent;
-    transition: background 0.3s ease;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background-color: transparent;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-  }
-  
-  /* Apply hover effect globally */
-  *:hover {
-    scrollbar-color: var(--element-color-1) var(--background-color-1t);
-  }
-  
-  *:hover::-webkit-scrollbar-track {
-    background: var(--background-color-1t);
-  }
-  
-  *:hover::-webkit-scrollbar-thumb {
-    background-color: var(--element-color-1);
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--element-color-2);
-  }
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+/* Apply hover effect globally */
+*:hover {
+  scrollbar-color: var(--element-color-1) var(--background-color-1t);
+}
+
+*:hover::-webkit-scrollbar-track {
+  background: var(--background-color-1t);
+}
+
+*:hover::-webkit-scrollbar-thumb {
+  background-color: var(--element-color-1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--element-color-2);
+}

@@ -1,15 +1,11 @@
 <template>
   <div class="landing-container">
     <div class="landing-page-1">
-      <div class="background-gradient-container">
-        <div class="content-container">
-          <div class="landing-titles-container">
-            <div class="landing-title">Ascendance·☁️</div>
-            <div class="landing-subtitle">Play to Learn</div>
-          </div>
-          <library-creator />
-        </div>
+      <div class="landing-titles-container">
+        <div class="landing-title">Ascendance·☁️</div>
+        <div class="landing-subtitle">Play to Learn</div>
       </div>
+      <library-creator />
     </div>
     <div class="landing-page-2">
       <div class="buttons">
@@ -46,16 +42,16 @@
           </div>
         </div>
       </transition>
+      <div class="stat-infos">
+        <div class="stat-info">📖200+ Custom Lessons generated.</div>
+        <div class="small-text">Check out these shared lessons ↓</div>
+        <div class="shared-content"><SharedContent /></div>
+      </div>
       <div class="cta-container" @click="redirectLogin">
         <CtaButton />
       </div>
       <div class="features-container">
         <FeaturesComponent />
-      </div>
-      <div class="stat-infos">
-        <div class="stat-info">📖200+ Custom Lessons generated.</div>
-        <div class="small-text">Check out these shared lessons ↓</div>
-        <div class="shared-content"><SharedContent /></div>
       </div>
       <img :src="openaiPath" alt="Powered by OpenAI" class="openai" />
       <div class="faq-container">
@@ -169,7 +165,6 @@ export default {
     },
   },
   mounted() {
-    this.updateBackgroundImage();
     this.observeStatInfos();
     this.observeFeatures();
   },
@@ -183,57 +178,8 @@ export default {
 .landing-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-}
-
-.landing-page {
-  text-align: left;
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-size: cover;
-  transition: background-image 0.5s ease-in-out;
-  width: 100%;
-  height: 84vh;
   max-width: 1024px;
-}
-
-.background-gradient-container {
-  padding: 0 1em;
-  background-image: linear-gradient(
-      to top,
-      #00000000 90%,
-      var(--background-color) 100%
-    ),
-    linear-gradient(to right, #00000000 90%, var(--background-color) 100%),
-    linear-gradient(to left, #00000000 90%, var(--background-color) 100%),
-    linear-gradient(to bottom, #00000000 50%, var(--background-color) 95%);
-  background-position: center top;
-  background-size: cover;
-  /* max-width: 1024px; */
   width: 100%;
-  height: 84vh;
-  z-index: 0;
-}
-
-.background-gradient-container::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(var(--background-color-rgb), 0.5);
-  z-index: 0;
-}
-
-.content-container {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  justify-content: space-around;
-  padding: 0 0.5em;
-  position: relative;
-  z-index: 1;
 }
 
 .landing-titles-container {
@@ -247,8 +193,6 @@ export default {
   font-size: 4em;
   margin-top: 1em;
   color: var(--text-color);
-  text-shadow: 0px 0px 10px var(--background-color),
-    0px 0px 20px var(--background-color), 0px 0px 30px var(--background-color);
 }
 
 .landing-subtitle {
@@ -258,8 +202,6 @@ export default {
   font-size: 1.5em;
   margin: 0;
   color: linear-gradient(to right, var(--text-color), var(--highlight-color));
-  text-shadow: 0px 0px 10px var(--background-color),
-    0px 0px 20px var(--background-color), 0px 0px 30px var(--background-color);
 }
 
 .buttons {
@@ -274,41 +216,32 @@ export default {
   opacity: 0.4;
   margin-right: 10px;
   font-size: 1.6em;
-  text-shadow: none;
-  transition: all 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .button-active {
   opacity: 1;
-  text-shadow: 0px 0px 5px var(--background-color),
-    0px 0px 10px var(--background-color), 0px 0px 15px var(--background-color);
 }
 
 .value-content {
-  height: 4em;
+  height: 7em;
   font-size: 1.2em;
-  transition: all 0.3s ease;
   padding-right: 35%;
-  text-shadow: 0px 0px 5px var(--background-color),
-    0px 0px 10px var(--background-color), 0px 0px 15px var(--background-color);
 }
 
 .value-explainer {
   font-size: 1.2em;
   font-weight: 700;
-  transition: all 0.3s ease;
   margin-bottom: 0.2em;
 }
 
 .value-text {
   font-size: 1em;
   opacity: 0.85;
-  transition: all 0.3s ease;
 }
 
 .cta-container {
-  margin-bottom: 2em;
-  z-index: 10;
+  margin: 2em 0;
 }
 
 .stat-infos {
@@ -337,10 +270,10 @@ export default {
 .landing-page-1 {
   display: flex;
   justify-content: center;
-  height: calc(100vh - 110px);
+  flex-direction: column;
 }
 .landing-page-2 {
-  padding: 1em;
+  padding: 2em;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -359,7 +292,6 @@ export default {
   margin: 0 auto;
   padding: 64px 25%;
   max-height: 212px;
-  z-index: 1;
 }
 
 .small-text {
@@ -380,6 +312,7 @@ export default {
     font-size: 1.3em;
   }
   .value-content {
+    height: 8em;
     padding-right: 20%;
   }
   .value-explainer {
@@ -398,12 +331,12 @@ export default {
     font-weight: 700;
     font-size: 2.5em;
   }
-
-  .content-container {
-    padding: 0;
+  .landing-page-2 {
+    padding: 1em; 
   }
 
   .value-content {
+    height: 9em;
     padding: 0;
   }
 

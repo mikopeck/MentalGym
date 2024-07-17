@@ -67,11 +67,11 @@ export default {
     border-color 0.3s ease, background-color 0.3s ease;
 }
 
-.feature:hover,
+/* .feature:hover,
 .feature.selected {
   background: var(--background-color-1t);
   border: 1px solid #ccc;
-}
+} */
 
 .feature.visible {
   animation: fadeSlideIn 0.3s ease-out forwards;
