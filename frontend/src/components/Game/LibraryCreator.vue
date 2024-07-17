@@ -1,7 +1,7 @@
 <template>
   <div class="library-gen-page">
     <div class="form-container">
-      <h1>Create a Library to Explore</h1>
+      <h1 v-if="libgenRoute">Create a Library to Explore</h1>
       <!-- Topic Selection -->
       <div class="libgen-section">
         <div class="form-group topic-selection">
@@ -24,6 +24,7 @@
               :key="level"
               :class="{ selected: libraryDifficulty === level }"
               @click="libraryDifficulty = level"
+              class="difficulty-button"
             >
               {{ level }}
             </button>
@@ -31,45 +32,60 @@
         </div>
       </div>
 
-      <!-- Language Picker -->
+      <!-- Toggle Button -->
       <div class="libgen-section">
-        <div class="form-group language-picker">
-          <div class="libgen-title">Language</div>
-          <select id="languageSelect" v-model="language">
-            <option
-              v-for="language in languages"
-              :key="language.code"
-              :value="language.code"
-            >
-              {{ language.name }}
-            </option>
-          </select>
+        <div class="toggle-button-container">
+          <button class="toggle-button" @click="toggleDetails">
+            <span v-if="!showDetails">▼ Additional options</span>
+          </button>
         </div>
-        <div class="form-group difficulty-buttons">
-          <div class="button-container">
-            <button
-              v-for="level in difficultyLevels"
-              :key="level"
-              :class="{ selected: languageDifficulty === level }"
-              @click="languageDifficulty = level"
-            >
-              {{ level }}
-            </button>
+      </div>
+
+      <!-- Hidden Sections -->
+      <transition name="fade">
+        <div class="libgen-section" v-if="showDetails">
+          <div class="libgen-section">
+            <div class="form-group language-picker">
+              <div class="libgen-title">Language</div>
+              <select id="languageSelect" v-model="language">
+                <option
+                  v-for="language in languages"
+                  :key="language.code"
+                  :value="language.code"
+                >
+                  {{ language.name }}
+                </option>
+              </select>
+            </div>
+            <div class="form-group difficulty-buttons">
+              <div class="button-container">
+                <button
+                  v-for="level in difficultyLevels"
+                  :key="level"
+                  :class="{ selected: languageDifficulty === level }"
+                  @click="languageDifficulty = level"
+                  class="difficulty-button"
+                >
+                  {{ level }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Optional Extra Context -->
+          <div class="form-group extra-context">
+            <div class="libgen-title">Extra</div>
+            <input
+              type="text"
+              id="extraContext"
+              v-model="extraContext"
+              placeholder="Optional context..."
+            />
           </div>
         </div>
-      </div>
+      </transition>
 
-      <!-- Optional Extra Context -->
-      <div class="form-group extra-context">
-        <div class="libgen-title">Extra</div>
-        <input
-          type="text"
-          id="extraContext"
-          v-model="extraContext"
-          placeholder="Optional context..."
-        />
-      </div>
-
+      <!-- CTA Button -->
       <CtaButton buttonText="Explore!" @click="handleSubmit" />
     </div>
   </div>
@@ -78,7 +94,9 @@
 <script>
 import axios from "axios";
 import { mapState } from "pinia";
+
 import { useLibGenStore } from "@/store/libGenStore.js";
+// import { useGameStore } from "@/store/gameStore.js";
 import CtaButton from "../Footer/LandingPageComponents/CtaButton.vue";
 
 export default {
@@ -89,24 +107,31 @@ export default {
       topic: "",
       language: "",
       extraContext: "",
-      languageDifficulty: 1,
-      libraryDifficulty: 1,
-      difficultyLevels: ["Easy", "Intermediate", "Hard"],
+      languageDifficulty: "",
+      libraryDifficulty: "",
+      difficultyLevels: ["Easy", "Normal", "Hard"],
+      showDetails: false,
     };
   },
   mounted() {
     if (this.languages.length > 0) {
       this.language = this.languages[0].code;
     }
+    this.libraryDifficulty = "Easy";
+    this.languageDifficulty = "Normal";
   },
   computed: {
     ...mapState(useLibGenStore, {
       languages: (state) => state.languages,
       topics: (state) => state.topics,
     }),
+    libgenRoute(){
+        return this.$route.path === "/library";
+    }
   },
   methods: {
     handleSubmit() {
+      if (this.topic === "") return;
       const postData = {
         topic: this.topic,
         language: this.language,
@@ -118,7 +143,10 @@ export default {
         .post("/api/library/generate", postData)
         .then((response) => {
           console.log("Success:", response);
-          // Handle success, e.g., display a message or redirect
+          const libraryId = response.data.library_id;
+        //   const gameStore = useGameStore();
+        //   gameStore.setId(libraryId);
+          this.$router.push(`/library/${libraryId}`);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -129,6 +157,9 @@ export default {
       const randomIndex = Math.floor(Math.random() * this.topics.length);
       this.topic = this.topics[randomIndex];
     },
+    toggleDetails() {
+      this.showDetails = !this.showDetails;
+    },
   },
 };
 </script>
@@ -138,7 +169,6 @@ export default {
   height: 100%;
   display: flex;
   align-items: center;
-  background-color: var(--background-color-2t);
 }
 
 .libgen-section {
@@ -164,18 +194,20 @@ export default {
 }
 
 .libgen-title {
-    margin-left:1em;
-    font-size: 0.8em;
-    opacity: 0.7;
+  margin-left: 1em;
+  margin-bottom: -0.3em;
+  font-size: 0.8em;
+  opacity: 0.7;
 }
 
-.title-bar{
-    display: flex;
-    flex-direction: row;
+.title-bar {
+  display: flex;
+  flex-direction: row;
   align-items: baseline;
 }
 
 .randomize-btn {
+  padding: 0 0.25em;
   font-size: 1.5em;
   background: #00000000;
 }
@@ -198,14 +230,13 @@ input[type="text"]::placeholder {
 
 .form-container input[type="text"] {
   background-color: var(--background-color);
-  /* padding: 10px; */
   border: 1px solid var(--element-color-1);
   border-radius: 4px;
   width: 100%;
   box-sizing: border-box;
 }
 
-select{
+select {
   padding: 10px;
   border: 1px solid var(--element-color-1);
 }
@@ -223,27 +254,23 @@ input[type="text"] {
   justify-content: space-around;
   flex-direction: row;
   width: 100%;
-  margin-bottom: 20px;
-  margin-top: 2px;
+  margin-bottom: 1em;
+  margin-top: 0.25;
 }
-button {
+.difficulty-button {
   background: none;
   border: none;
-  padding: 0 1em;
+  padding: 0.5em 1em;
   color: var(--highlight-color);
   font-size: 1em;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-button.selected {
+.difficulty-button.selected {
   color: var(--text-color);
   transform: scale(1.1);
   font-weight: bold;
-}
-
-.randomize-btn {
-    padding: 0.25em;
 }
 
 .extra-context input {
@@ -253,5 +280,31 @@ button.selected {
 .extra-context {
   display: flex;
   flex-direction: column;
+}
+
+.toggle-button-container {
+  display: flex;
+  align-content: left;
+  margin-top: -0.5em;
+}
+
+.toggle-button {
+  margin-left: 0;
+  color: var(--text-color);
+  opacity: 0.7;
+  background: none;
+  border: none;
+  font-size: 0.8em;
+  cursor: pointer;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

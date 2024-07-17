@@ -1,72 +1,54 @@
 <template>
   <div class="landing-container">
     <div class="landing-page-1">
-      <div class="landing-page">
-        <div class="background-gradient-container">
-          <div class="content-container">
-            <div class="landing-titles-container">
-              <div class="landing-title">Ascendance·☁️</div>
-              <div class="landing-subtitle">Your Personal AI Tutor</div>
-            </div>
-            <div class="buttons">
-              <div
-                v-for="(item, index) in items"
-                :key="index"
-                :class="{ 'button-active': activeIndex === index }"
-                class="button"
-                @click="setActiveIndex(index)"
-              >
-                {{ item }}
-              </div>
-            </div>
-            <transition name="fade" mode="out-in">
-              <div
-                class="value-content"
-                v-if="activeIndex === 0"
-                key="content-0"
-              >
-                <div class="value-explainer">
-                  Your personal learning journey.
-                </div>
-                <div class="value-text">
-                  <b>You</b> decide what to learn. Choose any topic you can
-                  describe, or jump into lessons offered based on your goals and
-                  preferences.
-                </div>
-              </div>
-              <div
-                class="value-content"
-                v-if="activeIndex === 1"
-                key="content-1"
-              >
-                <div class="value-explainer">
-                  Learn anything, challenge yourself.
-                </div>
-                <div class="value-text">
-                  Embark on a personalized learning adventure with interactive
-                  lessons and fun quizzes.
-                </div>
-              </div>
-              <div
-                class="value-content"
-                v-if="activeIndex === 2"
-                key="content-2"
-              >
-                <div class="value-explainer">Stats, graphs, streaks...</div>
-                <div class="value-text">
-                  Seeing progress gives us the rewarding feeling hard work
-                  deserves. Track your gains with graphs and stats.
-                </div>
-              </div>
-            </transition>
-            <div class="cta-container" @click="redirectLogin">
-              <CtaButton />
-            </div>
+      <div class="background-gradient-container">
+        <div class="content-container">
+          <div class="landing-titles-container">
+            <div class="landing-title">Ascendance·☁️</div>
+            <div class="landing-subtitle">Play to Learn</div>
           </div>
+          <library-creator />
         </div>
       </div>
     </div>
     <div class="landing-page-2">
+      <div class="buttons">
+        <div
+          v-for="(item, index) in items"
+          :key="index"
+          :class="{ 'button-active': activeIndex === index }"
+          class="button"
+          @click="setActiveIndex(index)"
+        >
+          {{ item }}
+        </div>
+      </div>
+      <transition name="fade" mode="out-in">
+        <div class="value-content" v-if="activeIndex === 0" key="content-0">
+          <div class="value-explainer">Your personal learning journey.</div>
+          <div class="value-text">
+            <b>You</b> decide what to learn. Choose any topic you can describe,
+            or jump into lessons offered based on your goals and preferences.
+          </div>
+        </div>
+        <div class="value-content" v-if="activeIndex === 1" key="content-1">
+          <div class="value-explainer">Learn anything, challenge yourself.</div>
+          <div class="value-text">
+            Embark on a personalized learning adventure with interactive lessons
+            and fun quizzes.
+          </div>
+        </div>
+        <div class="value-content" v-if="activeIndex === 2" key="content-2">
+          <div class="value-explainer">Stats, graphs, streaks...</div>
+          <div class="value-text">
+            Seeing progress gives us the rewarding feeling hard work deserves.
+            Track your gains with graphs and stats.
+          </div>
+        </div>
+      </transition>
+      <div class="cta-container" @click="redirectLogin">
+        <CtaButton />
+      </div>
       <div class="features-container">
         <FeaturesComponent />
       </div>
@@ -93,6 +75,7 @@ import CtaButton from "./LandingPageComponents/CtaButton.vue";
 import FaqComponent from "./LandingPageComponents/FaqComponent.vue";
 import SharedContent from "./LandingPageComponents/SharedContent.vue";
 import FeaturesComponent from "./LandingPageComponents/FeaturesComponent.vue";
+import LibraryCreator from "../Game/LibraryCreator.vue";
 
 export default {
   name: "AboutPage",
@@ -101,6 +84,7 @@ export default {
     FaqComponent,
     SharedContent,
     FeaturesComponent,
+    LibraryCreator,
   },
   data() {
     return {
@@ -356,10 +340,10 @@ export default {
   height: calc(100vh - 110px);
 }
 .landing-page-2 {
+  padding: 1em;
   display: flex;
   justify-content: center;
   flex-direction: column;
-  justify-content: space-around;
 }
 
 .features-container {

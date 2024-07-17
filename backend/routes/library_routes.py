@@ -19,7 +19,7 @@ def init_library_routes(app):
         result = lgn.suggest_library_wing(user_id, topic)
         
         room_names = [room for sublist in result for room in sublist]
-        library_response, status_code = lbh.create_library(current_user.id, topic, room_names)
+        library_response, status_code = lbh.create_library(user_id, topic, room_names)
 
         if status_code == 201:
             library_id = library_response.get_json().get("library_id")

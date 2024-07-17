@@ -11,7 +11,8 @@
         Score: {{ score }}
       </div>
     </div>
-    <div class="progress-bar" :style="{ width: progressBarWidth }"></div>
+    <div class="progress-bar-container">
+    <div class="progress-bar" :style="{ width: progressBarWidth }"></div></div>
   </div>
 </template>
 
@@ -131,5 +132,10 @@ export default {
   height: 4px;
   background-color: var(--element-color-1);
   transition: width 0.3s ease;
+}
+
+.progress-bar-container{
+    width: 100%;
+    background-color: #0000001a;
 }
 </style>
