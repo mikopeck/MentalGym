@@ -9,10 +9,17 @@
       <template v-slot:icon>&#128274;</template>
     </SideMenuButton>
     <SideMenuButton
+      label="Library"
+      :isSelected="isRouteActive('/library')"
+      @click="openRoute('/library')"
+    >
+      <template v-slot:icon>🏛</template>
+    </SideMenuButton>
+    <SideMenuButton
       v-if="loggedIn"
-      label="Chat"
-      :isSelected="isRouteActive('/')"
-      @click="openRoute('/')"
+      label="Lessons"
+      :isSelected="isRouteActive('/lessons')"
+      @click="openRoute('/lessons')"
     >
       <template v-slot:icon>&#128172;</template>
     </SideMenuButton>
@@ -31,14 +38,6 @@
       @click="openRoute('/progress')"
     >
       <template v-slot:icon>&#128200;</template>
-    </SideMenuButton>
-    <SideMenuButton
-      v-if="loggedIn"
-      label="Settings"
-      :isSelected="isRouteActive('/settings')"
-      @click="openRoute('/settings')"
-    >
-      <template v-slot:icon>&#128295;</template>
     </SideMenuButton>
     <SideMenuButton
       label="About"
@@ -60,6 +59,14 @@
       @click="openRoute('/terms')"
     >
       <template v-slot:icon>&#128279;</template>
+    </SideMenuButton>
+    <SideMenuButton
+      v-if="loggedIn"
+      label="Settings"
+      :isSelected="isRouteActive('/settings')"
+      @click="openRoute('/settings')"
+    >
+      <template v-slot:icon>&#128295;</template>
     </SideMenuButton>
   </aside>
 </template>

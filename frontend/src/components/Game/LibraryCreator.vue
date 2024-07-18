@@ -96,7 +96,6 @@ import axios from "axios";
 import { mapState } from "pinia";
 
 import { useLibGenStore } from "@/store/libGenStore.js";
-// import { useGameStore } from "@/store/gameStore.js";
 import CtaButton from "../Footer/LandingPageComponents/CtaButton.vue";
 
 export default {
@@ -144,8 +143,6 @@ export default {
         .then((response) => {
           console.log("Success:", response);
           const libraryId = response.data.library_id;
-        //   const gameStore = useGameStore();
-        //   gameStore.setId(libraryId);
           this.$router.push(`/library/${libraryId}`);
         })
         .catch((error) => {

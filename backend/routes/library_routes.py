@@ -14,12 +14,30 @@ def init_library_routes(app):
         topic = request.json.get("topic")
         if not topic:
             return jsonify(status="error", message="No topic provided"), 400
+        
+        library_difficulty = request.json.get("libraryDifficulty")
+        if not library_difficulty:
+            library_difficulty = "Easy"
+
+        language = request.json.get("language")
+        if not language:
+            language = "en"
+        
+        language_difficulty = request.json.get("languageDifficulty")
+        if not language_difficulty:
+            language_difficulty = "Normal"
+            
+        extra_context = request.json.get("extraContent")
+        if not extra_context:
+            existing_library = lbh.get_library_id(topic, library_difficulty, language, language_difficulty)
+            if existing_library:
+                return jsonify(status="success", library_id=existing_library)
 
         user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
         result = lgn.suggest_library_wing(user_id, topic)
         
         room_names = [room for sublist in result for room in sublist]
-        library_response, status_code = lbh.create_library(user_id, topic, room_names)
+        library_response, status_code = lbh.create_library(user_id, topic, room_names, library_difficulty, language, language_difficulty)
 
         if status_code == 201:
             library_id = library_response.get_json().get("library_id")

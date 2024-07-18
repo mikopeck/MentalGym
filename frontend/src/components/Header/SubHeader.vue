@@ -23,7 +23,7 @@ export default {
       return `${this.messageStore.progress * 100}%`;
     },
     show() {
-      return this.subheading && this.subheading.trim() !== "";
+      return this.subheading && this.subheading.trim() !== "" && this.$route.path.startsWith("/lesson");
     },
   },
 };

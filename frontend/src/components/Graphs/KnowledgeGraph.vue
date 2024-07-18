@@ -7,6 +7,7 @@
 import axios from "axios";
 import * as d3 from "d3";
 import { useGameStore } from "@/store/gameStore";
+import { usePopupStore}  from "@/store/popupStore";
 
 export default {
   name: "KnowledgeGraph",
@@ -46,15 +47,18 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           this.graphData = data.data;
-          // console.log(data);
-          // console.log(this.graphData);
 
           this.prepareGraphData();
           const nodeId = this.$route.query.node;
           this.loading = false;
           this.renderGraph(nodeId);
         })
-        .catch((error) => console.error("Error fetching graph data:", error));
+        .catch((error) => {
+          console.error("Error fetching graph data:", error);
+          this.loading = false;
+          const popupStore = usePopupStore();
+          popupStore.showPopup("No knowledge. <a href='/library'>Go learn.</a>")
+          });
     },
     prepareGraphData() {
       // Transform edges to D3 format

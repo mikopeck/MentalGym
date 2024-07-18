@@ -23,8 +23,8 @@
         <div class="value-content" v-if="activeIndex === 0" key="content-0">
           <div class="value-explainer">Your personal learning journey.</div>
           <div class="value-text">
-            <b>You</b> decide what to learn. Choose any topic you can describe,
-            or jump into lessons offered based on your goals and preferences.
+            <b>You</b> decide what to learn. Choose any topic you can describe in a few words.
+            Or let our tutor suggest based on your goals and interests.
           </div>
         </div>
         <div class="value-content" v-if="activeIndex === 1" key="content-1">
@@ -60,6 +60,10 @@
       <div class="cta-container" @click="redirectLogin">
         <CtaButton />
       </div>
+      <plan-page/>
+      <div class="cta-container" @click="redirectLogin">
+        <CtaButton />
+      </div>
     </div>
   </div>
 </template>
@@ -72,6 +76,7 @@ import FaqComponent from "./LandingPageComponents/FaqComponent.vue";
 import SharedContent from "./LandingPageComponents/SharedContent.vue";
 import FeaturesComponent from "./LandingPageComponents/FeaturesComponent.vue";
 import LibraryCreator from "../Game/LibraryCreator.vue";
+import PlanPage from '../Monetization/PlanPage.vue';
 
 export default {
   name: "AboutPage",
@@ -81,10 +86,11 @@ export default {
     SharedContent,
     FeaturesComponent,
     LibraryCreator,
+    PlanPage
   },
-  data() {
+  data(){
     return {
-      items: ["Learn.", "Discover.", "Grow."],
+      items: ["Have Fun", "Discover", "Level Up"],
       activeIndex: 0,
       popupMessage: "",
     };

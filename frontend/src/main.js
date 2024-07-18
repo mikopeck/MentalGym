@@ -4,14 +4,14 @@ import { createPinia } from 'pinia'
 import App from './App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from "@/store/authStore";
-import { usePopupStore } from "@/store/popupStore";
-import { useMentorStore } from "@/store/mentorStore";
+// import { usePopupStore } from "@/store/popupStore";
+// import { useMentorStore } from "@/store/mentorStore";
 
 import './assets/styles.css';
 import './assets/themes.css';
 
 const routes = [
-  { path: '/lessons', component: defineAsyncComponent(() => import('./components/Backstage/LessonsPage.vue')), meta: { title: 'Ascendance·☁️| Lessons' } },
+  { path: '/lessons', component: defineAsyncComponent(() => import('./components/Chat/ChatComponent.vue')), meta: { title: 'Ascendance·☁️| Lessons' } },
   { path: '/library', component: defineAsyncComponent(() => import('./components/Game/LibraryCreator.vue')), meta: { title: 'Ascendance·☁️| Create Library' } },
   { path: '/progress', component: defineAsyncComponent(() => import('./components/Backstage/ProgressPage.vue')), meta: { title: 'Ascendance·☁️| Progress' } },
   { path: '/knowledge', component: defineAsyncComponent(() => import('./components/Backstage/KnowledgePage.vue')), meta: { title: 'Ascendance·☁️| Knowledge Map' } },
@@ -31,13 +31,13 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   console.log("mainjs" + from + to.fullPath);
-  if (to.fullPath === "/?awake") {
-    const popupStore = usePopupStore();
-    popupStore.showWelcomePopup();
-    const mentorStore = useMentorStore();
-    mentorStore.show();
-    next('/');
-  }
+  // if (to.fullPath === "/?awake") {
+  //   const popupStore = usePopupStore();
+  //   popupStore.showWelcomePopup();
+  //   const mentorStore = useMentorStore();
+  //   mentorStore.show();
+  //   next('/');
+  // }
   const authStore = useAuthStore();
 
   if (!authStore.loggedIn && to.path === '/') {

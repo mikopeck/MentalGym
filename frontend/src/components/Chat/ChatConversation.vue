@@ -41,6 +41,8 @@ import ContentButton from "./ContentButton.vue";
 import CompleteButton from "./CompleteButton.vue";
 import { useMessageStore } from "@/store/messageStore";
 import { useInputStore } from "@/store/inputStore";
+import { usePopupStore } from "@/store/popupStore";
+import { useMentorStore } from "@/store/mentorStore";
 import eventBus from "@/eventBus";
 
 export default {
@@ -99,12 +101,26 @@ export default {
       // Single-message
       if (filteredMsgs.length === 2) {
         this.handleNewMessage();
+
+        // New user
+        if (this.$route.path === "/lessons") {
+          const popupStore = usePopupStore();
+          popupStore.showWelcomePopup();
+          const mentorStore = useMentorStore();
+          mentorStore.show();
+        }
       }
 
       return filteredMsgs;
     },
     hasNoMessages() {
       return this.filteredMessages.length === 0;
+    },
+    newToLessons() {
+      console.log(this.filteredMessages.length);
+      return (
+        this.$route.path === "/lessons" && this.filteredMessages.length === 2
+      );
     },
   },
   methods: {

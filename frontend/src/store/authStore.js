@@ -37,6 +37,6 @@ export const useAuthStore = defineStore('auth', {
     },
     useToken() {
       this.cloudTokens = this.cloudTokens + 1;
-    }
+    },
   },
 });
