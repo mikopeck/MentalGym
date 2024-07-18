@@ -65,7 +65,7 @@ export default {
   margin: -1.5em;
 }
 
-.map { top: 3%; left: 5%; }
+.map { top: 5%; left: 8%; }
 .exclamation-top-left { top: 18%; left: 18%; }
 .exclamation-top-right { top: 18%; right: 18%; }
 .exclamation-bottom-left { bottom: 18%; left: 18%; }

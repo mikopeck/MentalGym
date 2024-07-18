@@ -34,7 +34,7 @@ def init_library_routes(app):
                 return jsonify(status="success", library_id=existing_library)
 
         user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
-        result = lgn.suggest_library_wing(user_id, topic)
+        result = lgn.suggest_library_wing(user_id, topic, library_difficulty, language, language_difficulty,extra_context)
         
         room_names = [room for sublist in result for room in sublist]
         library_response, status_code = lbh.create_library(user_id, topic, room_names, library_difficulty, language, language_difficulty)

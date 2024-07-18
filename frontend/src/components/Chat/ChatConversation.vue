@@ -51,6 +51,11 @@ export default {
     CompleteButton,
     QuizComponent,
   },
+  data() {
+    return {
+      shownIntro: false,
+    };
+  },
   mounted() {
     eventBus.on("message-recieved", this.handleNewMessage);
   },
@@ -61,7 +66,6 @@ export default {
     filteredMessages() {
       const messageStore = useMessageStore();
       if (!messageStore.messages) {
-        // console.log("No messages!");
         return [];
       }
 
@@ -103,11 +107,8 @@ export default {
         this.handleNewMessage();
 
         // New user
-        if (this.$route.path === "/lessons") {
-          const popupStore = usePopupStore();
-          popupStore.showWelcomePopup();
-          const mentorStore = useMentorStore();
-          mentorStore.show();
+        if (this.$route.path === "/lessons" && !this.shownIntro) {
+          this.handleNewUser();
         }
       }
 
@@ -124,6 +125,13 @@ export default {
     },
   },
   methods: {
+    handleNewUser() {
+      const popupStore = usePopupStore();
+      popupStore.showWelcomePopup();
+      const mentorStore = useMentorStore();
+      mentorStore.show();
+      this.shownIntro = true;
+    },
     handleNewMessage() {
       // console.log("handling new message");
       this.$nextTick(() => {

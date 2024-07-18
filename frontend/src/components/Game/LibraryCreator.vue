@@ -86,7 +86,7 @@
       </transition>
 
       <!-- CTA Button -->
-      <CtaButton buttonText="Explore!" @click="handleSubmit" />
+      <CtaButton :buttonText="submitButtonText" @click="handleSubmit" :disabled="isSubmitting" />
     </div>
   </div>
 </template>
@@ -110,6 +110,7 @@ export default {
       libraryDifficulty: "",
       difficultyLevels: ["Easy", "Normal", "Hard"],
       showDetails: false,
+      isSubmitting: false,
     };
   },
   mounted() {
@@ -124,13 +125,17 @@ export default {
       languages: (state) => state.languages,
       topics: (state) => state.topics,
     }),
-    libgenRoute(){
-        return this.$route.path === "/library";
-    }
+    libgenRoute() {
+      return this.$route.path === "/library";
+    },
+    submitButtonText() {
+      return this.isSubmitting ? "Loading..." : "Explore!";
+    },
   },
   methods: {
     handleSubmit() {
       if (this.topic === "") return;
+      this.isSubmitting = true;
       const postData = {
         topic: this.topic,
         language: this.language,
@@ -148,6 +153,9 @@ export default {
         .catch((error) => {
           console.error("Error:", error);
           // Handle error, e.g., display error message
+        })
+        .finally(() => {
+          this.isSubmitting = false;
         });
     },
     randomizeTopic() {

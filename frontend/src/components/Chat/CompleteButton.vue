@@ -123,7 +123,7 @@ export default {
   },
   methods: {
     navigateBack() {
-      this.$router.push("/");
+      this.$router.push("/lessons");
     },
     navigateExplore() {
       this.exploreLoading = true;
@@ -150,7 +150,7 @@ export default {
       try {
         const response = await messageStore.sendMessage(
           "Start lesson: " + suggestion,
-          "/"
+          "/lessons"
         );
         // console.log("Response: ", response);
 

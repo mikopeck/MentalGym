@@ -11,7 +11,7 @@ request_timeout = 60  # Timeout for API requests in seconds
 TOKEN_CAP = 500
 LESSON_TOKENS = 1500
 
-GPT3_5 = "gpt-4o"
+GPT3_5 = "gpt-4o-mini"
 GPT4 = "gpt-4o"
 EMBEDDING_MODEL = "text-embedding-3-small"
 

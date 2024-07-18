@@ -79,10 +79,10 @@ export const useMessageStore = defineStore('messageStore', {
             const isLesson = currentPath.includes("/lesson/");
             const isChallenge = currentPath.includes("/challenge/");
             if (sanitizedMessage === "Leave challenge." && isChallenge) {
-                return "/";
+                return "/lessons";
             }
             if (sanitizedMessage === "Leave lesson." && isLesson) {
-                return "/";
+                return "/lessons";
             }
 
             // Sending logic

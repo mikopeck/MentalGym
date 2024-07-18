@@ -102,19 +102,9 @@ export default {
     shouldShowChat() {
       const path = this.$route.path;
       return (
-        path === "/" ||
+        path === "/lessons" ||
         path.includes("/lesson/") ||
         path.includes("/challenge/")
-      );
-    },
-    shouldShowLogin() {
-      const path = this.$route.path;
-      return !(
-        path.startsWith("/library") ||
-        path === "/terms" ||
-        path === "/about" ||
-        path === "/contact" ||
-        path === "/login"
       );
     },
     shouldShowRouterView() {
