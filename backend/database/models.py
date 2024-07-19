@@ -16,7 +16,9 @@ class User(db.Model, UserMixin):
     ai_tutor_profile = db.Column(db.Text, nullable=True)
     current_content = db.Column(db.String(500), nullable=True)
     
+    experience_points = db.Column(db.Integer, default=0)
     achievements = db.relationship('UserAchievement', backref='user')
+
     actions = db.relationship('UserAction', backref='user')
 
     chats = db.relationship('ChatHistory', backref='user')

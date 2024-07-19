@@ -172,6 +172,7 @@ export default {
 <style scoped>
 .library-gen-page {
   height: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
 }

@@ -84,6 +84,14 @@ export default {
       const libraryId = route.params.id;
       console.log("fetching library details");
       await gameStore.fetchLibraryDetails(libraryId);
+
+      this.$nextTick(() => {
+      const middleRoomIndex = 12;
+      const middleRoom = this.tiles[middleRoomIndex];
+      if (middleRoom && middleRoom.state === 1) {
+        this.handleTileClick(middleRoomIndex);
+      }
+    });
     })();
 
     watch(

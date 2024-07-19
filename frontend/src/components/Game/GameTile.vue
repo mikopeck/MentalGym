@@ -3,6 +3,9 @@
     <template v-if="loading">
       <div class="loader"></div>
     </template>
+    <template v-if="state === 0">
+      <div class="locked-display">☁️</div>
+    </template>
     <div class="grid-text">
       {{ name }}
     </div>
@@ -14,6 +17,7 @@
     />
   </div>
 </template>
+
 
 <script>
 export default {
@@ -52,20 +56,37 @@ export default {
 
 <style scoped>
 .locked::before {
-  border: 4px dotted var(--background-color-2t);
-  filter: brightness(15%);
-}
-.locked {
-  opacity: 0.4;
+  display: none;
 }
 
-.locked:hover::before {
-  border: 4px dotted var(--background-color-2t);
-  filter: brightness(40%);
+.locked-display, .grid-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  transition: opacity 0.3s ease;
 }
-.locked:hover {
-  opacity: 0.9;
+
+.locked-display {
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 4em;
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }
+
+.grid-item.locked:hover .locked-display {
+  opacity: 0.2;
+}
+
+.grid-item.locked .grid-text {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.grid-item.locked:hover .grid-text {
+  opacity: 1;
+}
+
 .unlocked::before {
   border: 2px dotted var(--element-color-1);
   filter: brightness(60%);
@@ -133,6 +154,7 @@ export default {
 
 
 .grid-text {
+  font-size: 1.1em;
   transition: transform 0.1s ease;
   position: relative;
   z-index: 2;
