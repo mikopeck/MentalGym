@@ -18,48 +18,16 @@ export const useGameStore = defineStore("gameStore", {
 
         score: 0,
         multiplier: 5,
+
+        completed: false,
     }),
     actions: {
         setId(libraryId) {
+            this.resetGameState();
             this.libraryId = libraryId;
         },
         handleMapClick() {
             this.currentRoom = null;
-        },
-        handleDirectionClick(direction) {
-            console.log(`${direction} clicked`);
-            if (!this.currentRoom) { return; }
-
-            const currentIndex = this.roomNames.indexOf(this.currentRoom);
-            if (currentIndex === -1) {
-                console.error('Current room not found in roomNames array.');
-                return;
-            }
-
-            let newIndex;
-            if (direction === 'right') {
-                newIndex = currentIndex + 1;
-            } else if (direction === 'left') {
-                newIndex = currentIndex - 1;
-            } else if (direction === 'up') {
-                newIndex = currentIndex - 5;
-            } else if (direction === 'down') {
-                newIndex = currentIndex + 5;
-            } else {
-                console.error('Invalid direction specified.');
-                return;
-            }
-
-            // Check if the new index is within the array bounds
-            if (newIndex < 0 || newIndex >= this.roomNames.length) {
-                console.error('New room index out of bounds.');
-                return;
-            }
-
-            const newRoomName = this.roomNames[newIndex];
-            if (newRoomName) {
-                this.openRoom(newRoomName);
-            }
         },
         handleExclamationClick(index) {
             console.log(`Exclamation ${index}`);
@@ -121,7 +89,7 @@ export const useGameStore = defineStore("gameStore", {
                     answered_questions: this.roomStates[room_name].answeredQuestions,
                     current_question_index: this.roomStates[room_name].currentQuestionIndex
                 }));
-                const response = await axios.post(`/api/library/${this.libraryId}/room/update`, { rooms });
+                const response = await axios.post(`/api/library/${this.libraryId}/room/update`, { rooms, score: this.score });
                 if (response.data.rooms) {
                     response.data.rooms.forEach(room => {
                         if (room.status === "error") {
@@ -141,7 +109,7 @@ export const useGameStore = defineStore("gameStore", {
                 if (response.data.status === "success") {
                     console.log(response.data);
                     this.roomNames = response.data.data.room_names || [];
-
+                    this.score = response.data.data.score || 0;
                     const roomStatesObject = response.data.data.room_states;
                     const roomStatesArray = Object.keys(roomStatesObject).map(key => {
                         return {
@@ -212,5 +180,44 @@ export const useGameStore = defineStore("gameStore", {
                 console.error(`Failed to load room ${room_name}: ${response.data.message}`);
             }
         },
+        endGame(){
+            if (!confirm(`Are you sure you want to complete this Library with score ${this.score}?`)) {
+                return;
+            }
+
+            this.broadcastRoomStates().then(() => {
+                console.log("Final states of all rooms broadcasted successfully.");
+            }).catch(error => {
+                console.error("Error broadcasting final states:", error);
+            });
+
+            axios.post(`/api/library/end`, {
+                libraryId: this.libraryId,
+                score: this.score,
+            })
+            .then(response => {
+                if (response.data.status === "success") {
+                    console.log("Game ended successfully:", response.data.message);
+                    this.completed = true;
+                } else {
+                    console.error("Failed to end game:", response.data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Error sending game end data:", error);
+            });
+        },
+        resetGameState() {
+            this.score = 0;
+            this.multiplier = 5;
+            this.roomNames = [];
+            this.roomStates = {};
+            this.currentRoom = null;
+            this.factoids = [];
+            this.currentQuestion = 0;
+            this.answeredQuestions = [];
+            this.questionVisible = false;
+            this.factoidVisible = null;
+        }
     },
 });

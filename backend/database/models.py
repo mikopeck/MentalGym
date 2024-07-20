@@ -143,9 +143,21 @@ class LibraryRoomState(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     library_id = db.Column(db.Integer, db.ForeignKey('library.id'), nullable=False)
     room_name = db.Column(db.String(200), nullable=False)
-    state = db.Column(db.Integer, default=0)  # 0-locked, 1-unlocked, 2-opened
-    current_question_index = db.Column(db.Integer, nullable=True)  # Index of the current question
+    state = db.Column(db.Integer, default=0)  # 0-locked, 1-unlocked, 2-opened, 3-completed
+    current_question_index = db.Column(db.Integer, nullable=True)
     answered_questions = db.Column(db.JSON, default=list, nullable=False)
+
+class LibraryCompletion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    library_id = db.Column(db.Integer, db.ForeignKey('library.id'), nullable=False)
+    completion_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    score = db.Column(db.Integer, nullable=False)
+    is_complete = db.Column(db.Boolean, default=False)
+    
+    library = db.relationship('Library', backref=db.backref('completions', lazy=True))
+    user = db.relationship('User', backref=db.backref('library_completions', lazy=True))
+
 
 class LibraryFactoid(db.Model):
     id = db.Column(db.Integer, primary_key=True)

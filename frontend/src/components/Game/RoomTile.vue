@@ -66,10 +66,10 @@ export default {
 }
 
 .map { top: 5%; left: 8%; }
-.exclamation-top-left { top: 18%; left: 18%; }
-.exclamation-top-right { top: 18%; right: 18%; }
-.exclamation-bottom-left { bottom: 18%; left: 18%; }
-.exclamation-bottom-right { bottom: 18%; right: 18%; }
+.exclamation-top-left { top: 19%; left: 19%; }
+.exclamation-top-right { top: 19%; right: 19%; }
+.exclamation-bottom-left { bottom: 19%; left: 19%; }
+.exclamation-bottom-right { bottom: 19%; right: 19%; }
 .question-mark { top: 50%; left: 50%; }
 
 @keyframes flash-highlight {

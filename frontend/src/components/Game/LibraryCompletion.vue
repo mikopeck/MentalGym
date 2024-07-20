@@ -1,78 +1,71 @@
 <template>
-  <div class="completion-container">
-    <div class="celebratory-message">🎉 Congratulations! 🎉</div>
-    <div v-if="suggestions.length" class="suggestions-container">
-      <div>Continue with...</div>
-      <ContentButton
-        v-for="(suggestion, index) in suggestions"
-        :key="index"
-        :name="suggestion"
-        :content="suggestion"
-        :showType="false"
-        @navigate="startSuggestion(suggestion)"
-        class="suggestion-button"
-      ></ContentButton>
-    </div>
-    <div v-if="loggedIn" class="what-next-container">
-      <div class="nav-row">
-        <button class="nav-button" @click="navigateBack">🔙Back</button>
-        <div class="separator">|</div>
-        <button
-          class="nav-button"
-          @click="navigateExplore"
-          :disabled="exploreLoading"
-        >
-          {{ exploreLoading ? "⏳Loading" : "🔍Explore" }}
-        </button>
-        <div class="separator">|</div>
-        <button class="nav-button" @click="navigateMap">🗺️Map</button>
+  <div v-if="completionVisible" class="completion-overlay">
+    <div class="completion-content">
+      <div class="celebratory-message">🎉 Congratulations! 🎉</div>
+      <div v-if="suggestions.length" class="suggestions-container">
+        <div>Continue with...</div>
+        <ContentButton
+          v-for="(suggestion, index) in suggestions"
+          :key="index"
+          :name="suggestion"
+          :content="suggestion"
+          :showType="false"
+          @navigate="startSuggestion(suggestion)"
+          class="suggestion-button"
+        ></ContentButton>
       </div>
-
-      <div class="nav-row">
-        <button class="share-button" @click="toggleShare">
-          {{ isSharing ? "Link" : "🔗Share" }}
-        </button>
-        <div class="separator">|</div>
-        <button class="feedback-button" @click="toggleFeedback">
-          {{ showFeedback ? "Hide Feedback⬆️" : "Feedback⤵️" }}
-        </button>
-      </div>
-    </div>
-
-    <div v-if="isSharing" class="share-container">
-      <input v-model="shareLink" readonly class="share-link-input" />
-      <button @click="copyToClipboard" class="copy-button">
-        {{ copyButtonText }}
-      </button>
-    </div>
-
-    <div class="rating-feedback">
-      <div v-show="showFeedback" class="feedback-form">
-        <p>Rate your experience:</p>
-        <div class="stars">
-          <span
-            v-for="n in 5"
-            :key="n"
-            class="star"
-            @click="setRating(n)"
-            :class="{ selected: n <= rating }"
+      <div v-if="loggedIn" class="what-next-container">
+        <div class="nav-row">
+          <button class="nav-button" @click="navigateLibrary">🏛New</button>
+          <div class="separator">|</div>
+          <button
+            class="nav-button"
+            @click="navigateExplore"
+            :disabled="exploreLoading"
           >
-            ★
-          </span>
+            {{ exploreLoading ? "⏳Loading" : "🔍Explore" }}
+          </button>
+          <div class="separator">|</div>
+          <button class="nav-button" @click="navigateMap">🗺️Map</button>
         </div>
-        <br />
 
-        <textarea
-          v-model="feedback"
-          placeholder="Enter your feedback here..."
-        ></textarea>
-        <button
-          :disabled="!isValid || isSubmitted"
-          @click="submitFeedback"
-          class="submit-btn"
-        >
-          {{ isSubmitted ? "Thank You" : "Submit" }}
-        </button>
+        <div class="nav-row">
+          <button class="nav-button" @click="navigateBack">🔙Back</button>
+          <div class="separator">|</div>
+          <button class="feedback-button" @click="toggleFeedback">
+            {{ showFeedback ? "Hide Feedback⬆️" : "Feedback⤵️" }}
+          </button>
+        </div>
+      </div>
+
+      <div class="rating-feedback">
+        <div v-show="showFeedback" class="feedback-form">
+          <p>Rate your experience:</p>
+          <div class="stars">
+            <span
+              v-for="n in 5"
+              :key="n"
+              class="star"
+              @click="setRating(n)"
+              :class="{ selected: n <= rating }"
+            >
+              ★
+            </span>
+          </div>
+          <br />
+
+          <textarea
+            v-model="feedback"
+            placeholder="Enter your feedback here..."
+          ></textarea>
+          <button
+            :disabled="!isValid || isSubmitted"
+            @click="submitFeedback"
+            class="submit-btn"
+          >
+            {{ isSubmitted ? "Thank You" : "Submit" }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -83,7 +76,7 @@ import axios from "axios";
 import { usePopupStore } from "@/store/popupStore";
 import { useAuthStore } from "@/store/authStore";
 import { useMessageStore } from "@/store/messageStore";
-import { useInputStore } from "@/store/inputStore";
+import { useGameStore } from "@/store/gameStore";
 import ContentButton from "../Chat/ContentButton.vue";
 
 export default {
@@ -93,25 +86,21 @@ export default {
       feedback: "",
       showFeedback: false,
       isSubmitted: false,
-      isSharing: false,
-      shareLink: window.location.href,
-      copyButtonText: "Copy",
       suggestions: [],
       exploreLoading: false,
+      loading: false,
     };
   },
   components: {
     ContentButton,
   },
-  mounted() {
-    const inputStore = useInputStore();
-    inputStore.hide();
-  },
-  unmounted() {
-    const inputStore = useInputStore();
-    inputStore.show();
-  },
   computed: {
+    gameStore() {
+      return useGameStore();
+    },
+    completionVisible() {
+      return this.gameStore.completed;
+    },
     isValid() {
       return this.rating > 0 || this.feedback.trim().length > 0;
     },
@@ -121,8 +110,11 @@ export default {
     },
   },
   methods: {
+    navigateLibrary() {
+      this.$router.push("/library");
+    },
     navigateBack() {
-      this.$router.push("/lessons");
+      this.gameStore.completed = false;
     },
     navigateExplore() {
       this.exploreLoading = true;
@@ -134,49 +126,45 @@ export default {
           if (response.data && response.data.suggestions) {
             this.suggestions = response.data.suggestions;
           } else {
-            this.exploreLoading = false; // console.log("No suggestions received");
           }
         })
         .catch((error) => {
           console.error("Error fetching suggestions: ", error);
-          this.exploreLoading = false;
         });
+      this.exploreLoading = false;
     },
     async startSuggestion(suggestion) {
-      // console.log("Selected suggestion: " + suggestion);
-      const messageStore = useMessageStore();
+      console.log("Selected suggestion: " + suggestion);
+      if (this.loading) return;
+
+      this.loading = true;
+      console.log(this.loading);
 
       try {
-        const response = await messageStore.sendMessage(
-          "Start lesson: " + suggestion,
-          "/lessons"
-        );
-        // console.log("Response: ", response);
+        // Making the POST request to the library generate route
+        const libraryResponse = await axios.post("/api/library/generate", {
+          topic: suggestion,
+        });
 
-        if (!response || response === "not sent") {
-          console.error("No response or message not sent");
-          return;
-        }
+        console.log("Library generation response:", libraryResponse.data);
+        const libraryId = libraryResponse.data.library_id;
 
-        if (this.$router) {
-          this.$router.push(response);
-        } else {
-          console.error("Router is undefined");
-        }
+        // Set the room names in the store
+        this.gameStore.setId(libraryId);
+        this.loading = false;
+        this.$router.push(`/library/${libraryId}`);
       } catch (error) {
-        console.error("Error in sendMessage: ", error);
+        this.loading = false;
+        console.error("Error in sending request to library:", error);
       }
     },
     navigateMap() {
       const path = this.$route.path;
-      const lessonMatch = path.match(/\/lesson\/(\d+)/);
-      const challengeMatch = path.match(/\/challenge\/(\d+)/);
+      const idMatch = path.match(/\/library\/(\d+)/);
 
       let id;
-      if (lessonMatch && lessonMatch[1]) {
-        id = lessonMatch[1];
-      } else if (challengeMatch && challengeMatch[1]) {
-        id = challengeMatch[1];
+      if (idMatch && idMatch[1]) {
+        id = idMatch[1];
       }
 
       if (id) {
@@ -296,9 +284,26 @@ export default {
 </script>
 
 <style scoped>
-.completion-container {
+.completion-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.completion-content {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 600px;
   text-align: center;
-  padding: 1rem;
 }
 
 .celebratory-message {
@@ -456,4 +461,3 @@ export default {
   margin: 2px;
 }
 </style>
-

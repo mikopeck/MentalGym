@@ -3,11 +3,13 @@ import random
 from flask import jsonify
 from database.models import (
     db,
+    User,
     Library,
     LibraryFactoid,
     LibraryQuestion,
     LibraryRoomState,
     LibraryQuestionChoice,
+    LibraryCompletion
 )
 
 
@@ -158,6 +160,12 @@ def get_library(library_id, user_id=None):
         for i, room in enumerate(room_states)
     }
 
+    if user_id:
+        existing_completion = LibraryCompletion.query.filter_by(library_id=library_id, user_id=user_id).first()
+        if existing_completion:
+            library_data["score"] = existing_completion.score
+
+    print(library_data)
     return jsonify(library_data)
 
 
@@ -362,6 +370,33 @@ def is_center_room(library_id, room_name):
     if not library:
         return jsonify({"message": "Library not found"}), 404
     return room_name == library.library_topic
+
+def update_game_end(user_id, library_id, score, is_complete):
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'status': 'error', 'message': 'User not found'}), 404
+        
+        existing_completion = LibraryCompletion.query.filter_by(library_id=library_id, user_id=user_id).first()
+        if existing_completion:
+            if is_complete:
+                existing_completion.is_complete = is_complete
+            if score > existing_completion.score:
+                existing_completion.score = score
+                user.experience_points += (score - existing_completion.score)
+            else:
+                return jsonify({'status': 'success', 'message': 'Existing score higher, no update performed'}), 200
+        else:
+            completion = LibraryCompletion(library_id=library_id, user_id=user_id, score=score, is_complete=is_complete)
+            db.session.add(completion)
+            user.experience_points += score
+
+        db.session.commit()
+        return jsonify({'status': 'success', 'message': 'Game ended and recorded successfully.'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
 
 
 # Utility function to convert a model instance to a dictionary

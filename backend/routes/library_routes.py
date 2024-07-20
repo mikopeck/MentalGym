@@ -122,6 +122,9 @@ def init_library_routes(app):
         user_id = current_user.id
         data = request.get_json()
 
+        if 'score' in data:
+            lbh.update_game_end(user_id, library_id, data['score'], False)
+
         # Multiple rooms update (assuming the data format includes a list of rooms with their new states)
         if 'rooms' in data:
             responses = []
@@ -139,3 +142,22 @@ def init_library_routes(app):
 
         else:
             return jsonify({"status": "error", "message": "Invalid data provided"}), 400
+        
+    @app.route("/api/library/end", methods=["POST"])
+    def end_game():
+        data = request.get_json()
+        library_id = data.get('libraryId')
+        score = data.get('score')
+        
+        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
+        if not user_id:
+            return jsonify({'status': 'error', 'message': "Not logged in..."}), 401
+        
+        if library_id is None or score is None:
+            return jsonify({'status': 'error', 'message': 'Missing libraryId or score'}), 400
+
+        try:
+            response, status = lbh.update_game_end(user_id, library_id, score, True)
+            return response, status
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)}), 500

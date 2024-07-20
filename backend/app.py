@@ -10,6 +10,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 
 from database.models import db, User
+from database.upgrade_db import run_upgrades
 
 load_dotenv()
 app = Flask(__name__, static_folder='../frontend/dist')
@@ -58,6 +59,9 @@ init_graph_routes(app)
 init_feedback_routes(app)
 init_admin_routes(app)
 init_library_routes(app)
+
+with app.app_context():
+    run_upgrades()
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

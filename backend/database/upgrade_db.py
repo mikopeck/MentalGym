@@ -1,26 +1,15 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from datetime import datetime
-from models import User  # Import your User model
+from database.models import db, User
 
-# Replace 'sqlite:///your_database.db' with your actual database URI
-DATABASE_URI = 'mysql+pymysql://root:password@localhost/mind_forge_ai'
+def run_upgrades():
+    upgrade_user_exp()
 
-# Connect to the database using SQLAlchemy
-engine = create_engine(DATABASE_URI)
-Session = sessionmaker(bind=engine)
-session = Session()
 
-# Query all users
-users = session.query(User).all()
 
-# Apply default values to users if they are None
-for user in users:
-    if user.confirmed is None:
-        user.confirmed = True
+# upgradess
 
-# Commit the changes to the database
-session.commit()
+def upgrade_user_exp():
+    users = User.query.filter(User.experience_points == None).all()
+    for user in users:
+        user.experience_points = 0
 
-# Close the session
-session.close()
+    db.session.commit()

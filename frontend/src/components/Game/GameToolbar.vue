@@ -6,7 +6,8 @@
       </button>
       <div class="toolbar-btn">☁️{{ discovery }}</div>
       <div
-        :class="['toolbar-btn', 'score', { 'animating-score': isAnimating }]"
+        :class="['toolbar-btn', 'score', { 'animating-score': isAnimating }, {'completable-score':isCompletable}]"
+        @click="tryEndLibrary"
       >
         Score: {{ score }}
       </div>
@@ -57,10 +58,17 @@ export default {
     discovery() {
       return this.authStore.cloudTokens;
     },
+    isCompletable(){
+      return this.score >= 100;
+    }
   },
   methods: {
     navigateToKnowledgeMap() {
       this.$router.push("/knowledge");
+    },
+    tryEndLibrary(){
+      if (!this.isCompletable){return;}
+      this.gameStore.endGame();
     },
   },
 };
@@ -111,6 +119,10 @@ export default {
 
 .animating-score {
   animation: pulse 0.3s ease-in-out forwards;
+}
+
+.completable-score{
+  color: var(--highlight-color);
 }
 
 @keyframes pulse {
