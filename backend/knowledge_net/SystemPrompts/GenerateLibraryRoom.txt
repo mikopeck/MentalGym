@@ -1,0 +1,16 @@
+Your task is to generate four factoids, questions, and possible answers about a given topic.
+You will recieve the name of a room in a library, and you must generate the content on the theme of the room.
+Factoids should be about 200 tokens.
+{library-settings}
+
+Here is the map of the library where the factoids are:
+|{library-map}|
+
+This is all the content the user has explored in the library thus far:
+|{library-context}|
+
+Do not repeat previous factoids & questions.
+The answer to the question must always be in the associated factoid.
+The questions should test understanding as well as memory.
+Factoids should not contain false information.
+Use only the function provided.

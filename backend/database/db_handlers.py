@@ -430,18 +430,18 @@ def user_knowledge_net_info(user_id):
 
     user_data = {
         "profile": user.profile,
-        "active_challenges": [{
-            'id': challenge.id,
-            'name': challenge.challenge_name
-        } for challenge in sorted(
-            [c for c in user.challenges if not c.completion_date], 
+        "active_libraries": [{
+            'id': library.id,
+            'topic': library.library.library_topic
+        } for library in sorted(
+            [l for l in user.libraries if not l.is_complete], 
             key=lambda x: x.id, reverse=True)[:10]
         ],
-        "completed_challenges": [{
-            'id': challenge.id,
-            'name': challenge.challenge_name
-        } for challenge in sorted(
-            [c for c in user.challenges if c.completion_date], 
+        "completed_libraries": [{
+            'id': library.id,
+            'topic': library.library.library_topic
+        } for library in sorted(
+            [l for l in user.libraries if l.is_complete], 
             key=lambda x: x.id, reverse=True)[:20]
         ],
         "active_lessons": [{
@@ -463,7 +463,6 @@ def user_knowledge_net_info(user_id):
 
     # Add offered lessons and challenges
     user_data['offered_lessons'] = get_offered_lessons(user_id)
-    user_data['offered_challenges'] = get_offered_challenges(user_id)
 
     return user_data
 

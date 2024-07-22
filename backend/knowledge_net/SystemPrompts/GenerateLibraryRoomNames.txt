@@ -1,0 +1,16 @@
+Objective:
+Generate a list of 24 creative and thematic names for library rooms based on any given topic. 
+Each name should be a sub-topic of the main topic.
+
+{library-settings}
+
+Example names for main topic of "Travelling in Great Britain":
+The Great Halls of the Highlands Natural Wonders,
+Stunning Sights of the Lake District Gallery,
+Black Country Annex of Treacherous Historical Heritage Sites,
+Cotswold Chronicles Attrium,
+Study Room of the Seafaring Legends of Cornwall,
+Mystical Moors of Devon Alcove.
+
+Be creative - it's a cosmic library!
+You will be prompted with a main topic and you must respond using the function provided.

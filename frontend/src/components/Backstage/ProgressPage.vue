@@ -34,7 +34,7 @@
             <tr>
               <th></th>
               <th>📖</th>
-              <!-- <th>🎯</th> -->
+              <th>🎯</th>
             </tr>
           </thead>
           <tbody>
@@ -43,38 +43,38 @@
               <td>
                 <span class="stat-value">{{ totalLessons }}</span>
               </td>
-              <!-- <td>
-                <span class="stat-value">{{ totalChallenges }}</span>
-              </td> -->
+              <td>
+                <span class="stat-value">{{ totalLibraries }}</span>
+              </td>
             </tr>
             <tr>
               <td><span class="stat-label">Percentage Completed</span></td>
               <td>
                 <span class="stat-value">{{ percentCompletedLessons }}%</span>
               </td>
-              <!-- <td>
+              <td>
                 <span class="stat-value"
-                  >{{ percentCompletedChallenges }}%</span
+                  >{{ percentCompletedLibraries }}%</span
                 >
-              </td> -->
+              </td>
             </tr>
             <tr>
               <td><span class="stat-label">Completed</span></td>
               <td>
                 <span class="stat-value">{{ completedLessons }}</span>
               </td>
-              <!-- <td>
-                <span class="stat-value">{{ completedChallenges }}</span>
-              </td> -->
+              <td>
+                <span class="stat-value">{{ completedLibraries }}</span>
+              </td>
             </tr>
             <tr>
               <td><span class="stat-label">Active</span></td>
               <td>
                 <span class="stat-value">{{ activeLessons }}</span>
               </td>
-              <!-- <td>
-                <span class="stat-value">{{ activeChallenges }}</span>
-              </td> -->
+              <td>
+                <span class="stat-value">{{ activeLibraries }}</span>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -122,11 +122,11 @@ export default {
       totalLessons: 0,
       activeLessons: 0,
       completedLessons: 0,
-      totalChallenges: 0,
-      activeChallenges: 0,
-      completedChallenges: 0,
+      totalLibraries: 0,
+      activeLibraries: 0,
+      completedLibraries: 0,
       percentCompletedLessons: 0,
-      percentCompletedChallenges: 0,
+      percentCompletedLibraries: 0,
       topTopics: {},
       maxStreak: 0,
       currentStreak: 0,
@@ -167,13 +167,13 @@ export default {
         this.totalLessons = response.data.progress.totalLessons;
         this.activeLessons = response.data.progress.activeLessons;
         this.completedLessons = response.data.progress.completedLessons;
-        this.totalChallenges = response.data.progress.totalChallenges;
-        this.activeChallenges = response.data.progress.activeChallenges;
-        this.completedChallenges = response.data.progress.completedChallenges;
+        this.totalLibraries = response.data.progress.totalLibraries;
+        this.activeLibraries = response.data.progress.activeLibraries;
+        this.completedLibraries = response.data.progress.completedLibraries;
         this.percentCompletedLessons =
           response.data.progress.percentCompletedLessons;
-        this.percentCompletedChallenges =
-          response.data.progress.percentCompletedChallenges;
+        this.percentCompletedLibraries =
+          response.data.progress.percentCompletedLibraries;
         this.topTopics = response.data.progress.topTopics;
         this.maxStreak = response.data.progress.maxStreak;
         this.currentStreak = response.data.progress.currentStreak;

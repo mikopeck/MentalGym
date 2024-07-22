@@ -7,7 +7,7 @@ import database.db_handlers as dbh
 def suggest_lessons(user_id, selected_node):
     lesson_names = []
     system_msg = system_message(user_id, roles.ExploreTopic)
-    user_msg = construct_user_message(user_id, selected_node)
+    user_msg = f"Suggest new topics connected to: {selected_node}."
     function = [functions.ExploreTopic]
     function_call = {"name": function[0]['name']}
     messages = create_message(system_msg, user_msg)
@@ -37,23 +37,3 @@ def suggest_lessons(user_id, selected_node):
             dbh.add_action(user_id, action_text)
             
     return lesson_names
-
-def construct_user_message(user_id, selected_node):
-    return get_user_activities(user_id) + f"\nThat is my history.\nSuggest new lessons connected to: {selected_node}."
-
-def get_user_activities(user_id):
-    # Collect the results from each function
-    completed_challenges = dbh.get_completed_challenges(user_id)
-    active_challenges = dbh.get_active_challenges(user_id)
-    completed_lessons = dbh.get_completed_lessons(user_id)
-    active_lessons = dbh.get_active_lessons(user_id)
-
-    # Extract only the names of challenges and lessons
-    challenge_names = [challenge['challenge_name'] for challenge in completed_challenges + active_challenges]
-    lesson_names = [lesson['lesson_name'] for lesson in completed_lessons + active_lessons]
-
-    # Combine all the names into a single list
-    all_activity_names = challenge_names + lesson_names
-
-    # Convert the list of names to a string with comma-separated values
-    return ', '.join(all_activity_names)

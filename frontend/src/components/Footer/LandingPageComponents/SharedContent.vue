@@ -30,7 +30,6 @@ export default {
   data() {
     return {
       lessons: [],
-      // challenges: [],
       loaded: false,
     };
   },
@@ -47,8 +46,6 @@ export default {
       try {
         const response = await axios.get("/api/public-content");
         this.lessons = response.data.lessons;
-        // console.log(response);
-        // this.challenges = response.data.challenges;
         this.loaded = true;
       } catch (error) {
         console.error("Error fetching public content:", error);

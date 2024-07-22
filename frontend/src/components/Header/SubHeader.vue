@@ -20,11 +20,10 @@ export default {
       return this.messageStore.subheading;
     },
     progressBarWidth() {
-      // console.log("calculating")
       return `${this.messageStore.progress * 100}%`;
     },
     show() {
-      return this.subheading && this.subheading.trim() !== "";
+      return this.subheading && this.subheading.trim() !== "" && this.$route.path.startsWith("/lesson");
     },
   },
 };
@@ -36,8 +35,8 @@ export default {
   font-size: 14px;
   color: var(--text-color);
   background-color: #0000001a;
-  padding: 5px 0;
   backdrop-filter: blur(8px);
+  padding: 5px 0;
   position: relative;
 }
 

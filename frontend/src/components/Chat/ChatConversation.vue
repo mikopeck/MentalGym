@@ -41,6 +41,8 @@ import ContentButton from "./ContentButton.vue";
 import CompleteButton from "./CompleteButton.vue";
 import { useMessageStore } from "@/store/messageStore";
 import { useInputStore } from "@/store/inputStore";
+import { usePopupStore } from "@/store/popupStore";
+import { useMentorStore } from "@/store/mentorStore";
 import eventBus from "@/eventBus";
 
 export default {
@@ -48,6 +50,11 @@ export default {
     ContentButton,
     CompleteButton,
     QuizComponent,
+  },
+  data() {
+    return {
+      shownIntro: false,
+    };
   },
   mounted() {
     eventBus.on("message-recieved", this.handleNewMessage);
@@ -59,7 +66,6 @@ export default {
     filteredMessages() {
       const messageStore = useMessageStore();
       if (!messageStore.messages) {
-        // console.log("No messages!");
         return [];
       }
 
@@ -99,6 +105,11 @@ export default {
       // Single-message
       if (filteredMsgs.length === 2) {
         this.handleNewMessage();
+
+        // New user
+        if (this.$route.path === "/lessons" && !this.shownIntro) {
+          this.handleNewUser();
+        }
       }
 
       return filteredMsgs;
@@ -106,8 +117,21 @@ export default {
     hasNoMessages() {
       return this.filteredMessages.length === 0;
     },
+    newToLessons() {
+      console.log(this.filteredMessages.length);
+      return (
+        this.$route.path === "/lessons" && this.filteredMessages.length === 2
+      );
+    },
   },
   methods: {
+    handleNewUser() {
+      const popupStore = usePopupStore();
+      popupStore.showWelcomePopup();
+      const mentorStore = useMentorStore();
+      mentorStore.show();
+      this.shownIntro = true;
+    },
     handleNewMessage() {
       // console.log("handling new message");
       this.$nextTick(() => {

@@ -4,8 +4,10 @@
 </template>
 
 <script>
+import axios from "axios";
 import * as d3 from "d3";
-import { useMessageStore } from "@/store/messageStore";
+import { useGameStore } from "@/store/gameStore";
+import { usePopupStore}  from "@/store/popupStore";
 
 export default {
   name: "KnowledgeGraph",
@@ -29,10 +31,9 @@ export default {
       colorScale: {
         completed_lesson: "#1f77b4",
         active_lesson: "#ff7f0e",
-        completed_challenge: "#2ca02c",
-        active_challenge: "#d62728",
+        completed_librarie: "#2ca02c",
+        active_librarie: "#d62728",
         offered_lesson: "#9467bd",
-        offered_challenge: "#8c564b",
       },
     };
   },
@@ -45,15 +46,18 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           this.graphData = data.data;
-          // console.log(data);
-          // console.log(this.graphData);
 
           this.prepareGraphData();
-          const nodeId = this.$route.query.node;
           this.loading = false;
-          this.renderGraph(nodeId);
+          const nodeName = this.$route.query.node;
+          this.renderGraph(nodeName);
         })
-        .catch((error) => console.error("Error fetching graph data:", error));
+        .catch((error) => {
+          console.error("Error fetching graph data:", error);
+          this.loading = false;
+          const popupStore = usePopupStore();
+          popupStore.showPopup("No knowledge. <a href='/library'>Go learn.</a>")
+          });
     },
     prepareGraphData() {
       // Transform edges to D3 format
@@ -69,7 +73,7 @@ export default {
         };
       });
     },
-    renderGraph(nodeId) {
+    renderGraph(nodeName) {
       // console.log("rendering");
       this.width = window.innerWidth - 42;
       this.height = window.innerHeight - 250;
@@ -231,9 +235,9 @@ export default {
       }
 
       // Afterstuff
-      if (nodeId) {
+      if (nodeName) {
         const nodeToSelect = this.graphData.nodes.find(
-          (node) => node.id.toString() === nodeId
+          (node) => node.name === nodeName
         );
         // console.log("Node to Select:", nodeToSelect);
         if (nodeToSelect) {
@@ -241,14 +245,14 @@ export default {
         }
       }
       setTimeout(() => {
-        this.zoomToNode(nodeId);
+        this.zoomToNode(nodeName);
       }, 1000);
     },
 
-    zoomToNode(nodeId) {
-      if (nodeId) {
+    zoomToNode(nodeName) {
+      if (nodeName) {
         const node = this.graphData.nodes.find(
-          (n) => n.id.toString() === nodeId
+          (n) => n.name === nodeName
         );
         if (node) {
           const zoomLevel = 4;
@@ -405,8 +409,8 @@ export default {
       let path;
       if (nodeData.category.includes("lesson")) {
         path = `/lesson/${nodeData.id}`;
-      } else if (nodeData.category.includes("challenge")) {
-        path = `/challenge/${nodeData.id}`;
+      } else if (nodeData.category.includes("librar")) {
+        path = `/library/${nodeData.id}`;
       }
       // console.log("Navigating to " + path);
       if (path) {
@@ -430,7 +434,6 @@ export default {
               this.showingSuggestions = true;
               this.updateExploreButtonText("🔽Hide");
             } else {
-              // console.log("No suggestions received for node " + nodeData.id);
               this.updateExploreButtonText("🔍Explore");
             }
           })
@@ -487,37 +490,32 @@ export default {
     },
 
     async handleSuggestionClick(suggestion) {
-      // console.log("Selected suggestion: " + suggestion);
-      const messageStore = useMessageStore();
+      console.log("Selected suggestion: " + suggestion);
       if (this.loading) return;
-      this.loading = true;
-      this.updateGoToButtonText("⏳Loading")
-      console.log(this.loading)
-      try {
-        const response = await messageStore.sendMessage(
-          "Start lesson: " + suggestion,
-          "/"
-        );
-        // console.log("Response: ", response);
 
-        if (!response || response === "not sent") {
-          console.error("No response or message not sent");
-          this.updateGoToButtonText("📖Go to")
-          this.loading = false;
-          return;
-        }
-        if (this.$router) {
-          this.loading = false;
-          this.$router.push(response);
-        } else {
-          this.loading = false;
-          this.updateGoToButtonText("📖Go to")
-          console.error("Router is undefined");
-        }
+      this.loading = true;
+      this.updateGoToButtonText("⏳Loading");
+      console.log(this.loading);
+
+      try {
+        // Making the POST request to the library generate route
+        const libraryResponse = await axios.post("/api/library/generate", {
+          topic: suggestion,
+        });
+
+        console.log("Library generation response:", libraryResponse.data);
+        const libraryId = libraryResponse.data.library_id;
+
+        // Set the room names in the store
+        const gameStore = useGameStore();
+        gameStore.setId(libraryId);
+
+        console.log(gameStore.id + libraryResponse.data.library_id);
+        this.$router.push(`/library/${libraryId}`);
       } catch (error) {
         this.loading = false;
-          this.updateGoToButtonText("📖Go to")
-        console.error("Error in sendMessage: ", error);
+        this.updateGoToButtonText("📖Go to");
+        console.error("Error in sending request to library:", error);
       }
     },
   },

@@ -1,15 +1,28 @@
 from datetime import datetime, timedelta, timezone
 from itsdangerous import URLSafeSerializer as Serializer
 from flask import current_app
+import hashlib
 
-from database.models import db, User
+from database.models import db, User, IPTracking
 
 # Rate limiting parameters
 DAILY_LIMITS = {
-    'free': 20,
-    'paid': 200,
-    'pro': 2000,
+    'free': 10,
+    'paid': 100,
+    'pro': 1000,
 }
+
+def reset_daily_limits(user):
+    now = datetime.now(timezone.utc)
+    if user.last_request_time.date() < now.date():
+        user.daily_request_count = 0
+        db.session.commit()
+
+def increment_request_count(user):
+    now = datetime.now(timezone.utc)
+    user.daily_request_count += 1
+    user.last_request_time = now
+    db.session.commit()
 
 def is_within_limit(user):
     now = datetime.now(timezone.utc)
@@ -17,29 +30,28 @@ def is_within_limit(user):
     midnight = midnight.replace(hour=0, minute=0, second=0, microsecond=0)
     time_until_reset = midnight - now
 
-    if user.last_request_time.date() < now.date():
-        user.daily_request_count = 0
-
+    reset_daily_limits(user)
+    
     daily_limit = DAILY_LIMITS.get(user.tier, DAILY_LIMITS['free'])
     if user.daily_request_count >= daily_limit:
         hours, remainder = divmod(int(time_until_reset.total_seconds()), 3600)
         minutes, _ = divmod(remainder, 60)
         message = f"Daily limit ({daily_limit}) exceeded. Please <a href='/plan' target='_blank'>upgrade your plan</a> or wait {hours} hours and {minutes} minutes before you send another message."
         return False, message
-    
+
     if user.last_request_time:
         if isinstance(user.last_request_time, datetime) and user.last_request_time.tzinfo is None:
             user.last_request_time = user.last_request_time.replace(tzinfo=timezone.utc)
 
     if user.last_request_time and (now - user.last_request_time) <= timedelta(seconds=2):
         return False, "Cooldown triggered. Please wait a few seconds and try again."
-    
-    user.daily_request_count += 1
-    print(f"Requests: {user.daily_request_count}")
-    user.last_request_time = now
-    db.session.commit()
 
+    increment_request_count(user)
     return True, ""
+
+def get_daily_request_count(user_id):
+    user = User.query.get(user_id)
+    return user.daily_request_count if user else 0
 
 
 def set_user_tier(user_id, tier):
@@ -75,3 +87,27 @@ def confirm(user_id, token):
     user.confirmation_token = None
     db.session.commit()
     return True
+
+def check_generation_allowed(ip, type):
+    hashed_ip = hashlib.sha256(ip.encode()).hexdigest()
+    record = IPTracking.query.filter_by(hashed_ip=hashed_ip).first()
+    if record:
+        if type == 'library' and record.library_generated:
+            return False
+        elif type == 'room' and record.room_generated:
+            return False
+    return True
+
+def mark_generation_done(ip, type):
+    hashed_ip = hashlib.sha256(ip.encode()).hexdigest()
+    record = IPTracking.query.filter_by(hashed_ip=hashed_ip).first()
+    if not record:
+        record = IPTracking(ip)
+        db.session.add(record)
+
+    if type == 'library':
+        record.library_generated = True
+    elif type == 'room':
+        record.room_generated = True
+
+    db.session.commit()

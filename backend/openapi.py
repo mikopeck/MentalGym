@@ -11,7 +11,7 @@ request_timeout = 60  # Timeout for API requests in seconds
 TOKEN_CAP = 500
 LESSON_TOKENS = 1500
 
-GPT3_5 = "gpt-4o"
+GPT3_5 = "gpt-4o-mini"
 GPT4 = "gpt-4o"
 EMBEDDING_MODEL = "text-embedding-3-small"
 
@@ -34,9 +34,11 @@ def generate_response(user_id, messages, functions=None, function_call="none", m
             if functions:
                 data["functions"] = functions
                 data["function_call"] = function_call
-                print(f"Requesting {model} response with {functions} mode {function_call}: \n{messages}")
-            else:
-                print("Requesting AI response: ", messages)
+            #     print(f"Requesting {model} response..")
+            #     print(f"{functions} mode {function_call}: \n{messages}")
+            # else:
+            #     print(f"Requesting {model} response: ", messages)
+            print(messages)
 
             response = requests.post(
                 "https://api.openai.com/v1/chat/completions",
@@ -108,6 +110,8 @@ def moderate(user_input):
 
 def get_embeddings(strings_list):
     print(f"embedding {strings_list}")
+    if not strings_list:
+        return None
     headers = {
         "Authorization": f"Bearer {openai.api_key}",
         "Content-Type": "application/json"

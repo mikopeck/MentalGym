@@ -8,15 +8,6 @@ from message_handler import initialize_messages
 
 def init_utility_routes(app):
 
-    @app.route("/api/challenges", methods=["GET"])
-    @login_required
-    def get_challenges_route():
-        challenges_data = {
-            "active": dbh.get_active_challenges(current_user.id),
-            "completed": dbh.get_completed_challenges(current_user.id)
-        }
-        return jsonify(status="success", challenges=challenges_data)
-
     @app.route("/api/lessons", methods=["GET"])
     @login_required
     def get_lessons_route():
@@ -42,10 +33,8 @@ def init_utility_routes(app):
     @app.route("/api/public-content", methods=["GET"])
     def get_public_content():
         public_lessons = dbh.get_public_lessons()
-        # public_challenges = dbh.get_public_challenges()
     
         return jsonify({
             "lessons": public_lessons,
-            # "challenges": public_challenges
         })
         

@@ -5,6 +5,7 @@ import axios from 'axios';
 import eventBus from '@/eventBus';
 import { usePopupStore } from "@/store/popupStore";
 import { useAdsStore } from "@/store/adsStore";
+import { useAuthStore } from "@/store/authStore";
 
 export const useMessageStore = defineStore('messageStore', {
     state: () => ({
@@ -78,10 +79,10 @@ export const useMessageStore = defineStore('messageStore', {
             const isLesson = currentPath.includes("/lesson/");
             const isChallenge = currentPath.includes("/challenge/");
             if (sanitizedMessage === "Leave challenge." && isChallenge) {
-                return "/";
+                return "/lessons";
             }
             if (sanitizedMessage === "Leave lesson." && isLesson) {
-                return "/";
+                return "/lessons";
             }
 
             // Sending logic
@@ -101,7 +102,10 @@ export const useMessageStore = defineStore('messageStore', {
             try {
                 const response = await axios.post("/api/chat", formData);
                 // Handling after successful sending
+                const authStore = useAuthStore();
+                authStore.cloudTokens = authStore.cloudTokens +1 ;
                 this.updateConversation(response.data);
+
                 if ("redirect" in response.data) {
                     if (response.data.redirect === null) {
                         return;

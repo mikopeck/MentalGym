@@ -19,3 +19,7 @@ ChallengeGuide = "ChallengeGuide"
 AfterContent = "AfterContent"
 
 ExploreTopic = "ExploreTopic"
+
+#lib
+GenerateLibraryRoomNames = "GenerateLibraryRoomNames"
+GenerateLibraryRoom = "GenerateLibraryRoom"

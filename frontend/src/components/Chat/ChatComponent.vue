@@ -2,7 +2,7 @@
 <template>
   <div class="main-container">
     <div class="message-history" ref="msgHistory">
-      <ChatConversation/>
+      <ChatConversation />
     </div>
     <MessageInput class="message-input" />
   </div>
@@ -12,6 +12,7 @@
 import MessageInput from "./MessageInput.vue";
 import ChatConversation from "./ChatConversation.vue";
 import { useScrollStore } from "@/store/scrollStore";
+import { useMessageStore } from "@/store/messageStore";
 import eventBus from "@/eventBus";
 
 export default {
@@ -21,6 +22,9 @@ export default {
     ChatConversation,
   },
   mounted() {
+    const path = window.location.pathname;
+    const messageStore = useMessageStore();
+    messageStore.fetchRecentMessages(path);
     eventBus.on("scroll-to-message", this.handleScrollToMessage);
   },
   unmounted() {

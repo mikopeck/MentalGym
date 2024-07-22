@@ -11,11 +11,9 @@
 
     <div class="main-content">
       <div class="another" @scroll="onScroll">
-        <!-- Main chat -->
-        <ChatComponent v-if="shouldShowChat" />
-
         <!-- Routes -->
         <router-view v-if="shouldShowRouterView"></router-view>
+        <about-page v-else/>
         <InfoPopup />
         <AdPopup />
       </div>
@@ -27,16 +25,15 @@
 <script>
 import TopBar from "./components/Header/TopBar.vue";
 import SideMenu from "./components/Header/SideMenu.vue";
-import ChatComponent from "./components/Chat/ChatComponent.vue";
 import BottomBar from "./components/Footer/BottomBar.vue";
 import SubHeader from "./components/Header/SubHeader.vue";
 import InfoPopup from "./components/Menus/InfoPopup.vue";
 import AdPopup from "./components/Monetization/AdPopup.vue";
 import MentorSelection from "./components/Backstage/MentorSelection.vue";
+import AboutPage from './components/Footer/AboutPage.vue';
 import { useAuthStore } from "@/store/authStore";
 import { useMenuStore } from "@/store/menuStore";
 import { useThemeStore } from "@/store/themeStore";
-import { usePopupStore } from "@/store/popupStore";
 import { useMessageStore } from "@/store/messageStore";
 import { useScrollStore } from "@/store/scrollStore";
 import { useMentorStore } from "@/store/mentorStore";
@@ -51,20 +48,20 @@ export default {
   components: {
     TopBar,
     SideMenu,
-    ChatComponent,
     BottomBar,
     SubHeader,
     InfoPopup,
     AdPopup,
     MentorSelection,
+    AboutPage
   },
   mounted() {
     this.handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         const now = new Date();
         const timeDifference = (now - this.lastVisible) / 1000 / 60;
-        if (timeDifference >= 2) {
-          // 2 minutes afk to reload
+        if (timeDifference >= 20) {
+          // 20 minutes afk to reload
           window.location.reload();
         }
       } else {
@@ -75,27 +72,13 @@ export default {
     document.addEventListener("visibilitychange", this.handleVisibilityChange);
 
     const authStore = useAuthStore();
+    authStore.checkAuth();
+
     const router = this.$router;
     if (window.location.search === "?awake") {
-      // console.log("awakapp");
-      authStore.login();
-      const popupStore = usePopupStore();
-      popupStore.showWelcomePopup();
-      const mentorStore = useMentorStore();
-      mentorStore.show();
-      // console.log(mentorStore.isVisible, "app");
       router.push("/");
     }
 
-    const path = window.location.pathname;
-    if (
-      path === "/" ||
-      path.includes("/lesson/") ||
-      path.includes("/challenge/")
-    ) {
-      const messageStore = useMessageStore();
-      messageStore.fetchRecentMessages(path);
-    }
   },
   unmounted() {
     document.removeEventListener(
@@ -114,24 +97,14 @@ export default {
     },
     loggedIn() {
       const authStore = useAuthStore();
-      authStore.checkAuth();
       return authStore.loggedIn;
     },
     shouldShowChat() {
       const path = this.$route.path;
       return (
-        path === "/" ||
+        path === "/lessons" ||
         path.includes("/lesson/") ||
         path.includes("/challenge/")
-      );
-    },
-    shouldShowLogin() {
-      const path = this.$route.path;
-      return !(
-        path === "/terms" ||
-        path === "/about" ||
-        path === "/contact" ||
-        path === "/login"
       );
     },
     shouldShowRouterView() {
@@ -145,6 +118,7 @@ export default {
   watch: {
     loggedIn(newValue) {
       if (!newValue) {
+        console.log("login from app");
         this.$router.push("/login");
       }
       if (newValue && this.shouldShowChat) {
@@ -165,20 +139,12 @@ export default {
 
       const menuStore = useMenuStore();
       menuStore.hideActionMenu();
-      // const mentorStore = useMentorStore();
-      // mentorStore.hide();
+      const mentorStore = useMentorStore();
+      mentorStore.hide();
       if (window.innerWidth < 1750) {
         menuStore.hideSideMenu();
       }
 
-      // if (this.$route.query.awake) {
-      //   const authStore = useAuthStore();
-      //   authStore.login();
-      //   const popupStore = usePopupStore();
-      //   popupStore.showWelcomePopup();
-      //   const mentorStore = useMentorStore();
-      //   mentorStore.show();
-      // }
     },
   },
   methods: {
@@ -212,6 +178,8 @@ export default {
 }
 
 .another {
+  display: flex;
+  justify-content: center;
   height: 100%;
   overflow: auto;
 }

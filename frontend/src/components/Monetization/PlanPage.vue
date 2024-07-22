@@ -1,10 +1,11 @@
 <template>
   <div class="plan-page">
-    <h1 class="page-title">Choose Your Subscription Plan</h1>
+    <h1 class="page-title" v-if="isPlanPage">Choose Your Subscription Plan</h1>
+    <h1 class="page-title">Subscription Plans</h1>
     <div class="plans-container">
       <div class="plan" v-for="(plan, index) in plans" :key="index">
         <div class="plan-header" :style="{ backgroundColor: plan.color }">
-          <h1>{{ plan.title }}</h1>
+          <h1 v-if="loggedIn">{{ plan.title }}</h1>
           <p class="price">{{ plan.price }}</p>
         </div>
         <div class="plan-body">
@@ -31,6 +32,8 @@
 <script>
 import axios from "axios";
 
+import { useAuthStore } from '@/store/authStore';
+
 export default {
   name: "PlanPage",
   data() {
@@ -40,43 +43,39 @@ export default {
           title: "Aspirant",
           price: "Free",
           features: [
-            "Personal Tutor",
-            "Custom Lessons & Quizzes",
+            "10☁️ Free Every Day",
+            "Custom Libraries",
             "Knowledge Map",
-            "20 daily message limit",
-            "Up to 10 lessons daily",
+            "Personal Tutor",
           ],
           color: "var(--background-color-1t)",
           buttonColor: "var(--background-color-2t)",
         },
         {
           title: "Awakened",
-          price: "$10/month",
+          price: "$4/month",
           features: [
+            "100☁️Every Day",
             "All features in Aspirant",
-            "200 daily message limit",
-            "Up to 100 lessons daily",
             "Unlimited Knowledge Map",
-            "Priority support",
+            "Priority Support",
           ],
           color: "var(--element-color-1)",
           buttonColor: "var(--element-color-1)",
         },
         {
           title: "Ascendant",
-          price: "$20/month",
+          price: "$8/month",
           features: [
-            "All features in Awakened",
-            "Always the best AI model by OpenAI",
-            "2000 daily message limit",
-            "Up to 1000 lessons daily",
-            "Early access to new features",
+            '<b>1000☁️</b> Every Day',
+            "All Features in Awakened",
+            "Use Frontier AI Models",
+            "Early Access to New Features",
           ],
           color: "var(--element-color-2)",
           buttonColor: "var(--element-color-2)",
         },
       ],
-      userTier: "free",
       userTierMapping: {
         Aspirant: "free",
         Awakened: "paid",
@@ -89,10 +88,19 @@ export default {
       },
     };
   },
-  async mounted() {
-    this.fetchUserPlan();
-  },
   computed: {
+    isPlanPage() {
+      return this.$route.path === "/plan";
+    },
+    authStore(){
+      return useAuthStore();
+    },
+    loggedIn(){
+      return this.authStore.loggedIn;
+    },
+    userTier() {
+      return this.authStore.userTier;
+    },
     planButtonLabels() {
       return this.plans.map((plan) => {
         if (this.userTierMapping[plan.title] === this.userTier) {
@@ -109,7 +117,6 @@ export default {
       axios
         .get("/api/plan")
         .then((response) => {
-          // console.log(response.data);
           this.userTier = response.data.tier;
         })
         .catch((error) => {

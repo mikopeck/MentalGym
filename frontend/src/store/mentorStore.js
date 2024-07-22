@@ -64,7 +64,7 @@ export const useMentorStore = defineStore('mentorStore', {
                     const path = window.location.pathname;
                     if (path === "/settings"){
                         const popupStore = usePopupStore();
-                        popupStore.showPopup(`Mentor personality set to ${this.currentMentor}.<br/>This change will affect the main chat and any new lessons or challenges.`);
+                        popupStore.showPopup(`Mentor personality set to ${this.currentMentor}.<br/>This change will affect the main chat and any new lessons.`);
                     }
                     const messageStore = useMessageStore();
                     messageStore.fetchRecentMessages(path);

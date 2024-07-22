@@ -15,7 +15,11 @@
       <h2 class="section-title">Subscription Tier</h2>
       <div class="half-n-half">
         <TierButton />
-        <MenuButton label="Change Subscription" @click="redirectPlan" />
+        <MenuButton label="Change" @click="redirectPlan" />
+      </div>
+      <div class="half-n-half">
+        <p class="profile-info">☁️{{ cloudTokens }}</p>
+        <MenuButton label="Get More Max ☁️!" @click="redirectPlan" />
       </div>
     </div>
 
@@ -85,6 +89,10 @@ export default {
     this.fetchCurrentMentor();
   },
   computed: {
+    cloudTokens(){
+      const authStore = useAuthStore();
+      return authStore.cloudTokens;
+    },
     currentMentorName() {
       const mentorStore = useMentorStore();
       return mentorStore.currentMentor;
@@ -202,10 +210,11 @@ export default {
 }
 
 .profile-info {
+  padding: 8px 16px;
+  margin: 4px;
   width: 100%;
+  
   margin-top: 4px;
-  height: 42px;
-  font-size: 16px;
   color: var(--text-color);
   justify-content: center;
   display: flex;
