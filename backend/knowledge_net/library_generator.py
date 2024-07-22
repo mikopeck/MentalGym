@@ -1,6 +1,6 @@
 from flask import jsonify
 import numpy as np
-from openapi import generate_response, get_embeddings, LESSON_TOKENS
+from openapi import generate_response, get_embeddings, LESSON_TOKENS, GPT4
 from message_handler import create_message
 from knowledge_net.SystemPrompts.prompt_utils import sys_library, sys_lib_room
 import functions
@@ -130,7 +130,7 @@ def fill_room(user_id, room_name, library_id):
         function = [functions.GenerateLibraryRoom]
         function_call = {"name": function[0]['name']}
         messages = create_message(system_msg, user_msg)
-        response = generate_response(user_id, messages, function, function_call, tokens=LESSON_TOKENS)
+        response = generate_response(user_id, messages, function, function_call, tokens=LESSON_TOKENS, model=GPT4)
         response_message = response["choices"][0]["message"]
         if not response_message.get("function_call"):
             return []

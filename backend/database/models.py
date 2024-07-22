@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from datetime import datetime
+import hashlib
 
 db = SQLAlchemy()
 
@@ -22,8 +23,8 @@ class User(db.Model, UserMixin):
     actions = db.relationship('UserAction', backref='user')
 
     chats = db.relationship('ChatHistory', backref='user')
-    challenges = db.relationship('Challenge', backref='user')
     lessons = db.relationship('Lesson', backref='user')
+    libraries = db.relationship('LibraryCompletion', backref='user')
 
     tier = db.Column(db.String(50), default='free')  # 'free', 'paid', 'pro'
     daily_request_count = db.Column(db.Integer, default=0)
@@ -52,6 +53,15 @@ class User(db.Model, UserMixin):
             "completed_lessons": completed_lessons
         }
         return user_data
+    
+class IPTracking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    hashed_ip = db.Column(db.String(64), unique=True, nullable=False)
+    library_generated = db.Column(db.Boolean, default=False, nullable=False)
+    room_generated = db.Column(db.Boolean, default=False, nullable=False)
+
+    def __init__(self, ip):
+        self.hashed_ip = hashlib.sha256(ip.encode()).hexdigest()
 
 class Achievement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -156,8 +166,6 @@ class LibraryCompletion(db.Model):
     is_complete = db.Column(db.Boolean, default=False)
     
     library = db.relationship('Library', backref=db.backref('completions', lazy=True))
-    user = db.relationship('User', backref=db.backref('library_completions', lazy=True))
-
 
 class LibraryFactoid(db.Model):
     id = db.Column(db.Integer, primary_key=True)

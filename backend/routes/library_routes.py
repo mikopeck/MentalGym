@@ -5,12 +5,16 @@ from flask_login import current_user, AnonymousUserMixin
 
 import database.library_handlers as lbh
 import knowledge_net.library_generator as lgn
-from database.user_handler import is_within_limit
+from database.user_handler import is_within_limit, check_generation_allowed, mark_generation_done
 
 def init_library_routes(app):
 
     @app.route("/api/library/generate", methods=["POST"])
     def generate_library():
+        ip = request.remote_addr
+        if not check_generation_allowed(ip, 'library'):
+            return jsonify(status="error", message="Library generation limit reached."), 403
+
         topic = request.json.get("topic")
         if not topic:
             return jsonify(status="error", message="No topic provided"), 400
@@ -31,6 +35,7 @@ def init_library_routes(app):
         if not extra_context:
             existing_library = lbh.get_library_id(topic, library_difficulty, language, language_difficulty)
             if existing_library:
+                mark_generation_done(ip, 'library')
                 return jsonify(status="success", library_id=existing_library)
 
         user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
@@ -41,6 +46,7 @@ def init_library_routes(app):
 
         if status_code == 201:
             library_id = library_response.get_json().get("library_id")
+            mark_generation_done(ip, 'library')
             return jsonify(status="success", library_id=library_id)
         else:
             return library_response
@@ -56,6 +62,10 @@ def init_library_routes(app):
         
     @app.route("/api/library/room", methods=["POST"])
     def generate_room():
+        ip = request.remote_addr
+        if not check_generation_allowed(ip, 'room'):
+            return jsonify(status="error", message="Room generation limit reached."), 403
+
         data = request.get_json()
         subtopic = data.get("subtopic")
         library_id = data.get("libraryId")
@@ -78,12 +88,14 @@ def init_library_routes(app):
         # Attempt to retrieve existing room contents
         existing_content = lbh.retrieve_library_room_contents(library_id, subtopic)
         if existing_content:
+            mark_generation_done(ip, 'room')
             return jsonify(status="success", data=existing_content)
 
         # If no content exists, generate new content
         generated_content = lgn.fill_room(user_id, subtopic, library_id)
         print(generated_content)
         if generated_content:
+            mark_generation_done(ip, 'room')
             return jsonify(status="success", data=generated_content)
         else:
             return jsonify(status="error", message="Failed to generate content"), 500

@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta, timezone
 from itsdangerous import URLSafeSerializer as Serializer
 from flask import current_app
+import hashlib
 
-from database.models import db, User
+from database.models import db, User, IPTracking
 
 # Rate limiting parameters
 DAILY_LIMITS = {
@@ -86,3 +87,27 @@ def confirm(user_id, token):
     user.confirmation_token = None
     db.session.commit()
     return True
+
+def check_generation_allowed(ip, type):
+    hashed_ip = hashlib.sha256(ip.encode()).hexdigest()
+    record = IPTracking.query.filter_by(hashed_ip=hashed_ip).first()
+    if record:
+        if type == 'library' and record.library_generated:
+            return False
+        elif type == 'room' and record.room_generated:
+            return False
+    return True
+
+def mark_generation_done(ip, type):
+    hashed_ip = hashlib.sha256(ip.encode()).hexdigest()
+    record = IPTracking.query.filter_by(hashed_ip=hashed_ip).first()
+    if not record:
+        record = IPTracking(ip)
+        db.session.add(record)
+
+    if type == 'library':
+        record.library_generated = True
+    elif type == 'room':
+        record.room_generated = True
+
+    db.session.commit()

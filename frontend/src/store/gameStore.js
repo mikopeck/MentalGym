@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import axios from "axios";
 
 import { useAuthStore } from "@/store/authStore";
+import { usePopupStore } from "@/store/popupStore.js";
 
 export const useGameStore = defineStore("gameStore", {
     state: () => ({
@@ -47,7 +48,7 @@ export const useGameStore = defineStore("gameStore", {
 
                 if (room.answeredQuestions.length === 4) {
                     this.score = this.score + this.multiplier
-                    room.state = 3; 
+                    room.state = 3;
                     this.unlockAdjacentRooms();
                 }
 
@@ -70,7 +71,7 @@ export const useGameStore = defineStore("gameStore", {
                 }
             });
             console.log("unlocked " + this.roomStates)
-        },        
+        },
         findNextUnansweredQuestion() {
             const room = this.roomStates[this.currentRoom];
             for (let i = 1; i <= 4; i++) {
@@ -151,13 +152,23 @@ export const useGameStore = defineStore("gameStore", {
                         this.roomStates[room_name].state = 2;
                         await this.broadcastRoomStates();
                         const authStore = useAuthStore();
-                        authStore.cloudTokens = authStore.cloudTokens + 1 ;
+                        authStore.cloudTokens = authStore.cloudTokens + 1;
                         console.log(`Room ${room_name} unlocked successfully`);
                     } else {
                         console.error(`Failed to unlock room ${room_name}: ${response.data.message}`);
+                        if (response.data.status === 403) {
+                            const popupStore = usePopupStore();
+                            popupStore.showPopup("Please login to continue.");
+                            this.$router.push("/login");
+                        }
                     }
                 }
             } catch (error) {
+                if (error.response.status === 403) {
+                    const popupStore = usePopupStore();
+                    popupStore.showPopup("Please login to continue.");
+                    this.$router.push("/login");
+                }
                 console.error("Error unlocking room:", error);
                 return false;
             }
@@ -180,7 +191,7 @@ export const useGameStore = defineStore("gameStore", {
                 console.error(`Failed to load room ${room_name}: ${response.data.message}`);
             }
         },
-        endGame(){
+        endGame() {
             if (!confirm(`Are you sure you want to complete this Library with score ${this.score}?`)) {
                 return;
             }
@@ -195,17 +206,17 @@ export const useGameStore = defineStore("gameStore", {
                 libraryId: this.libraryId,
                 score: this.score,
             })
-            .then(response => {
-                if (response.data.status === "success") {
-                    console.log("Game ended successfully:", response.data.message);
-                    this.completed = true;
-                } else {
-                    console.error("Failed to end game:", response.data.message);
-                }
-            })
-            .catch(error => {
-                console.error("Error sending game end data:", error);
-            });
+                .then(response => {
+                    if (response.data.status === "success") {
+                        console.log("Game ended successfully:", response.data.message);
+                        this.completed = true;
+                    } else {
+                        console.error("Failed to end game:", response.data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error sending game end data:", error);
+                });
         },
         resetGameState() {
             this.score = 0;

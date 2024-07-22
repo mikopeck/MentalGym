@@ -16,7 +16,7 @@
       </div>
       <div v-if="loggedIn" class="what-next-container">
         <div class="nav-row">
-          <button class="nav-button" @click="navigateLibrary">🏛New</button>
+          <button class="nav-button" @click="navigateLibrary">🏛 New</button>
           <div class="separator">|</div>
           <button
             class="nav-button"
@@ -98,6 +98,9 @@ export default {
     gameStore() {
       return useGameStore();
     },
+    messageStore() {
+      return useMessageStore();
+    },
     completionVisible() {
       return this.gameStore.completed;
     },
@@ -118,14 +121,14 @@ export default {
     },
     navigateExplore() {
       this.exploreLoading = true;
-      const messageStore = useMessageStore();
-      const url = `/api/explore?name=${messageStore.subheading}`;
+      const url = `/api/explore?name=${this.messageStore.subheading}`;
       axios
         .get(url)
         .then((response) => {
           if (response.data && response.data.suggestions) {
             this.suggestions = response.data.suggestions;
           } else {
+            console.error("No suggestions...");
           }
         })
         .catch((error) => {
@@ -156,22 +159,16 @@ export default {
       } catch (error) {
         this.loading = false;
         console.error("Error in sending request to library:", error);
+        if (error.response && error.response.status === 403) {
+          const popupStore = usePopupStore();
+          popupStore.showPopup("Please login to continue.");
+          this.$router.push("/login");
+        }
       }
     },
     navigateMap() {
-      const path = this.$route.path;
-      const idMatch = path.match(/\/library\/(\d+)/);
-
-      let id;
-      if (idMatch && idMatch[1]) {
-        id = idMatch[1];
-      }
-
-      if (id) {
-        this.$router.push("/knowledge?node=" + id);
-      } else {
-        console.error("ID not found in the URL");
-      }
+      console.log(this.gameStore.roomNames[12]);
+      this.$router.push("/knowledge?node=" + this.gameStore.roomNames[12]);
     },
     toggleFeedback() {
       this.showFeedback = !this.showFeedback;

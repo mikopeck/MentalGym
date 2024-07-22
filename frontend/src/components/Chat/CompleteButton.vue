@@ -168,22 +168,8 @@ export default {
       }
     },
     navigateMap() {
-      const path = this.$route.path;
-      const lessonMatch = path.match(/\/lesson\/(\d+)/);
-      const challengeMatch = path.match(/\/challenge\/(\d+)/);
-
-      let id;
-      if (lessonMatch && lessonMatch[1]) {
-        id = lessonMatch[1];
-      } else if (challengeMatch && challengeMatch[1]) {
-        id = challengeMatch[1];
-      }
-
-      if (id) {
-        this.$router.push("/knowledge?node=" + id);
-      } else {
-        console.error("ID not found in the URL");
-      }
+      const messageStore = useMessageStore();
+      this.$router.push("/knowledge?node=" + messageStore.subheading);
     },
     toggleFeedback() {
       this.showFeedback = !this.showFeedback;

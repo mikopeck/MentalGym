@@ -8,12 +8,12 @@ from knowledge_net.math_utils import calculate_cosine_similarities
 def get_graph_data(user_id):
     user_data = user_knowledge_net_info(user_id)
 
-    # Concatenating all strings from lessons and challenges
+    # Concatenating all strings from lessons and libraries
     all_strings = [lesson['name'] for lesson in user_data['completed_lessons']] + \
               [lesson['name'] for lesson in user_data['active_lessons']] + \
-              [challenge['name'] for challenge in user_data['completed_challenges']] + \
-              [challenge['name'] for challenge in user_data['active_challenges']] + \
-              user_data['offered_lessons'] + user_data['offered_challenges']
+              [library['topic'] for library in user_data['completed_libraries']] + \
+              [library['topic'] for library in user_data['active_libraries']] + \
+              user_data['offered_lessons']
 
     print(all_strings)
     # Retrieve embeddings for all strings
@@ -63,7 +63,7 @@ def compose_data(user_data, edges):
     """
     Compose the graph data from user data and edges.
 
-    :param user_data: A dictionary containing user's lessons and challenges data.
+    :param user_data: A dictionary containing user's lessons and libraries data.
     :param edges: A list of tuples representing the edges in the graph.
     :return: A dictionary representing the graph with nodes and edges.
     """
@@ -71,20 +71,18 @@ def compose_data(user_data, edges):
 
     # Combine all items into a single list for easy indexing, with IDs for those that have them
     all_items = []
-    for category_key in ['completed_lessons', 'active_lessons', 'completed_challenges', 'active_challenges']:
+    for category_key in ['completed_lessons', 'active_lessons', 'completed_libraries', 'active_libraries']:
         for item in user_data[category_key]:
             item_data = {
-                "name": item['name'],
+                "name": item['name'] if 'name' in item else item['topic'],
                 "category": category_key[:-1],  # Removes the plural 's'
                 "id": item.get('id')  # Adds the ID if present
             }
             all_items.append(item_data)
 
-    # Add offered lessons and challenges without IDs
+    # Add offered lessons and libraries without IDs
     for lesson in user_data['offered_lessons']:
         all_items.append({"name": lesson, "category": "offered_lesson"})
-    for challenge in user_data['offered_challenges']:
-        all_items.append({"name": challenge, "category": "offered_challenge"})
 
     # Adding nodes with their categories and IDs
     for item in all_items:

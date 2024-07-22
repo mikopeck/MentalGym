@@ -96,6 +96,7 @@ import axios from "axios";
 import { mapState } from "pinia";
 
 import { useLibGenStore } from "@/store/libGenStore.js";
+import {usePopupStore} from "@/store/popupStore.js";
 import CtaButton from "../Footer/LandingPageComponents/CtaButton.vue";
 
 export default {
@@ -152,7 +153,11 @@ export default {
         })
         .catch((error) => {
           console.error("Error:", error);
-          // Handle error, e.g., display error message
+          if (error.response && error.response.status === 403) {
+            const  popupStore = usePopupStore();
+            popupStore.showPopup("Please login to continue.");
+            this.$router.push("/login");
+          }
         })
         .finally(() => {
           this.isSubmitting = false;
