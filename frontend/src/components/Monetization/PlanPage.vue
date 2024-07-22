@@ -67,7 +67,7 @@ export default {
           title: "Ascendant",
           price: "$8/month",
           features: [
-            '<b>1000☁️</b> Every Day',
+            '1000☁️ Every Day',
             "All Features in Awakened",
             "Use Frontier AI Models",
             "Early Access to New Features",
@@ -83,8 +83,8 @@ export default {
       },
       planUrls: {
         Aspirant: "https://buy.stripe.com/bIY6sg5154ZmaXu4gi",
-        Awakened: "https://buy.stripe.com/9AQaIw0KPdvS0iQ6oo",
-        Ascendant: "https://buy.stripe.com/aEU9Es8dhdvSe9G6op",
+        Awakened: "https://buy.stripe.com/cN2aIw79ddvSghOaEI",
+        Ascendant: "https://buy.stripe.com/9AQ5ocbptfE0fdK005",
       },
     };
   },
