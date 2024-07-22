@@ -6,7 +6,9 @@ pip install -r requirements.txt
 export FLASK_ENV=production
 
 echo "Starting database upgrade..."
+export RUN_SEEDING=False
 flask db upgrade
+export RUN_SEEDING=True
 if [ $? -ne 0 ]; then
     echo "Database upgrade failed"
     exit 1

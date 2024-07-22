@@ -1,7 +1,9 @@
 from database.models import db, User
+import os
 
 def run_upgrades():
-    upgrade_user_exp()
+    if os.getenv('RUN_SEEDING', 'False') == 'True':
+        upgrade_user_exp()
 
 
 
