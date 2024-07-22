@@ -1,6 +1,7 @@
 #!/bin/bash
 
 pip install -r requirements.txt
+flask db migrate
 flask db upgrade
 
 # Start Gunicorn with the specified number of workers
