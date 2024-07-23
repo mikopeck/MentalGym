@@ -80,6 +80,7 @@
               id="extraContext"
               v-model="extraContext"
               placeholder="Optional context..."
+              :disabled="disableExtras"
             />
           </div>
         </div>
@@ -87,6 +88,8 @@
 
       <!-- CTA Button -->
       <CtaButton :buttonText="submitButtonText" @click="handleSubmit" :disabled="isSubmitting" />
+
+      <!-- <library-browser/> -->
     </div>
   </div>
 </template>
@@ -97,11 +100,15 @@ import { mapState } from "pinia";
 
 import { useLibGenStore } from "@/store/libGenStore.js";
 import {usePopupStore} from "@/store/popupStore.js";
+import {useAuthStore} from "@/store/authStore.js";
 import CtaButton from "../Footer/LandingPageComponents/CtaButton.vue";
+// import LibraryBrowser from "./LibraryBrowser.vue"
 
 export default {
   name: "LibraryCreator",
-  components: { CtaButton },
+  components: { CtaButton, 
+  // LibraryBrowser 
+  },
   data() {
     return {
       topic: "",
@@ -132,6 +139,10 @@ export default {
     submitButtonText() {
       return this.isSubmitting ? "Loading..." : "Explore!";
     },
+    disableExtras(){
+      const authStore = useAuthStore();
+      return !authStore.loggedIn;
+    }
   },
   methods: {
     handleSubmit() {

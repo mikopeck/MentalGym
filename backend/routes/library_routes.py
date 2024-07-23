@@ -173,3 +173,7 @@ def init_library_routes(app):
             return response, status
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 500
+        
+    @app.route("/api/libraries", methods=["GET"])
+    def get_libraries():
+        return lbh.get_libraries_info()

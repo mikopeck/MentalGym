@@ -175,7 +175,7 @@ export default {
 
 .plan {
   border: 2px solid var(--element-color-1);
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
   width: 300px;
   opacity: 1;
@@ -213,7 +213,7 @@ export default {
 button {
   padding: 10px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   color: var(--text-color);
   cursor: pointer;
   border: 2px solid var(--background-color-1t);

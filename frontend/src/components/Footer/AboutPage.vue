@@ -93,11 +93,6 @@ export default {
       items: ["Have Fun", "Discover", "Level Up"],
       activeIndex: 0,
       popupMessage: "",
-      backgroundImages: [
-        require("@/assets/images/discover.webp"),
-        require("@/assets/images/learn.webp"),
-        require("@/assets/images/grow.webp"),
-      ],
     };
   },
   created() {
@@ -135,13 +130,6 @@ export default {
     },
     rotateActiveIndex() {
       this.activeIndex = (this.activeIndex + 1) % this.items.length;
-      this.updateBackgroundImage();
-    },
-    updateBackgroundImage() {
-      const landingPage = document.querySelector(".landing-page");
-      landingPage.style.backgroundImage = `url(${
-        this.backgroundImages[this.activeIndex]
-      })`;
     },
     observeFeatures() {
       const observer = new IntersectionObserver(

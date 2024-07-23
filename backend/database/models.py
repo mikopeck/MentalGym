@@ -144,6 +144,9 @@ class Library(db.Model):
     language_difficulty = db.Column(db.String(50), nullable=False)
     context = db.Column(db.String(200), nullable=True)
 
+    clicks = db.Column(db.Integer, default=0)
+    likes = db.Column(db.Integer, default=0)
+
     room_names = db.Column(db.JSON, nullable=False)
 
     factoids = db.relationship('LibraryFactoid', backref='library')
