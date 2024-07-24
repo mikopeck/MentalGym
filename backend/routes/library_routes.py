@@ -2,38 +2,65 @@
 
 from flask import request, jsonify
 from flask_login import current_user, AnonymousUserMixin
+from bleach import clean 
 
+from openapi import moderate
 import database.library_handlers as lbh
 import knowledge_net.library_generator as lgn
-from database.user_handler import is_within_limit, check_generation_allowed, mark_generation_done
+from database.user_handler import increment_violations, is_within_limit, check_generation_allowed, mark_generation_done
 
 def init_library_routes(app):
 
     @app.route("/api/library/generate", methods=["POST"])
     def generate_library():
+        # User checks
         user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
         if not user_id:
             ip = request.remote_addr
             if not check_generation_allowed(ip, 'library'):
                 return jsonify(status="error", message="Library generation limit reached."), 403
 
+        # Topic checks
         topic = request.json.get("topic")
         if not topic:
             return jsonify(status="error", message="No topic provided"), 400
+        if len(topic) > 200:
+                return jsonify({"error": "Topic is too long. Maximum 200 characters allowed."}), 400
+        if len(topic) < 1:
+                return jsonify({"error": "No message."}), 400
+        violation, message = moderate(topic)
+        if violation:
+            if user_id:
+                increment_violations(user_id)
+            return jsonify({"error": f"Message breaks our usage policy. Please check our guidelines.\n{message}"}), 400
         
+        # difficulty checks
         library_difficulty = request.json.get("libraryDifficulty")
         if not library_difficulty:
             library_difficulty = "Easy"
+        else:
+            library_difficulty = clean(library_difficulty)
 
+        # language & langdifficulty checks
         language = request.json.get("language")
         if not language:
-            language = "en"
-        
+            language = "English"
         language_difficulty = request.json.get("languageDifficulty")
         if not language_difficulty:
             language_difficulty = "Normal"
             
+        # Extra context checks
         extra_context = request.json.get("extraContent")
+        if extra_context:
+            extra_context = clean(extra_context)
+        if extra_context and len(extra_context) > 200:
+                return jsonify({"error": "Extra context is too long. Maximum 200 characters allowed."}), 400
+        violation, message = moderate(extra_context)
+        if violation:
+            if user_id:
+                increment_violations(user_id)
+            return jsonify({"error": f"Message breaks our usage policy. Please check our guidelines.\n{message}"}), 400
+        
         if not extra_context:
             existing_library = lbh.get_library_id(topic, library_difficulty, language, language_difficulty)
             if existing_library:

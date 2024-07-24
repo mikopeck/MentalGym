@@ -1,7 +1,7 @@
 # routes/chat_routes.py
 
 from flask import current_app, jsonify, request
-from flask_login import login_required, current_user
+from flask_login import current_user
 from bleach import clean 
 
 import database.db_handlers as dbh
