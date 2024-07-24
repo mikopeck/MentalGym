@@ -90,4 +90,9 @@ export default {
 .stats, .language-info {
   font-size: 0.8em;
 }
+
+.language-info{
+  display: flex;
+  flex-direction: column;
+}
 </style>

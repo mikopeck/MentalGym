@@ -50,8 +50,8 @@
               <select id="languageSelect" v-model="language">
                 <option
                   v-for="language in languages"
-                  :key="language.code"
-                  :value="language.code"
+                  :key="language"
+                  :value="language"
                 >
                   {{ language.name }}
                 </option>
@@ -122,9 +122,7 @@ export default {
     };
   },
   mounted() {
-    if (this.languages.length > 0) {
-      this.language = this.languages[0].code;
-    }
+    this.language = "English";
     this.libraryDifficulty = "Easy";
     this.languageDifficulty = "Normal";
   },
