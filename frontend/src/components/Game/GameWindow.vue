@@ -82,7 +82,6 @@ export default {
 
     (async () => {
       const libraryId = route.params.id;
-      console.log("fetching library details");
       await gameStore.fetchLibraryDetails(libraryId);
 
       this.$nextTick(() => {
@@ -101,7 +100,6 @@ export default {
           (tile) => tile.name === newRoom
         );
         this.expandedTile = newExpandedTile !== -1 ? newExpandedTile : null;
-        console.log(this.expandedTile + newExpandedTile);
       }
     );
 

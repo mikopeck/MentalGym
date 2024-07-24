@@ -75,7 +75,6 @@ export default {
         console.error("No questions available or invalid questions format");
         return null;
       }
-      console.log(currentFactoid);
       const currentQuestion = currentFactoid.questions[0];
       if (
         !currentQuestion ||

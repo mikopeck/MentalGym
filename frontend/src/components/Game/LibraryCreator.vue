@@ -156,7 +156,7 @@ export default {
       axios
         .post("/api/library/generate", postData)
         .then((response) => {
-          console.log("Success:", response);
+          // s("Success:", response);
           const libraryId = response.data.library_id;
           this.$router.push(`/library/${libraryId}`);
         })

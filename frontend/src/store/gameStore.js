@@ -31,11 +31,9 @@ export const useGameStore = defineStore("gameStore", {
             this.currentRoom = null;
         },
         handleExclamationClick(index) {
-            console.log(`Exclamation ${index}`);
             this.factoidVisible = index;
         },
         handleQuestionClick() {
-            console.log('Question clicked');
             this.questionVisible = true;
         },
         answerAttempt(correct) {
@@ -61,16 +59,13 @@ export const useGameStore = defineStore("gameStore", {
         },
 
         unlockAdjacentRooms() {
-            console.log("unlocking " + this.roomStates)
             const currentIndex = this.roomNames.indexOf(this.currentRoom);
             const adjacentIndices = [currentIndex - 1, currentIndex + 1, currentIndex - 5, currentIndex + 5];
             adjacentIndices.forEach(async index => {
                 if (index >= 0 && index < this.roomNames.length && this.roomStates[this.roomNames[index]].state === 0) {
                     this.roomStates[this.roomNames[index]].state = 1;
-                    //await this.saveRoomState(this.roomNames[index], 1);
                 }
             });
-            console.log("unlocked " + this.roomStates)
         },
         findNextUnansweredQuestion() {
             const room = this.roomStates[this.currentRoom];
@@ -108,7 +103,6 @@ export const useGameStore = defineStore("gameStore", {
             try {
                 const response = await axios.get(`/api/library/${libraryId}`);
                 if (response.data.status === "success") {
-                    console.log(response.data);
                     this.roomNames = response.data.data.room_names || [];
                     this.score = response.data.data.score || 0;
                     const roomStatesObject = response.data.data.room_states;
@@ -146,14 +140,12 @@ export const useGameStore = defineStore("gameStore", {
                 if (this.roomStates[room_name].state === 1) {
                     // Generating room
                     const subtopic = room_name;
-                    console.log(this.libraryId);
                     const response = await axios.post("/api/library/room", { libraryId: this.libraryId, subtopic });
                     if (response.data.status === "success") {
                         this.roomStates[room_name].state = 2;
                         await this.broadcastRoomStates();
                         const authStore = useAuthStore();
                         authStore.cloudTokens = authStore.cloudTokens + 1;
-                        console.log(`Room ${room_name} unlocked successfully`);
                     } else {
                         console.error(`Failed to unlock room ${room_name}: ${response.data.message}`);
                         if (response.data.status === 403) {
@@ -208,7 +200,6 @@ export const useGameStore = defineStore("gameStore", {
             })
                 .then(response => {
                     if (response.data.status === "success") {
-                        console.log("Game ended successfully:", response.data.message);
                         this.completed = true;
                     } else {
                         console.error("Failed to end game:", response.data.message);

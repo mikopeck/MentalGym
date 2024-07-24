@@ -94,11 +94,10 @@ export default {
     likeLib() {
       axios
         .post("/api/library/like", { libraryId: this.gameStore.libraryId})
-        .then((response) => {
-          console.log("Library liked successfully:", response.data);
+        .then(() => {
           this.isLiked = true;
         })
-        .catch((error) => {
+        .catch(() => {
           console.error("Error liking the library:", error);
         });
     },

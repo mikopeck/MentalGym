@@ -137,11 +137,9 @@ export default {
       this.exploreLoading = false;
     },
     async startSuggestion(suggestion) {
-      console.log("Selected suggestion: " + suggestion);
       if (this.loading) return;
 
       this.loading = true;
-      console.log(this.loading);
 
       try {
         // Making the POST request to the library generate route
@@ -149,7 +147,6 @@ export default {
           topic: suggestion,
         });
 
-        console.log("Library generation response:", libraryResponse.data);
         const libraryId = libraryResponse.data.library_id;
 
         // Set the room names in the store
@@ -158,11 +155,9 @@ export default {
         this.$router.push(`/library/${libraryId}`);
       } catch (error) {
         this.loading = false;
-        console.error("Error in sending request to library:", error);
       }
     },
     navigateMap() {
-      console.log(this.gameStore.roomNames[12]);
       this.$router.push("/knowledge?node=" + this.gameStore.roomNames[12]);
     },
     toggleFeedback() {

@@ -490,12 +490,10 @@ export default {
     },
 
     async handleSuggestionClick(suggestion) {
-      console.log("Selected suggestion: " + suggestion);
       if (this.loading) return;
 
       this.loading = true;
       this.updateGoToButtonText("⏳Loading");
-      console.log(this.loading);
 
       try {
         // Making the POST request to the library generate route
@@ -503,14 +501,12 @@ export default {
           topic: suggestion,
         });
 
-        console.log("Library generation response:", libraryResponse.data);
         const libraryId = libraryResponse.data.library_id;
 
         // Set the room names in the store
         const gameStore = useGameStore();
         gameStore.setId(libraryId);
 
-        console.log(gameStore.id + libraryResponse.data.library_id);
         this.$router.push(`/library/${libraryId}`);
       } catch (error) {
         this.loading = false;

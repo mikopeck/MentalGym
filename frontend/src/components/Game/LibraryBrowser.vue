@@ -31,7 +31,6 @@ export default {
       axios
         .get("/api/libraries")
         .then((response) => {
-          console.log(response.data);
           this.mostLikedLibraries = response.data.most_liked;
           this.newestLibraries = response.data.latest;
         })

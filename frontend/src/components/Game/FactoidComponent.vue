@@ -22,7 +22,7 @@ export default {
     factoidText() {
       const store = useGameStore();
       // Assuming factoids is an array of objects and factoidVisible is the index
-      console.log(store.factoids);
+      //console.log(store.factoids);
       return store.factoids[store.factoidVisible]?.factoid_text || 'No factoid text';
     }
   },
@@ -34,10 +34,8 @@ export default {
   },
   setup() {
     const store = useGameStore();
-    console.log("loaded factiod")
     onMounted(() => {
       watch(() => store.factoidVisible, (newVal, oldVal) => {
-        console.log('factoidVisible changed from', oldVal, 'to', newVal);
       }, { immediate: true });
     });
   }

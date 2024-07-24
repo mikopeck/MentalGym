@@ -28,9 +28,6 @@ export default {
       required: true,
     },
   },
-  mounted() {
-    console.log(this.library);
-  },
   methods: {
     goToLibrary(id) {
       this.$router.push("/library/" + id);
