@@ -36,7 +36,7 @@ ordered-set==4.1.0
 packaging==23.2
 pycparser==2.21
 Pygments==2.16.1
-PyMySQL==1.1.0
+PyMySQL==1.1.1
 python-dotenv==1.0.0
 requests==2.31.0
 resend==0.6.0
