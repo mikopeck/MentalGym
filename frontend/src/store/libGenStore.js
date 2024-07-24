@@ -10,11 +10,7 @@ export const useLibGenStore = defineStore('libGenStore', {
       "Korean", "Malay", "Norwegian", "Polish", "Portuguese",
       "Romanian", "Russian", "Spanish", "Swedish", "Thai",
       "Turkish", "Ukrainian", "Vietnamese"
-    ].sort((a, b) => {
-      if (a === "English") return -1;
-      if (b === "English") return 1;
-      return a.localeCompare(b);
-    }),
+    ],
     "topics": [
       "The Enigmatic World of Quantum Computing",
       "Green Innovations for a Sustainable Future",
@@ -50,7 +46,7 @@ export const useLibGenStore = defineStore('libGenStore', {
       "The Basics of Computers and the Internet",
       "Our Solar System: Planets and Their Orbits",
       "Animals and Their Habitats",
-      "Healthy Eating and Exercise for on a Budget",
+      "Healthy Eating and Exercise on a Budget",
       "Exploring Different Cultures Around the World",
       "The Importance of Teamwork and Friendship",
       "The Wonders of Space: Stars and Galaxies",
