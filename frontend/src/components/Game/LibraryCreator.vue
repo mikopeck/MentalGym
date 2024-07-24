@@ -79,7 +79,7 @@
               type="text"
               id="extraContext"
               v-model="extraContext"
-              placeholder="Optional context..."
+              :placeholder="disableExtras ? 'Login to enable' : 'Optional context...'"
               :disabled="disableExtras"
             />
           </div>
@@ -89,7 +89,7 @@
       <!-- CTA Button -->
       <CtaButton :buttonText="submitButtonText" @click="handleSubmit" :disabled="isSubmitting" />
 
-      <!-- <library-browser/> -->
+      <library-browser/>
     </div>
   </div>
 </template>
@@ -102,12 +102,12 @@ import { useLibGenStore } from "@/store/libGenStore.js";
 import {usePopupStore} from "@/store/popupStore.js";
 import {useAuthStore} from "@/store/authStore.js";
 import CtaButton from "../Footer/LandingPageComponents/CtaButton.vue";
-// import LibraryBrowser from "./LibraryBrowser.vue"
+import LibraryBrowser from "./LibraryBrowser.vue"
 
 export default {
   name: "LibraryCreator",
   components: { CtaButton, 
-  // LibraryBrowser 
+  LibraryBrowser 
   },
   data() {
     return {
@@ -166,7 +166,7 @@ export default {
           console.error("Error:", error);
           if (error.response && error.response.status === 403) {
             const  popupStore = usePopupStore();
-            popupStore.showPopup("Please login to continue.");
+            popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
             this.$router.push("/login");
           }
         })

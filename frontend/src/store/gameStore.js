@@ -158,7 +158,7 @@ export const useGameStore = defineStore("gameStore", {
                         console.error(`Failed to unlock room ${room_name}: ${response.data.message}`);
                         if (response.data.status === 403) {
                             const popupStore = usePopupStore();
-                            popupStore.showPopup("Please login to continue.");
+                            popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
                             this.$router.push("/login");
                         }
                     }
@@ -166,7 +166,7 @@ export const useGameStore = defineStore("gameStore", {
             } catch (error) {
                 if (error.response.status === 403) {
                     const popupStore = usePopupStore();
-                    popupStore.showPopup("Please login to continue.");
+                    popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
                     this.$router.push("/login");
                 }
                 console.error("Error unlocking room:", error);

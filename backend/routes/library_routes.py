@@ -177,3 +177,8 @@ def init_library_routes(app):
     @app.route("/api/libraries", methods=["GET"])
     def get_libraries():
         return lbh.get_libraries_info()
+    
+    @app.route("/api/library/like", methods=["POST"])
+    def like_library():
+        data = request.get_json()
+        return lbh.like_library(data.get('libraryId'))

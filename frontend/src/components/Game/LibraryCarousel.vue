@@ -3,11 +3,23 @@
     <div class="carousel-top">
       <h4>{{ title }}</h4>
       <div class="carousel-navigation">
-        <div class="carousel-nav-button" @click="scrollLeft">&lt;</div>
-        <div class="carousel-nav-button" @click="scrollRight">&gt;</div>
+        <div
+          class="carousel-nav-button"
+          @click="scrollLeft"
+          :class="{ disabled: isAtStart }"
+        >
+          &lt;
+        </div>
+        <div
+          class="carousel-nav-button"
+          @click="scrollRight"
+          :class="{ disabled: isAtEnd }"
+        >
+          &gt;
+        </div>
       </div>
     </div>
-    <div class="carousel-container">
+    <div ref="carousel" class="carousel-container">
       <LibraryButton
         v-for="library in libraries"
         :key="library.id"
@@ -35,12 +47,32 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      isAtStart: true,
+      isAtEnd: false,
+    };
+  },
+  mounted() {
+    this.checkScroll();
+  },
   methods: {
     scrollLeft() {
-      // Logic to scroll left
+      const carousel = this.$refs.carousel;
+      const childWidth = carousel.firstElementChild.offsetWidth;
+      carousel.scrollLeft -= childWidth;
+      this.$nextTick(this.checkScroll);
     },
     scrollRight() {
-      // Logic to scroll right
+      const carousel = this.$refs.carousel;
+      const childWidth = carousel.firstElementChild.offsetWidth;
+      carousel.scrollLeft += childWidth;
+      this.$nextTick(this.checkScroll);
+    },
+    checkScroll() {
+      const carousel = this.$refs.carousel;
+      this.isAtStart = carousel.scrollLeft <= 0;
+      this.isAtEnd = carousel.scrollLeft + carousel.offsetWidth >= carousel.scrollWidth;
     },
   },
 };
@@ -52,6 +84,7 @@ export default {
   flex-direction: column;
   align-items: center;
   width: 100%;
+  margin-top: 2em;
 }
 
 .carousel-top {
@@ -70,6 +103,7 @@ export default {
   display: flex;
   overflow: hidden;
   width: 100%;
+  scroll-behavior: smooth;overflow-x: auto;
 }
 
 .carousel-nav-button {

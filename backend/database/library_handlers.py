@@ -138,6 +138,9 @@ def get_library(library_id, user_id=None):
     if not library:
         return jsonify({"message": "Library not found"}), 404
 
+    library.clicks += 1
+    db.session.commit()
+
     library_data = library.as_dict()
 
     room_states = LibraryRoomState.query.filter_by(
@@ -408,6 +411,18 @@ def get_libraries_info():
         'most_liked': top_liked_dicts,
         'latest': latest_dicts
     })
+
+def like_library(library_id):
+    try:
+        library = Library.query.get(library_id)
+        if library is None:
+            return jsonify({'error': 'Library not found'}), 404
+        
+        library.likes += 1
+        db.session.commit()
+        return jsonify({'message': 'Like added successfully', 'likes': library.likes}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 # Utility function to convert a model instance to a dictionary

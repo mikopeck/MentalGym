@@ -1,32 +1,93 @@
 <template>
-  <button class="library-button">
-    {{ library.library_topic }}
+  <button class="library-button" @click="goToLibrary(library.id)">
+    <div class="info-overlay">
+      <div class="top-info">
+        <div class="library-topic">{{ library.library_topic }}</div>
+        <div class="difficulty">{{ library.difficulty }}</div>
+      </div>
+      <div class="bottom-info">
+        <div class="stats">
+          <span class="likes">👍 {{ library.likes }}</span>
+          <span class="clicks">👁️ {{ library.clicks }}</span>
+        </div>
+        <div class="language-info">
+          <span>{{ library.language }}</span>
+          <span>{{ library.language_difficulty }}</span>
+        </div>
+      </div>
+    </div>
   </button>
 </template>
 
 <script>
 export default {
-  name: 'LibraryButton',
+  name: "LibraryButton",
   props: {
     library: {
       type: Object,
-      required: true
-    }
-  }
-}
+      required: true,
+    },
+  },
+  mounted() {
+    console.log(this.library);
+  },
+  methods: {
+    goToLibrary(id) {
+      this.$router.push("/library/" + id);
+    },
+  },
+};
 </script>
 
 <style scoped>
 .library-button {
-  padding: 10px 20px;
+  position: relative;
+  flex-shrink: 0;
   margin: 5px;
-  background-color: var(--element-color-1);
+  padding: 0.5em;
+  background-image: url('@/assets/images/light.webp');
+  background-size: cover;
+  background-position: center;
+  width: 300px;
+  height: 180px;
   border: none;
   cursor: pointer;
-  transition: background-color 0.3s;
+  overflow: hidden;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
 }
 
 .library-button:hover {
-  background-color: var(--element-color-2);
+  transform: scale(1.05);
+}
+
+.info-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.top-info, .bottom-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.library-topic, .difficulty, .likes, .clicks, .language, .language_difficulty {
+    text-align: left;
+  padding: 5px;
+  font-size: 0.9em;
+}
+
+.stats, .language-info {
+  font-size: 0.8em;
 }
 </style>

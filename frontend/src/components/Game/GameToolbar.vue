@@ -4,27 +4,43 @@
       <button class="toolbar-btn back-button" @click="navigateToKnowledgeMap">
         ◀️🗺️
       </button>
+      <button class="toolbar-btn like-button" :style="{ color: isLiked ? 'var(--highlight-color)' : '' }" @click="likeLib">
+        {{ likeText }}
+      </button>
       <div class="toolbar-btn">☁️{{ discovery }}</div>
       <div
-        :class="['toolbar-btn', 'score', { 'animating-score': isAnimating }, {'completable-score':isCompletable}]"
+        :class="[
+          'toolbar-btn',
+          'score',
+          { 'animating-score': isAnimating },
+          { 'completable-score': isCompletable },
+        ]"
         @click="tryEndLibrary"
       >
         Score: {{ score }}
       </div>
     </div>
     <div class="progress-bar-container">
-    <div class="progress-bar" :style="{ width: progressBarWidth }"></div></div>
+      <div class="progress-bar" :style="{ width: progressBarWidth }"></div>
+    </div>
   </div>
 </template>
 
 
 <script>
+import axios from "axios";
+
 import { useGameStore } from "@/store/gameStore";
 import { useAuthStore } from "@/store/authStore";
 import { ref, watch } from "vue";
 
 export default {
   name: "GameToolbar",
+  data() {
+    return {
+      isLiked: false
+    };
+  },
   setup() {
     const gameStore = useGameStore();
     const authStore = useAuthStore();
@@ -37,7 +53,7 @@ export default {
           isAnimating.value = true;
           setTimeout(() => {
             isAnimating.value = false;
-          }, 300); // Matches the duration of your CSS transition
+          }, 300);
         }
       }
     );
@@ -58,17 +74,33 @@ export default {
     discovery() {
       return this.authStore.cloudTokens;
     },
-    isCompletable(){
+    isCompletable() {
       return this.score >= 100;
+    },
+    likeText() {
+      return this.isLiked ? 'Liked 👍' : 'Like 👍';
     }
   },
   methods: {
     navigateToKnowledgeMap() {
       this.$router.push("/knowledge");
     },
-    tryEndLibrary(){
-      if (!this.isCompletable){return;}
+    tryEndLibrary() {
+      if (!this.isCompletable) {
+        return;
+      }
       this.gameStore.endGame();
+    },
+    likeLib() {
+      axios
+        .post("/api/library/like", { libraryId: this.gameStore.libraryId})
+        .then((response) => {
+          console.log("Library liked successfully:", response.data);
+          this.isLiked = true;
+        })
+        .catch((error) => {
+          console.error("Error liking the library:", error);
+        });
     },
   },
 };
@@ -121,7 +153,7 @@ export default {
   animation: pulse 0.3s ease-in-out forwards;
 }
 
-.completable-score{
+.completable-score {
   color: var(--highlight-color);
 }
 
@@ -146,8 +178,8 @@ export default {
   transition: width 0.3s ease;
 }
 
-.progress-bar-container{
-    width: 100%;
-    background-color: #0000001a;
+.progress-bar-container {
+  width: 100%;
+  background-color: #0000001a;
 }
 </style>

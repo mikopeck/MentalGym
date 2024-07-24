@@ -25,3 +25,5 @@ def upgrade_library_socials():
     libraries = Library.query.filter(Library.likes == None).all()
     for library in libraries:
         library.likes = 0
+    
+    db.session.commit()
