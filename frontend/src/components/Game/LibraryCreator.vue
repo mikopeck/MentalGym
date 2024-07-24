@@ -53,7 +53,7 @@
                   :key="language"
                   :value="language"
                 >
-                  {{ language.name }}
+                  {{ language }}
                 </option>
               </select>
             </div>
