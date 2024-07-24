@@ -43,7 +43,6 @@ export const useLibGenStore = defineStore('libGenStore', {
       "Exploring the Potential of Biohacking and Human Enhancement",
       "The Impact of Global Pandemics on Human Civilization",
       "The Future of Space Colonization: Moon, Mars, and Beyond",
-      "How Plants Grow: Photosynthesis Explained",
       "The Magic of the Four Seasons",
       "The Life Cycle of a Butterfly",
       "The Water Cycle: From Rain to Rivers",
