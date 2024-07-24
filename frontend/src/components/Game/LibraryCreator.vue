@@ -50,8 +50,8 @@
               <select id="languageSelect" v-model="language">
                 <option
                   v-for="language in languages"
-                  :key="language.code"
-                  :value="language.code"
+                  :key="language"
+                  :value="language"
                 >
                   {{ language.name }}
                 </option>
@@ -79,7 +79,8 @@
               type="text"
               id="extraContext"
               v-model="extraContext"
-              placeholder="Optional context..."
+              :placeholder="disableExtras ? 'Login to enable' : 'Optional context...'"
+              :disabled="disableExtras"
             />
           </div>
         </div>
@@ -87,6 +88,8 @@
 
       <!-- CTA Button -->
       <CtaButton :buttonText="submitButtonText" @click="handleSubmit" :disabled="isSubmitting" />
+
+      <library-browser/>
     </div>
   </div>
 </template>
@@ -97,11 +100,15 @@ import { mapState } from "pinia";
 
 import { useLibGenStore } from "@/store/libGenStore.js";
 import {usePopupStore} from "@/store/popupStore.js";
+import {useAuthStore} from "@/store/authStore.js";
 import CtaButton from "../Footer/LandingPageComponents/CtaButton.vue";
+import LibraryBrowser from "./LibraryBrowser.vue"
 
 export default {
   name: "LibraryCreator",
-  components: { CtaButton },
+  components: { CtaButton, 
+  LibraryBrowser 
+  },
   data() {
     return {
       topic: "",
@@ -115,9 +122,7 @@ export default {
     };
   },
   mounted() {
-    if (this.languages.length > 0) {
-      this.language = this.languages[0].code;
-    }
+    this.language = "English";
     this.libraryDifficulty = "Easy";
     this.languageDifficulty = "Normal";
   },
@@ -132,6 +137,10 @@ export default {
     submitButtonText() {
       return this.isSubmitting ? "Loading..." : "Explore!";
     },
+    disableExtras(){
+      const authStore = useAuthStore();
+      return !authStore.loggedIn;
+    }
   },
   methods: {
     handleSubmit() {
@@ -155,7 +164,7 @@ export default {
           console.error("Error:", error);
           if (error.response && error.response.status === 403) {
             const  popupStore = usePopupStore();
-            popupStore.showPopup("Please login to continue.");
+            popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
             this.$router.push("/login");
           }
         })

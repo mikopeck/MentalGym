@@ -159,11 +159,6 @@ export default {
       } catch (error) {
         this.loading = false;
         console.error("Error in sending request to library:", error);
-        if (error.response && error.response.status === 403) {
-          const popupStore = usePopupStore();
-          popupStore.showPopup("Please login to continue.");
-          this.$router.push("/login");
-        }
       }
     },
     navigateMap() {

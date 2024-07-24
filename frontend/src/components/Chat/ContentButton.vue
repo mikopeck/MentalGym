@@ -74,7 +74,7 @@ export default {
   padding: 0.5rem 1rem;
   background: var(--element-color-1);
   border: 2px solid var(--background-color-1t);
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
   text-align: center;
   position: relative;

@@ -11,9 +11,11 @@ def init_library_routes(app):
 
     @app.route("/api/library/generate", methods=["POST"])
     def generate_library():
-        ip = request.remote_addr
-        if not check_generation_allowed(ip, 'library'):
-            return jsonify(status="error", message="Library generation limit reached."), 403
+        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
+        if not user_id:
+            ip = request.remote_addr
+            if not check_generation_allowed(ip, 'library'):
+                return jsonify(status="error", message="Library generation limit reached."), 403
 
         topic = request.json.get("topic")
         if not topic:
@@ -35,10 +37,10 @@ def init_library_routes(app):
         if not extra_context:
             existing_library = lbh.get_library_id(topic, library_difficulty, language, language_difficulty)
             if existing_library:
-                mark_generation_done(ip, 'library')
+                if not user_id:
+                    mark_generation_done(ip, 'library')
                 return jsonify(status="success", library_id=existing_library)
 
-        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
         result = lgn.suggest_library_wing(user_id, topic, library_difficulty, language, language_difficulty,extra_context)
         
         room_names = [room for sublist in result for room in sublist]
@@ -46,7 +48,8 @@ def init_library_routes(app):
 
         if status_code == 201:
             library_id = library_response.get_json().get("library_id")
-            mark_generation_done(ip, 'library')
+            if not user_id:
+                mark_generation_done(ip, 'library')
             return jsonify(status="success", library_id=library_id)
         else:
             return library_response
@@ -62,9 +65,11 @@ def init_library_routes(app):
         
     @app.route("/api/library/room", methods=["POST"])
     def generate_room():
-        ip = request.remote_addr
-        if not check_generation_allowed(ip, 'room'):
-            return jsonify(status="error", message="Room generation limit reached."), 403
+        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
+        if not user_id:
+            ip = request.remote_addr
+            if not check_generation_allowed(ip, 'room'):
+                return jsonify(status="error", message="Room generation limit reached."), 403
 
         data = request.get_json()
         subtopic = data.get("subtopic")
@@ -75,7 +80,6 @@ def init_library_routes(app):
         if not library_id:
             return jsonify(status="error", message="No library ID provided"), 400
 
-        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
 
         if user_id:
             within_limit, message = is_within_limit(current_user)
@@ -88,14 +92,16 @@ def init_library_routes(app):
         # Attempt to retrieve existing room contents
         existing_content = lbh.retrieve_library_room_contents(library_id, subtopic)
         if existing_content:
-            mark_generation_done(ip, 'room')
+            if not user_id:
+                mark_generation_done(ip, 'room')
             return jsonify(status="success", data=existing_content)
 
         # If no content exists, generate new content
         generated_content = lgn.fill_room(user_id, subtopic, library_id)
         print(generated_content)
         if generated_content:
-            mark_generation_done(ip, 'room')
+            if not user_id:
+                mark_generation_done(ip, 'room')
             return jsonify(status="success", data=generated_content)
         else:
             return jsonify(status="error", message="Failed to generate content"), 500
@@ -173,3 +179,12 @@ def init_library_routes(app):
             return response, status
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 500
+        
+    @app.route("/api/libraries", methods=["GET"])
+    def get_libraries():
+        return lbh.get_libraries_info()
+    
+    @app.route("/api/library/like", methods=["POST"])
+    def like_library():
+        data = request.get_json()
+        return lbh.like_library(data.get('libraryId'))

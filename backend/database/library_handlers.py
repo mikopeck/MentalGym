@@ -138,6 +138,9 @@ def get_library(library_id, user_id=None):
     if not library:
         return jsonify({"message": "Library not found"}), 404
 
+    library.clicks += 1
+    db.session.commit()
+
     library_data = library.as_dict()
 
     room_states = LibraryRoomState.query.filter_by(
@@ -397,14 +400,40 @@ def update_game_end(user_id, library_id, score, is_complete):
         db.session.rollback()
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
+def get_libraries_info():
+    top_liked_libraries = Library.query.order_by(Library.likes.desc()).limit(40).all()
+    latest_libraries = Library.query.order_by(Library.id.desc()).limit(40).all()
+
+    top_liked_dicts = [model_to_dict(library, exclude=['room_names', 'factoids']) for library in top_liked_libraries]
+    latest_dicts = [model_to_dict(library, exclude=['room_names', 'factoids']) for library in latest_libraries]
+
+    return jsonify({
+        'most_liked': top_liked_dicts,
+        'latest': latest_dicts
+    })
+
+def like_library(library_id):
+    try:
+        library = Library.query.get(library_id)
+        if library is None:
+            return jsonify({'error': 'Library not found'}), 404
+        
+        library.likes += 1
+        db.session.commit()
+        return jsonify({'message': 'Like added successfully', 'likes': library.likes}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 # Utility function to convert a model instance to a dictionary
-def model_to_dict(model_instance):
+def model_to_dict(model_instance, exclude=None):
+    exclude = exclude or []
     return {
         c.name: getattr(model_instance, c.name)
         for c in model_instance.__table__.columns
+        if c.name not in exclude
     }
+
 
 
 # Adding as_dict methods to models

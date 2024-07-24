@@ -42,11 +42,11 @@
           </div>
         </div>
       </transition>
-      <div class="stat-infos">
+      <!-- <div class="stat-infos">
         <div class="stat-info">📖200+ Custom Lessons generated.</div>
         <div class="small-text">Check out these shared lessons ↓</div>
         <div class="shared-content"><SharedContent /></div>
-      </div>
+      </div> -->
       <div class="cta-container" @click="redirectLogin">
         <CtaButton />
       </div>
@@ -73,7 +73,7 @@ import { usePopupStore } from "@/store/popupStore";
 import { useThemeStore } from "@/store/themeStore";
 import CtaButton from "./LandingPageComponents/CtaButton.vue";
 import FaqComponent from "./LandingPageComponents/FaqComponent.vue";
-import SharedContent from "./LandingPageComponents/SharedContent.vue";
+// import SharedContent from "./LandingPageComponents/SharedContent.vue";
 import FeaturesComponent from "./LandingPageComponents/FeaturesComponent.vue";
 import LibraryCreator from "../Game/LibraryCreator.vue";
 import PlanPage from '../Monetization/PlanPage.vue';
@@ -83,7 +83,7 @@ export default {
   components: {
     CtaButton,
     FaqComponent,
-    SharedContent,
+    // SharedContent,
     FeaturesComponent,
     LibraryCreator,
     PlanPage
@@ -93,11 +93,6 @@ export default {
       items: ["Have Fun", "Discover", "Level Up"],
       activeIndex: 0,
       popupMessage: "",
-      backgroundImages: [
-        require("@/assets/images/discover.webp"),
-        require("@/assets/images/learn.webp"),
-        require("@/assets/images/grow.webp"),
-      ],
     };
   },
   created() {
@@ -135,13 +130,6 @@ export default {
     },
     rotateActiveIndex() {
       this.activeIndex = (this.activeIndex + 1) % this.items.length;
-      this.updateBackgroundImage();
-    },
-    updateBackgroundImage() {
-      const landingPage = document.querySelector(".landing-page");
-      landingPage.style.backgroundImage = `url(${
-        this.backgroundImages[this.activeIndex]
-      })`;
     },
     observeFeatures() {
       const observer = new IntersectionObserver(
@@ -161,29 +149,29 @@ export default {
       const features = document.querySelectorAll(".feature");
       features.forEach((feature) => observer.observe(feature));
     },
-    observeStatInfos() {
-      const observer = new IntersectionObserver(
-        (entries, observer) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("visible");
-              observer.unobserve(entry.target);
-            }
-          });
-        },
-        {
-          threshold: 1,
-        }
-      );
+    // observeStatInfos() {
+    //   const observer = new IntersectionObserver(
+    //     (entries, observer) => {
+    //       entries.forEach((entry) => {
+    //         if (entry.isIntersecting) {
+    //           entry.target.classList.add("visible");
+    //           observer.unobserve(entry.target);
+    //         }
+    //       });
+    //     },
+    //     {
+    //       threshold: 1,
+    //     }
+    //   );
 
-      const stats = document.querySelectorAll(".stat-info");
-      stats.forEach((stat) => {
-        observer.observe(stat);
-      });
-    },
+    //   const stats = document.querySelectorAll(".stat-info");
+    //   stats.forEach((stat) => {
+    //     observer.observe(stat);
+    //   });
+    // },
   },
   mounted() {
-    this.observeStatInfos();
+    // this.observeStatInfos();
     this.observeFeatures();
   },
   beforeUnmount() {

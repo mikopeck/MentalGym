@@ -50,7 +50,8 @@ export default {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
-  padding: 20px;
+  padding-top: 3em;
+  padding-bottom: 1em;
 }
 
 .feature {
