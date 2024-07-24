@@ -97,7 +97,7 @@ export default {
         .then(() => {
           this.isLiked = true;
         })
-        .catch(() => {
+        .catch((error) => {
           console.error("Error liking the library:", error);
         });
     },

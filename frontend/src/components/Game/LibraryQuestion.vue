@@ -39,10 +39,15 @@ export default {
     };
   },
   methods: {
+    shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    },
     submitAnswer(choice) {
       const store = useGameStore();
-      const correct =
-        store.factoids[store.currentQuestion].questions[0].correct_choice;
+      const correct = store.factoids[store.currentQuestion].questions[0].correct_choice;
       if (correct === choice) {
         this.answerState.correct = choice;
         this.answerState.wrong = null;
@@ -67,30 +72,20 @@ export default {
       if (store.currentQuestion === null) return null;
 
       const currentFactoid = store.factoids[store.currentQuestion];
-      if (
-        !currentFactoid ||
-        !Array.isArray(currentFactoid.questions) ||
-        currentFactoid.questions.length === 0
-      ) {
+      if (!currentFactoid || !Array.isArray(currentFactoid.questions) || currentFactoid.questions.length === 0) {
         console.error("No questions available or invalid questions format");
         return null;
       }
       const currentQuestion = currentFactoid.questions[0];
-      if (
-        !currentQuestion ||
-        !currentQuestion.question_text ||
-        !currentQuestion.correct_choice ||
-        !Array.isArray(currentQuestion.wrong_choices)
-      ) {
+      if (!currentQuestion || !currentQuestion.question_text || !currentQuestion.correct_choice || !Array.isArray(currentQuestion.wrong_choices)) {
         console.error("Question structure is incomplete or invalid");
         return null;
       }
+      const choices = [currentQuestion.correct_choice, ...currentQuestion.wrong_choices];
+      this.shuffleArray(choices);
       return {
         text: currentQuestion.question_text,
-        choices: [
-          currentQuestion.correct_choice,
-          ...currentQuestion.wrong_choices,
-        ],
+        choices: choices,
       };
     },
     questionVisible() {
