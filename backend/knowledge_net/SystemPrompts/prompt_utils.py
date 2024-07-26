@@ -7,19 +7,19 @@ from database.library_handlers import (
 
 def create_difficulty_message(difficulty):
     messages = {
-        "Easy": "The game is set to Easy difficulty. Please tailor the content to be straightforward and introductory.",
-        "Medium": "The game is set to Medium difficulty. Please ensure the content is moderately challenging.",
+        "Easy": "The game is set to Easy difficulty, so reply with content which is straightforward and introductory.",
+        "Normal": "The game is set to Medium difficulty, so reply with content which is moderately challenging.",
         "Hard": "The game is set to Hard difficulty. Design the content to be complex and demanding."
     }
-    return messages.get(difficulty, "Please check the difficulty setting as it is invalid.")
+    return messages.get(difficulty, "The game is set to Easy difficulty, so reply with content which is straightforward and introductory.")
 
 def create_language_message(language, language_difficulty):
     messages = {
-        "Easy": f"{language} is the chosen language, set to an easy level. Ensure the language used is simple and clear.",
-        "Medium": f"{language} is the chosen language, set to a medium level. Use moderately complex language constructions.",
-        "Hard": f"{language} is the chosen language, set to a hard level. Employ advanced language structures and vocabulary."
+        "Easy": f"{language} is the chosen language, set to an easy level, so your reply should be simple and understandable for children and must be in {language}!",
+        "Normal": f"{language} is the chosen language, set to a medium level, so your reply should be understandable to the average adult and must be in {language}!",
+        "Hard": f"{language} is the chosen language, set to a hard level, so your reply should use rich vocabulary and may contain complex grammar and must be in {language}!"
     }
-    return messages.get(language_difficulty, "Please check the language difficulty setting as it is invalid.")
+    return messages.get(language_difficulty, "English is the chosen language, set to a medium level, so your reply should be understandable to the average adult and must be in English!")
 
 def sys_library(library_difficulty, language, language_difficulty, extra_context):
     current_script_directory = os.path.dirname(os.path.abspath(__file__))

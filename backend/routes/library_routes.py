@@ -28,11 +28,6 @@ def init_library_routes(app):
                 return jsonify({"error": "Topic is too long. Maximum 200 characters allowed."}), 400
         if len(topic) < 1:
                 return jsonify({"error": "No message."}), 400
-        violation, message = moderate(topic)
-        if violation:
-            if user_id:
-                increment_violations(user_id)
-            return jsonify({"error": f"Message breaks our usage policy. Please check our guidelines.\n{message}"}), 400
         
         # difficulty checks
         library_difficulty = request.json.get("libraryDifficulty")
@@ -55,7 +50,11 @@ def init_library_routes(app):
             extra_context = clean(extra_context)
         if extra_context and len(extra_context) > 200:
                 return jsonify({"error": "Extra context is too long. Maximum 200 characters allowed."}), 400
-        violation, message = moderate(extra_context)
+        
+        content_for_moderation = topic
+        if extra_context:
+            content_for_moderation += extra_context
+        violation, message = moderate(content_for_moderation)
         if violation:
             if user_id:
                 increment_violations(user_id)
