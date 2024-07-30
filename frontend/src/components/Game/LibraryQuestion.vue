@@ -14,7 +14,7 @@
                 correct: choice === answerState.correct,
                 wrong: choice === answerState.wrong,
               }"
-              @click="submitAnswer(choice)"
+              @click.stop="submitAnswer(choice)"
             >
               {{ choice }}
             </button>

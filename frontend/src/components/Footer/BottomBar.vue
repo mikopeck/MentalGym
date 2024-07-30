@@ -111,7 +111,7 @@ export default {
   position: -webkit-sticky;
   position: sticky;
   bottom: -1px;
-  font-family: "Garamond", sans-serif;
+  /* font-family: "Garamond", sans-serif; */
   color: rgba(var(--text-color-rgb), 0.8);
   padding: 12px 0;
   text-align: center;

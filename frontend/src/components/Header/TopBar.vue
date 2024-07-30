@@ -103,7 +103,7 @@ export default {
 }
 
 .app-title {
-  font-family: "Arial", sans-serif;
+  /* font-family: "Arial", sans-serif; */
   display: block;
   margin: 0;
   font-size: 24px;

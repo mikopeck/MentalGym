@@ -1,9 +1,11 @@
 <!-- Factoid.vue -->
 <template>
   <div v-if="factoidVisible != null && factoidText" class="factoid-overlay" @click="closeFactoid">
+  <div class="factoid-box">
     <div class="factoid-content">
       <p>{{ factoidText }}</p>
     </div>
+  </div>
   </div>
 </template>
 
@@ -42,6 +44,18 @@ export default {
 
 <style scoped>
 .factoid-overlay {
+  position: absolute;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.factoid-box{
   position: absolute;
   display: flex;
   justify-content: center;

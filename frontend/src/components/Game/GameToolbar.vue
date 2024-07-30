@@ -83,7 +83,7 @@ export default {
   },
   methods: {
     navigateToKnowledgeMap() {
-      this.$router.push("/knowledge");
+      this.$router.push("/knowledge" + this.gameStore.roomNames[12]);
     },
     tryEndLibrary() {
       if (!this.isCompletable) {
