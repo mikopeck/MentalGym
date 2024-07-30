@@ -8,4 +8,5 @@ Allow: /login$
 Allow: /terms$
 Allow: /contact$
 Allow: /plan$
+Allow: /library$
 Sitemap: https://ascendance.cloud/sitemap.xml

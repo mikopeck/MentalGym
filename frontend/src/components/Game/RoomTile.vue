@@ -28,9 +28,6 @@ export default {
     mapClick() {
       this.gameStore.handleMapClick();
     },
-    directionClick(direction) {
-      this.gameStore.handleDirectionClick(direction);
-    },
     exclamationClick(index) {
       this.gameStore.handleExclamationClick(index);
     },
@@ -56,11 +53,11 @@ export default {
   width: 3em;
   height: 3em;
   text-align: center;
-  color: var(--text-color);
+  color: var(--light-text);
   cursor: pointer;
   pointer-events: auto;
   font-weight: 900;
-  text-shadow: 0px 0px 10px var(--background-color), 0px 0px 20px var(--background-color), 0px 0px 30px var(--background-color), 0px 0px 40px var(--background-color);
+  text-shadow: 0px 0px 10px var(--black-back), 0px 0px 20px var(--black-back), 0px 0px 30px var(--black-back), 0px 0px 40px var(--black-back);
   transition: text-shadow 0.3s ease;
   margin: -1.5em;
 }
@@ -73,7 +70,7 @@ export default {
 .question-mark { top: 50%; left: 50%; }
 
 @keyframes flash-highlight {
-  0%, 100% { text-shadow: 0px 0px 10px var(--background-color), 0px 0px 20px var(--background-color), 0px 0px 30px var(--background-color), 0px 0px 40px var(--background-color); }
+  0%, 100% { text-shadow: 0px 0px 10px var(--black-back), 0px 0px 20px var(--black-back), 0px 0px 30px var(--black-back), 0px 0px 40px var(--black-back); }
   50% { text-shadow: 0px 0px 10px var(--highlight-color), 0px 0px 20px var(--highlight-color), 0px 0px 30px var(--highlight-color), 0px 0px 40px var(--highlight-color); }
 }
 

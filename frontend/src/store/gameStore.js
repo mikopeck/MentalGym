@@ -66,6 +66,7 @@ export const useGameStore = defineStore("gameStore", {
                     this.roomStates[this.roomNames[index]].state = 1;
                 }
             });
+            this.broadcastRoomStates();
         },
         findNextUnansweredQuestion() {
             const room = this.roomStates[this.currentRoom];
@@ -151,7 +152,7 @@ export const useGameStore = defineStore("gameStore", {
                         if (response.data.status === 403) {
                             const popupStore = usePopupStore();
                             popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
-                            this.$router.push("/login");
+                            return false;
                         }
                     }
                 }
@@ -159,10 +160,9 @@ export const useGameStore = defineStore("gameStore", {
                 if (error.response.status === 403) {
                     const popupStore = usePopupStore();
                     popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
-                    this.$router.push("/login");
+                    return false;
                 }
                 console.error("Error unlocking room:", error);
-                return false;
             }
             return true;
         },

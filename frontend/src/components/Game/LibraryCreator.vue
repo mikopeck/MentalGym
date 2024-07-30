@@ -3,93 +3,101 @@
     <div class="form-container">
       <h1 v-if="libgenRoute">Create a Library to Explore</h1>
       <!-- Topic Selection -->
-      <div class="libgen-section">
-        <div class="form-group topic-selection">
-          <div class="libgen-title">Topic</div>
-          <div class="title-bar">
-            <input
-              type="text"
-              id="topicInput"
-              v-model="topic"
-              placeholder="Choose any topic"
-              maxlength="200"
-            />
-            <button class="randomize-btn" @click="randomizeTopic">🎲</button>
+      <div class="libgen-create">
+        <div class="libgen-section">
+          <div class="form-group topic-selection">
+            <div class="libgen-title">Topic</div>
+            <div class="title-bar">
+              <input
+                type="text"
+                id="topicInput"
+                v-model="topic"
+                placeholder="Choose any topic"
+                maxlength="200"
+                @focus="selectInputText"
+              />
+              <button class="randomize-btn" @click="randomizeTopic">🎲</button>
+            </div>
+          </div>
+          <div class="form-group difficulty-buttons">
+            <div class="button-container">
+              <button
+                v-for="level in difficultyLevels"
+                :key="level"
+                :class="{ selected: libraryDifficulty === level }"
+                @click="libraryDifficulty = level"
+                class="difficulty-button"
+              >
+                {{ level }}
+              </button>
+            </div>
           </div>
         </div>
-        <div class="form-group difficulty-buttons">
-          <div class="button-container">
-            <button
-              v-for="level in difficultyLevels"
-              :key="level"
-              :class="{ selected: libraryDifficulty === level }"
-              @click="libraryDifficulty = level"
-              class="difficulty-button"
-            >
-              {{ level }}
+
+        <!-- Toggle Button -->
+        <div class="libgen-section">
+          <div class="toggle-button-container">
+            <button class="toggle-button" @click="toggleDetails">
+              <span v-if="!showDetails">▼ Additional options</span>
             </button>
           </div>
         </div>
-      </div>
 
-      <!-- Toggle Button -->
-      <div class="libgen-section">
-        <div class="toggle-button-container">
-          <button class="toggle-button" @click="toggleDetails">
-            <span v-if="!showDetails">▼ Additional options</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Hidden Sections -->
-      <transition name="fade">
-        <div class="libgen-section" v-if="showDetails">
-          <div class="libgen-section">
-            <div class="form-group language-picker">
-              <div class="libgen-title">Language</div>
-              <select id="languageSelect" v-model="language">
-                <option
-                  v-for="language in languages"
-                  :key="language"
-                  :value="language"
-                >
-                  {{ language }}
-                </option>
-              </select>
-            </div>
-            <div class="form-group difficulty-buttons">
-              <div class="button-container">
-                <button
-                  v-for="level in difficultyLevels"
-                  :key="level"
-                  :class="{ selected: languageDifficulty === level }"
-                  @click="languageDifficulty = level"
-                  class="difficulty-button"
-                >
-                  {{ level }}
-                </button>
+        <!-- Hidden Sections -->
+        <transition name="fade">
+          <div class="libgen-section" v-if="showDetails">
+            <div class="libgen-section">
+              <div class="form-group language-picker">
+                <div class="libgen-title">Language</div>
+                <select id="languageSelect" v-model="language">
+                  <option
+                    v-for="language in languages"
+                    :key="language"
+                    :value="language"
+                  >
+                    {{ language }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group difficulty-buttons">
+                <div class="button-container">
+                  <button
+                    v-for="level in difficultyLevels"
+                    :key="level"
+                    :class="{ selected: languageDifficulty === level }"
+                    @click="languageDifficulty = level"
+                    class="difficulty-button"
+                  >
+                    {{ level }}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Optional Extra Context -->
-          <div class="form-group extra-context">
-            <div class="libgen-title">Extra</div>
-            <input
-              type="text"
-              id="extraContext"
-              v-model="extraContext"
-              :placeholder="disableExtras ? 'Login to enable' : 'Optional context...'"
-              :disabled="disableExtras"
-            />
+            <!-- Optional Extra Context -->
+            <div class="form-group extra-context">
+              <div class="libgen-title">Extra</div>
+              <input
+                type="text"
+                id="extraContext"
+                v-model="extraContext"
+                :placeholder="
+                  disableExtras ? 'Login to enable' : 'Optional context...'
+                "
+                :disabled="disableExtras"
+              />
+            </div>
           </div>
-        </div>
-      </transition>
-
+        </transition>
+      </div>
       <!-- CTA Button -->
-      <CtaButton :buttonText="submitButtonText" @click="handleSubmit" :disabled="isSubmitting" />
+      <CtaButton
+        :buttonText="submitButtonText"
+        @click="handleSubmit"
+        :disabled="isSubmitting"
+      />
 
-      <library-browser/>
+      <library-browser />
     </div>
   </div>
 </template>
@@ -99,16 +107,14 @@ import axios from "axios";
 import { mapState } from "pinia";
 
 import { useLibGenStore } from "@/store/libGenStore.js";
-import {usePopupStore} from "@/store/popupStore.js";
-import {useAuthStore} from "@/store/authStore.js";
+import { usePopupStore } from "@/store/popupStore.js";
+import { useAuthStore } from "@/store/authStore.js";
 import CtaButton from "../Footer/LandingPageComponents/CtaButton.vue";
-import LibraryBrowser from "./LibraryBrowser.vue"
+import LibraryBrowser from "./LibraryBrowser.vue";
 
 export default {
   name: "LibraryCreator",
-  components: { CtaButton, 
-  LibraryBrowser 
-  },
+  components: { CtaButton, LibraryBrowser },
   data() {
     return {
       topic: "",
@@ -137,12 +143,15 @@ export default {
     submitButtonText() {
       return this.isSubmitting ? "Loading..." : "Explore!";
     },
-    disableExtras(){
+    disableExtras() {
       const authStore = useAuthStore();
       return !authStore.loggedIn;
-    }
+    },
   },
   methods: {
+    selectInputText(event) {
+      event.target.select();
+    },
     handleSubmit() {
       if (this.topic === "") return;
       this.isSubmitting = true;
@@ -163,8 +172,10 @@ export default {
         .catch((error) => {
           console.error("Error:", error);
           if (error.response && error.response.status === 403) {
-            const  popupStore = usePopupStore();
-            popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
+            const popupStore = usePopupStore();
+            popupStore.showPopup(
+              "You have reached the limit.</br>Please login to continue."
+            );
             this.$router.push("/login");
           }
         })
@@ -202,9 +213,20 @@ export default {
   align-items: center;
   height: 100%;
   width: 100%;
-  max-width: 720px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 1em;
+}
+
+.libgen-create {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 .form-group {
@@ -215,7 +237,7 @@ export default {
 
 .libgen-title {
   margin-left: 1em;
-  margin-bottom: -0.3em;
+  margin-bottom: -0.125em;
   font-size: 0.8em;
   opacity: 0.7;
 }

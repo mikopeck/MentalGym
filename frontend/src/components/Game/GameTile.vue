@@ -154,13 +154,15 @@ export default {
 
 
 .grid-text {
+  color: var(--light-text);
+  padding: 0 0.25em;
   font-size: 1.1em;
   transition: transform 0.1s ease;
   position: relative;
   z-index: 2;
-  text-shadow: 0px 0px 5px var(--background-color),
-    0px 0px 10px var(--background-color), 0px 0px 15px var(--background-color),
-    0px 0px 20px var(--background-color), 0px 0px 25px var(--background-color);
+  text-shadow: 0px 0px 5px var(--black-back),
+    0px 0px 10px var(--black-back), 0px 0px 15px var(--black-back),
+    0px 0px 20px var(--black-back), 0px 0px 25px var(--black-back);
   padding-bottom: 1%;
 }
 

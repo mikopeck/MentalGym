@@ -92,6 +92,10 @@ def progress(user_id, lesson_id, no_redirect = False):
         db.add_ai_response(user_id, response, current_sys_role, message_type=message_type)
 
 def detect_content_actions(user_id, user_message):
+    current_sys_role = db.get_system_role(user_id, lesson_id)
+    if current_sys_role == roles.ProfileGather:
+        return None, False
+
     if (user_message == "Continue...") & ("Continue..." in db.get_actions(user_id)):
         mh.update_system_role(user_id, roles.AfterContent)
         return None, False

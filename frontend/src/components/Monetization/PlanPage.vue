@@ -1,7 +1,7 @@
 <template>
   <div class="plan-page">
     <h1 class="page-title" v-if="isPlanPage">Choose Your Subscription Plan</h1>
-    <h1 class="page-title">Subscription Plans</h1>
+    <h1 class="page-title" v-else>Subscription Plans</h1>
     <div class="plans-container">
       <div class="plan" v-for="(plan, index) in plans" :key="index">
         <div class="plan-header" :style="{ backgroundColor: plan.color }">
@@ -55,7 +55,7 @@ export default {
           title: "Awakened",
           price: "$4/month",
           features: [
-            "100☁️Every Day",
+            "100☁️ Every Day",
             "All features in Aspirant",
             "Unlimited Knowledge Map",
             "Priority Support",
@@ -230,7 +230,7 @@ li {
 
 @media (max-width: 768px) {
   .plans-container {
-    flex-direction: column-reverse;
+    flex-direction: column;
     align-items: center;
   }
   .plan {

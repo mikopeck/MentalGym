@@ -12,6 +12,9 @@
     --text-color: #f0f8ff;
     --text-color-rgb: 240, 248, 255;
     --glow-color: #bb86fc;
+    
+    --light-text: #f0f8ff;
+    --black-back: #0e0c14;
 }
 
 .light-theme {
@@ -25,4 +28,7 @@
     --highlight-color: #250849;
     --text-color: #0e0c14;
     --text-color-rgb: 14, 12, 20;
+
+    --light-text: #f0f8ff;
+    --black-back: #0e0c14;
 }

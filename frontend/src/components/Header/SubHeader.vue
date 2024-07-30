@@ -2,7 +2,10 @@
 <template>
   <transition name="slide-fade">
     <div v-if="show" class="subheading-container">
-      {{ subheading }}
+      <div class="subheading-bar">
+        <div class="bar-element">{{ subheading }}</div>
+        <div class="bar-element">☁️{{ discovery }}</div>
+      </div>
       <div class="progress-bar" :style="{ width: progressBarWidth }"></div>
     </div>
   </transition>
@@ -10,11 +13,18 @@
 
 <script>
 import { useMessageStore } from "@/store/messageStore";
+import { useAuthStore } from "@/store/authStore";
 
 export default {
   computed: {
     messageStore() {
       return useMessageStore();
+    },
+    authStore() {
+      return useAuthStore();
+    },
+    discovery(){
+      return this.authStore.cloudTokens;
     },
     subheading() {
       return this.messageStore.subheading;
@@ -23,7 +33,11 @@ export default {
       return `${this.messageStore.progress * 100}%`;
     },
     show() {
-      return this.subheading && this.subheading.trim() !== "" && this.$route.path.startsWith("/lesson");
+      return (
+        this.subheading &&
+        this.subheading.trim() !== "" &&
+        this.$route.path.startsWith("/lesson")
+      );
     },
   },
 };
@@ -38,6 +52,12 @@ export default {
   backdrop-filter: blur(8px);
   padding: 5px 0;
   position: relative;
+}
+
+.subheading-bar{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .progress-bar {
@@ -55,5 +75,9 @@ export default {
 .slide-fade-enter,
 .slide-fade-leave-to {
   opacity: 0;
+}
+
+.bar-element {
+  margin: 0 0.5em;
 }
 </style>

@@ -43,7 +43,7 @@ export default {
   },
   data() {
     return {
-      showLoginForm: false,
+      showLoginForm: true,
       loggingIn: false,
     };
   },

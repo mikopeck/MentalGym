@@ -121,8 +121,6 @@ export default {
   align-items: center;
   padding: 0.5em;
   color: var(--text-color);
-  background-color: #0000001a;
-  backdrop-filter: blur(8px);
   padding: 5px 0;
 }
 
