@@ -4,7 +4,7 @@
     <div v-if="show" class="subheading-container">
       <div class="subheading-bar">
         <div class="bar-element">{{ subheading }}</div>
-        <div class="bar-element">☁️{{ discovery }}</div>
+        <div class="bar-element" @click="navToPlans">☁️{{ discovery }}</div>
       </div>
       <div class="progress-bar" :style="{ width: progressBarWidth }"></div>
     </div>
@@ -40,6 +40,11 @@ export default {
       );
     },
   },
+  methods: {
+    navToPlans(){
+      this.$router.push("/plan")
+    }
+  }
 };
 </script>
 

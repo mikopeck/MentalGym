@@ -7,7 +7,7 @@
       <button class="toolbar-btn like-button" :style="{ color: isLiked ? 'var(--highlight-color)' : '' }" @click="likeLib">
         {{ likeText }}
       </button>
-      <div class="toolbar-btn">☁️{{ discovery }}</div>
+      <div class="toolbar-btn" @click="navToPlans">☁️{{ discovery }}</div>
       <div
         :class="[
           'toolbar-btn',
@@ -101,6 +101,9 @@ export default {
           console.error("Error liking the library:", error);
         });
     },
+    navToPlans(){
+      this.$router.push("/plan")
+    }
   },
 };
 </script>
