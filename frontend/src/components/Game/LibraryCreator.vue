@@ -207,7 +207,7 @@ export default {
 }
 
 .form-container {
-  overflow: auto;
+  /* overflow: auto; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -219,7 +219,7 @@ export default {
 }
 
 .libgen-create {
-  overflow: auto;
+  /* overflow: auto; */
   display: flex;
   flex-direction: column;
   align-items: center;
