@@ -40,7 +40,7 @@ export default {
           question:
             "Is there a subscription model and what are the payment options?",
           answer:
-            "Ascendance offers both free and <a href='/plan'>paid subscription plans</a>. The paid plans feature increased message limits and use more powerful AI models. Payment can be made via major credit cards, and other digital wallets, depending on your region.",
+            "Ascendance offers both free and <a href='/plan'>paid subscription plans</a>. The paid plans feature increased usage limits and use more powerful AI models. Payment can be made via major credit cards, and other digital wallets, depending on your region.",
           isOpen: false,
         },
         {

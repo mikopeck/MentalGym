@@ -43,7 +43,7 @@ export default {
           title: "Aspirant",
           price: "Free",
           features: [
-            "10☁️ Free Every Day",
+            "25☁️ Free Every Day",
             "Custom Libraries",
             "Knowledge Map",
             "Personal Tutor",
@@ -55,7 +55,7 @@ export default {
           title: "Awakened",
           price: "$4/month",
           features: [
-            "100☁️ Every Day",
+            "250☁️ Every Day",
             "All features in Aspirant",
             "Unlimited Knowledge Map",
             "Priority Support",
@@ -67,7 +67,7 @@ export default {
           title: "Ascendant",
           price: "$8/month",
           features: [
-            '1000☁️ Every Day',
+            '2500☁️ Every Day',
             "All Features in Awakened",
             "Use Frontier AI Models",
             "Early Access to New Features",

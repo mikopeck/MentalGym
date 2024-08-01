@@ -7,9 +7,9 @@ from database.models import db, User, IPTracking
 
 # Rate limiting parameters
 DAILY_LIMITS = {
-    'free': 10,
-    'paid': 100,
-    'pro': 1000,
+    'free': 25,
+    'paid': 250,
+    'pro': 2500,
 }
 
 def reset_daily_limits(user):
