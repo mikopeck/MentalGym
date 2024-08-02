@@ -21,6 +21,7 @@ export const useGameStore = defineStore("gameStore", {
         multiplier: 5,
 
         completed: false,
+        tutorial: true,
     }),
     actions: {
         setId(libraryId) {
@@ -55,6 +56,12 @@ export const useGameStore = defineStore("gameStore", {
             } else {
                 this.multiplier = 5;
                 this.currentQuestion = this.findNextUnansweredQuestion();
+            }
+
+            if (this.score >= 100 & this.tutorial){
+                const popupStore = usePopupStore();
+                popupStore.showLibraryCompletionInfo();
+                this.tutorial=false;
             }
         },
 
@@ -104,6 +111,7 @@ export const useGameStore = defineStore("gameStore", {
             try {
                 const response = await axios.get(`/api/library/${libraryId}`);
                 if (response.data.status === "success") {
+                    console.log(response.data.data)
                     this.roomNames = response.data.data.room_names || [];
                     this.score = response.data.data.score || 0;
                     const roomStatesObject = response.data.data.room_states;
@@ -123,6 +131,12 @@ export const useGameStore = defineStore("gameStore", {
                         };
                         return acc;
                     }, {});
+
+                    this.tutorial = response.data.data.tutorial;
+                    if (this.tutorial) {
+                        const popupStore = usePopupStore();
+                        popupStore.showLibraryInstructions();
+                    }
                 } else {
                     console.error("Failed to fetch library details");
                 }

@@ -1,4 +1,4 @@
-from database.models import db, User, ChatHistory, Challenge, Lesson, UserAction, Achievement, UserAchievement, Feedback
+from database.models import db, User, ChatHistory, Challenge, Lesson, UserAction, Achievement, UserAchievement, Feedback,LibraryRoomState,LibraryCompletion
 from utils import decode_if_needed, extract_single_emoji
 from datetime import datetime
 
@@ -502,6 +502,11 @@ def clear_user_profile(user_id):
         user.system_role = ''
         db.session.commit()
 
+def clear_user_library_completions(user_id):
+    LibraryRoomState.query.filter_by(user_id=user_id).delete()
+    LibraryCompletion.query.filter_by(user_id=user_id).delete()
+    db.session.commit()
+
 def reset_user_profile(user_id):
     clear_user_chat_history(user_id)
     clear_all_user_actions(user_id)
@@ -509,3 +514,4 @@ def reset_user_profile(user_id):
     clear_user_challenges(user_id)
     clear_user_lessons(user_id)
     clear_user_profile(user_id)
+    clear_user_library_completions(user_id)

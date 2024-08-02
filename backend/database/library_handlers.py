@@ -163,10 +163,15 @@ def get_library(library_id, user_id=None):
         for i, room in enumerate(room_states)
     }
 
+    library_data["tutorial"] = True #default
     if user_id:
         existing_completion = LibraryCompletion.query.filter_by(library_id=library_id, user_id=user_id).first()
         if existing_completion:
             library_data["score"] = existing_completion.score
+
+        any_completion = LibraryCompletion.query.filter_by(user_id=user_id, is_complete=True).first()
+        if any_completion:
+            library_data["tutorial"] = False
 
     print(library_data)
     return jsonify(library_data)

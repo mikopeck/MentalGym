@@ -107,7 +107,7 @@ export default {
   position: absolute;
   top: 0px;
   right: 0px;
-    margin-top: 4px;
+  margin-top: 4px;
   padding: 0px 8px;
   background: #00000000;
   border-radius: 8px;
