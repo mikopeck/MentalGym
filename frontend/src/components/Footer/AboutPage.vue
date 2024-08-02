@@ -60,7 +60,7 @@
       <div class="cta-container" @click="redirectLogin">
         <CtaButton />
       </div>
-      <plan-page/>
+      <plan-page />
       <div class="cta-container" @click="redirectLogin">
         <CtaButton />
       </div>
@@ -71,12 +71,13 @@
 <script>
 import { usePopupStore } from "@/store/popupStore";
 import { useThemeStore } from "@/store/themeStore";
+import { useAuthStore } from "@/store/authStore";
 import CtaButton from "./LandingPageComponents/CtaButton.vue";
 import FaqComponent from "./LandingPageComponents/FaqComponent.vue";
 // import SharedContent from "./LandingPageComponents/SharedContent.vue";
 import FeaturesComponent from "./LandingPageComponents/FeaturesComponent.vue";
 import LibraryCreator from "../Game/LibraryCreator.vue";
-import PlanPage from '../Monetization/PlanPage.vue';
+import PlanPage from "../Monetization/PlanPage.vue";
 
 export default {
   name: "AboutPage",
@@ -86,9 +87,9 @@ export default {
     // SharedContent,
     FeaturesComponent,
     LibraryCreator,
-    PlanPage
+    PlanPage,
   },
-  data(){
+  data() {
     return {
       items: ["Have Fun", "Discover", "Level Up"],
       activeIndex: 0,
@@ -123,7 +124,13 @@ export default {
       }
     },
     redirectLogin() {
-      this.$router.push("/login");
+      const authStore = useAuthStore();
+      if (authStore.loggedIn) {
+        this.$router.push("/lessons");
+      }
+      else{
+        this.$router.push("/login");
+      }
     },
     setActiveIndex(index) {
       this.activeIndex = index;
@@ -338,7 +345,7 @@ export default {
     font-size: 2.5em;
   }
   .landing-page-2 {
-    padding: 1em; 
+    padding: 1em;
   }
 
   .value-content {
