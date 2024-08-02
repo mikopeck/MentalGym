@@ -4,8 +4,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from "@/store/authStore";
-// import { usePopupStore } from "@/store/popupStore";
-// import { useMentorStore } from "@/store/mentorStore";
+import { useGameStore } from "@/store/gameStore";
 
 import './assets/styles.css';
 import './assets/themes.css';
@@ -30,15 +29,19 @@ const router = createRouter({
   routes,
 });
 router.beforeEach((to, from, next) => {
-  console.log("mainjs" + from + to.fullPath);
-  // if (to.fullPath === "/?awake") {
-  //   const popupStore = usePopupStore();
-  //   popupStore.showWelcomePopup();
-  //   const mentorStore = useMentorStore();
-  //   mentorStore.show();
-  //   next('/');
-  // }
+  console.log("mainjs" + from.fullPath + to.fullPath);
+
   const authStore = useAuthStore();
+  const gameStore = useGameStore();
+
+  if (from.path.startsWith('/library/') && to.path.startsWith('/library/')) {
+    const fromLibraryId = from.path.split('/')[2];
+    const toLibraryId = to.path.split('/')[2];
+
+    if (fromLibraryId !== toLibraryId) {
+      gameStore.fetchLibraryDetails(toLibraryId);
+    }
+  }
 
   if (!authStore.loggedIn && to.path === '/') {
     next('/about');

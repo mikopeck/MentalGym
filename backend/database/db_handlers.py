@@ -431,14 +431,14 @@ def user_knowledge_net_info(user_id):
     user_data = {
         "profile": user.profile,
         "active_libraries": [{
-            'id': library.id,
+            'id': library.library_id,
             'topic': library.library.library_topic
         } for library in sorted(
             [l for l in user.libraries if not l.is_complete], 
             key=lambda x: x.id, reverse=True)[:10]
         ],
         "completed_libraries": [{
-            'id': library.id,
+            'id': library.library_id,
             'topic': library.library.library_topic
         } for library in sorted(
             [l for l in user.libraries if l.is_complete], 

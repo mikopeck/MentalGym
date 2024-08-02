@@ -3,7 +3,7 @@
     <div class="completion-content">
       <div class="celebratory-message">🎉 Congratulations! 🎉</div>
       <div v-if="suggestions.length" class="suggestions-container">
-        <div>Continue with...</div>
+        <div>{{ loading ? "Loading..." : "Continue with..." }}</div>
         <ContentButton
           v-for="(suggestion, index) in suggestions"
           :key="index"
@@ -121,7 +121,7 @@ export default {
     },
     navigateExplore() {
       this.exploreLoading = true;
-      const url = `/api/explore?name=${this.messageStore.subheading}`;
+      const url = `/api/explore?name=${this.gameStore.roomNames[12]}`;
       axios
         .get(url)
         .then((response) => {
@@ -133,8 +133,10 @@ export default {
         })
         .catch((error) => {
           console.error("Error fetching suggestions: ", error);
+        })
+        .finally(() => {
+          this.exploreLoading = false;
         });
-      this.exploreLoading = false;
     },
     async startSuggestion(suggestion) {
       if (this.loading) return;
@@ -150,9 +152,10 @@ export default {
         const libraryId = libraryResponse.data.library_id;
 
         // Set the room names in the store
-        this.gameStore.setId(libraryId);
         this.loading = false;
+        this.gameStore.completed = false;
         this.$router.push(`/library/${libraryId}`);
+        this.gameStore.fetchLibraryDetails(libraryId);
       } catch (error) {
         this.loading = false;
       }
@@ -165,53 +168,6 @@ export default {
     },
     setRating(n) {
       this.rating = n;
-    },
-    toggleShare() {
-      if (this.isSharing) {
-        this.isSharing = false;
-      } else {
-        const confirmShare = confirm(
-          "This will make your content shareable with a link. Do you want to proceed?"
-        );
-        if (confirmShare) {
-          const confirmPublic = confirm(
-            "Do you also want to make this content visible on the landing page for everyone?\nWARNING: Everyone will be able to view all messages in this lesson / challenge."
-          );
-          if (confirmPublic) {
-            this.shareContent(true);
-          } else {
-            this.shareContent(false);
-          }
-        }
-      }
-    },
-
-    shareContent(isPublic) {
-      const routePath = this.$route.path;
-      axios
-        .post("/api/share", { path: routePath, public: isPublic })
-        .then(() => {
-          this.isSharing = true;
-          this.shareLink = window.location.href;
-          alert(
-            `Content has been successfully ${
-              isPublic ? "made public" : "shared"
-            }.`
-          );
-        })
-        .catch((error) => {
-          console.error("Error sharing content: ", error);
-        });
-    },
-    copyToClipboard() {
-      navigator.clipboard
-        .writeText(this.shareLink)
-        .then(() => {
-          this.copyButtonText = "Copied!";
-        })
-        .catch((err) => {
-          console.error("Failed to copy: ", err);
-        });
     },
     submitFeedback() {
       const sanitizeInput = (input) => {
@@ -266,6 +222,13 @@ export default {
     this.rating = 0;
     this.feedback = "";
     this.showFeedback = false;
+  },
+  watch: {
+    completionVisible(newValue) {
+      if (newValue) {
+        this.navigateExplore();
+      }
+    },
   },
 };
 </script>
@@ -447,4 +410,5 @@ export default {
 .suggestion-button {
   margin: 2px;
 }
+
 </style>

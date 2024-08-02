@@ -62,6 +62,7 @@ export const useGameStore = defineStore("gameStore", {
                 const popupStore = usePopupStore();
                 popupStore.showLibraryCompletionInfo();
                 this.tutorial=false;
+                this.questionVisible=false;
             }
         },
 
