@@ -164,16 +164,18 @@ def get_library(library_id, user_id=None):
     }
 
     library_data["tutorial"] = True #default
+    print(library_data["tutorial"])
     if user_id:
         existing_completion = LibraryCompletion.query.filter_by(library_id=library_id, user_id=user_id).first()
         if existing_completion:
             library_data["score"] = existing_completion.score
 
         any_completion = LibraryCompletion.query.filter_by(user_id=user_id, is_complete=True).first()
+        print(any_completion)
         if any_completion:
             library_data["tutorial"] = False
 
-    print(library_data)
+    # print(library_data)
     return jsonify(library_data)
 
 
