@@ -20,7 +20,12 @@ def download_image(image_url):
 
 def upload_file_to_blob(file_content, file_name):
     print("Uploading file to Azure Blob Storage...")
+    print(connect_str)
+    print(container_name)
+    print(file_name)
+    print(blob_service_client)
     blob_client = blob_service_client.get_blob_client(container=container_name, blob=file_name)
+    print(blob_client)
     blob_client.upload_blob(file_content)
     print(blob_client.url)
     return blob_client.url

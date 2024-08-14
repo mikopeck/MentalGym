@@ -97,6 +97,7 @@ def init_library_routes(app):
         if status_code != 200:
             return response 
     
+        print(library.get_json().get("clicks")%4)
         print(library.get_json().get("clicks")%4 == 0)
         print(response.json['has_default_image'])
         if response.json['has_default_image'] and library.get_json().get("clicks")%4 == 0:
