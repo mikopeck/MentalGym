@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from datetime import datetime
 import hashlib
+import random
 
 db = SQLAlchemy()
 
@@ -58,7 +59,9 @@ class IPTracking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     hashed_ip = db.Column(db.String(64), unique=True, nullable=False)
     library_generated = db.Column(db.Boolean, default=False, nullable=False)
+    library_generated_time = db.Column(db.DateTime, nullable=True)
     room_generated = db.Column(db.Boolean, default=False, nullable=False)
+    room_generated_time = db.Column(db.DateTime, nullable=True)
 
     def __init__(self, ip):
         self.hashed_ip = hashlib.sha256(ip.encode()).hexdigest()
@@ -136,10 +139,13 @@ class Lesson(db.Model):
 
 ###lib###
 class Library(db.Model):
+    DEFAULT_IMAGE_URL = "https://csb10032002fc59a9f5.blob.core.windows.net/library-images/background.png"
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     library_topic = db.Column(db.String(200), nullable=False)
     difficulty = db.Column(db.String(50), nullable=False)
+    guide = db.Column(db.String(50), nullable=False, default=lambda: random.choice(["Azalea", "Irona", "Bubbles", "Sterling"]))
     language = db.Column(db.String(50), nullable=False)
     language_difficulty = db.Column(db.String(50), nullable=False)
     context = db.Column(db.String(200), nullable=True)
@@ -148,6 +154,7 @@ class Library(db.Model):
     likes = db.Column(db.Integer, default=0)
 
     room_names = db.Column(db.JSON, nullable=False)
+    image_url = db.Column(db.String(200), nullable=False, default=DEFAULT_IMAGE_URL)
 
     factoids = db.relationship('LibraryFactoid', backref='library')
 

@@ -92,10 +92,20 @@ def check_generation_allowed(ip, type):
     hashed_ip = hashlib.sha256(ip.encode()).hexdigest()
     record = IPTracking.query.filter_by(hashed_ip=hashed_ip).first()
     if record:
-        if type == 'library' and record.library_generated:
-            return False
-        elif type == 'room' and record.room_generated:
-            return False
+        if type == 'library':
+            if record.library_generated:
+                if record.library_generated_time and (datetime.now() - record.library_generated_time) < timedelta(hours=1):
+                    return False
+            record.library_generated = True
+            record.library_generated_time = datetime.now()
+        elif type == 'room':
+            if record.room_generated:
+                if record.room_generated_time and (datetime.now() - record.room_generated_time) < timedelta(hours=1):
+                    return False
+            record.room_generated = True
+            record.room_generated_time = datetime.now()
+
+    db.session.commit()
     return True
 
 def mark_generation_done(ip, type):
@@ -107,7 +117,9 @@ def mark_generation_done(ip, type):
 
     if type == 'library':
         record.library_generated = True
+        record.library_generated_time = datetime.now()
     elif type == 'room':
         record.room_generated = True
+        record.room_generated_time = datetime.now()
 
     db.session.commit()

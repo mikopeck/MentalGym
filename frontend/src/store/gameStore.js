@@ -139,7 +139,7 @@ export const useGameStore = defineStore("gameStore", {
                         popupStore.showLibraryInstructions();
                     }
                 } else {
-                    console.error("Failed to fetch library details");
+                    console.error("Failed to fetch library details", response);
                 }
             } catch (error) {
                 console.error("Error fetching library details:", error);

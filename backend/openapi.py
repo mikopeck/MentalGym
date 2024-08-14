@@ -2,6 +2,7 @@ import openai
 import time
 import requests
 import json
+import os
 
 #### settings ####
 max_retries = 5
@@ -133,4 +134,45 @@ def get_embeddings(strings_list):
             return None
     except requests.RequestException as e:
         print(f"Request failed: {e}")
+        return None
+    
+
+def get_image(prompt, resolution="1024x1024"):
+    headers = {
+        "Authorization": f'Key {os.getenv("FAL_API_KEY")}',
+        "Content-Type": "application/json"
+    }
+
+    for attempt in range(max_retries):
+        try:
+            data = {
+                "prompt": prompt,
+                "image_size": "square",
+                "num_inference_steps": 4,
+                "num_images": 1,
+            }
+
+            response = requests.post(
+                "https://fal.run/fal-ai/flux/schnell",
+                headers=headers,
+                data=json.dumps(data),
+                timeout=request_timeout
+            )
+
+            if response.status_code == 200:
+                response_data = response.json()
+                print(response_data['images'][0]['url'])
+                return response_data['images'][0]['url']
+            else:
+                print(f"Request failed with status code {response.status_code}: {response.json()}")
+                time.sleep(delay)
+
+        except requests.exceptions.Timeout:
+            print(f"Request timed out after {request_timeout} seconds. Retrying...")
+            time.sleep(delay)
+        except Exception as e:
+            print(f"An error occurred: {e}. Retrying in {delay} seconds...")
+            time.sleep(delay)
+    else:
+        print("Max retries reached. Unable to generate image.")
         return None

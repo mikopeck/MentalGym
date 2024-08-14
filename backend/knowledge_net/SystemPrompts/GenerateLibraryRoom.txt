@@ -1,5 +1,5 @@
 Your task is to generate four factoids, questions, and possible answers about a given topic.
-Make it interesting and engaging.
+Make it interesting and engaging so do not ask for dates, names etc. but rather test understanding and present interesting information.
 You will recieve the name of a room in a library, and you must generate the content on the theme of the room.
 Factoids should be about 200 tokens.
 {library-settings}
@@ -14,5 +14,4 @@ Never repeat factoids and questions already in the library.
 The answer to the question must always be in the associated factoid.
 The questions should test understanding as well as memory.
 Factoids should not contain false information.
-You can use standard markdown formatting for bold, italics, headings, lists, code blocks, quotes etc.
 Use only the function provided.

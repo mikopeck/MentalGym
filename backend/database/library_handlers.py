@@ -164,7 +164,6 @@ def get_library(library_id, user_id=None):
     }
 
     library_data["tutorial"] = True #default
-    print(library_data["tutorial"])
     if user_id:
         existing_completion = LibraryCompletion.query.filter_by(library_id=library_id, user_id=user_id).first()
         if existing_completion:
@@ -175,9 +174,24 @@ def get_library(library_id, user_id=None):
         if any_completion:
             library_data["tutorial"] = False
 
-    # print(library_data)
+    library_data["clicks"] = library.clicks
     return jsonify(library_data)
 
+def get_library_details(library_id):
+    try:
+        library = Library.query.get(library_id)
+        if library is None:
+            return jsonify({'error': 'Library not found'}), 404
+
+        # Fetch required details
+        details = {
+            'topic': library.library_topic,
+            'guide': library.guide,
+            'difficulty': library.difficulty
+        }
+        return jsonify(details), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 def save_library_room_contents(library_id, room_name, factoids):
     responses = []
@@ -407,17 +421,24 @@ def update_game_end(user_id, library_id, score, is_complete):
         db.session.rollback()
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
-def get_libraries_info():
+def get_libraries_info(user_id=None):
     top_liked_libraries = Library.query.order_by(Library.likes.desc()).limit(40).all()
     latest_libraries = Library.query.order_by(Library.id.desc()).limit(40).all()
 
     top_liked_dicts = [model_to_dict(library, exclude=['room_names', 'factoids']) for library in top_liked_libraries]
     latest_dicts = [model_to_dict(library, exclude=['room_names', 'factoids']) for library in latest_libraries]
 
-    return jsonify({
+    response_data = {
         'most_liked': top_liked_dicts,
         'latest': latest_dicts
-    })
+    }
+
+    if user_id is not None:
+        my_libraries = Library.query.filter_by(user_id=user_id).order_by(Library.id.desc()).limit(40).all()
+        my_dicts = [model_to_dict(library, exclude=['room_names', 'factoids']) for library in my_libraries]
+        response_data['mine'] = my_dicts
+
+    return jsonify(response_data)
 
 def like_library(library_id):
     try:
@@ -430,8 +451,35 @@ def like_library(library_id):
         return jsonify({'message': 'Like added successfully', 'likes': library.likes}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+def has_default_image(library_id):
+    try:
+        library = Library.query.get(library_id)
+        if library is None:
+            return jsonify({'error': 'Library not found'}), 404
+        
+        has_default = library.image_url == Library.DEFAULT_IMAGE_URL
+        return jsonify({'has_default_image': has_default}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def update_library_image(library_id, image_url):
+    try:
+        library = Library.query.get(library_id)
+        if library is None:
+            return jsonify({'error': 'Library not found'}), 404
+        
+        library.image_url = image_url
+        db.session.commit()
+        return jsonify({'message': 'Image updated successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
+
+
+# UTILSSSS 
+        
 # Utility function to convert a model instance to a dictionary
 def model_to_dict(model_instance, exclude=None):
     exclude = exclude or []
@@ -440,8 +488,6 @@ def model_to_dict(model_instance, exclude=None):
         for c in model_instance.__table__.columns
         if c.name not in exclude
     }
-
-
 
 # Adding as_dict methods to models
 Library.as_dict = lambda self: model_to_dict(self)

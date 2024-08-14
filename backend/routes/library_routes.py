@@ -2,14 +2,18 @@
 
 from flask import request, jsonify
 from flask_login import current_user, AnonymousUserMixin
-from bleach import clean 
+from bleach import clean
+from flask_executor import Executor
 
 from openapi import moderate
 import database.library_handlers as lbh
 import knowledge_net.library_generator as lgn
+from images.library_imager import generate_images_task
 from database.user_handler import increment_violations, is_within_limit, check_generation_allowed, mark_generation_done
 
 def init_library_routes(app):
+
+    executor = Executor(app)
 
     @app.route("/api/library/generate", methods=["POST"])
     def generate_library():
@@ -72,8 +76,12 @@ def init_library_routes(app):
         room_names = [room for sublist in result for room in sublist]
         library_response, status_code = lbh.create_library(user_id, topic, room_names, library_difficulty, language, language_difficulty)
 
+
         if status_code == 201:
             library_id = library_response.get_json().get("library_id")
+            
+            # start task of image generation
+            executor.submit(generate_images_task, library_id)
             if not user_id:
                 mark_generation_done(ip, 'library')
             return jsonify(status="success", library_id=library_id)
@@ -84,6 +92,16 @@ def init_library_routes(app):
     def get_library(library_id):
         user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
         library = lbh.get_library(library_id, user_id)
+        
+        response, status_code = lbh.has_default_image(library_id)
+        if status_code != 200:
+            return response 
+    
+        print(library.get_json().get("clicks")%4 == 0)
+        print(response.json['has_default_image'])
+        if response.json['has_default_image'] and library.get_json().get("clicks")%4 == 0:
+            executor.submit(generate_images_task, library_id)
+            
         if library:
             return jsonify(status="success", data=library.get_json())
         else:
@@ -92,14 +110,14 @@ def init_library_routes(app):
     @app.route("/api/library/room", methods=["POST"])
     def generate_room():
         user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
+        data = request.get_json()
+        subtopic = data.get("subtopic")
+        library_id = data.get("libraryId")
+
         if not user_id:
             ip = request.remote_addr
             if not check_generation_allowed(ip, 'room'):
                 return jsonify(status="error", message="Room generation limit reached."), 403
-
-        data = request.get_json()
-        subtopic = data.get("subtopic")
-        library_id = data.get("libraryId")
 
         if not subtopic:
             return jsonify(status="error", message="No subtopic provided"), 400
@@ -208,7 +226,8 @@ def init_library_routes(app):
         
     @app.route("/api/libraries", methods=["GET"])
     def get_libraries():
-        return lbh.get_libraries_info()
+        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
+        return lbh.get_libraries_info(user_id)
     
     @app.route("/api/library/like", methods=["POST"])
     def like_library():

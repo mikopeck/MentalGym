@@ -1,5 +1,5 @@
 <template>
-  <button class="library-button" @click="goToLibrary(library.id)">
+  <button class="library-button" @click="goToLibrary(library.id)" :style="{ backgroundImage: 'url(' + library.image_url + ')' }">
     <div class="info-overlay">
       <div class="top-info">
         <div class="library-topic">{{ library.library_topic }}</div>
@@ -42,7 +42,7 @@ export default {
   flex-shrink: 0;
   margin: 5px;
   padding: 0.5em;
-  background-image: url('@/assets/images/light.webp');
+  /* background-image: url('@/assets/images/light.webp'); */
   background-size: cover;
   background-position: center;
   width: 300px;

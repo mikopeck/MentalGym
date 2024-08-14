@@ -1,5 +1,6 @@
 <template>
   <div class="library-browser">
+    <LibraryCarousel title="My Libraries" :libraries="myLibraries" v-if="loggedIn & browsingLibraries"/>
     <LibraryCarousel
       title="Most Liked Libraries"
       :libraries="mostLikedLibraries"
@@ -10,6 +11,8 @@
 
 <script>
 import axios from "axios";
+
+import { useAuthStore } from "@/store/authStore";
 import LibraryCarousel from "./LibraryCarousel.vue";
 
 export default {
@@ -19,6 +22,7 @@ export default {
   },
   data() {
     return {
+      myLibraries: [],
       mostLikedLibraries: [],
       newestLibraries: [],
     };
@@ -33,12 +37,25 @@ export default {
         .then((response) => {
           this.mostLikedLibraries = response.data.most_liked;
           this.newestLibraries = response.data.latest;
+
+          if (this.loggedIn){
+            this.myLibraries = response.data.mine;
+          }
         })
         .catch((error) => {
           console.error("Failed to fetch libraries", error);
         });
     },
   },
+  computed: {
+    loggedIn(){
+      const authStore = useAuthStore();
+      return authStore.loggedIn;
+    },
+    browsingLibraries(){
+      return this.$route.path == "/library"
+    }
+  }
 };
 </script>
 
