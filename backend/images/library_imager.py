@@ -46,7 +46,7 @@ def generate_images_task(id):
     difficulty = details['difficulty']
     guide_description = get_guide_description(guide)
         
-    image_url = get_image(f"Game backdrop of a room with many decorations styled in the theme: {topic}. A {guide_description} is next to a lone bookshelf amidst the decorations. The contents seem to be of {difficulty} difficulty.")
+    image_url = get_image(f"Game backdrop of a room with many decorations about: {topic}. A {guide_description} is next to a lone bookshelf amidst the decorations. The contents seem to be of {difficulty} difficulty.")
     if not image_url:
         return "Failed to get image"
     print(image_url)
