@@ -1,12 +1,9 @@
 import os
 import requests
-from flask import Flask
 from azure.storage.blob import BlobServiceClient
 
 from openapi import get_image
 from database.library_handlers import update_library_image, get_library_details
-
-app = Flask(__name__)
 
 # Initialize the BlobServiceClient
 connect_str = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
