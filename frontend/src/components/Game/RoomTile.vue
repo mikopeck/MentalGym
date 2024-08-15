@@ -71,7 +71,7 @@ export default {
 
 @keyframes flash-highlight {
   0%, 100% { text-shadow: 0px 0px 10px var(--black-back), 0px 0px 20px var(--black-back), 0px 0px 30px var(--black-back), 0px 0px 40px var(--black-back); }
-  50% { text-shadow: 0px 0px 10px var(--highlight-color), 0px 0px 20px var(--highlight-color), 0px 0px 30px var(--highlight-color), 0px 0px 40px var(--highlight-color); }
+  50% { text-shadow: 0px 0px 10px var(--light-highlight), 0px 0px 20px var(--light-highlight), 0px 0px 30px var(--light-highlight), 0px 0px 40px var(--light-highlight); }
 }
 
 .flashing {
