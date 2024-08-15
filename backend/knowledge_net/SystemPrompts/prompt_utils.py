@@ -50,7 +50,7 @@ def sys_lib_room(library_id):
         system_message = file.read()
 
     if "{library-topic}" in system_message:
-        lib_topic = get_library_room_names(library_id)
+        lib_topic = get_library_topic(library_id)
         system_message = system_message.replace("{library-topic}", lib_topic)
 
     if "{library-map}" in system_message:
@@ -67,9 +67,11 @@ def sys_lib_room(library_id):
         system_message = system_message.replace("{library-settings}", meaningful_message)
 
     if "{library-context}" in system_message:
-        response = get_library_content(library_id)
-        content, status = response.get_json(), response.status_code
+        json_response, status = get_library_content(library_id)
+        
         if status == 200:
-            system_message = system_message.replace("{library-context}", content['library_content'])
+            content_dict = json_response.get_json()
+            content_str = content_dict['library_content']
+            system_message = system_message.replace("{library-context}", content_str)
 
     return system_message
