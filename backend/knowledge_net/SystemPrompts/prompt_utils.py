@@ -3,6 +3,7 @@ from database.library_handlers import (
     get_library_room_names,
     get_library_content,
     get_library_settings,
+    get_library_topic
 )
 
 def create_difficulty_message(difficulty):
@@ -48,6 +49,10 @@ def sys_lib_room(library_id):
     with open(system_message_path, "r") as file:
         system_message = file.read()
 
+    if "{library-topic}" in system_message:
+        lib_topic = get_library_room_names(library_id)
+        system_message = system_message.replace("{library-topic}", lib_topic)
+
     if "{library-map}" in system_message:
         lib_map, status = get_library_room_names(library_id)
         if status == 200:
@@ -62,9 +67,9 @@ def sys_lib_room(library_id):
         system_message = system_message.replace("{library-settings}", meaningful_message)
 
     if "{library-context}" in system_message:
-        content, status = get_library_content(library_id)
+        response = get_library_content(library_id)
+        content, status = response.get_json(), response.status_code
         if status == 200:
-            content_str = "; ".join(f"{k}: {v}" for k, v in content.items())
-            system_message = system_message.replace("{library-context}", content_str)
+            system_message = system_message.replace("{library-context}", content['library_content'])
 
     return system_message

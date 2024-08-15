@@ -132,7 +132,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(5, 1fr);
-  height: 100%;
+  height: 96%;
   aspect-ratio: 1 / 1;
   max-width: 98vmin;
   max-height: 98vmin;

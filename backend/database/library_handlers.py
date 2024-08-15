@@ -379,15 +379,32 @@ def get_library_content(library_id):
     library = Library.query.get(library_id)
     if not library:
         return jsonify({"message": "Library not found"}), 404
+    
     factoids = LibraryFactoid.query.filter_by(library_id=library_id).all()
-    content = {factoid.room_name: factoid.factoid_content for factoid in factoids}
-    return jsonify({"library_content": content}).json["library_content"], 200
+    content_list = []
+    
+    for factoid in factoids:
+        factoid_content = f"Factoid: {factoid.factoid_content}\n"
+        questions = LibraryQuestion.query.filter_by(factoid_id=factoid.id).all()
+        
+        for question in questions:
+            question_content = f"Question: {question.question_text}\n"
+            factoid_content += question_content
+        
+        content_list.append(factoid_content)
+    full_content = "\n".join(content_list)
+    
+    return jsonify({"library_content": full_content}), 200
 
 def get_library_settings(library_id):
     library = Library.query.get(library_id)
     if not library:
         return jsonify({"message": "Library not found"}), 404
     return library.difficulty, library.language, library.language_difficulty, library.context
+
+def get_library_topic(library_id):
+    library = Library.query.get(library_id)
+    return library.library_topic
 
 def is_center_room(library_id, room_name):
     library = Library.query.get(library_id)

@@ -2,6 +2,8 @@ Your task is to generate four factoids, questions, and possible answers about a 
 Make it interesting and engaging so do not ask for dates, names etc. but rather test understanding and present interesting information.
 You will recieve the name of a room in a library, and you must generate the content on the theme of the room.
 Factoids should be about 200 tokens.
+
+The topic of the whole library is {library-topic}.
 {library-settings}
 
 Here is the map of the library where the factoids are:
