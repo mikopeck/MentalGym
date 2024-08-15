@@ -405,10 +405,22 @@ def get_all_feedback():
     feedback_list = Feedback.query.all()
     return [feedback.as_dict() for feedback in feedback_list]
 
-def get_all_user_emails():
-    users = User.query.with_entities(User.email).all()
-    email_list = [user.email for user in users]
-    return email_list
+def get_user_details():
+    users = User.query.all()
+
+    user_details_list = []
+    for user in users:
+        user_details = {
+            "email": user.email,
+            "tier": user.tier,
+            "experience_points": user.experience_points,
+            "num_chats": len(user.chats),
+            "num_lessons": len(user.lessons),
+            "num_libraries": len(user.libraries)
+        }
+        user_details_list.append(user_details)
+
+    return user_details_list
 
 
 ### GRAPHS ###

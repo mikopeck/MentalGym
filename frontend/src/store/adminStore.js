@@ -13,6 +13,7 @@ export const useAdminStore = defineStore('admin', {
       try {
         const response = await axios.get('/api/admin/feedback');
         this.feedback = response.data;
+        console.log(response.data);
       } catch (error) {
         this.error = error;
       }
@@ -21,6 +22,7 @@ export const useAdminStore = defineStore('admin', {
       try {
         const response = await axios.get('/api/admin/user-emails');
         this.userEmails = response.data;
+        console.log(response.data);
       } catch (error) {
         this.error = error;
       }

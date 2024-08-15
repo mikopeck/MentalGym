@@ -20,5 +20,5 @@ def init_admin_routes(app):
         if current_user.email != 'mikopeck@gmail.com':
             return jsonify({"error": "Unauthorized access"}), 403
 
-        emails = dbh.get_all_user_emails()
+        emails = dbh.get_user_details()
         return jsonify(emails), 200

@@ -26,6 +26,7 @@ def upload_file_to_blob(file_content, file_name):
         print("Upload successful!")
     except Exception as e:
         print("Failed to upload:", e)
+        return
     print(blob_client.url)
     return blob_client.url
 
