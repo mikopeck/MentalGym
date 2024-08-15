@@ -114,6 +114,7 @@ export default {
   },
   methods: {
     navigateLibrary() {
+      this.gameStore.completed = false;
       this.$router.push("/library");
     },
     navigateBack() {
@@ -161,6 +162,7 @@ export default {
       }
     },
     navigateMap() {
+      this.gameStore.completed = false;
       this.$router.push("/knowledge?node=" + this.gameStore.roomNames[12]);
     },
     toggleFeedback() {
