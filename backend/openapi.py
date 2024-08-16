@@ -7,7 +7,7 @@ import os
 #### settings ####
 max_retries = 5
 delay = 3
-request_timeout = 60  # Timeout for API requests in seconds
+request_timeout = 60
 
 TOKEN_CAP = 500
 LESSON_TOKENS = 1500
@@ -137,7 +137,20 @@ def get_embeddings(strings_list):
         return None
     
 
-def get_image(prompt, resolution="1024x1024"):
+def get_image(prompt):
+    # Enhance the prompt 
+    system_message = {
+        "role": "system",
+        "content": "Your task is to reply with a description of a desired image, including scenery, characters, atmosphere, other objects, and any specific styles or themes.Reply only with an improved image description."
+    }
+    user_message = {
+        "role": "user",
+        "content": prompt
+    }
+    response = generate_response("system", [system_message, user_message])
+    enhanced_prompt = response["choices"][0]["message"]["content"]
+    
+    # Fal Flux/shnell
     headers = {
         "Authorization": f'Key {os.getenv("FAL_API_KEY")}',
         "Content-Type": "application/json"
@@ -146,7 +159,7 @@ def get_image(prompt, resolution="1024x1024"):
     for attempt in range(max_retries):
         try:
             data = {
-                "prompt": prompt,
+                "prompt": enhanced_prompt,
                 "image_size": "square",
                 "num_inference_steps": 4,
                 "num_images": 1,
