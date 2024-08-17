@@ -108,7 +108,7 @@ export default {
   height: 100%;
   aspect-ratio: 1 / 1;
   max-width: 100%;
-  z-index: 1000;
+  z-index: 110;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -137,7 +137,7 @@ export default {
     var(--background-color-1t)
   );
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1001;
+  z-index: 111;
   font-size: 1.2em;
 }
 

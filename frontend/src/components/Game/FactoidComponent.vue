@@ -48,7 +48,7 @@ export default {
   height: 100%;
   aspect-ratio: 1 / 1;
   max-width: 100%;
-  z-index: 1000;
+  z-index: 110;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -70,7 +70,7 @@ export default {
   align-items: center;
   text-align: left;
   padding: 1em;
-  z-index: 1001;
+  z-index: 111;
   font-size: 1.2em;
   background-color: var(--background-haze);
   box-shadow: 0 16px 16px var(--background-color-2t), 0 -16px 16px var(--background-color-2t); 
