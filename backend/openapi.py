@@ -141,7 +141,7 @@ def get_image(prompt):
     # Enhance the prompt 
     system_message = {
         "role": "system",
-        "content": "Your task is to reply with a description of a desired image, including scenery, characters, atmosphere, other objects, and any specific styles or themes to match the topic. Feel free to make up the specific decorations and scenery so that it is maximally related to the topic of the library. Reply only with an improved image description."
+        "content": "Your task is to reply with a description of a desired image, including scenery, characters, atmosphere, other objects, and any specific styles or themes to match the topic. Feel free to make up the specific decorations and scenery so that it is maximally related to the topic of the library - focus on maybe two or three specific things to include of your own choosing to depict the topic. Reply only with an improved image description."
     }
     user_message = {
         "role": "user",
