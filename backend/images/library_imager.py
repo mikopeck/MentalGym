@@ -32,13 +32,13 @@ def upload_file_to_blob(file_content, file_name):
 
 def get_guide_description(guide):
     if guide == "Bubbles":
-        return "cheerful blue otter with a shiny, sleek fur and smile, playing with bubbles,"
+        return "cheerful blue otter with a shiny, sleek fur and smile,"
     elif guide == "Irona":
-        return "strict red fox with sharp eyes, a stern expression, wearing a black suit, pointing at something,"
+        return "strict red fox with sharp eyes, a stern expression, wearing a black suit,"
     elif guide == "Sterling":
-        return "gray horse with a strong, muscular build and a well-kept mane, standing tall with a confident posture in a proffessors coat and with square glasses,"
+        return "serious gray horse with a strong, muscular build and a well-kept mane, in a professors coat and square glasses,"
     else: #"Azalea"
-        return "purple octopus with gracefully flowing tentacles, beckoning you to join,"
+        return "purple curious octopus with gracefully flowing tentacles"
 
 def generate_images_task(id):
     details_response, details_status = get_library_details(id)
