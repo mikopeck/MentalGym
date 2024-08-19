@@ -42,11 +42,10 @@ export default {
   flex-shrink: 0;
   margin: 5px;
   padding: 0.5em;
-  /* background-image: url('@/assets/images/light.webp'); */
   background-size: cover;
   background-position: center;
-  width: 300px;
-  height: 180px;
+  width: 240px;
+  height: 240px;
   border: none;
   cursor: pointer;
   overflow: hidden;
