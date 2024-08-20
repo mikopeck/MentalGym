@@ -11,7 +11,7 @@ def suggest_lessons(user_id, selected_node):
     function = [functions.ExploreTopic]
     function_call = {"name": function[0]['name']}
     messages = create_message(system_msg, user_msg)
-    response = generate_response(user_id, messages, function, function_call)
+    response = generate_response(user_id, messages, function, function_call, temperature=0.7)
     response_message = response["choices"][0]["message"]
     if not response_message.get("function_call"):
         return []

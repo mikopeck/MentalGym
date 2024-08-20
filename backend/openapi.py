@@ -12,15 +12,21 @@ request_timeout = 60
 TOKEN_CAP = 500
 LESSON_TOKENS = 1500
 
-GPT3_5 = "gpt-4o-mini"
+GPT3_5 = "gpt-4o"
 GPT4 = "gpt-4o"
 EMBEDDING_MODEL = "text-embedding-3-small"
+DEFAULT_TEMP = 0.1
 
-def generate_response(user_id, messages, functions=None, function_call="none", model=GPT3_5, tokens=TOKEN_CAP):
+def generate_response(user_id, messages, functions=None, function_call="none", model=GPT3_5, tokens=TOKEN_CAP, temperature=None):
     headers = {
         "Authorization": f"Bearer {openai.api_key}",
         "Content-Type": "application/json"
     }
+
+    if temperature is not None:
+        data_temperature = temperature
+    else:
+        data_temperature = 0.1 if functions else 0.4
 
     for attempt in range(max_retries):
         try:
@@ -28,7 +34,7 @@ def generate_response(user_id, messages, functions=None, function_call="none", m
                 "user": str(user_id),
                 "model": model,
                 "messages": messages,
-                "temperature": 0.1 if functions else 0.4,
+                "temperature": data_temperature,
                 "max_tokens": tokens
             }
 
@@ -141,7 +147,7 @@ def get_image(prompt):
     # Enhance the prompt 
     system_message = {
         "role": "system",
-        "content": "Your task is to reply with a description of a desired image, including scenery, characters, atmosphere, other objects, and any specific styles or themes to match the topic. Feel free to make up the specific decorations and scenery so that it is maximally related to the topic of the library - focus on maybe two or three specific things to include of your own choosing to depict the topic. Reply only with an improved image description."
+        "content": "Your task is to reply with a description of a desired image, including scenery, characters, atmosphere, other objects, and any specific styles or themes to match the topic. Make up specific decorations and scenery or architectural elements so that it is maximally related to the topic of the library. Reply only with an improved image description focusing mainly on what makes the library unique to the topic."
     }
     user_message = {
         "role": "user",

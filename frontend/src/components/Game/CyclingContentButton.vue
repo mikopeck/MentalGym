@@ -1,36 +1,48 @@
-<!-- ContentButton.vue -->
 <template>
-  <button
-    @click="navigateToContent(role)"
-    :class="['content-button', isCompleted ? 'completed-button' : '']"
+  <div
+    class="cycling-content-button"
+    :class="isCompleted ? 'completed-button' : ''"
   >
-    <!-- <span v-if="showType" class="emoji-indicator">{{
-      getEmojiForContentType
-    }}</span> -->
-    <div class="content-name">{{ contentWithoutEmoji }}</div>
-    <span v-if="hasContentEmoji" class="emoji-indicator">{{
-      extractedEmoji
-    }}</span>
-  </button>
+    <button @click="prevOption" class="arrow-button left-arrow">
+      &#x25C0; <!-- Left arrow character -->
+    </button>
+
+    <button @click="navigateToContent(role)" class="content-display">
+      <div class="content-name">{{ contentWithoutEmoji }}</div>
+      <span v-if="hasContentEmoji" class="emoji-indicator">{{
+        extractedEmoji
+      }}</span>
+    </button>
+
+    <button @click="nextOption" class="arrow-button right-arrow">
+      &#x25B6; <!-- Right arrow character -->
+    </button>
+  </div>
 </template>
 
 <script>
 export default {
   props: {
+    options: {
+      type: Array,
+      required: true,
+    },
     showType: {
       type: Boolean,
       default: true,
     },
-    content: String,
     role: String,
     content_type: String,
   },
-  methods: {
-    navigateToContent(role) {
-      this.$emit("navigate", role);
-    },
+  data() {
+    return {
+      currentIndex: 0,
+    };
   },
   computed: {
+    content() {
+      return this.options[this.currentIndex];
+    },
     isCompleted() {
       return String(this.role).includes("?completed");
     },
@@ -62,13 +74,45 @@ export default {
       return this.content.replace(this.extractedEmoji, "").trim();
     },
   },
+  methods: {
+    navigateToContent(role) {
+      this.$emit("navigate", role);
+    },
+    nextOption() {
+      if (this.currentIndex < this.options.length - 1) {
+        this.currentIndex++;
+      } else {
+        this.currentIndex = 0;
+      }
+    },
+    prevOption() {
+      if (this.currentIndex > 0) {
+        this.currentIndex--;
+      } else {
+        this.currentIndex = this.options.length - 1;
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
-.content-button {
+.cycling-content-button {
   display: flex;
-  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  padding: 0 10px;
+}
+
+.content-display {
+  display: flex;
   align-items: center;
   justify-content: center;
   padding: 0.5rem 1rem;
@@ -77,20 +121,16 @@ export default {
   border-radius: 8px;
   cursor: pointer;
   text-align: center;
-  position: relative;
   transition: border-color 0.3s ease;
+  position: relative;
 }
 
 .content-name {
   padding: 8px;
 }
 
-.content-button .emoji-indicator {
+.emoji-indicator {
   font-size: 1.5rem;
-}
-
-.content-button:hover {
-  border-color: #6a2bc2b3;
 }
 
 .completed-button {

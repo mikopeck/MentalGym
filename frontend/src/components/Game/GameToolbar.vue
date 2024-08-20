@@ -69,13 +69,13 @@ export default {
       return `${this.gameStore.score}%`;
     },
     score() {
-      return this.gameStore.score;
+      return this.gameStore.score + " (+" +this.gameStore.multiplier+")";
     },
     discovery() {
       return this.authStore.cloudTokens;
     },
     isCompletable() {
-      return this.score >= 100;
+      return this.gameStore.score >= 100;
     },
     likeText() {
       return this.isLiked ? 'Liked 👍' : 'Like 👍';

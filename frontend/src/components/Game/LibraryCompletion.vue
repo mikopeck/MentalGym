@@ -4,15 +4,14 @@
       <div class="celebratory-message">🎉 Congratulations! 🎉</div>
       <div v-if="suggestions.length" class="suggestions-container">
         <div>{{ loading ? "Loading..." : "Continue with..." }}</div>
-        <ContentButton
-          v-for="(suggestion, index) in suggestions"
-          :key="index"
-          :name="suggestion"
-          :content="suggestion"
+        <CyclingContentButton
+          :options="suggestions"
+          :role="someRole"
+          :content_type="someContentType"
           :showType="false"
-          @navigate="startSuggestion(suggestion)"
+          @navigate="startSuggestion"
           class="suggestion-button"
-        ></ContentButton>
+        />
       </div>
       <div v-if="loggedIn" class="what-next-container">
         <div class="nav-row">
@@ -77,7 +76,7 @@ import { usePopupStore } from "@/store/popupStore";
 import { useAuthStore } from "@/store/authStore";
 import { useMessageStore } from "@/store/messageStore";
 import { useGameStore } from "@/store/gameStore";
-import ContentButton from "../Chat/ContentButton.vue";
+import CyclingContentButton from "./CyclingContentButton.vue";
 
 export default {
   data() {
@@ -92,7 +91,7 @@ export default {
     };
   },
   components: {
-    ContentButton,
+    CyclingContentButton,
   },
   computed: {
     gameStore() {
@@ -284,6 +283,10 @@ export default {
   margin-bottom: 5px;
 }
 
+.nav-button {
+  font-size: 1em;
+}
+
 .share-container {
   display: flex;
   justify-content: center;
@@ -409,5 +412,4 @@ export default {
 .suggestion-button {
   margin: 2px;
 }
-
 </style>
