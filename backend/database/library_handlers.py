@@ -425,8 +425,6 @@ def update_game_end(user_id, library_id, score, is_complete):
             if score > existing_completion.score:
                 existing_completion.score = score
                 user.experience_points += (score - existing_completion.score)
-            else:
-                return jsonify({'status': 'success', 'message': 'Existing score higher, no update performed'}), 200
         else:
             completion = LibraryCompletion(library_id=library_id, user_id=user_id, score=score, is_complete=is_complete)
             db.session.add(completion)

@@ -1,58 +1,13 @@
 from datetime import datetime, timedelta
 from sqlalchemy import func, extract
-from collections import defaultdict
-from database.models import db, Challenge, Lesson
-from utils import extract_single_emoji
-
-def get_pie_chart_data(user_id):
-    lessons_by_topic = db.session.query(
-        Lesson.lesson_name
-    ).filter_by(user_id=user_id).all()
-
-    challenges_by_topic = db.session.query(
-        Challenge.challenge_name
-    ).filter_by(user_id=user_id).all()
-
-    topic_counts = defaultdict(int)
-    for lesson_name in lessons_by_topic:
-        emoji = extract_single_emoji(lesson_name[0])
-        if emoji:
-            topic_counts[emoji] += 1
-
-    for challenge_name in challenges_by_topic:
-        emoji = extract_single_emoji(challenge_name[0])
-        if emoji:
-            topic_counts[emoji] += 1
-
-    sorted_topics = sorted(topic_counts.items(), key=lambda x: x[1], reverse=True)
-    top_10_topics = sorted_topics[:10]
-    other_count = sum([count for _, count in sorted_topics[10:]])
-    
-    if other_count > 0:
-        top_10_topics.append(('Others', other_count))
-
-    labels = [emoji for emoji, _ in top_10_topics]
-    data_values = [count for _, count in top_10_topics]
-    backgroundColors = ['#b284e0', '#84e0c1','#d8c58c','#9384e0', '#84e0b2', '#84b2e0']
-
-    pie_chart_data = {
-        'labels': labels,
-        'datasets': [{
-            'label': '',
-            'data': data_values,
-            'backgroundColor': backgroundColors[:len(data_values)],
-            'hoverOffset': 4
-        }]
-    }
-
-    return pie_chart_data
+from database.models import db, LibraryCompletion, Lesson
 
 def get_line_graph_data(user_id):
     # Query the database for lessons completed by day, month, and year
     lessons_over_time = db.session.query(
-        extract('day', Lesson.completion_date),
-        extract('month', Lesson.completion_date),
-        extract('year', Lesson.completion_date),
+        extract('day', Lesson.completion_date).label('day'),
+        extract('month', Lesson.completion_date).label('month'),
+        extract('year', Lesson.completion_date).label('year'),
         func.count(Lesson.id).label('lessons_count')
     ).filter_by(user_id=user_id).group_by(
         extract('day', Lesson.completion_date),
@@ -60,73 +15,91 @@ def get_line_graph_data(user_id):
         extract('year', Lesson.completion_date)
     ).all()
 
-    # If there are no lessons completed, return None
-    if not lessons_over_time:
-        return None
+    # Query the database for completed libraries with their scores
+    libraries_over_time = db.session.query(
+        extract('day', LibraryCompletion.completion_date).label('day'),
+        extract('month', LibraryCompletion.completion_date).label('month'),
+        extract('year', LibraryCompletion.completion_date).label('year'),
+        func.sum(LibraryCompletion.score).label('total_score')
+    ).filter_by(user_id=user_id, is_complete=True).group_by(
+        extract('day', LibraryCompletion.completion_date),
+        extract('month', LibraryCompletion.completion_date),
+        extract('year', LibraryCompletion.completion_date)
+    ).all()
 
-    # Initialize a dictionary to store data for each date with zero lessons count
+    if not lessons_over_time and not libraries_over_time:
+        return None
+    
+    # Initialize a dictionary to store data for each date
     merged_data = {}
-    for day, month, year, count in lessons_over_time:
+
+    # Add lessons data to merged_data
+    for day, month, year, lessons_count in lessons_over_time:
         if day is None or month is None or year is None:
             continue
         date_key = datetime(year, month, day)
-        merged_data[date_key] = {"lessons": count}
+        if date_key not in merged_data:
+            merged_data[date_key] = {"exp": 0}
+        merged_data[date_key]["exp"] += lessons_count * 100  # 100 EXP per lesson
+
+    # Add library data to merged_data
+    for day, month, year, total_score in libraries_over_time:
+        if day is None or month is None or year is None:
+            continue
+        date_key = datetime(year, month, day)
+        if date_key not in merged_data:
+            merged_data[date_key] = {"exp": 0}
+        merged_data[date_key]["exp"] += total_score  # Add score as EXP for completed libraries
 
     # Prepare the final dataset
-    data = [{"date": key.strftime('%Y-%m-%d'), "lessons": value["lessons"]} for key, value in merged_data.items()]
+    data = [{"date": key.strftime('%Y-%m-%d'), "exp": value["exp"]} for key, value in merged_data.items()]
     data = sorted(data, key=lambda x: x["date"])
     dates = [item['date'] for item in data]
-    lessons = [item['lessons'] for item in data]
-    cumulative_lessons = [sum(lessons[:i+1]) for i in range(len(lessons))]
+    exp_values = [item['exp'] for item in data]
+    cumulative_exp = [sum(exp_values[:i+1]) for i in range(len(exp_values))]
 
     return {
         "labels": dates,
         "backgroundColor": '#84b2e0',
         "datasets": [{
-            "label": "Lessons📖",
-            "data": cumulative_lessons,
+            "label": "Experience🌟",
+            "data": cumulative_exp,
             "backgroundColor": '#84b2e0',
             "borderColor": '#84b2e0',
         }]
     }
 
-def get_top_topics(user_id):
-    pie_data = get_pie_chart_data(user_id)
-    combined_data = list(zip(pie_data['labels'], pie_data['datasets'][0]['data']))
-    sorted_combined_data = sorted(combined_data, key=lambda x: x[1], reverse=True)[:5]
-    return {label: value for label, value in sorted_combined_data}
-
-def get_active_and_completed(user_id, total_lessons, total_challenges):
+def get_active_and_completed(user_id, total_lessons, total_librarys):
     active_lessons = db.session.query(func.count(Lesson.id)).filter_by(user_id=user_id, completion_date=None).scalar()
     completed_lessons = total_lessons - active_lessons
 
-    active_challenges = db.session.query(func.count(Challenge.id)).filter_by(user_id=user_id, completion_date=None).scalar()
-    completed_challenges = total_challenges - active_challenges
+    active_librarys = db.session.query(func.count(LibraryCompletion.id)).filter_by(user_id=user_id, is_complete=False).scalar()
+    completed_librarys = total_librarys - active_librarys
 
-    return active_lessons, completed_lessons, active_challenges, completed_challenges
+    return active_lessons, completed_lessons, active_librarys, completed_librarys
 
-def get_percent_completed(completed_lessons, total_lessons, completed_challenges, total_challenges):
+def get_percent_completed(completed_lessons, total_lessons, completed_librarys, total_librarys):
     percent_completed_lessons = round((completed_lessons / total_lessons) * 100, 2) if total_lessons else 0
-    percent_completed_challenges = round((completed_challenges / total_challenges) * 100, 2) if total_challenges else 0
+    percent_completed_librarys = round((completed_librarys / total_librarys) * 100, 2) if total_librarys else 0
 
-    return percent_completed_lessons, percent_completed_challenges
+    return percent_completed_lessons, percent_completed_librarys
 
 def get_content_per_day(user_id):
     lessons_per_day = db.session.query(Lesson.completion_date, func.count(Lesson.id)).filter_by(user_id=user_id).group_by(Lesson.completion_date).all()
-    challenges_per_day = db.session.query(Challenge.completion_date, func.count(Challenge.id)).filter_by(user_id=user_id).group_by(Challenge.completion_date).all()
+    librarys_per_day = db.session.query(LibraryCompletion.completion_date, func.count(LibraryCompletion.id)).filter_by(user_id=user_id).group_by(LibraryCompletion.completion_date).all()
 
-    return dict(lessons_per_day), dict(challenges_per_day)
+    return dict(lessons_per_day), dict(librarys_per_day)
 
-def get_streak(lessons_per_day, challenges_per_day):
+def get_streak(lessons_per_day, librarys_per_day):
     streak = 0
     current_streak = 0
     today = datetime.now().date()
     last_date = today
 
     lessons_dates = {k: v for k, v in lessons_per_day.items() if k is not None}
-    challenges_dates = {k: v for k, v in challenges_per_day.items() if k is not None}
+    librarys_dates = {k: v for k, v in librarys_per_day.items() if k is not None}
 
-    combined_dates = sorted(set(lessons_dates) | set(challenges_dates))
+    combined_dates = sorted(set(lessons_dates) | set(librarys_dates))
 
     for date in combined_dates:
         if date == last_date - timedelta(days=1):
@@ -141,30 +114,27 @@ def get_streak(lessons_per_day, challenges_per_day):
 
 def get_stats(user_id):
     total_lessons = db.session.query(func.count(Lesson.id)).filter_by(user_id=user_id).scalar()
-    total_challenges = db.session.query(func.count(Challenge.id)).filter_by(user_id=user_id).scalar()
+    total_librarys = db.session.query(func.count(LibraryCompletion.id)).filter_by(user_id=user_id).scalar()
 
-    top_topics = get_top_topics(user_id)
-    
-    active_lessons, completed_lessons, active_challenges, completed_challenges = get_active_and_completed(user_id, total_lessons, total_challenges)
-    percent_completed_lessons, percent_completed_challenges = get_percent_completed(completed_lessons, total_lessons, completed_challenges, total_challenges)
-    lessons_per_day, challenges_per_day = get_content_per_day(user_id)
-    max_streak, current_streak = get_streak(lessons_per_day, challenges_per_day)
+    active_lessons, completed_lessons, active_librarys, completed_librarys = get_active_and_completed(user_id, total_lessons, total_librarys)
+    percent_completed_lessons, percent_completed_librarys = get_percent_completed(completed_lessons, total_lessons, completed_librarys, total_librarys)
+    lessons_per_day, librarys_per_day = get_content_per_day(user_id)
+    max_streak, current_streak = get_streak(lessons_per_day, librarys_per_day)
 
     data = {
-        "totalCompleted": completed_lessons + completed_challenges,
+        "totalCompleted": completed_lessons + completed_librarys,
         "totalLessons": total_lessons,
         "activeLessons": active_lessons,
         "completedLessons": completed_lessons,
-        "totalChallenges": total_challenges,
-        "activeChallenges": active_challenges,
-        "completedChallenges": completed_challenges,
+        "totalLibrarys": total_librarys,
+        "activeLibrarys": active_librarys,
+        "completedLibrarys": completed_librarys,
         "percentCompletedLessons": percent_completed_lessons,
-        "percentCompletedChallenges": percent_completed_challenges,
+        "percentCompletedLibrarys": percent_completed_librarys,
         "lessonsPerDay": lessons_per_day,
-        "challengesPerDay": challenges_per_day,
+        "librarysPerDay": librarys_per_day,
         "maxStreak": max_streak,
         "currentStreak": current_streak,
-        "topTopics": top_topics,
     }
 
     return data

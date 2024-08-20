@@ -1,7 +1,7 @@
 from flask import jsonify, request
 from flask_login import login_required, current_user
 
-from stats import get_line_graph_data, get_pie_chart_data, get_stats
+from stats import get_line_graph_data, get_stats
 from knowledge_net.graph_calc import get_graph_data
 from knowledge_net.explore import suggest_lessons
 
@@ -11,22 +11,19 @@ def init_graph_routes(app):
     @login_required
     def get_user_progress():
         line_graph_data = get_line_graph_data(current_user.id)
-        pie_chart_data = get_pie_chart_data(current_user.id)
         stats = get_stats(current_user.id)
 
         data = {
             "lineGraph": line_graph_data,
-            "pieChart": pie_chart_data,
             "totalCompleted": stats['totalCompleted'],
             "totalLessons": stats['totalLessons'],
             "activeLessons": stats['activeLessons'],
             "completedLessons": stats['completedLessons'],
-            "totalLessons": stats['totalLessons'],
-            "activeLessons": stats['activeLessons'],
-            "completedLessons": stats['completedLessons'],
+            "totalLibrarys": stats['totalLibrarys'],
+            "activeLibrarys": stats['activeLibrarys'],
+            "completedLibrarys": stats['completedLibrarys'],
             "percentCompletedLessons": stats['percentCompletedLessons'],
-            "percentCompletedLessons": stats['percentCompletedLessons'],
-            "topTopics": stats['topTopics'],
+            "percentCompletedLibrarys": stats['percentCompletedLibrarys'],
             "maxStreak": stats['maxStreak'],
             "currentStreak": stats['currentStreak']
         }

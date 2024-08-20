@@ -189,3 +189,4 @@ def get_image(prompt):
     else:
         print("Max retries reached. Unable to generate image.")
         return None
+

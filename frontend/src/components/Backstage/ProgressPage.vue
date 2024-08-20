@@ -33,88 +33,71 @@
           <thead>
             <tr>
               <th></th>
-              <th>📖</th>
-              <th>🎯</th>
+              <th>🏛Libraries</th>
+              <th>📖Lessons</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><span class="stat-label">Total</span></td>
               <td>
-                <span class="stat-value">{{ totalLessons }}</span>
+                <span class="stat-value">{{ totalLibraries }}</span>
               </td>
               <td>
-                <span class="stat-value">{{ totalLibraries }}</span>
+                <span class="stat-value">{{ totalLessons }}</span>
               </td>
             </tr>
             <tr>
               <td><span class="stat-label">Percentage Completed</span></td>
               <td>
-                <span class="stat-value">{{ percentCompletedLessons }}%</span>
-              </td>
-              <td>
                 <span class="stat-value"
                   >{{ percentCompletedLibraries }}%</span
                 >
+              </td>
+              <td>
+                <span class="stat-value">{{ percentCompletedLessons }}%</span>
               </td>
             </tr>
             <tr>
               <td><span class="stat-label">Completed</span></td>
               <td>
-                <span class="stat-value">{{ completedLessons }}</span>
+                <span class="stat-value">{{ completedLibraries }}</span>
               </td>
               <td>
-                <span class="stat-value">{{ completedLibraries }}</span>
+                <span class="stat-value">{{ completedLessons }}</span>
               </td>
             </tr>
             <tr>
               <td><span class="stat-label">Active</span></td>
               <td>
-                <span class="stat-value">{{ activeLessons }}</span>
+                <span class="stat-value">{{ activeLibraries }}</span>
               </td>
               <td>
-                <span class="stat-value">{{ activeLibraries }}</span>
+                <span class="stat-value">{{ activeLessons }}</span>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-
-    <div class="progress-section" v-if="dataLoaded && currentPageIndex === 2">
-      <PieChart :data="topicDistribution" />
-      <div class="statistics topic-distribution-statistics">
-        <div v-for="(value, topic) in topTopics" :key="topic" class="stat-item">
-          <span class="stat-value">{{ value }}</span>
-          <span class="stat-label">{{ topic }}</span>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
-
 
 <script>
 import axios from "axios";
 import ProgressGraph from "../Graphs/ProgressGraph.vue";
-import PieChart from "../Graphs/PieChart.vue";
 import MenuButton from "../Menus/MenuButton.vue";
 
 export default {
   name: "ProgressPage",
   components: {
     ProgressGraph,
-    PieChart,
     MenuButton,
   },
   data() {
     return {
       currentPageIndex: 0,
       userProgress: {
-        type: Object,
-        default: () => ({ labels: [], datasets: [] }),
-      },
-      topicDistribution: {
         type: Object,
         default: () => ({ labels: [], datasets: [] }),
       },
@@ -127,7 +110,6 @@ export default {
       completedLibraries: 0,
       percentCompletedLessons: 0,
       percentCompletedLibraries: 0,
-      topTopics: {},
       maxStreak: 0,
       currentStreak: 0,
       dataLoaded: false,
@@ -139,8 +121,6 @@ export default {
         return "📈";
       } else if (this.currentPageIndex == 1) {
         return "🧮";
-      } else if (this.currentPageIndex == 2) {
-        return "📚";
       } else {
         return "";
       }
@@ -150,8 +130,6 @@ export default {
         return "Progress Overview";
       } else if (this.currentPageIndex == 1) {
         return "Detailed Statistics";
-      } else if (this.currentPageIndex == 2) {
-        return "Topic Distribution";
       } else {
         return "";
       }
@@ -162,22 +140,19 @@ export default {
       const response = await axios.get("/api/user-progress");
       if (response.data.status === "success") {
         this.userProgress = response.data.progress.lineGraph;
-        this.topicDistribution = response.data.progress.pieChart;
         this.totalCompleted = response.data.progress.totalCompleted;
         this.totalLessons = response.data.progress.totalLessons;
         this.activeLessons = response.data.progress.activeLessons;
         this.completedLessons = response.data.progress.completedLessons;
-        this.totalLibraries = response.data.progress.totalLibraries;
-        this.activeLibraries = response.data.progress.activeLibraries;
-        this.completedLibraries = response.data.progress.completedLibraries;
+        this.totalLibraries = response.data.progress.totalLibrarys;
+        this.activeLibraries = response.data.progress.activeLibrarys;
+        this.completedLibraries = response.data.progress.completedLibrarys;
         this.percentCompletedLessons =
           response.data.progress.percentCompletedLessons;
         this.percentCompletedLibraries =
-          response.data.progress.percentCompletedLibraries;
-        this.topTopics = response.data.progress.topTopics;
+          response.data.progress.percentCompletedLibrarys;
         this.maxStreak = response.data.progress.maxStreak;
         this.currentStreak = response.data.progress.currentStreak;
-        // console.log(response.data);
         this.dataLoaded = true;
       } else {
         console.error("Failed to fetch user progress");
@@ -188,7 +163,7 @@ export default {
   },
   methods: {
     changePage(direction) {
-      const maxPageIndex = 2;
+      const maxPageIndex = 1;
       this.currentPageIndex += direction;
       if (this.currentPageIndex < 0) {
         this.currentPageIndex = maxPageIndex;
@@ -289,7 +264,4 @@ table {
   table-layout: fixed;
 }
 
-/* th, td {
-  text-align: center;
-} */
 </style>

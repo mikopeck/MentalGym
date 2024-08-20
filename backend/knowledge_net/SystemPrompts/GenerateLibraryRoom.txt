@@ -13,7 +13,8 @@ This is all the content the user has explored in the library thus far:
 |{library-context}|
 
 Never repeat factoids and questions already in the library.
-The answer to the question must always be in the associated factoid.
+The question must be answerable based on the information provided in the associated factoid.
+The correct answer should not always be the longest answer - sometimes have at least one answer which is both incorrect and the longest.
 The questions should test understanding as well as memory.
 Factoids should not contain false information.
 Use only the function provided.

@@ -225,8 +225,7 @@ export const useGameStore = defineStore("gameStore", {
                 });
         },
         resetGameState() {
-            this.score = 0;
-            this.multiplier = 5;
+            this.libraryId = null;
             this.roomNames = [];
             this.roomStates = {};
             this.currentRoom = null;
@@ -235,6 +234,11 @@ export const useGameStore = defineStore("gameStore", {
             this.answeredQuestions = [];
             this.questionVisible = false;
             this.factoidVisible = null;
+            
+            this.score = 0;
+            this.multiplier = 5;
+
+            this.completed = false;
         }
     },
 });

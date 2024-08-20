@@ -1,10 +1,10 @@
 <template>
   <div class="room-tile">
-    <button class="icon map" :class="{flashing: completedRoom}" @click="mapClick">◀️🏛</button>
-    <button class="icon exclamation-top-left" :class="{flashing: !completedRoom}" @click="exclamationClick(0)">!</button>
-    <button class="icon exclamation-top-right" :class="{flashing: !completedRoom}" @click="exclamationClick(1)">!</button>
-    <button class="icon exclamation-bottom-left" :class="{flashing: !completedRoom}" @click="exclamationClick(2)">!</button>
-    <button class="icon exclamation-bottom-right" :class="{flashing: !completedRoom}" @click="exclamationClick(3)">!</button>
+    <button class="icon map" :class="{flashing: completedRoom}" @click.stop="mapClick">◀️🏛</button>
+    <button class="icon exclamation-top-left" :class="{flashing: !completedRoom}" @click.stop="exclamationClick(0)">!</button>
+    <button class="icon exclamation-top-right" :class="{flashing: !completedRoom}" @click.stop="exclamationClick(1)">!</button>
+    <button class="icon exclamation-bottom-left" :class="{flashing: !completedRoom}" @click.stop="exclamationClick(2)">!</button>
+    <button class="icon exclamation-bottom-right" :class="{flashing: !completedRoom}" @click.stop="exclamationClick(3)">!</button>
     <button class="icon question-mark" :class="{flashing: !completedRoom}" v-if="!completedRoom" @click="questionClick">?</button>
   </div>
 </template>

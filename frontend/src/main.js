@@ -34,13 +34,13 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
   const gameStore = useGameStore();
 
-  if (from.path.startsWith('/library/') && to.path.startsWith('/library/')) {
-    const fromLibraryId = from.path.split('/')[2];
-    const toLibraryId = to.path.split('/')[2];
+  if (from.path.startsWith('/library/')){
+    gameStore.resetGameState();
+  }
 
-    if (fromLibraryId !== toLibraryId) {
-      gameStore.fetchLibraryDetails(toLibraryId);
-    }
+  if(to.path.startsWith('/library/')) {
+    const toLibraryId = to.path.split('/')[2];
+    gameStore.fetchLibraryDetails(toLibraryId);
   }
 
   if (!authStore.loggedIn && to.path === '/') {

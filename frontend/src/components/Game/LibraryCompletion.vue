@@ -114,7 +114,6 @@ export default {
   },
   methods: {
     navigateLibrary() {
-      this.gameStore.completed = false;
       this.$router.push("/library");
     },
     navigateBack() {
@@ -154,7 +153,6 @@ export default {
 
         // Set the room names in the store
         this.loading = false;
-        this.gameStore.completed = false;
         this.$router.push(`/library/${libraryId}`);
         this.gameStore.fetchLibraryDetails(libraryId);
       } catch (error) {
@@ -162,7 +160,6 @@ export default {
       }
     },
     navigateMap() {
-      this.gameStore.completed = false;
       this.$router.push("/knowledge?node=" + this.gameStore.roomNames[12]);
     },
     toggleFeedback() {
