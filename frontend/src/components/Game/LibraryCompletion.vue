@@ -156,7 +156,6 @@ export default {
         // Set the room names in the store
         this.loading = false;
         this.$router.push(`/library/${libraryId}`);
-        this.gameStore.fetchLibraryDetails(libraryId);
       } catch (error) {
         this.loading = false;
       }
