@@ -12,7 +12,7 @@
                 type="text"
                 id="topicInput"
                 v-model="topic"
-                placeholder="Choose any topic"
+                placeholder="What to learn about"
                 maxlength="200"
                 @focus="selectInputText"
               />
@@ -94,7 +94,7 @@
       <CtaButton
         :buttonText="submitButtonText"
         @click="handleSubmit"
-        :disabled="isSubmitting"
+        :isSubmitting="isSubmitting"
       />
 
       <library-browser />
@@ -165,7 +165,6 @@ export default {
       axios
         .post("/api/library/generate", postData)
         .then((response) => {
-          // s("Success:", response);
           const libraryId = response.data.library_id;
           this.$router.push(`/library/${libraryId}`);
         })
@@ -177,6 +176,10 @@ export default {
               "You have reached the limit.</br>Please login to continue."
             );
             this.$router.push("/login");
+          }
+          if (error.response && error.response.status === 400 && error.response.data && error.response.data.error) {
+            const popupStore = usePopupStore();
+            popupStore.showPopup(error.response.data.error);
           }
         })
         .finally(() => {

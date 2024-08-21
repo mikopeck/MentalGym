@@ -4,6 +4,7 @@ from flask import request, jsonify
 from flask_login import current_user, AnonymousUserMixin
 from bleach import clean
 from flask_executor import Executor
+from concurrent.futures import Future
 
 from openapi import moderate
 import database.library_handlers as lbh
@@ -54,16 +55,7 @@ def init_library_routes(app):
             extra_context = clean(extra_context)
         if extra_context and len(extra_context) > 200:
                 return jsonify({"error": "Extra context is too long. Maximum 200 characters allowed."}), 400
-        
-        content_for_moderation = topic
-        if extra_context:
-            content_for_moderation += extra_context
-        violation, message = moderate(content_for_moderation)
-        if violation:
-            if user_id:
-                increment_violations(user_id)
-            return jsonify({"error": f"Message breaks our usage policy. Please check our guidelines.\n{message}"}), 400
-        
+                
         if not extra_context:
             existing_library = lbh.get_library_id(topic, library_difficulty, language, language_difficulty)
             if existing_library:
@@ -71,11 +63,24 @@ def init_library_routes(app):
                     mark_generation_done(ip, 'library')
                 return jsonify(status="success", library_id=existing_library)
 
+        # Start moderation task
+        content_for_moderation = topic
+        if extra_context:
+            content_for_moderation += extra_context
+        moderation_future = executor.submit(moderate, topic)
+
         result = lgn.suggest_library_wing(user_id, topic, library_difficulty, language, language_difficulty,extra_context)
         
         room_names = [room for sublist in result for room in sublist]
-        library_response, status_code = lbh.create_library(user_id, topic, room_names, library_difficulty, language, language_difficulty)
 
+        # Check moderation before continue
+        violation, message = moderation_future.result()
+        if violation:
+            if user_id:
+                increment_violations(user_id)
+            return jsonify({"error": f"Message breaks our usage policy. Please check our guidelines.\n{message}"}), 400
+        
+        library_response, status_code = lbh.create_library(user_id, topic, room_names, library_difficulty, language, language_difficulty)
 
         if status_code == 201:
             library_id = library_response.get_json().get("library_id")

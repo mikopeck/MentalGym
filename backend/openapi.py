@@ -94,8 +94,8 @@ def moderate(user_input):
             if response.status_code == 200:
                 response_data = response.json()
                 output = response_data["results"][0]
-                violation = output["flagged"]
-                print("Moderation completed successfully.")
+                violation = output["flagged"] or any(score > 0.25 for score in output["category_scores"].values())
+                print(f"Moderation completed successfully.\n{output}")
                 return violation, output
             else:
                 print(f"Request failed with status code {response.status_code}. Retrying...")
