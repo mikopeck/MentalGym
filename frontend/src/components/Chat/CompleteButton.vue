@@ -306,7 +306,6 @@ export default {
   padding-top: 2em;
   font-weight: 700;
   opacity: 0.8;
-  font-size: 0.8em;
   transition: opacity 2s;
 }
 
@@ -428,6 +427,9 @@ export default {
 }
 
 .separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding-left: 4px;
   padding-right: 4px;
 }

@@ -1,24 +1,30 @@
 <template>
   <div
     class="cycling-content-button"
-    :class="isCompleted ? 'completed-button' : ''"
+    :class="{ 'completed-button': isCompleted, loading: options.length === 0 }"
   >
     <button @click="prevOption" class="arrow-button left-arrow">
-      &#x25C0; <!-- Left arrow character -->
+      &#x25C0;
+      <!-- Left arrow character -->
     </button>
 
     <button @click="navigateToContent(role)" class="content-display">
-      <div class="content-name">{{ contentWithoutEmoji }}</div>
+      <div v-if="loadedOptions" class="content-name">
+        {{ contentWithoutEmoji }}
+      </div>
+      <div v-else class="content-name">Loading...</div>
       <span v-if="hasContentEmoji" class="emoji-indicator">{{
         extractedEmoji
       }}</span>
     </button>
 
     <button @click="nextOption" class="arrow-button right-arrow">
-      &#x25B6; <!-- Right arrow character -->
+      &#x25B6;
+      <!-- Right arrow character -->
     </button>
   </div>
 </template>
+
 
 <script>
 export default {
@@ -40,6 +46,9 @@ export default {
     };
   },
   computed: {
+    loadedOptions() {
+      return this.options.length > 0;
+    },
     content() {
       return this.options[this.currentIndex];
     },
@@ -95,7 +104,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .cycling-content-button {
   display: flex;
@@ -123,6 +131,10 @@ export default {
   text-align: center;
   transition: border-color 0.3s ease;
   position: relative;
+}
+
+.loading .content-display {
+  opacity: 0.5; /* Adjust opacity for loading state */
 }
 
 .content-name {

@@ -1,8 +1,10 @@
 <template>
+  <transition name="fade">
   <div v-if="completionVisible" class="completion-overlay">
     <div class="completion-content">
       <div class="celebratory-message">🎉 Congratulations! 🎉</div>
-      <div v-if="suggestions.length" class="suggestions-container">
+      <!-- Streak and EXP/lvlup go here -->
+      <div class="suggestions-container">
         <div>{{ loading ? "Loading..." : "Continue with..." }}</div>
         <CyclingContentButton
           :options="suggestions"
@@ -22,7 +24,7 @@
             @click="navigateExplore"
             :disabled="exploreLoading"
           >
-            {{ exploreLoading ? "⏳Loading" : "🔍Explore" }}
+            {{ exploreLoading ? "⏳Loading" : "🔍Suggest again" }}
           </button>
           <div class="separator">|</div>
           <button class="nav-button" @click="navigateMap">🗺️Map</button>
@@ -68,6 +70,7 @@
       </div>
     </div>
   </div>
+  </transition>
 </template>
 
 <script>
@@ -273,7 +276,6 @@ export default {
   padding-top: 2em;
   font-weight: 700;
   opacity: 0.8;
-  font-size: 0.8em;
   transition: opacity 2s;
 }
 
@@ -284,7 +286,7 @@ export default {
 }
 
 .nav-button {
-  font-size: 1em;
+  font-size: 16px;
 }
 
 .share-container {
@@ -401,6 +403,9 @@ export default {
 .separator {
   padding-left: 4px;
   padding-right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .suggestions-container {

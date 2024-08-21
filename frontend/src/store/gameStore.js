@@ -199,10 +199,6 @@ export const useGameStore = defineStore("gameStore", {
             }
         },
         endGame() {
-            if (!confirm(`Are you sure you want to complete this Library with score ${this.score}?`)) {
-                return;
-            }
-
             this.broadcastRoomStates().then(() => {
                 console.log("Final states of all rooms broadcasted successfully.");
             }).catch(error => {
