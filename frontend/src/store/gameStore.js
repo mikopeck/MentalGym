@@ -189,7 +189,6 @@ export const useGameStore = defineStore("gameStore", {
             const subtopic = room_name;
             const response = await axios.post("/api/library/shelves", { libraryId: this.libraryId, subtopic });
             if (response.data.status === "success") {
-                console.log(`Room ${room_name} data:`, response.data.data);
                 this.factoids = response.data.data.factoids;
                 this.currentQuestion = this.roomStates[room_name].currentQuestionIndex;
                 this.answered_questions = this.roomStates[room_name].answered_questions;

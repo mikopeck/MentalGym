@@ -98,7 +98,7 @@ def update_library_room_state(
         room_state.state = new_state
         room_state.answered_questions = answered_questions
         room_state.current_question_index = current_question_index
-        db.session.add(room_state)
+        # db.session.add(room_state)
         db.session.commit()
         return (
             jsonify(
