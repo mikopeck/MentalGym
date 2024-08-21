@@ -1,14 +1,14 @@
 <template>
   <div
     class="cycling-content-button"
-    :class="{ 'completed-button': isCompleted, loading: options.length === 0 }"
+    :class="{ loading: options.length === 0 }"
   >
     <button @click="prevOption" class="arrow-button left-arrow">
       &#x25C0;
       <!-- Left arrow character -->
     </button>
 
-    <button @click="navigateToContent(role)" class="content-display">
+    <button @click="navigateToContent(content)" class="content-display">
       <div v-if="loadedOptions" class="content-name">
         {{ contentWithoutEmoji }}
       </div>
@@ -37,8 +37,6 @@ export default {
       type: Boolean,
       default: true,
     },
-    role: String,
-    content_type: String,
   },
   data() {
     return {
@@ -51,19 +49,6 @@ export default {
     },
     content() {
       return this.options[this.currentIndex];
-    },
-    isCompleted() {
-      return String(this.role).includes("?completed");
-    },
-    getEmojiForContentType() {
-      switch (this.content_type) {
-        case "lesson":
-          return "📖";
-        case "challenge":
-          return "🎯";
-        default:
-          return "☁️";
-      }
     },
     hasContentEmoji() {
       if (!this.content) return false;

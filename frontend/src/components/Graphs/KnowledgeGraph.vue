@@ -6,7 +6,6 @@
 <script>
 import axios from "axios";
 import * as d3 from "d3";
-import { useGameStore } from "@/store/gameStore";
 import { usePopupStore}  from "@/store/popupStore";
 
 export default {
@@ -502,11 +501,6 @@ export default {
         });
 
         const libraryId = libraryResponse.data.library_id;
-
-        // Set the room names in the store
-        const gameStore = useGameStore();
-        gameStore.setId(libraryId);
-
         this.$router.push(`/library/${libraryId}`);
       } catch (error) {
         this.loading = false;

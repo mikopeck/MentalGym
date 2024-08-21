@@ -38,7 +38,7 @@ router.beforeEach((to, from, next) => {
     gameStore.resetGameState();
   }
 
-  if(to.path.startsWith('/library/')) {
+  if(to.path.startsWith('/library/') && from.path.startsWith('/library/')) {
     const toLibraryId = to.path.split('/')[2];
     gameStore.fetchLibraryDetails(toLibraryId);
   }
