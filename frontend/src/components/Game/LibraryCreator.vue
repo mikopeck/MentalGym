@@ -184,7 +184,7 @@ export default {
         /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
       if (urlPattern.test(this.topic)) {
         const popupStore = usePopupStore();
-            popupStore.showPopup("We do not currently support links.</br>Please type a topic like 'Cats' or 'Etiquette around the world'.");
+            popupStore.showPopup("We do not currently support links.</br>Try entering the topic of the website instead.");
         return;
       }
       // if this.topic is a web link (maybe without spaces and includes a dot?)
