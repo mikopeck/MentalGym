@@ -11,6 +11,7 @@
               <input
                 type="text"
                 id="topicInput"
+                ref="topicInput"
                 v-model="topic"
                 placeholder="What to learn about"
                 maxlength="200"
@@ -105,6 +106,10 @@
 <script>
 import axios from "axios";
 import { mapState } from "pinia";
+import {
+  startTypingEffect,
+  stopTypingEffect,
+} from "../../scripts/placeholderTyping.js";
 
 import { useLibGenStore } from "@/store/libGenStore.js";
 import { usePopupStore } from "@/store/popupStore.js";
@@ -118,6 +123,11 @@ export default {
   data() {
     return {
       topic: "",
+      safeTopics: [
+        "Innovative breakdance moves",
+        "How to identify misinformation",
+        "Origins of the Olympic games",
+      ],
       language: "",
       extraContext: "",
       languageDifficulty: "",
@@ -131,8 +141,24 @@ export default {
     this.language = "English";
     this.libraryDifficulty = "Easy";
     this.languageDifficulty = "Normal";
+    if (this.computedTopics.length > 0 && this.$refs.topicInput) {
+      this.typingInterval = startTypingEffect(
+        this.$refs.topicInput,
+        this.computedTopics
+      );
+    } else {
+      console.log("never started");
+    }
+  },
+  unmounted() {
+    if (this.typingInterval) {
+      stopTypingEffect(this.typingInterval);
+    }
   },
   computed: {
+    computedTopics() {
+      return this.topics.length > 0 ? this.topics : this.safeTopics;
+    },
     ...mapState(useLibGenStore, {
       languages: (state) => state.languages,
       topics: (state) => state.topics,
@@ -154,6 +180,14 @@ export default {
     },
     handleSubmit() {
       if (this.topic === "") return;
+      const urlPattern =
+        /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
+      if (urlPattern.test(this.topic)) {
+        const popupStore = usePopupStore();
+            popupStore.showPopup("We do not currently support links.</br>Please type a topic like 'Cats' or 'Etiquette around the world'.");
+        return;
+      }
+      // if this.topic is a web link (maybe without spaces and includes a dot?)
       this.isSubmitting = true;
       const postData = {
         topic: this.topic,
@@ -177,7 +211,12 @@ export default {
             );
             this.$router.push("/login");
           }
-          if (error.response && error.response.status === 400 && error.response.data && error.response.data.error) {
+          if (
+            error.response &&
+            error.response.status === 400 &&
+            error.response.data &&
+            error.response.data.error
+          ) {
             const popupStore = usePopupStore();
             popupStore.showPopup(error.response.data.error);
           }
