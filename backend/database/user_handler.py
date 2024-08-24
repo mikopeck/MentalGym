@@ -2,6 +2,8 @@ from datetime import datetime, timedelta, timezone
 from itsdangerous import URLSafeSerializer as Serializer
 from flask import current_app
 import hashlib
+import stripe
+import os
 
 from database.models import db, User, IPTracking
 
@@ -11,6 +13,7 @@ DAILY_LIMITS = {
     'paid': 250,
     'pro': 2500,
 }
+stripe.api_key = os.getenv("STRIPE_API_KEY")
 
 def reset_daily_limits(user):
     now = datetime.now(timezone.utc)
@@ -24,6 +27,32 @@ def increment_request_count(user):
     user.last_request_time = now
     db.session.commit()
 
+def update_user_tier_from_stripe(user):
+    try:
+        customers = stripe.Customer.list(email=user.email)
+        if customers['data']:
+            customer = customers['data'][0]  # Assuming the first match is the correct customer
+            subscriptions = stripe.Subscription.list(customer=customer['id'], status='active')
+            if subscriptions['data']:
+                # User has an active subscription, determine the tier
+                active_subscription = subscriptions['data'][0]
+                plan_nickname = active_subscription['plan']['nickname'].lower()
+                if "ascendant plan" in plan_nickname:
+                    user.tier = 'pro'
+                elif "awakened plan" in plan_nickname:
+                    user.tier = 'paid'
+                else:# Default to free if no matching plan nickname
+                    user.tier = 'free'
+            else:# Default to free if no subscription
+                user.tier = 'free'
+        else:# Default to free if no data
+            user.tier = 'free'
+        db.session.commit()
+    except stripe.error.StripeError as e:
+        print(f"Stripe error: {e}")
+        return False, "Failed to verify subscription status. Please <a href='/contact' target='_blank'>contact support</a>."
+    return True, ""
+
 def is_within_limit(user):
     now = datetime.now(timezone.utc)
     midnight = now + timedelta(days=1)
@@ -32,6 +61,13 @@ def is_within_limit(user):
 
     reset_daily_limits(user)
     
+    # Check stripe here
+    if user.daily_request_count == DAILY_LIMITS['free'] and user.email != "mikopeck@gmail.com":
+        success, message = update_user_tier_from_stripe(user)
+        if not success:
+            print(message)
+            return False, "Failed to verify subscription status. Please <a href='/contact' target='_blank'>contact support</a>."
+
     daily_limit = DAILY_LIMITS.get(user.tier, DAILY_LIMITS['free'])
     if user.daily_request_count >= daily_limit:
         hours, remainder = divmod(int(time_until_reset.total_seconds()), 3600)

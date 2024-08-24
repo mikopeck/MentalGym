@@ -14,11 +14,11 @@ export default {
     title() {
       switch (this.tier) {
         case "paid":
-          return "Ascend";
+          return "Awakened ($4/mo)";
         case "pro":
-          return "Ascendant";
+          return "Ascendant ($8/mo)";
         default: //'free'
-          return "Upgrade";
+          return "Aspirant (free)";
       }
     },
     tier() {

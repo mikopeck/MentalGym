@@ -195,18 +195,18 @@ export default {
 </script>
 
 <style scoped>
-.settings-buttons {
-  margin-top: 16px;
-  width: 100%;
-  max-width: 720px;
-}
-
 .profile-section {
   margin-top: 16px;
   padding-bottom: 16px;
   width: 100%;
   max-width: 720px;
   border-bottom: 2px solid var(--background-color-1t);
+}
+
+.settings-buttons {
+  margin-top: 16px;
+  width: 100%;
+  max-width: 720px;
 }
 
 .profile-info {
