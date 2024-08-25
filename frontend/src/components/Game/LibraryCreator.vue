@@ -14,7 +14,7 @@
                 ref="topicInput"
                 v-model="topic"
                 placeholder="What to learn about"
-                maxlength="200"
+                maxlength="100"
                 @focus="selectInputText"
               />
               <button class="randomize-btn" @click="randomizeTopic">🎲</button>
@@ -184,7 +184,7 @@ export default {
         /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
       if (urlPattern.test(this.topic)) {
         const popupStore = usePopupStore();
-            popupStore.showPopup("We do not currently support links.</br>Try entering the topic of the website instead.");
+            popupStore.showPopup("We do not currently support links.</br>Try entering the topic of the website instead.</br>Note: This app can teach you about anything, but will not do your homework!");
         return;
       }
       // if this.topic is a web link (maybe without spaces and includes a dot?)
