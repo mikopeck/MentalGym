@@ -6,7 +6,7 @@
       <div class="libgen-create">
         <div class="libgen-section">
           <div class="form-group topic-selection">
-            <div class="libgen-title">Topic</div>
+            <div class="libgen-title">Topic (What To Learn About)</div>
             <div class="title-bar">
               <input
                 type="text"

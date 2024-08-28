@@ -2,7 +2,6 @@
 <template>
   <div
     class="top-bar"
-    :class="{ 'nav-bar-invisible': !isVisible, 'nav-bar': isVisible }"
   >
     <router-link to="/about">
       <img
@@ -33,20 +32,10 @@
 <script>
 import { useMenuStore } from "@/store/menuStore";
 import { useThemeStore } from "@/store/themeStore";
-import { useScrollStore } from "@/store/scrollStore";
 
 export default {
   name: "TopBar",
   computed: {
-    scrollTop() {
-      return useScrollStore().scrollTop;
-    },
-    isVisible() {
-      if (this.$route.path !== "/about") {
-        return true;
-      }
-      return this.scrollTop > 48;
-    },
     logoPath() {
       const themeStore = useThemeStore();
       return themeStore.darkMode

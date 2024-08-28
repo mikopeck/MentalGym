@@ -2,8 +2,8 @@
   <div class="landing-container">
     <div class="landing-page-1">
       <div class="landing-titles-container">
-        <div class="landing-title">Ascendance·☁️</div>
-        <div class="landing-subtitle">Play to Learn</div>
+        <div class="landing-title">Learn Anything!</div>
+        <div class="landing-subtitle">Where Curious Minds Learn By Playing.</div>
       </div>
       <library-creator />
     </div>
@@ -42,11 +42,6 @@
           </div>
         </div>
       </transition>
-      <!-- <div class="stat-infos">
-        <div class="stat-info">📖200+ Custom Lessons generated.</div>
-        <div class="small-text">Check out these shared lessons ↓</div>
-        <div class="shared-content"><SharedContent /></div>
-      </div> -->
       <div class="cta-container" @click="redirectLogin">
         <CtaButton />
       </div>

@@ -2,7 +2,7 @@ export function startTypingEffect(elem, topics) {
     let currentIndex = 0;
     let isDeleting = false;
     let text = '';
-    let typingSpeed = 100;
+    let typingSpeed = 75;
     let timer = null;
 
     function type() {
@@ -20,7 +20,7 @@ export function startTypingEffect(elem, topics) {
         let typeSpeed = typingSpeed;
 
         if (isDeleting) {
-            typeSpeed /= 2;
+            typeSpeed /= 4;
         }
 
         if (!isDeleting && text === fullText) {
@@ -29,7 +29,7 @@ export function startTypingEffect(elem, topics) {
         } else if (isDeleting && text === '') {
             isDeleting = false;
             typeSpeed = 500;
-            currentIndex = (currentIndex + 1) % topics.length;
+            currentIndex = (currentIndex + (Math.floor(Math.random() * topics.length))) % topics.length;
         }
 
         clearTimeout(timer);
