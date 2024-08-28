@@ -284,10 +284,6 @@ export default {
   margin-bottom: 5px;
 }
 
-.nav-button {
-  font-size: 16px;
-}
-
 .share-container {
   display: flex;
   justify-content: center;

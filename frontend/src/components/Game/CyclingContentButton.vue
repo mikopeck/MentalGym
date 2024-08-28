@@ -124,6 +124,7 @@ export default {
 
 .content-name {
   padding: 8px;
+  font-weight: 700;
 }
 
 .emoji-indicator {
