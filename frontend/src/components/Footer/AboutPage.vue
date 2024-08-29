@@ -209,6 +209,7 @@ export default {
   opacity: 0.9;
   font-size: 1.5em;
   margin: 0;
+  margin-bottom: 1em;
   color: linear-gradient(to right, var(--text-color), var(--highlight-color));
 }
 
