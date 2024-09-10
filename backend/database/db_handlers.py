@@ -79,6 +79,12 @@ def add_completion_message(user_id, challenge_id=None, lesson_id=None):
     db.session.add(completion_message)
     db.session.commit()
 
+def award_lesson_experience(user_id):
+    user = User.query.get(user_id)
+    if user:
+        user.experience_points += 100
+        db.session.commit()    
+
 def get_recent_messages(user_id, lesson_id=None, challenge_id=None, limit=history_limit):
     query = ChatHistory.query.filter_by(user_id=user_id, lesson_id=lesson_id, challenge_id=challenge_id)
     recent_messages = query.order_by(ChatHistory.id.desc()).limit(limit).all()

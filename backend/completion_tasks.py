@@ -149,6 +149,7 @@ def quiz_feedback(user_id, lesson_id):
         db.complete_quiz_message(user_id, lesson_id, feedback_msg+" | ")
         db.update_lesson(user_id, lesson_id, datetime.utcnow())
         db.add_completion_message(user_id, lesson_id=lesson_id)
+        db.award_lesson_experience(user_id)
         return None, lesson_id
         
     messages = mh.prepare_session_messages(user_id, lesson_id) 

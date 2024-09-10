@@ -4,6 +4,7 @@ from flask import request, jsonify
 from flask_login import login_required, current_user
 
 import database.db_handlers as dbh
+from stats import get_total_user_exp, get_streak
 from database.user_handler import get_user_tier, set_user_tier
 from message_handler import update_system_role, initialize_messages
 
@@ -68,3 +69,8 @@ def init_profile_routes(app):
         if isInitial == 2:
             initialize_messages(current_user.id)
         return jsonify(status="success")
+    
+    @app.route('/api/user/stats', methods=['GET'])
+    @login_required
+    def get_user_stats():
+        return jsonify({'streak': get_streak(current_user.id)[1], 'exp':get_total_user_exp(current_user.id)})

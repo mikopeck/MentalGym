@@ -1,4 +1,5 @@
 from database.models import db, User, Library
+from stats import get_total_user_exp
 import os
 
 def run_upgrades():
@@ -16,7 +17,11 @@ def run_upgrades():
 def upgrade_user_exp():
     users = User.query.filter(User.experience_points == None).all()
     for user in users:
-        user.experience_points = 0
+        user.experience_points = get_total_user_exp(user.id)
+
+    users = User.query.filter(User.experience_points == 0).all()
+    for user in users:
+        user.experience_points = get_total_user_exp(user.id)
 
 def upgrade_library_socials():
     libraries = Library.query.filter(Library.clicks == None).all()

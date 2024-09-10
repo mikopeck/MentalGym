@@ -1,6 +1,7 @@
 <template>
   <div class="completion-container">
     <div class="celebratory-message">🎉 Congratulations! 🎉</div>
+    <UserStats />
     <div v-if="suggestions.length" class="suggestions-container">
       <div>Continue with...</div>
       <ContentButton
@@ -85,6 +86,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useMessageStore } from "@/store/messageStore";
 import { useInputStore } from "@/store/inputStore";
 import ContentButton from "../Chat/ContentButton.vue";
+import UserStats from "../Graphs/UserStats.vue";
 
 export default {
   data() {
@@ -102,6 +104,7 @@ export default {
   },
   components: {
     ContentButton,
+    UserStats,
   },
   mounted() {
     const inputStore = useInputStore();

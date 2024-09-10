@@ -69,6 +69,22 @@ def get_line_graph_data(user_id):
         }]
     }
 
+def get_total_user_exp(user_id):
+    total_lessons_exp = db.session.query(
+        func.count(Lesson.id).label('lessons_count')
+    ).filter_by(user_id=user_id).scalar() or 0
+
+    # Each completed lesson counts as 100 EXP
+    total_lessons_exp *= 100
+
+    total_libraries_exp = db.session.query(
+        func.sum(LibraryCompletion.score).label('total_score')
+    ).filter_by(user_id=user_id, is_complete=True).scalar() or 0
+
+    total_exp = total_lessons_exp + total_libraries_exp
+
+    return total_exp
+
 def get_active_and_completed(user_id, total_lessons, total_librarys):
     active_lessons = db.session.query(func.count(Lesson.id)).filter_by(user_id=user_id, completion_date=None).scalar()
     completed_lessons = total_lessons - active_lessons
@@ -90,11 +106,12 @@ def get_content_per_day(user_id):
 
     return dict(lessons_per_day), dict(librarys_per_day)
 
-def get_streak(lessons_per_day, librarys_per_day):
-    streak = 0
+def get_streak(user_id):
+    max_streak = 0
     current_streak = 0
-    today = datetime.now().date()
+    today = datetime.now()
     last_date = today
+    lessons_per_day, librarys_per_day = get_content_per_day(user_id)
 
     lessons_dates = {k: v for k, v in lessons_per_day.items() if k is not None}
     librarys_dates = {k: v for k, v in librarys_per_day.items() if k is not None}
@@ -102,15 +119,17 @@ def get_streak(lessons_per_day, librarys_per_day):
     combined_dates = sorted(set(lessons_dates) | set(librarys_dates))
 
     for date in combined_dates:
-        if date == last_date - timedelta(days=1):
+        if date.date() == (last_date + timedelta(days=1)).date():
             current_streak += 1
         else:
-            if date != today:
-                current_streak = 1
-        streak = max(streak, current_streak)
+            current_streak = 1
+        max_streak = max(max_streak, current_streak)
         last_date = date
 
-    return streak, current_streak
+    if last_date.date() != today.date():
+        current_streak = 0
+
+    return max_streak, current_streak
 
 def get_stats(user_id):
     total_lessons = db.session.query(func.count(Lesson.id)).filter_by(user_id=user_id).scalar()
@@ -118,8 +137,7 @@ def get_stats(user_id):
 
     active_lessons, completed_lessons, active_librarys, completed_librarys = get_active_and_completed(user_id, total_lessons, total_librarys)
     percent_completed_lessons, percent_completed_librarys = get_percent_completed(completed_lessons, total_lessons, completed_librarys, total_librarys)
-    lessons_per_day, librarys_per_day = get_content_per_day(user_id)
-    max_streak, current_streak = get_streak(lessons_per_day, librarys_per_day)
+    max_streak, current_streak = get_streak(user_id)
 
     data = {
         "totalCompleted": completed_lessons + completed_librarys,
@@ -131,8 +149,6 @@ def get_stats(user_id):
         "completedLibrarys": completed_librarys,
         "percentCompletedLessons": percent_completed_lessons,
         "percentCompletedLibrarys": percent_completed_librarys,
-        "lessonsPerDay": lessons_per_day,
-        "librarysPerDay": librarys_per_day,
         "maxStreak": max_streak,
         "currentStreak": current_streak,
     }

@@ -1,75 +1,75 @@
 <template>
   <transition name="fade">
-  <div v-if="completionVisible" class="completion-overlay">
-    <div class="completion-content">
-      <div class="celebratory-message">🎉 Congratulations! 🎉</div>
-      <!-- Streak and EXP/lvlup go here -->
-      <div class="suggestions-container">
-        <div>{{ loading ? "Loading..." : "Continue with..." }}</div>
-        <CyclingContentButton
-          :options="suggestions"
-          :role="someRole"
-          :content_type="someContentType"
-          :showType="false"
-          @navigate="startSuggestion"
-          class="suggestion-button"
-        />
-      </div>
-      <div v-if="loggedIn" class="what-next-container">
-        <div class="nav-row">
-          <button class="nav-button" @click="navigateLibrary">🏛 New</button>
-          <div class="separator">|</div>
-          <button
-            class="nav-button"
-            @click="navigateExplore"
-            :disabled="exploreLoading"
-          >
-            {{ exploreLoading ? "⏳Loading" : "🔍Suggest again" }}
-          </button>
-          <div class="separator">|</div>
-          <button class="nav-button" @click="navigateMap">🗺️Map</button>
+    <div v-if="completionVisible" class="completion-overlay">
+      <div class="completion-content">
+        <div class="celebratory-message">🎉 Congratulations! 🎉</div>
+        <UserStats />
+        <div class="suggestions-container">
+          <div>{{ loading ? "Loading..." : "Continue with..." }}</div>
+          <CyclingContentButton
+            :options="suggestions"
+            :role="someRole"
+            :content_type="someContentType"
+            :showType="false"
+            @navigate="startSuggestion"
+            class="suggestion-button"
+          />
         </div>
-
-        <div class="nav-row">
-          <button class="nav-button" @click="navigateBack">🔙Back</button>
-          <div class="separator">|</div>
-          <button class="feedback-button" @click="toggleFeedback">
-            {{ showFeedback ? "Hide Feedback⬆️" : "Feedback⤵️" }}
-          </button>
-        </div>
-      </div>
-
-      <div class="rating-feedback">
-        <div v-show="showFeedback" class="feedback-form">
-          <p>Rate your experience:</p>
-          <div class="stars">
-            <span
-              v-for="n in 5"
-              :key="n"
-              class="star"
-              @click="setRating(n)"
-              :class="{ selected: n <= rating }"
+        <div v-if="loggedIn" class="what-next-container">
+          <div class="nav-row">
+            <button class="nav-button" @click="navigateLibrary">🏛 New</button>
+            <div class="separator">|</div>
+            <button
+              class="nav-button"
+              @click="navigateExplore"
+              :disabled="exploreLoading"
             >
-              ★
-            </span>
+              {{ exploreLoading ? "⏳Loading" : "🔍Suggest again" }}
+            </button>
+            <div class="separator">|</div>
+            <button class="nav-button" @click="navigateMap">🗺️Map</button>
           </div>
-          <br />
 
-          <textarea
-            v-model="feedback"
-            placeholder="Enter your feedback here..."
-          ></textarea>
-          <button
-            :disabled="!isValid || isSubmitted"
-            @click="submitFeedback"
-            class="submit-btn"
-          >
-            {{ isSubmitted ? "Thank You" : "Submit" }}
-          </button>
+          <div class="nav-row">
+            <button class="nav-button" @click="navigateBack">🔙Back</button>
+            <div class="separator">|</div>
+            <button class="feedback-button" @click="toggleFeedback">
+              {{ showFeedback ? "Hide Feedback⬆️" : "Feedback⤵️" }}
+            </button>
+          </div>
+        </div>
+
+        <div class="rating-feedback">
+          <div v-show="showFeedback" class="feedback-form">
+            <p>Rate your experience:</p>
+            <div class="stars">
+              <span
+                v-for="n in 5"
+                :key="n"
+                class="star"
+                @click="setRating(n)"
+                :class="{ selected: n <= rating }"
+              >
+                ★
+              </span>
+            </div>
+            <br />
+
+            <textarea
+              v-model="feedback"
+              placeholder="Enter your feedback here..."
+            ></textarea>
+            <button
+              :disabled="!isValid || isSubmitted"
+              @click="submitFeedback"
+              class="submit-btn"
+            >
+              {{ isSubmitted ? "Thank You" : "Submit" }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
   </transition>
 </template>
 
@@ -80,6 +80,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useMessageStore } from "@/store/messageStore";
 import { useGameStore } from "@/store/gameStore";
 import CyclingContentButton from "./CyclingContentButton.vue";
+import UserStats from "../Graphs/UserStats.vue"
 
 export default {
   data() {
@@ -95,6 +96,7 @@ export default {
   },
   components: {
     CyclingContentButton,
+    UserStats
   },
   computed: {
     gameStore() {
@@ -121,7 +123,7 @@ export default {
     navigateBack() {
       this.gameStore.completed = false;
     },
-    navigateExplore() {
+    async navigateExplore() {
       this.exploreLoading = true;
       const url = `/api/explore?name=${this.gameStore.roomNames[12]}`;
       axios
