@@ -21,6 +21,7 @@ export const useUserStatsStore = defineStore('userStats', {
     },
     async getStats() {
       if (this.streak === null || this.exp === null) {
+        console.log("nulls")
         await this.fetchStatsFromBackend();
       }
       return {

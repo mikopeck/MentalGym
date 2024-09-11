@@ -5,7 +5,7 @@
         <StreakFire :streak="streak" />
       </div>
       <div class="stat-item">
-        <ExpProgressBar :exp="exp" />
+        <ExpProgressBar :newExp="exp" />
       </div>
     </div>
   </div>

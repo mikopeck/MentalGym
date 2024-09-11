@@ -1,128 +1,106 @@
 <template>
-  <div class="exp-progress-bar">
-    <div class="level-display">
-      Level: {{ displayedLevel }}
-    </div>
-    <div class="progress-bar">
-      <div
-        class="progress-bar-fill"
-        :style="{ width: progressWidth + '%' }"
-      ></div>
-    </div>
-    <div class="exp-display">
-      {{ displayedExp }} / 200 XP
-    </div>
+  <div class="exp-progress">
+    <svg width="100" height="100">
+      <circle
+        cx="50"
+        cy="50"
+        r="45"
+        fill="transparent"
+        stroke="#ccc"
+        stroke-width="10"
+      ></circle>
+      <circle
+        cx="50"
+        cy="50"
+        r="45"
+        :stroke="levelUp ? 'gold' : 'green'"
+        stroke-width="10"
+        :stroke-dasharray="circumference"
+        :stroke-dashoffset="offset"
+        stroke-linecap="round"
+        transform="rotate(-90, 50, 50)"
+      ></circle>
+      <text
+        x="50"
+        y="57.5"
+        font-size="24"
+        font-weight="700"
+        text-anchor="middle"
+        :fill="levelUp ? 'gold' : 'green'"
+      >
+        {{ displayLevel }}
+      </text>
+    </svg>
   </div>
 </template>
 
 <script>
 import { useGameStore } from "@/store/gameStore";
+import { ref, watch } from "vue";
 
 export default {
   name: "ExpProgressBar",
   props: {
-    exp: {
+    newExp: {
       type: Number,
-      default: 0
-    }
+      required: true,
+    },
   },
-  data() {
-    return {
-      displayedExp: 0,
-      displayedLevel: 1,
-      progressWidth: 0,
-      gainedExp: 0
+  setup(props) {
+    const gameStore = useGameStore();
+    const oldExp = ref(0);
+    const gainedExp = ref(0);
+    const oldLvl = ref(0);
+    const newLvl = ref(Math.floor(props.newExp / 200) + 1);
+    const displayLevel = ref(oldLvl.value);
+    const levelUp = ref(false);
+    const circumference = 2 * Math.PI * 45; // Adjusted for the new radius
+    const offset = ref(circumference);
+
+    const updateExp = () => {
+      if (window.location.pathname.includes("/library")) {
+        gainedExp.value = gameStore.score;
+      } else if (window.location.pathname.includes("/lesson")) {
+        gainedExp.value = 100;
+      }
+      oldExp.value = props.newExp - gainedExp.value;
+      oldLvl.value = Math.floor(oldExp.value / 200) + 1;
+      displayLevel.value = oldLvl.value;
+      animateProgress();
     };
-  },
-  computed: {
-    level() {
-      return Math.floor(this.exp / 200) + 1;
-    },
-    progress() {
-      return (this.exp % 200) / 2;
-    }
-  },
-  watch: {
-    exp: {
-      immediate: true,
-      handler(newExp) {
-        this.animateProgress(newExp);
-      }
-    }
-  },
-  mounted() {
-    // Add a delay before starting the animation
-    setTimeout(() => {
-      this.startAnimation();
-    }, 500); // 500ms delay, adjust as needed
-  },
-  methods: {
-    startAnimation() {
-      const gameStore = useGameStore();
-      if (this.$route.path.includes("/library")) {
-        this.gainedExp = gameStore.score;
-      } else if (this.$route.path.includes("/lesson")) {
-        this.gainedExp = 100;
-      }
-      const previousExp = this.exp - this.gainedExp;
-      this.animateProgress(previousExp);
-    },
-    animateProgress(previousExp) {
-      const newLevel = Math.floor(this.exp / 200) + 1;
-      const newProgress = (this.exp % 200) / 2;
 
-      const prevLevel = Math.floor(previousExp / 200) + 1;
-      const prevProgress = (previousExp % 200) / 2;
-
-      this.animateValue("displayedExp", previousExp % 200, this.exp % 200, 1000);
-      this.animateValue("progressWidth", prevProgress, newProgress, 1000);
-      this.animateValue("displayedLevel", prevLevel, newLevel, 1000);
-    },
-    animateValue(property, startValue, endValue, duration) {
-      const range = endValue - startValue;
-      const startTime = performance.now();
-
+    const animateProgress = () => {
+      const diff = props.newExp - oldExp.value;
+      const diffLevel = newLvl.value - oldLvl.value;
+      levelUp.value = diffLevel > 0;
+      console.log(levelUp.value)
+      let progress = 0;
       const step = () => {
-        const elapsedTime = performance.now() - startTime;
-        const progress = Math.min(elapsedTime / duration, 1);
-        this[property] = Math.floor(startValue + range * progress);
-
-        if (progress < 1) {
+        progress += diff / 100;
+        const currentExp = oldExp.value + progress;
+        const currentLevel = Math.floor(currentExp / 200) + 1;
+        displayLevel.value = currentLevel;
+        const progressPercentage = (currentExp % 200) / 200;
+        offset.value = circumference * (1 - progressPercentage);
+        if (progress < diff) {
           requestAnimationFrame(step);
+        } else {
+          if (levelUp.value) {
+            // Reset the animation for level-up effect
+            offset.value = circumference;
+            setTimeout(() => animateProgress(), 5000); // Delay to demonstrate level-up
+          }
         }
       };
-
       requestAnimationFrame(step);
-    }
-  }
+    };
+
+    watch(() => props.newExp, updateExp, { immediate: true });
+
+    return { displayLevel, offset, circumference, levelUp };
+  },
 };
 </script>
 
-
 <style scoped>
-.exp-progress-bar {
-  width: 300px;
-  margin: 10px;
-  font-family: Arial, sans-serif;
-}
-.level-display {
-  font-size: 1.5em;
-  margin-bottom: 10px;
-}
-.progress-bar {
-  background-color: #e0e0e0;
-  border-radius: 10px;
-  overflow: hidden;
-  height: 20px;
-  width: 100%;
-  margin-bottom: 10px;
-}
-.progress-bar-fill {
-  background-color: #4caf50;
-  height: 100%;
-  transition: width 1s ease-in-out;
-}
-.exp-display {
-  font-size: 1em;
-}
 </style>

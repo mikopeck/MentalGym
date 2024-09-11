@@ -48,10 +48,22 @@ class User(db.Model, UserMixin):
             key=lambda x: x.id, reverse=True)[:100]
         ]
 
+        active_libraries = [library.library.library_topic for library in sorted(
+            [l for l in self.libraries if not l.is_complete], 
+            key=lambda x: x.id, reverse=True)[:100]
+        ]
+
+        completed_libraries = [library.library.library_topic for library in sorted(
+            [l for l in self.libraries if l.is_complete], 
+            key=lambda x: x.id, reverse=True)[:100]
+        ]
+
         user_data = {
             "profile": self.profile,
-            "active_lessons": active_lessons,
-            "completed_lessons": completed_lessons
+            "active_lessons": active_lessons+active_libraries,
+            "completed_lessons": completed_lessons+completed_libraries
+            # "active_libraries": active_libraries,
+            # "completed_libraries": completed_libraries
         }
         return user_data
     
