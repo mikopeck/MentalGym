@@ -24,11 +24,10 @@ export default defineComponent({
   },
   setup() {
     const userStatsStore = useUserStatsStore();
+    userStatsStore.getStats();
 
     const streak = computed(() => userStatsStore.streak);
     const exp = computed(() => userStatsStore.exp);
-
-    userStatsStore.getStats();
 
     return {
       streak,
@@ -50,30 +49,13 @@ export default defineComponent({
 
 .stats {
   text-align: center;
+  padding-top: 1em;
   display: flex;
   justify-content: space-around;
 }
 
 .stat-item {
   text-align: center;
-}
-
-.stat-value {
-  display: block;
-  font-size: 48px;
-  font-weight: bold;
-  color: #4a90e2;
-  margin-bottom: 8px;
-}
-
-.stat-label {
-  font-size: 16px;
-  color: #7d8899;
-}
-
-.stats-card:hover {
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-  transform: translateY(-2px);
-  transition: all 0.3s ease;
+  padding: 0 1em;
 }
 </style>

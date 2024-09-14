@@ -13,7 +13,7 @@
         cx="50"
         cy="50"
         r="45"
-        :stroke="levelUp ? 'gold' : 'green'"
+        stroke="green"
         stroke-width="10"
         :stroke-dasharray="circumference"
         :stroke-dashoffset="offset"
@@ -26,13 +26,15 @@
         font-size="24"
         font-weight="700"
         text-anchor="middle"
-        :fill="levelUp ? 'gold' : 'green'"
+        fill="green"
+        :class="{ 'level-up-animation': levelUp.value, 'gold-color': levelUp.value }"
       >
         {{ displayLevel }}
       </text>
     </svg>
   </div>
 </template>
+
 
 <script>
 import { useGameStore } from "@/store/gameStore";
@@ -54,7 +56,7 @@ export default {
     const newLvl = ref(Math.floor(props.newExp / 200) + 1);
     const displayLevel = ref(oldLvl.value);
     const levelUp = ref(false);
-    const circumference = 2 * Math.PI * 45; // Adjusted for the new radius
+    const circumference = 2 * Math.PI * 45;
     const offset = ref(circumference);
 
     const updateExp = () => {
@@ -73,7 +75,7 @@ export default {
       const diff = props.newExp - oldExp.value;
       const diffLevel = newLvl.value - oldLvl.value;
       levelUp.value = diffLevel > 0;
-      console.log(levelUp.value)
+      console.log(levelUp.value);
       let progress = 0;
       const step = () => {
         progress += diff / 100;
@@ -85,11 +87,13 @@ export default {
         if (progress < diff) {
           requestAnimationFrame(step);
         } else {
-          if (levelUp.value) {
-            // Reset the animation for level-up effect
-            offset.value = circumference;
-            setTimeout(() => animateProgress(), 5000); // Delay to demonstrate level-up
-          }
+          console.log("done")
+          // if (levelUp.value) {
+          //   setTimeout(() => {
+          //     levelUp.value = false;
+          //     animateProgress();
+          //   }, 5000);
+          // }
         }
       };
       requestAnimationFrame(step);
@@ -103,4 +107,35 @@ export default {
 </script>
 
 <style scoped>
+.level-up-animation {
+  animation: pop 0.5s ease-out, gold-flash 1s ease-out;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes gold-flash {
+  0% {
+    fill: green;
+  }
+  50% {
+    fill: gold;
+  }
+  100% {
+    fill: green;
+  }
+}
+
+.gold-color {
+  fill: gold;
+}
 </style>

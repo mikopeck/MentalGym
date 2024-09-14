@@ -1,12 +1,35 @@
 <template>
   <div class="streak-fire">
-    <div class="fire" :style="fireStyle">
-      <div class="flame"></div>
-      <div class="flame"></div>
-      <div class="flame"></div>
-    </div>
-    <div class="streak-text">
-      Streak: {{ streak }}
+    <svg class="flame-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <!-- Layer 1 -->
+      <path
+        class="flame-layer flame-layer1"
+        d="M32 2C32 2 12 22 12 36C12 47.046 20.954 56 32 56C43.046 56 52 47.046 52 36C52 22 32 2 32 2Z"
+        fill="#FF6A00"
+      />
+      <!-- Layer 2 -->
+      <path
+        class="flame-layer flame-layer2"
+        d="M32 12C32 12 22 22 22 32C22 39.732 28.268 46 36 46C43.732 46 50 39.732 50 32C50 22 32 12 32 12Z"
+        fill="#FF8C00"
+      />
+      <!-- Layer 3 -->
+      <path
+        class="flame-layer flame-layer3"
+        d="M32 22C32 22 28 26 28 30C28 32.2091 29.7909 34 32 34C34.2091 34 36 32.2091 36 30C36 26 32 22 32 22Z"
+        fill="#FFD700"
+      />
+      <!-- Layer 4 -->
+      <circle
+        class="flame-layer flame-layer4"
+        cx="32"
+        cy="36"
+        r="4"
+        fill="#FFFF00"
+      />
+    </svg>
+    <div class="streak-container">
+      <span class="streak-count">{{ streak }}</span>
     </div>
   </div>
 </template>
@@ -17,73 +40,79 @@ export default {
   props: {
     streak: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
-  computed: {
-    fireStyle() {
-      const intensity = Math.min(this.streak / 10, 1); // Cap the intensity at 1 (max effect)
-      return {
-        transform: `scale(${1 + intensity * 0.5})`,
-        opacity: `${0.5 + intensity * 0.5}`
-      };
-    }
-  }
-}
+};
 </script>
 
 <style scoped>
 .streak-fire {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  font-size: 1.5em;
+  justify-content: center;
+  flex-direction: column;
 }
 
-.streak-text {
-  margin-top: 10px;
-  font-size: 1.5rem;
+.streak-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.streak-count {
   font-weight: bold;
-  color: var(--text-color);
+  color: #ff6a00;
 }
 
-.fire {
-  position: relative;
-  width: 50px;
-  height: 70px;
+.flame-icon {
+  padding-top: 0.2em;
+  width: 64px;
+  height: 64px;
 }
 
-.flame {
-  position: absolute;
-  bottom: 0;
-  width: 30px;
-  height: 50px;
-  background: radial-gradient(circle, rgba(255,165,0,1) 0%, rgba(255,69,0,1) 50%, rgba(255,0,0,0) 100%);
-  animation: flicker 0.4s infinite alternate ease-in-out;
-  border-radius: 50% 50% 0 0;
+.flame-layer {
+  animation: flickerAnimation 2s infinite;
+  transform-origin: center bottom;
 }
 
-.flame:nth-child(2) {
-  width: 25px;
-  height: 40px;
-  left: 5px;
-  animation-duration: 0.35s;
+.flame-layer1 {
+  animation-delay: 0s;
 }
 
-.flame:nth-child(3) {
-  width: 20px;
-  height: 30px;
-  left: 10px;
-  animation-duration: 0.3s;
+.flame-layer2 {
+  animation-delay: 0.5s;
 }
 
-@keyframes flicker {
-  from {
-    transform: scaleY(1);
+.flame-layer3 {
+  animation-delay: 1s;
+}
+
+.flame-layer4 {
+  animation-delay: 1.5s;
+}
+
+@keyframes flickerAnimation {
+  0% {
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
-  to {
-    transform: scaleY(1.2);
-    opacity: 0.7;
+  25% {
+    transform: translateY(-2px) scale(1.02);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-3px) scale(1.03);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
   }
 }
 </style>

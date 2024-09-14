@@ -19,10 +19,10 @@ export const useUserStatsStore = defineStore('userStats', {
         console.error('Error fetching stats from backend', error);
       }
     },
-    async getStats() {
+    getStats() {
       if (this.streak === null || this.exp === null) {
         console.log("nulls")
-        await this.fetchStatsFromBackend();
+        this.fetchStatsFromBackend();
       }
       return {
         streak: this.streak,
