@@ -4,7 +4,7 @@
       <circle
         cx="50"
         cy="50"
-        r="45"
+        r="44"
         fill="transparent"
         stroke="#ccc"
         stroke-width="10"
@@ -22,7 +22,18 @@
       ></circle>
       <text
         x="50"
-        y="57.5"
+        y="46"
+        font-size="14"
+        font-weight="700"
+        text-anchor="middle"
+        fill="green"
+        :class="{ 'level-up-animation': levelUp.value, 'gold-color': levelUp.value }"
+      >
+        Level
+      </text>
+      <text
+        x="50"
+        y="66"
         font-size="24"
         font-weight="700"
         text-anchor="middle"
@@ -34,6 +45,7 @@
     </svg>
   </div>
 </template>
+
 
 
 <script>
@@ -107,6 +119,10 @@ export default {
 </script>
 
 <style scoped>
+.exp-progress{
+  padding-top:1.5em;
+}
+
 .level-up-animation {
   animation: pop 0.5s ease-out, gold-flash 1s ease-out;
 }

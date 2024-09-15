@@ -102,7 +102,7 @@ def get_percent_completed(completed_lessons, total_lessons, completed_librarys, 
 
 def get_content_per_day(user_id):
     lessons_per_day = db.session.query(Lesson.completion_date, func.count(Lesson.id)).filter_by(user_id=user_id).group_by(Lesson.completion_date).all()
-    librarys_per_day = db.session.query(LibraryCompletion.completion_date, func.count(LibraryCompletion.id)).filter_by(user_id=user_id).group_by(LibraryCompletion.completion_date).all()
+    librarys_per_day = db.session.query(LibraryCompletion.completion_date, func.count(LibraryCompletion.id)).filter_by(user_id=user_id, is_complete=True).group_by(LibraryCompletion.completion_date).all()
 
     return dict(lessons_per_day), dict(librarys_per_day)
 
@@ -121,6 +121,8 @@ def get_streak(user_id):
     for date in combined_dates:
         if date.date() == (last_date + timedelta(days=1)).date():
             current_streak += 1
+        elif last_date.date() == date.date():
+            continue
         else:
             current_streak = 1
         max_streak = max(max_streak, current_streak)

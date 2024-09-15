@@ -37,7 +37,6 @@ export default defineComponent({
 });
 </script>
 
-
 <style scoped>
 .user-stats-container {
   display: flex;

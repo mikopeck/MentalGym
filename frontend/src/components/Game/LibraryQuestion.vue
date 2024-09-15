@@ -163,11 +163,6 @@ button {
   transition: all ease 0.1s;
 }
 
-button:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-  border-color: var(--highlight-color);
-}
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s;

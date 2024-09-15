@@ -28,6 +28,7 @@
     </div>
 
     <div class="progress-section" v-if="dataLoaded && currentPageIndex === 1">
+      <user-stats/>
       <div class="statistics">
         <table>
           <thead>
@@ -87,12 +88,14 @@
 import axios from "axios";
 import ProgressGraph from "../Graphs/ProgressGraph.vue";
 import MenuButton from "../Menus/MenuButton.vue";
+import UserStats from "../Graphs/UserStats.vue";
 
 export default {
   name: "ProgressPage",
   components: {
     ProgressGraph,
     MenuButton,
+    UserStats
   },
   data() {
     return {

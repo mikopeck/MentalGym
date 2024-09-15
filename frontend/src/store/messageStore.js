@@ -17,7 +17,6 @@ export const useMessageStore = defineStore('messageStore', {
     }),
     actions: {
         async updateConversation(data) {
-            // console.log("updating")
             this.messages = data.messages;
             this.actions = data.actions;
             if ("subheading" in data) {
@@ -29,7 +28,6 @@ export const useMessageStore = defineStore('messageStore', {
             }
         },
         async fetchRecentMessages(currentPath) {
-            // console.log("fetching for " + currentPath)
             let apiEndpoint = "/api/chat";
             const params = {};
 
@@ -44,7 +42,6 @@ export const useMessageStore = defineStore('messageStore', {
             axios
                 .get(apiEndpoint, { params })
                 .then((response) => {
-                    // console.log(response.data)
                     this.updateConversation(response.data);
                 })
                 .catch((error) => {

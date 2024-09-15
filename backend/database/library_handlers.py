@@ -420,8 +420,9 @@ def update_game_end(user_id, library_id, score, is_complete):
         
         existing_completion = LibraryCompletion.query.filter_by(library_id=library_id, user_id=user_id).first()
         if existing_completion:
-            if is_complete:
+            if is_complete and not existing_completion.is_complete:
                 existing_completion.is_complete = is_complete
+                existing_completion.completion_date = datetime.utcnow()
             if score > existing_completion.score:
                 existing_completion.score = score
                 user.experience_points += (score - existing_completion.score)

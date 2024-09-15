@@ -4,7 +4,6 @@ import axios from "axios";
 
 import { useAuthStore } from "@/store/authStore";
 import { usePopupStore } from "@/store/popupStore.js";
-// import { useUserStatsStore } from "@/store/userStatsStore.js";
 
 export const useGameStore = defineStore("gameStore", {
     state: () => ({
@@ -211,8 +210,6 @@ export const useGameStore = defineStore("gameStore", {
             })
                 .then(response => {
                     if (response.data.status === "success") {
-                        // const userStatsStore = useUserStatsStore();
-                        // userStatsStore.fetchStatsFromBackend();
                         this.completed = true;
                     } else {
                         console.error("Failed to end game:", response.data.message);

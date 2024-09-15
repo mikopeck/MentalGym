@@ -124,6 +124,7 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100%;
+  width: 100%;
   transition: all 0.3s ease;
   overflow: hidden;
 }
