@@ -12,8 +12,8 @@ request_timeout = 60
 TOKEN_CAP = 500
 LESSON_TOKENS = 1500
 
-GPT3_5 = "gpt-4o"
-GPT4 = "gpt-4o"
+GPT3_5 = "gpt-4o-2024-08-06"
+GPT4 = "gpt-4o-2024-08-06"
 EMBEDDING_MODEL = "text-embedding-3-small"
 DEFAULT_TEMP = 0.1
 
