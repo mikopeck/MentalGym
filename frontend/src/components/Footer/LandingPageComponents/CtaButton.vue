@@ -32,44 +32,62 @@ export default {
 }
 
 .pill-button {
+  position: relative;
   font-size: 1.5em;
   padding: 8px 22px;
-  border: solid 1px var(--element-color-2);
+  border: 2px solid var(--element-color-2);
   border-radius: 20px;
   color: var(--text-color);
-  background-image: linear-gradient(
-    to right,
-    var(--element-color-1),
-    var(--element-color-2)
-  );
+  background-color: var(--element-color-1);
   cursor: pointer;
   outline: none;
   transition: all 0.3s;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.pill-button::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(
+    90deg,
+    var(--element-color-1),
+    var(--highlight-color),
+    var(--element-color-2),
+    var(--element-color-1)
+  );
+  background-size: 200% 200%;
+  border-radius: inherit;
+  z-index: -1;
+  filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 .pill-button:hover {
-  border: solid 1px var(--highlight-color);
+  border-color: var(--highlight-color);
 }
 
 .pill-button:disabled {
   cursor: default;
-  /* opacity: 0.9; */
 }
 
-@keyframes gradient {
+.pill-button.loading::before {
+  opacity: 1;
+  animation: gradientBorder 4s linear infinite;
+}
+
+@keyframes gradientBorder {
   0% {
     background-position: 0% 50%;
   }
-  50% {
-    background-position: 100% 50%;
-  }
   100% {
-    background-position: 0% 50%;
+    background-position: 200% 50%;
   }
-}
-
-.loading {
-  animation: gradient 2s ease infinite;
-  background-size: 200% 200%;
 }
 </style>
+

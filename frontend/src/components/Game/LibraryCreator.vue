@@ -93,12 +93,13 @@
         </transition>
       </div>
       <!-- CTA Button -->
+      <div class="cta-container">
       <CtaButton
         :buttonText="submitButtonText"
         @click="handleSubmit"
         :isSubmitting="isSubmitting"
       />
-
+      </div>
       <library-browser />
     </div>
   </div>
@@ -339,6 +340,11 @@ input[type="text"] {
 
 .language-picker select {
   background-color: var(--background-color);
+}
+
+.cta-container {
+  margin-top: 2em;
+  margin-bottom: 1em;
 }
 
 .button-container {

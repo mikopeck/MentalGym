@@ -199,7 +199,7 @@ export default {
   text-align: center;
   font-weight: 700;
   font-size: 4em;
-  margin-top: 1em;
+  margin-top: 1.5em;
   color: var(--text-color);
 }
 
@@ -209,7 +209,7 @@ export default {
   opacity: 0.9;
   font-size: 1.5em;
   margin: 0;
-  margin-bottom: 1em;
+  margin-bottom: 3em;
   color: linear-gradient(to right, var(--text-color), var(--highlight-color));
 }
 
@@ -250,7 +250,9 @@ export default {
 }
 
 .cta-container {
-  margin: 2em 0;
+  margin-top: 2em;
+  margin-bottom: 2em;
+
 }
 
 .stat-infos {
