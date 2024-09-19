@@ -13,6 +13,7 @@
                 id="topicInput"
                 ref="topicInput"
                 v-model="topic"
+                :class="{ 'input-error': topicError }"
                 placeholder="What to learn about"
                 maxlength="100"
                 @focus="selectInputText"
@@ -20,7 +21,12 @@
               />
               <button class="randomize-btn" @click="randomizeTopic">🎲</button>
             </div>
+            <!-- Error Message -->
+            <div v-if="topicError" class="error-message">
+              Please enter a topic.
+            </div>
           </div>
+
           <div class="form-group difficulty-buttons">
             <div class="button-container">
               <button
@@ -94,11 +100,11 @@
       </div>
       <!-- CTA Button -->
       <div class="cta-container">
-      <CtaButton
-        :buttonText="submitButtonText"
-        @click="handleSubmit"
-        :isSubmitting="isSubmitting"
-      />
+        <CtaButton
+          :buttonText="submitButtonText"
+          @click="handleSubmit"
+          :isSubmitting="isSubmitting"
+        />
       </div>
       <library-browser />
     </div>
@@ -125,6 +131,7 @@ export default {
   data() {
     return {
       topic: "",
+      topicError: false,
       safeTopics: [
         "Innovative breakdance moves",
         "How to identify misinformation",
@@ -178,17 +185,23 @@ export default {
   },
   methods: {
     handlePaste(event) {
-      const pastedText = event.clipboardData.getData('text');
+      const pastedText = event.clipboardData.getData("text");
       if (pastedText.length > 100) {
         const popupStore = usePopupStore();
-        popupStore.showPopup("Please write the topic you wish to learn about.</br>(Up to 100 characters)");
+        popupStore.showPopup(
+          "Please write the topic you wish to learn about.</br>(Up to 100 characters)"
+        );
       }
     },
     selectInputText(event) {
       event.target.select();
     },
     handleSubmit() {
-      if (this.topic === "") return;
+      if (this.topic.trim() === "") {
+        this.topicError = true;
+        return;
+      }
+      this.topicError = false;
       const urlPattern =
         /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
       if (urlPattern.test(this.topic)) {
@@ -298,6 +311,17 @@ export default {
   flex-direction: row;
   align-items: baseline;
 }
+
+.input-error {
+  border-color: red;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 0.5em;
+}
+
 
 .randomize-btn {
   padding: 0 0.25em;
