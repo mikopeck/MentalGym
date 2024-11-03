@@ -48,7 +48,7 @@ export default {
 
 .icon {
   position: absolute;
-  font-size: 24px;
+  font-size: 48px;
   line-height: 3em;
   width: 3em;
   height: 3em;
