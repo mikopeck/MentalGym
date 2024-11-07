@@ -1,6 +1,6 @@
 <template>
   <div class="library-gen-page">
-    <div class="form-container">
+    <div class="form-container" @keydown.enter="handleSubmit">
       <h1 v-if="libgenRoute">Create a Library to Explore</h1>
       <!-- Topic Selection -->
       <div class="libgen-create">
@@ -117,12 +117,12 @@ import { mapState } from "pinia";
 import {
   startTypingEffect,
   stopTypingEffect,
-} from "../../scripts/placeholderTyping.js";
+} from "@/scripts/placeholderTyping.js";
 
 import { useLibGenStore } from "@/store/libGenStore.js";
 import { usePopupStore } from "@/store/popupStore.js";
 import { useAuthStore } from "@/store/authStore.js";
-import CtaButton from "../Footer/LandingPageComponents/CtaButton.vue";
+import CtaButton from "../../Footer/LandingPageComponents/CtaButton.vue";
 import LibraryBrowser from "./LibraryBrowser.vue";
 
 export default {

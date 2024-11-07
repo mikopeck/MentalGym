@@ -4,8 +4,8 @@
 </template>
   
   <script>
-import GameWindow from "../Game/GameWindow.vue";
-import LibraryCompletion from './LibraryCompletion.vue';
+import GameWindow from "./GameWindow.vue";
+import LibraryCompletion from '../LibraryCompletion.vue';
 
 export default 
   {

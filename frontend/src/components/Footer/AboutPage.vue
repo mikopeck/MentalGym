@@ -3,7 +3,7 @@
     <div class="landing-page-1">
       <div class="landing-titles-container">
         <div class="landing-title">Learn Anything!</div>
-        <div class="landing-subtitle">Where Curious Minds Learn By Playing.</div>
+        <div class="landing-subtitle">Where Curious Minds Play to Learn.</div>
       </div>
       <library-creator />
     </div>
@@ -71,7 +71,7 @@ import CtaButton from "./LandingPageComponents/CtaButton.vue";
 import FaqComponent from "./LandingPageComponents/FaqComponent.vue";
 // import SharedContent from "./LandingPageComponents/SharedContent.vue";
 import FeaturesComponent from "./LandingPageComponents/FeaturesComponent.vue";
-import LibraryCreator from "../Game/LibraryCreator.vue";
+import LibraryCreator from "../Game/Creation/LibraryCreator.vue";
 import PlanPage from "../Monetization/PlanPage.vue";
 
 export default {

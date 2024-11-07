@@ -12,10 +12,10 @@ import './assets/themes.css';
 const routes = [
   { path: '/lessons', component: defineAsyncComponent(() => import('./components/Chat/ChatComponent.vue')), meta: { title: 'Ascendance·☁️| Lessons' } },
   { path: '/lesson/:id', component: defineAsyncComponent(() => import('./components/Chat/ChatComponent.vue')), meta: { title: 'Ascendance·☁️| Learning' } },
-  { path: '/library', component: defineAsyncComponent(() => import('./components/Game/LibraryCreator.vue')), meta: { title: 'Ascendance·☁️| Create Library' } },
+  { path: '/library', component: defineAsyncComponent(() => import('./components/Game/Creation/LibraryCreator.vue')), meta: { title: 'Ascendance·☁️| Create Library' } },
   { path: '/progress', component: defineAsyncComponent(() => import('./components/Backstage/ProgressPage.vue')), meta: { title: 'Ascendance·☁️| Progress' } },
   { path: '/knowledge', component: defineAsyncComponent(() => import('./components/Backstage/KnowledgePage.vue')), meta: { title: 'Ascendance·☁️| Knowledge Map' } },
-  { path: '/library/:id', component: defineAsyncComponent(() => import('./components/Game/GamePage.vue')), meta: { title: 'Ascendance·☁️| Explore Library' } },
+  { path: '/library/:id', component: defineAsyncComponent(() => import('./components/Game/OldLibrary/GamePage.vue')), meta: { title: 'Ascendance·☁️| Explore Library' } },
   { path: '/about', component: defineAsyncComponent(() => import('./components/Footer/AboutPage.vue')), meta: { title: 'Ascendance·☁️| Learn Anything!' } },
   { path: '/contact', component: defineAsyncComponent(() => import('./components/Footer/ContactPage.vue')), meta: { title: 'Ascendance·☁️| Contact Us' } },
   { path: '/settings', component: defineAsyncComponent(() => import('./components/Backstage/SettingsPage.vue')), meta: { title: 'Ascendance·☁️| Settings' } },
