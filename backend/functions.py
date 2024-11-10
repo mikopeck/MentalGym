@@ -268,7 +268,7 @@ GenerateLibraryRoomNames = {
                     "properties": {
                         "room_name": {
                             "type": "string",
-                            "description": "A name for the library room which includes the topic description. Up to 12 words."
+                            "description": "A name for the library room which includes the subtopic description. Up to 12 words."
                         },
                     },
                     "required": ["room_name"]

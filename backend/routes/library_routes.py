@@ -9,7 +9,7 @@ from concurrent.futures import Future
 from openapi import moderate
 import database.library_handlers as lbh
 import knowledge_net.library_generator as lgn
-from images.library_imager import generate_images_task
+from images.library_imager import generate_images_task, save_image
 from database.user_handler import increment_violations, is_within_limit, check_generation_allowed, mark_generation_done
 
 def init_library_routes(app):
@@ -33,65 +33,94 @@ def init_library_routes(app):
                 return jsonify({"error": "Topic is too long. Maximum 200 characters allowed."}), 400
         if len(topic) < 1:
                 return jsonify({"error": "No message."}), 400
-        
-        # difficulty checks
+
+        # Difficulty checks
         library_difficulty = request.json.get("libraryDifficulty")
         if not library_difficulty:
             library_difficulty = "Easy"
         else:
             library_difficulty = clean(library_difficulty)
 
-        # language & langdifficulty checks
+        # Language & language difficulty checks
         language = request.json.get("language")
         if not language:
             language = "English"
         language_difficulty = request.json.get("languageDifficulty")
         if not language_difficulty:
             language_difficulty = "Normal"
-            
+
         # Extra context checks
         extra_context = request.json.get("extraContent")
         if extra_context:
             extra_context = clean(extra_context)
         if extra_context and len(extra_context) > 200:
                 return jsonify({"error": "Extra context is too long. Maximum 200 characters allowed."}), 400
-                
+
+        # Check for existing library
         if not extra_context:
             existing_library = lbh.get_library_id(topic, library_difficulty, language, language_difficulty)
             if existing_library:
-                if not user_id:
-                    mark_generation_done(ip, 'library')
-                return jsonify(status="success", library_id=existing_library)
-
+                # Now check if first room exists
+                subtopic = topic
+                existing_content = lbh.retrieve_library_room_contents(existing_library, subtopic)
+                if existing_content:
+                    return jsonify(status="success", library_id=existing_library, room_content=existing_content)
+                else:
+                    # Generate room content asynchronously
+                    room_future = executor.submit(lgn.generate_room_content, user_id, subtopic, existing_library)
+                    try:
+                        room_future.result()
+                        existing_content = lbh.retrieve_library_room_contents(existing_library, subtopic)
+                        return jsonify(status="success", library_id=existing_library, room_content=existing_content)
+                    except Exception as e:
+                        return jsonify(status="error", message="Failed to generate room content"), 500
+        
+        if not user_id:
+            mark_generation_done(ip, 'library')
+        
         # Start moderation task
         content_for_moderation = topic
         if extra_context:
             content_for_moderation += extra_context
-        moderation_future = executor.submit(moderate, topic)
+        moderation_future = executor.submit(moderate, content_for_moderation)
 
-        result = lgn.suggest_library_wing(user_id, topic, library_difficulty, language, language_difficulty,extra_context)
-        
-        room_names = [room for sublist in result for room in sublist]
+        # Start library generation task
+        room_names_future = executor.submit(lgn.suggest_library_wing, user_id, topic, library_difficulty, language, language_difficulty, extra_context)
 
-        # Check moderation before continue
+        # Start image generation task
+        guide = "Azalea" # pick random guide
+        img_url_future = executor.submit(generate_images_task, topic, library_difficulty, guide)
+
+        # Generate first room content
+        subtopic = topic
+        room_future = executor.submit(lgn.generate_room_content, user_id, subtopic, library_difficulty, language, language_difficulty, extra_context)
+
+        # Wait for moderation result
         violation, message = moderation_future.result()
         if violation:
             if user_id:
                 increment_violations(user_id)
             return jsonify({"error": f"Message breaks our usage policy. Please check our guidelines.\n{message}"}), 400
-        
-        library_response, status_code = lbh.create_library(user_id, topic, room_names, library_difficulty, language, language_difficulty)
 
+        # Create the library
+        room_names = room_names_future.result()
+        library_response, status_code = lbh.create_library(user_id, topic, room_names, library_difficulty, language, language_difficulty)
         if status_code == 201:
             library_id = library_response.get_json().get("library_id")
-            
-            # start task of image generation
-            executor.submit(generate_images_task, library_id)
-            if not user_id:
-                mark_generation_done(ip, 'library')
-            return jsonify(status="success", library_id=library_id)
+            img_url = img_url_future.result()
+            print("saving image..")
+            #save_image(library_id, img_url)
         else:
-            return library_response
+            raise Exception("Library creation failed")
+
+        try:
+            lbh.save_library_room_contents(library_id, topic, room_future.result())
+            library = lbh.get_library(library_id, user_id)
+            existing_content = lbh.retrieve_library_room_contents(existing_library, subtopic)
+
+            return jsonify(status="success", library_data=library.get_json(), room_content=existing_content)
+        except Exception as e:
+            return jsonify(status="error", message="Failed to generate room content"), 500
 
     @app.route("/api/library/<int:library_id>", methods=["GET"])
     def get_library(library_id):
@@ -135,7 +164,6 @@ def init_library_routes(app):
         elif not lbh.is_center_room(library_id, subtopic):
             return jsonify(status="error", message="Please login to continue."), 400
 
-
         # Attempt to retrieve existing room contents
         existing_content = lbh.retrieve_library_room_contents(library_id, subtopic)
         if existing_content:
@@ -143,14 +171,14 @@ def init_library_routes(app):
                 mark_generation_done(ip, 'room')
             return jsonify(status="success", data=existing_content)
 
-        # If no content exists, generate new content
-        generated_content = lgn.fill_room(user_id, subtopic, library_id)
-        print(generated_content)
-        if generated_content:
+        # If no content exists, generate new content asynchronously
+        room_future = executor.submit(lgn.generate_room_content, user_id, subtopic, library_id)
+        try:
+            generated_content = room_future.result()
             if not user_id:
                 mark_generation_done(ip, 'room')
             return jsonify(status="success", data=generated_content)
-        else:
+        except Exception as e:
             return jsonify(status="error", message="Failed to generate content"), 500
         
     @app.route("/api/library/shelves", methods=["POST"])
@@ -177,37 +205,7 @@ def init_library_routes(app):
             return jsonify(status="success", data=generated_content)
         else:
             return jsonify(status="error", message="Failed to generate content"), 500
-
-
-    @app.route("/api/library/<int:library_id>/room/update", methods=["POST"])
-    def update_room_state(library_id):
-        if isinstance(current_user, AnonymousUserMixin):
-            return jsonify({"status": "error", "message": "Please log in to update room states"}), 401
-
-        user_id = current_user.id
-        data = request.get_json()
-
-        if 'score' in data:
-            lbh.update_game_end(user_id, library_id, data['score'], False)
-
-        # Multiple rooms update (assuming the data format includes a list of rooms with their new states)
-        if 'rooms' in data:
-            responses = []
-            for room in data['rooms']:
-                room_name = room['room_name']
-                new_state = room['new_state']
-                answered_questions = room['answered_questions']
-                current_question_index = room['current_question_index']
-                response, status_code = lbh.update_library_room_state(user_id, library_id, room_name, new_state,answered_questions,current_question_index)
-                if status_code != 200:
-                    responses.append({"room_name": room_name, "status": "error", "message": response.get_json()['message']})
-                else:
-                    responses.append({"room_name": room_name, "status": "success"})
-            return jsonify({"rooms": responses}), 200
-
-        else:
-            return jsonify({"status": "error", "message": "Invalid data provided"}), 400
-        
+    
     @app.route("/api/library/end", methods=["POST"])
     def end_game():
         data = request.get_json()

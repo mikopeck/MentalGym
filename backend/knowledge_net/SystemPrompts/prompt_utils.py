@@ -72,6 +72,33 @@ def sys_lib_room(library_id):
         if status == 200:
             content_dict = json_response.get_json()
             content_str = content_dict['library_content']
-            system_message = system_message.replace("{library-context}", content_str)
+            if content_str:
+                system_message = system_message.replace("{library-context}", content_str)
+
+    return system_message
+
+def sys_first_room(subtopic, library_difficulty, language, language_difficulty, extra_context):
+    current_script_directory = os.path.dirname(os.path.abspath(__file__))
+    system_message_path = os.path.join(
+        current_script_directory, f"GenerateLibraryRoom.txt"
+    )
+
+    with open(system_message_path, "r") as file:
+        system_message = file.read()
+
+    if "{library-topic}" in system_message:
+        system_message = system_message.replace("{library-topic}", subtopic)
+
+    if "{library-map}" in system_message:
+        system_message = system_message.replace("{library-map}", "Empty")
+
+    if "{library-settings}" in system_message:
+        difficulty_message = create_difficulty_message(library_difficulty)
+        language_message = create_language_message(language, language_difficulty)
+        meaningful_message = f"{difficulty_message} {language_message} Additional context: {extra_context}"
+        system_message = system_message.replace("{library-settings}", meaningful_message)
+
+    if "{library-context}" in system_message and extra_context:
+        system_message = system_message.replace("{library-context}", "None")
 
     return system_message

@@ -40,22 +40,16 @@ def get_guide_description(guide):
     else: #"Azalea"
         return "purple curious octopus with gracefully flowing tentacles"
 
-def generate_images_task(id):
-    details_response, details_status = get_library_details(id)
-    if details_status != 200:
-        return details_response
-    
-    details = details_response.json
-    topic = details['topic']
-    guide = details['guide']
-    difficulty = details['difficulty']
+def generate_images_task(topic, difficulty, guide):
     guide_description = get_guide_description(guide)
     
     image_url = get_image(f"Pixel-art style game backdrop of a library decorated in the theme of the topic: {topic}. A {guide_description} is next to a lone bookshelf amidst the decorations. The contents seem to be of {difficulty} difficulty and all about topic: {topic}.")
     if not image_url:
         return "Failed to get image"
     print(image_url)
+    return image_url
 
+def save_image(id, image_url):
     # Download the image from the URL
     image_content = download_image(image_url)
     if not image_content:
@@ -69,5 +63,3 @@ def generate_images_task(id):
 
     # Update url in db
     update_library_image(id, blob_url)
-    print("updated")
-    return "Success"

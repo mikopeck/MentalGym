@@ -11,9 +11,11 @@ export const useGameStore = defineStore("gameStore", {
         roomNames: [],
         roomStates: {},
         currentRoom: null,
+        nextRooms: [],
         factoids: [],
         currentQuestion: 0,
         answeredQuestions: [],
+        incorrectQuestionAnswers: [],
         questionVisible: false,
         factoidVisible: null,
 
@@ -28,15 +30,6 @@ export const useGameStore = defineStore("gameStore", {
             this.resetGameState();
             this.libraryId = libraryId;
         },
-        handleMapClick() {
-            this.currentRoom = null;
-        },
-        handleExclamationClick(index) {
-            this.factoidVisible = index;
-        },
-        handleQuestionClick() {
-            this.questionVisible = true;
-        },
         answerAttempt(correct) {
             if (correct) {
                 this.score = this.score + this.multiplier;
@@ -45,67 +38,46 @@ export const useGameStore = defineStore("gameStore", {
                 const room = this.roomStates[this.currentRoom];
                 room.answeredQuestions.push(this.currentQuestion);
 
+
+                if (room.answeredQuestions.length === 2) {
+                    this.prepareNextRooms();
+                }
                 if (room.answeredQuestions.length === 4) {
-                    this.score = this.score + this.multiplier
                     room.state = 3;
-                    this.unlockAdjacentRooms();
                 }
 
-                this.currentQuestion = this.findNextUnansweredQuestion();
+                this.nextQuestion();
 
             } else {
-                this.multiplier = 5;
-                this.currentQuestion = this.findNextUnansweredQuestion();
+                // Add the question to incorrect answers
+                // for every 4 incorrectly answered questions, add a new room with those 4 questions, then remove them from the incorrectQuestionAnswers
+                this.multiplier = 5;// make it 5+sqrt(multiplier-5) instead
+                this.nextQuestion();
             }
 
-            if (this.score >= 100 & this.tutorial){
+            if (this.score >= 100 & this.tutorial) {
                 const popupStore = usePopupStore();
                 popupStore.showLibraryCompletionInfo();
-                this.tutorial=false;
-                this.questionVisible=false;
+                this.tutorial = false;
+                this.questionVisible = false;
             }
         },
-
-        unlockAdjacentRooms() {
-            const currentIndex = this.roomNames.indexOf(this.currentRoom);
-            const adjacentIndices = [currentIndex - 1, currentIndex + 1, currentIndex - 5, currentIndex + 5];
-            adjacentIndices.forEach(async index => {
-                if (index >= 0 && index < this.roomNames.length && this.roomStates[this.roomNames[index]].state === 0) {
-                    this.roomStates[this.roomNames[index]].state = 1;
-                }
-            });
-            this.broadcastRoomStates();
-        },
-        findNextUnansweredQuestion() {
+        nextQuestion() {
             const room = this.roomStates[this.currentRoom];
-            for (let i = 1; i <= 4; i++) {
-                let nextQuestionIndex = (this.currentQuestion + i) % 4;
-                if (!room.answeredQuestions.includes(nextQuestionIndex)) {
-                    return nextQuestionIndex;
+            for (let i = 0; i < this.factoids.length; i++) {
+                if (!room.answeredQuestions.includes(i)) {
+                    this.currentQuestion = i;
                 }
             }
-            return null;
         },
-        async broadcastRoomStates() {
-            try {
-                const rooms = Object.keys(this.roomStates).map(room_name => ({
-                    room_name,
-                    new_state: this.roomStates[room_name].state,
-                    answered_questions: this.roomStates[room_name].answeredQuestions,
-                    current_question_index: this.roomStates[room_name].currentQuestionIndex
-                }));
-                const response = await axios.post(`/api/library/${this.libraryId}/room/update`, { rooms, score: this.score });
-                if (response.data.rooms) {
-                    response.data.rooms.forEach(room => {
-                        if (room.status === "error") {
-                            console.error(`Failed to update state for room ${room.room_name}: ${room.message}`);
-                        }
-                    });
-                }
-                console.log("All room states updated successfully.");
-            } catch (error) {
-                console.error("Failed to broadcast room states:", error);
-            }
+        async prepareNextRooms() {
+            // first call unlock 3 rooms subsequent calls unlock 2.
+            // pick 3 from unlocked and check if they are loaded
+            // load any which arent loaded, one-by-one
+            // set this.nextRooms to the three picked
+        },
+        async unlockRoom() {
+
         },
         async fetchLibraryDetails(libraryId) {
             this.setId(libraryId);
@@ -198,12 +170,6 @@ export const useGameStore = defineStore("gameStore", {
             }
         },
         endGame() {
-            this.broadcastRoomStates().then(() => {
-                console.log("Final states of all rooms broadcasted successfully.");
-            }).catch(error => {
-                console.error("Error broadcasting final states:", error);
-            });
-
             axios.post(`/api/library/end`, {
                 libraryId: this.libraryId,
                 score: this.score,
@@ -227,9 +193,10 @@ export const useGameStore = defineStore("gameStore", {
             this.factoids = [];
             this.currentQuestion = 0;
             this.answeredQuestions = [];
+            this.incorrectQuestionAnswers = [];
             this.questionVisible = false;
             this.factoidVisible = null;
-            
+
             this.score = 0;
             this.multiplier = 5;
 
