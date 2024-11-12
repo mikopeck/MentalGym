@@ -61,19 +61,18 @@ def init_library_routes(app):
             existing_library = lbh.get_library_id(topic, library_difficulty, language, language_difficulty)
             if existing_library:
                 # Now check if first room exists
-                subtopic = topic
-                existing_content = lbh.retrieve_library_room_contents(existing_library, subtopic)
+                existing_content = lbh.retrieve_library_room_contents(existing_library, topic)
                 if existing_content:
-                    return jsonify(status="success", library_id=existing_library, room_content=existing_content)
+                    return jsonify(status="success", library_id=existing_library)
                 else:
-                    # Generate room content asynchronously
-                    room_future = executor.submit(lgn.generate_room_content, user_id, subtopic, existing_library)
                     try:
-                        room_future.result()
-                        existing_content = lbh.retrieve_library_room_contents(existing_library, subtopic)
-                        return jsonify(status="success", library_id=existing_library, room_content=existing_content)
+                        # Generate room content asynchronously
+                        room_future = executor.submit(lgn.generate_room_content, user_id, topic, existing_library)
+                        room_contents = room_future.result()
+                        lbh.save_library_room_contents(library_id, topic, room_contents)
+                        return jsonify(status="success", library_id=existing_library)
                     except Exception as e:
-                        return jsonify(status="error", message="Failed to generate room content"), 500
+                        return jsonify(status="error", message=f"Failed to generate room content {e}"), 500
         
         if not user_id:
             mark_generation_done(ip, 'library')
@@ -92,8 +91,7 @@ def init_library_routes(app):
         img_url_future = executor.submit(generate_images_task, topic, library_difficulty, guide)
 
         # Generate first room content
-        subtopic = topic
-        room_future = executor.submit(lgn.generate_room_content, user_id, subtopic, library_difficulty, language, language_difficulty, extra_context)
+        room_future = executor.submit(lgn.generate_room_content, user_id, topic, library_difficulty, language, language_difficulty, extra_context)
 
         # Wait for moderation result
         violation, message = moderation_future.result()
@@ -114,11 +112,11 @@ def init_library_routes(app):
             raise Exception("Library creation failed")
 
         try:
-            lbh.save_library_room_contents(library_id, topic, room_future.result())
+            room_contents = room_future.result()
+            lbh.save_library_room_contents(library_id, topic, room_contents)
             library = lbh.get_library(library_id, user_id)
-            existing_content = lbh.retrieve_library_room_contents(existing_library, subtopic)
 
-            return jsonify(status="success", library_data=library.get_json(), room_content=existing_content)
+            return jsonify(status="success", library_data=library.get_json())
         except Exception as e:
             return jsonify(status="error", message="Failed to generate room content"), 500
 
@@ -135,7 +133,7 @@ def init_library_routes(app):
             executor.submit(generate_images_task, library_id)
             
         if library:
-            return jsonify(status="success", data=library.get_json())
+            return jsonify(status="success", data=library.get_json(), room_data=lbh.retrieve_library_room_contents(library_id, library.get_json().get("room_names")[0]))
         else:
             return jsonify(status="error", message="Library not found"), 404
         
@@ -179,31 +177,6 @@ def init_library_routes(app):
                 mark_generation_done(ip, 'room')
             return jsonify(status="success", data=generated_content)
         except Exception as e:
-            return jsonify(status="error", message="Failed to generate content"), 500
-        
-    @app.route("/api/library/shelves", methods=["POST"])
-    def load_room():
-        data = request.get_json()
-        subtopic = data.get("subtopic")
-        library_id = data.get("libraryId")
-
-        if not subtopic:
-            return jsonify(status="error", message="No subtopic provided"), 400
-        if not library_id:
-            return jsonify(status="error", message="No library ID provided"), 400
-
-        user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
-        # Attempt to retrieve existing room contents
-        existing_content = lbh.retrieve_library_room_contents(library_id, subtopic)
-        if existing_content:
-            return jsonify(status="success", data=existing_content)
-
-        # If no content exists, generate new content
-        generated_content = lgn.fill_room(user_id, subtopic, library_id)
-        print(generated_content)
-        if generated_content:
-            return jsonify(status="success", data=generated_content)
-        else:
             return jsonify(status="error", message="Failed to generate content"), 500
     
     @app.route("/api/library/end", methods=["POST"])

@@ -211,7 +211,6 @@ export default {
         );
         return;
       }
-      // if this.topic is a web link (maybe without spaces and includes a dot?)
       this.isSubmitting = true;
       const postData = {
         topic: this.topic,
@@ -223,7 +222,8 @@ export default {
       axios
         .post("/api/library/generate", postData)
         .then((response) => {
-          const libraryId = response.data.library_id;
+          console.log(response.data);
+          const libraryId = response.data.library_data.id;
           this.$router.push(`/library/${libraryId}`);
         })
         .catch((error) => {

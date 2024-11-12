@@ -22,6 +22,7 @@ export const useGameStore = defineStore("gameStore", {
         score: 0,
         multiplier: 5,
 
+        showNext: false,
         completed: false,
         tutorial: true,
     }),
@@ -30,29 +31,42 @@ export const useGameStore = defineStore("gameStore", {
             this.resetGameState();
             this.libraryId = libraryId;
         },
+        setRoom(roomName){
+            this.currentRoom = roomName;
+        },
+        startGame(){
+            this.currentRoom = 0;//first room
+        },
         answerAttempt(correct) {
             if (correct) {
                 this.score = this.score + this.multiplier;
                 this.multiplier = this.multiplier + 1;
+                this.currentQuestion += 1;
 
                 const room = this.roomStates[this.currentRoom];
-                room.answeredQuestions.push(this.currentQuestion);
-
-
-                if (room.answeredQuestions.length === 2) {
+                if (this.currentQuestion === 2) {
                     this.prepareNextRooms();
                 }
-                if (room.answeredQuestions.length === 4) {
+                if (this.currentQuestion === 4) {
                     room.state = 3;
+                    this.showNext = true;
                 }
-
-                this.nextQuestion();
 
             } else {
                 // Add the question to incorrect answers
-                // for every 4 incorrectly answered questions, add a new room with those 4 questions, then remove them from the incorrectQuestionAnswers
-                this.multiplier = 5;// make it 5+sqrt(multiplier-5) instead
-                this.nextQuestion();
+                this.incorrectQuestionAnswers.push(this.factoids[this.currentQuestion]);
+
+                // Revision rooms
+                if (this.incorrectQuestionAnswers.length >= 4) {
+                    const newRoomName = 'Revision room ' + (Object.keys(this.roomStates).length + 1);
+                    this.roomNames.push(newRoomName);
+                    this.roomStates[newRoomName] = {
+                        state: 2, // Loaded
+                        factoids: this.incorrectQuestionAnswers.slice(),
+                    };
+                    this.incorrectQuestionAnswers = [];
+                }
+                this.multiplier = 5 + Math.sqrt(Math.max(0, this.multiplier - 5));
             }
 
             if (this.score >= 100 & this.tutorial) {
@@ -62,48 +76,55 @@ export const useGameStore = defineStore("gameStore", {
                 this.questionVisible = false;
             }
         },
-        nextQuestion() {
-            const room = this.roomStates[this.currentRoom];
-            for (let i = 0; i < this.factoids.length; i++) {
-                if (!room.answeredQuestions.includes(i)) {
-                    this.currentQuestion = i;
+        async prepareNextRooms() {
+            let roomsToUnlock = 2;
+            const unlockedRoomsCount = Object.values(this.roomStates).filter(room => room.state > 1).length;
+            if (unlockedRoomsCount === 0) {
+                roomsToUnlock = 3;
+            }
+
+            // Unlock
+            const lockedRooms = Object.keys(this.roomStates).filter(roomName => this.roomStates[roomName].state === 1);
+            for (let i = 0; i < roomsToUnlock && i < lockedRooms.length; i++) {
+                const roomName = lockedRooms[i];
+                this.roomStates[roomName].state = 1;
+            }
+
+            // Pick up to 3 rooms from availableRooms
+            const availableRooms = Object.keys(this.roomStates).filter(roomName => {
+                const roomState = this.roomStates[roomName];
+                return roomState.state >= 1; // Unlocked or loaded
+            });
+            this.nextRooms = availableRooms.slice(0, 3);
+
+            // Load any which aren't loaded
+            for (const roomName of this.nextRooms) {
+                if (this.roomStates[roomName].state === 1) {
+                    await this.loadRoom(roomName);
                 }
             }
-        },
-        async prepareNextRooms() {
-            // first call unlock 3 rooms subsequent calls unlock 2.
-            // pick 3 from unlocked and check if they are loaded
-            // load any which arent loaded, one-by-one
-            // set this.nextRooms to the three picked
-        },
-        async unlockRoom() {
-
         },
         async fetchLibraryDetails(libraryId) {
             this.setId(libraryId);
             try {
+                console.log("fetching")
                 const response = await axios.get(`/api/library/${libraryId}`);
                 if (response.data.status === "success") {
-                    console.log(response.data.data)
+                    console.log(response.data)
                     this.roomNames = response.data.data.room_names || [];
                     this.score = response.data.data.score || 0;
-                    const roomStatesObject = response.data.data.room_states;
-                    const roomStatesArray = Object.keys(roomStatesObject).map(key => {
-                        return {
-                            room_name: roomStatesObject[key].room_name,
-                            state: roomStatesObject[key].state,
-                            current_question_index: roomStatesObject[key].current_question_index,
-                            answered_questions: roomStatesObject[key].answered_questions
+
+                    this.roomStates = {};
+                    this.roomNames.forEach((roomName, index) => {
+                        let state = 0;
+                        if (index === 0) {
+                            state = 2;
+                        }
+                        this.roomStates[roomName] = {
+                            state: state,
+                            factoids: [],
                         };
                     });
-                    this.roomStates = roomStatesArray.reduce((acc, room) => {
-                        acc[room.room_name] = {
-                            state: room.state,
-                            currentQuestionIndex: room.current_question_index,
-                            answeredQuestions: room.answered_questions
-                        };
-                        return acc;
-                    }, {});
 
                     this.tutorial = response.data.data.tutorial;
                     if (this.tutorial) {
@@ -117,30 +138,24 @@ export const useGameStore = defineStore("gameStore", {
                 console.error("Error fetching library details:", error);
             }
         },
-
-        async openRoom(room_name) {
+        async loadRoom(room_name) {
             try {
                 console.log("opening" + room_name);
-                if (this.roomStates[room_name].state > 1) {
-                    await this.loadRoom(room_name);
-                    this.currentRoom = room_name;
+                if (this.roomStates[room_name].state !== 1) {
+                    console.error(`Trying to load ${room_name} in state ${this.roomStates[room_name].state}.`)
+                    return
                 }
-                if (this.roomStates[room_name].state === 1) {
-                    // Generating room
-                    const subtopic = room_name;
-                    const response = await axios.post("/api/library/room", { libraryId: this.libraryId, subtopic });
-                    if (response.data.status === "success") {
-                        this.roomStates[room_name].state = 2;
-                        await this.broadcastRoomStates();
-                        const authStore = useAuthStore();
-                        authStore.cloudTokens = authStore.cloudTokens + 1;
-                    } else {
-                        console.error(`Failed to unlock room ${room_name}: ${response.data.message}`);
-                        if (response.data.status === 403) {
-                            const popupStore = usePopupStore();
-                            popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
-                            return false;
-                        }
+                // Generating room
+                const response = await axios.post("/api/library/room", { libraryId: this.libraryId, room_name });
+                if (response.data.status === "success") {
+                    this.roomStates[room_name].state = 2;
+                    this.roomStates[room_name].factoids = response.data.data;
+                } else {
+                    console.error(`Failed to unlock room ${room_name}: ${response.data.message}`);
+                    if (response.data.status === 403) {
+                        const popupStore = usePopupStore();
+                        popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
+                        return false;
                     }
                 }
             } catch (error) {
@@ -153,21 +168,17 @@ export const useGameStore = defineStore("gameStore", {
             }
             return true;
         },
-        async loadRoom(room_name) {
+        openRoom(room_name) {
             if (this.roomStates[room_name].state < 2) {
-                console.error(`Loading unopened room ${room_name}`);
+                console.error(`Opening unloaded room ${room_name}`);
                 return;
             }
-            const subtopic = room_name;
-            const response = await axios.post("/api/library/shelves", { libraryId: this.libraryId, subtopic });
-            if (response.data.status === "success") {
-                this.factoids = response.data.data.factoids;
-                this.currentQuestion = this.roomStates[room_name].currentQuestionIndex;
-                this.answered_questions = this.roomStates[room_name].answered_questions;
-                console.log(`Room ${room_name} loaded successfully`);
-            } else {
-                console.error(`Failed to load room ${room_name}: ${response.data.message}`);
-            }
+            this.currentRoom = room_name
+            this.factoids = this.roomStates[room_name].factoids;
+            this.currentQuestion = 0;
+            const authStore = useAuthStore();
+            authStore.cloudTokens = authStore.cloudTokens + 1;
+            console.log(`Room ${room_name} entered successfully`);
         },
         endGame() {
             axios.post(`/api/library/end`, {
@@ -190,7 +201,8 @@ export const useGameStore = defineStore("gameStore", {
             this.roomNames = [];
             this.roomStates = {};
             this.currentRoom = null;
-            this.factoids = [];
+            this.nextRooms = [],
+                this.factoids = [];
             this.currentQuestion = 0;
             this.answeredQuestions = [];
             this.incorrectQuestionAnswers = [];
@@ -200,7 +212,8 @@ export const useGameStore = defineStore("gameStore", {
             this.score = 0;
             this.multiplier = 5;
 
-            this.completed = false;
+            this.showNext = false,
+                this.completed = false;
         }
     },
 });
