@@ -1,6 +1,7 @@
 <template>
   <transition name="fade">
     <div v-if="completionVisible" class="completion-overlay">
+      <div class="completion-content">
         <div class="celebratory-message">🎉 Congratulations! 🎉</div>
         <UserStats />
         <div class="suggestions-container">
@@ -68,6 +69,7 @@
           </div>
         </div>
       </div>
+    </div>
   </transition>
 </template>
 
@@ -119,7 +121,7 @@ export default {
       this.$router.push("/library");
     },
     navigateBack() {
-      this.gameStore.completed = false;
+      this.gameStore.fetchLibraryDetails(this.gameStore.libraryId);
     },
     async navigateExplore() {
       this.exploreLoading = true;
@@ -245,6 +247,15 @@ export default {
   align-items: center;
   justify-content: center;
   z-index: 190;
+}
+
+.completion-content {
+  background-color: transparent;
+  color: var(--text-color);
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 600px;
+  text-align: center;
 }
 
 .celebratory-message {

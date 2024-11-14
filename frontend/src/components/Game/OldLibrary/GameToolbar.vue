@@ -83,7 +83,7 @@ export default {
   },
   methods: {
     navigateToKnowledgeMap() {
-      this.$router.push("/knowledge?node=" + this.gameStore.roomNames[12]);
+      this.$router.push("/knowledge?node=" + this.gameStore.libraryTopic);
     },
     tryEndLibrary() {
       if (!this.isCompletable) {
@@ -110,7 +110,8 @@ export default {
 
 
 <style scoped>
-.toolbar-container {
+.toolbar-container {  
+  z-index: 111;
   width: 100%;
   display: flex;
   flex-direction: column;

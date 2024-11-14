@@ -39,15 +39,15 @@ export const useGameStore = defineStore("gameStore", {
             this.resetGameState();
             this.libraryId = libraryId;
         },
-        startGame(){
+        startGame() {
             this.openRoom(this.libraryTopic);
         },
-        toggleFactoid(){
+        toggleFactoid() {
             console.log("toggling")
-            if (this.factoidVisible == null){
+            if (this.factoidVisible == null) {
                 this.questionVisible = false;
                 this.factoidVisible = this.currentQuestion;
-            }else{
+            } else {
                 this.factoidVisible = null;
                 this.questionVisible = true;
             }
@@ -63,39 +63,40 @@ export const useGameStore = defineStore("gameStore", {
                 console.log(this.currentQuestion)
                 if (this.currentQuestion === 2 && !this.finalTest) {
                     this.prepareNextRooms();
-                }
-                else if (this.currentQuestion === 4 && !this.finalTest) {
+                } else if (this.currentQuestion === 4 && !this.finalTest) {
                     this.questionVisible = false;
                     this.showNext = true;
-                }
-                else if (this.currentQuestion === 5 && this.finalTest){
+                } else if (this.currentQuestion === 5 && this.finalTest) {
                     this.questionVisible = false;
                     this.completed = true;
                     this.endGame();
                     return;
                 }
             } else {
-                this.incorrectQuestionAnswers.push(this.factoids[this.currentQuestion]);
+                const currentFactoid = this.factoids[this.currentQuestion];
+                if (!this.incorrectQuestionAnswers.includes(currentFactoid)) {
+                    this.incorrectQuestionAnswers.push(currentFactoid);
+                }
+
                 if (this.incorrectQuestionAnswers.length >= 4) {
                     const newRoomName = 'Revision room ' + (Object.keys(this.roomStates).length + 1);
-                    this.roomNames.push(newRoomName);
-                    this.roomStates[newRoomName] = {
-                        state: 2,
-                        factoids: this.incorrectQuestionAnswers.slice(),
-                    };
-                    this.incorrectQuestionAnswers = [];
-                    console.log(this.roomStates)
-                }
-                this.multiplier = 5 + Math.sqrt(Math.max(0, this.multiplier - 5));
-            }
 
-            if (this.score >= 100 & this.tutorial) {
-                const popupStore = usePopupStore();
-                popupStore.showLibraryCompletionInfo();
-                this.tutorial = false;
-                this.questionVisible = false;
+                    if (!this.roomStates[newRoomName]) {
+                        this.roomNames.push(newRoomName);
+                        this.roomStates[newRoomName] = {
+                            state: 2,
+                            factoids: this.incorrectQuestionAnswers.slice(),
+                        };
+                    }
+
+                    this.incorrectQuestionAnswers = [];
+                    console.log(this.roomStates);
+                }
+                this.multiplier = Math.round(5 + Math.sqrt(Math.max(0, this.multiplier - 5)));
+
             }
         },
+
         async prepareNextRooms() {
             let roomsToUnlock = 2;
             const unlockedRoomsCount = Object.values(this.roomStates).filter(room => room.state > 1).length;
@@ -104,26 +105,36 @@ export const useGameStore = defineStore("gameStore", {
             }
 
             const lockedRooms = Object.keys(this.roomStates).filter(roomName => this.roomStates[roomName].state === 0);
+
+            // Shuffle the locked rooms array to make the selection random
+            for (let i = lockedRooms.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [lockedRooms[i], lockedRooms[j]] = [lockedRooms[j], lockedRooms[i]];
+            }
+
+            // Unlock 3 random rooms (or less if there are fewer locked rooms)
             for (let i = 0; i < roomsToUnlock && i < lockedRooms.length; i++) {
                 const roomName = lockedRooms[i];
                 this.roomStates[roomName].state = 1;
             }
 
+            // Update available rooms after unlocking
             const availableRooms = Object.keys(this.roomStates).filter(roomName => {
                 const roomState = this.roomStates[roomName];
                 return roomState.state === 1 || roomState.state === 2;
             });
+
             this.nextRooms = availableRooms.length <= 3
-            ? availableRooms
-            : availableRooms.sort(() => Math.random() - 0.5).slice(0, 3);
+                ? availableRooms
+                : availableRooms.slice(0, 3);
 
             const completedRoomsCount = Object.values(this.roomStates).filter(room => room.state === 3).length;
             if (completedRoomsCount > 4) {
                 let makeFinalTest = Math.random() < 0.5;
-                if (completedRoomsCount === 4){
+                if (completedRoomsCount === 4) {
                     makeFinalTest = true;
                 }
-                if (completedRoomsCount === 5){
+                if (completedRoomsCount === 5) {
                     makeFinalTest = false;
                 }
                 if (makeFinalTest) {
@@ -148,7 +159,7 @@ export const useGameStore = defineStore("gameStore", {
                         factoids: finalTestFactoids
                     };
                     this.roomNames.push(finalTestRoomName);
- 
+
                     if (this.nextRooms.length > 0) {
                         const randomIndex = Math.floor(Math.random() * this.nextRooms.length);
                         this.nextRooms[randomIndex] = finalTestRoomName;
@@ -164,7 +175,7 @@ export const useGameStore = defineStore("gameStore", {
                     await this.loadRoom(roomName);
                 }
             }
-            console.log("prepared",this.roomStates)
+            console.log("prepared", this.roomStates)
         },
         async fetchLibraryDetails(libraryId) {
             this.setId(libraryId);
@@ -258,7 +269,7 @@ export const useGameStore = defineStore("gameStore", {
             console.log(`Room ${room_name} entered successfully`);
             this.questionVisible = true;
             this.roomStates[room_name].state = 3;
-            if (room_name === "Final Test Room"){
+            if (room_name === "Final Test Room") {
                 this.finalTest = true;
             }
         },
@@ -276,7 +287,8 @@ export const useGameStore = defineStore("gameStore", {
                 })
                 .catch(error => {
                     console.error("Error sending game end data:", error);
-                });},
+                });
+        },
         resetGameState() {
             this.libraryId = null;
             this.roomNames = [];

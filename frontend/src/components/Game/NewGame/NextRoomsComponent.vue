@@ -4,6 +4,7 @@
     class="next-container"
     :style="{ backgroundImage: 'url(' + gameStore.imageUrl + ')' }"
   >
+    <div class="next-room-title">Where to go next?</div>
     <div class="next-room-buttons">
       <RoomButton
         v-for="(room, index) in rooms"
@@ -11,9 +12,8 @@
         @click="openRoom(room.roomName)"
         :label="room.roomName"
         :style="{ opacity: room.isLoading ? 0.6 : 1 }"
-        :disabled="room.isLoading"
+        :position="index"
       >
-        {{ room.roomName }}
       </RoomButton>
     </div>
   </div>
@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     openRoom(roomName) {
-      if (this.gameStore.roomStates[roomName].state === 2){
+      if (this.gameStore.roomStates[roomName].state === 2) {
         this.gameStore.openRoom(roomName);
       }
     },
@@ -66,8 +66,12 @@ export default {
   display: flex;
   flex-direction: column-reverse;
 }
-.next-room-buttons{
+.next-room-buttons {
   width: 90%;
   margin: 0px auto;
+}
+.next-room-title{
+  font-weight: 700;
+  padding:4px;
 }
 </style>

@@ -42,7 +42,6 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--background-color);
   margin: 0;
 }
 
