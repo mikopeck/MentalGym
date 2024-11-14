@@ -107,7 +107,7 @@ def init_library_routes(app):
             library_id = library_response.get_json().get("library_id")
             img_url = img_url_future.result()
             print("saving image..")
-            #save_image(library_id, img_url)
+            save_image(library_id, img_url)
         else:
             raise Exception("Library creation failed")
 
