@@ -1,8 +1,8 @@
 <template>
-  <button class="library-button" @click="goToLibrary(library.id)" :style="{ backgroundImage: 'url(' + library.image_url + ')' }">
+  <div v-if="noRoom" class="library-button" :style="{ backgroundImage: 'url(' + library.imageUrl + ')' }">
     <div class="info-overlay">
       <div class="top-info">
-        <div class="library-topic">{{ library.library_topic }}</div>
+        <div class="library-topic">{{ library.libraryTopic }}</div>
         <div class="difficulty">{{ library.difficulty }}</div>
       </div>
       <div class="cta-container">
@@ -19,11 +19,11 @@
         </div>
         <div class="language-info">
           <span>{{ library.language }}</span>
-          <span>{{ library.language_difficulty }}</span>
+          <span>{{ library.languageDifficulty }}</span>
         </div>
       </div>
     </div>
-  </button>
+  </div>
 </template>
 
 
@@ -43,6 +43,9 @@ export default {
     library() {
       return useGameStore();
     },
+    noRoom(){
+      return this.library.currentRoom == null;
+    }
   },
   methods: {
     startGame() {
@@ -62,8 +65,9 @@ export default {
   background-position: center;
   width: 100%;
   height: 100%;
+  max-width: 512px;
+  max-height: 512px;
   border: none;
-  cursor: pointer;
   overflow: hidden;
   border-radius: 8px;
   transition: transform 0.3s ease;

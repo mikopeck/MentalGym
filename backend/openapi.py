@@ -41,7 +41,6 @@ def generate_response(user_id, messages, functions=None, function_call="none", m
             if functions:
                 data["functions"] = functions
                 data["function_call"] = function_call
-            #     print(f"Requesting {model} response..")
             #     print(f"{functions} mode {function_call}: \n{messages}")
             # else:
             print(f"Requesting {model} response: ", messages)

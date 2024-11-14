@@ -40,7 +40,7 @@ def suggest_library_wing(user_id, selected_node, library_difficulty, language, l
 
 # rooms
     
-def fill_room(user_id, room_name, library_id):
+def fill_libroom(user_id, room_name, library_id):
     def generate_room_contents():
         system_msg = sys_lib_room(library_id)
         user_msg = room_name
@@ -93,9 +93,9 @@ def fill_room(user_id, subtopic, library_difficulty, language, language_difficul
 
     return room_contents
 
-def generate_room_content(user_id, subtopic, library_id):
+def generate_libroom_content(user_id, subtopic, library_id):
     # Generate room content
-    generated_content = fill_room(user_id, subtopic, library_id)
+    generated_content = fill_libroom(user_id, subtopic, library_id)
     if generated_content:
         return generated_content
     else:

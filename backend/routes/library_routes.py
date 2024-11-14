@@ -169,13 +169,14 @@ def init_library_routes(app):
                 mark_generation_done(ip, 'room')
             return jsonify(status="success", data=existing_content)
 
-        # If no content exists, generate new content asynchronously
-        room_future = executor.submit(lgn.generate_room_content, user_id, subtopic, library_id)
         try:
-            generated_content = room_future.result()
+            # If no content exists, generate new content
+            generated_content = lgn.generate_libroom_content(user_id, subtopic, library_id)
+            lbh.save_library_room_contents(library_id, subtopic, generated_content)
+            existing_content = lbh.retrieve_library_room_contents(library_id, subtopic)
             if not user_id:
                 mark_generation_done(ip, 'room')
-            return jsonify(status="success", data=generated_content)
+            return jsonify(status="success", data=existing_content)
         except Exception as e:
             return jsonify(status="error", message="Failed to generate content"), 500
     

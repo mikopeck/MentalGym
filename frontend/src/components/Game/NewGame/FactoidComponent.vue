@@ -29,7 +29,7 @@ export default {
   methods: {
     closeFactoid () {
       const store = useGameStore();
-      store.factoidVisible = null;
+      store.toggleFactoid();
     }
   },
   setup() {

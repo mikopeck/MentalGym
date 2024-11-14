@@ -27,8 +27,8 @@ import { useRoute } from "vue-router";
 import { useGameStore } from "@/store/gameStore";
 import GameTile from "./GameTile.vue";
 import RoomTile from "./RoomTile.vue";
-import FactoidComponent from "./FactoidComponent.vue";
-import LibraryQuestion from "./LibraryQuestion.vue";
+import FactoidComponent from "../NewGame/FactoidComponent.vue";
+import LibraryQuestion from "../NewGame/LibraryQuestion.vue";
 import GameToolbar from "./GameToolbar.vue";
 
 export default {
@@ -65,7 +65,7 @@ export default {
       if (tile.state > 1 || (tile.state === 1 && !tile.loading)) {
         this.loadingStates[tile.name] = true;
         try {
-          if (!(await this.gameStore.openRoom(tile.name))) {
+          if (!(this.gameStore.openRoom(tile.name))) {
             this.$router.push("/login");
           }
         } finally {
