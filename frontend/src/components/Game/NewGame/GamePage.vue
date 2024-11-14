@@ -7,9 +7,9 @@
 </template>
 
   <script>
-import GameWindow from "../NewGame/GameWindow.vue";
-import LibraryCompletion from '../LibraryCompletion.vue';
-import GameToolbar from '../OldLibrary/GameToolbar.vue';
+import GameWindow from "./GameWindow.vue";
+import LibraryCompletion from './LibraryCompletion.vue';
+import GameToolbar from './GameToolbar.vue';
 
 export default 
   {

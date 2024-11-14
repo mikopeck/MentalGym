@@ -79,8 +79,8 @@ import { usePopupStore } from "@/store/popupStore";
 import { useAuthStore } from "@/store/authStore";
 import { useMessageStore } from "@/store/messageStore";
 import { useGameStore } from "@/store/gameStore";
-import CyclingContentButton from "./Creation/CyclingContentButton.vue";
-import UserStats from "../Graphs/UserStats.vue"
+import CyclingContentButton from "../Creation/CyclingContentButton.vue";
+import UserStats from "../../Graphs/UserStats.vue"
 
 export default {
   data() {

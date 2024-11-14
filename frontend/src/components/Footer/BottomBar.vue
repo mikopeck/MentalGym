@@ -17,7 +17,7 @@
           height="16"
         />
       </button>
-      <span class="separator">·</span>
+      <!-- <span class="separator">·</span>
       <a
         href="https://twitter.com/AscendanceCloud"
         target="_blank"
@@ -30,7 +30,7 @@
           width="12"
           height="12"
         />
-      </a>
+      </a> -->
       <span class="separator">·</span>
       <a
         href="https://discord.gg/SSGygda5DX"
