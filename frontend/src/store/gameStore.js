@@ -339,7 +339,7 @@ export const useGameStore = defineStore("gameStore", {
             this.languageDifficulty = null;
             this.libraryTopic = null;
             this.likes = 0;
-            resetTimer();
+            this.resetTimer();
         }
     }
 });

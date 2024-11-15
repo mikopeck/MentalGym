@@ -1,19 +1,36 @@
 <template>
   <div class="toolbar-container">
     <div class="game-toolbar">
-      <button class="toolbar-btn like-button" :style="{ color: isLiked ? 'var(--highlight-color)' : '' }" @click="likeLib">
+      <button
+        class="toolbar-btn like-button"
+        :style="{ color: isLiked ? 'var(--highlight-color)' : '' }"
+        @click="likeLib"
+      >
         {{ likeText }}
       </button>
       <div class="toolbar-btn" @click="navToPlans">☁️{{ discovery }}</div>
       <div
         :class="[
           'toolbar-btn',
-          'score',
-          { 'animating-score': isAnimating },
-          { 'completable-score': isCompletable },
+          'score-container',
         ]"
       >
-        Score: {{ score }}
+        <span
+          class="score"
+          :class="{ 
+            'animating-score': isScoreAnimating
+          }"
+        >
+          Score: {{ score }}
+        </span>
+        <span
+          class="time-spent"
+          :class="{ 
+            'animating-time': isTimeAnimating 
+          }"
+        >
+          {{ formattedTime }}
+        </span>
       </div>
     </div>
     <div class="progress-bar-container">
@@ -21,7 +38,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 import axios from "axios";
@@ -34,21 +50,34 @@ export default {
   name: "GameToolbar",
   data() {
     return {
-      isLiked: false
+      isLiked: false,
     };
   },
   setup() {
     const gameStore = useGameStore();
     const authStore = useAuthStore();
-    const isAnimating = ref(false);
+    const isScoreAnimating = ref(false);
+    const isTimeAnimating = ref(false);
 
     watch(
       () => gameStore.score,
       (newVal, oldVal) => {
         if (newVal !== oldVal) {
-          isAnimating.value = true;
+          isScoreAnimating.value = true;
           setTimeout(() => {
-            isAnimating.value = false;
+            isScoreAnimating.value = false;
+          }, 300);
+        }
+      }
+    );
+
+    watch(
+      () => gameStore.timeSpent,
+      (newVal, oldVal) => {
+        if (newVal !== oldVal) {
+          isTimeAnimating.value = true;
+          setTimeout(() => {
+            isTimeAnimating.value = false;
           }, 300);
         }
       }
@@ -57,7 +86,8 @@ export default {
     return {
       gameStore,
       authStore,
-      isAnimating,
+      isScoreAnimating,
+      isTimeAnimating,
     };
   },
   computed: {
@@ -65,19 +95,27 @@ export default {
       return `${this.gameStore.score}%`;
     },
     score() {
-      return this.gameStore.score + " (+" +this.gameStore.multiplier+")";
+      return this.gameStore.score + " (+" + this.gameStore.multiplier + ")";
     },
     discovery() {
       return this.authStore.cloudTokens;
     },
     likeText() {
       return this.isLiked ? 'Liked 👍' : 'Like 👍';
-    }
+    },
+    formattedTime() {
+      // Format the timeSpent property into a human-readable format (mm:ss)
+      const minutes = Math.floor(this.gameStore.timeSpent / 60);
+      const seconds = this.gameStore.timeSpent % 60;
+      return `${minutes.toString().padStart(2, "0")}:${seconds
+        .toString()
+        .padStart(2, "0")}`;
+    },
   },
   methods: {
     likeLib() {
       axios
-        .post("/api/library/like", { libraryId: this.gameStore.libraryId})
+        .post("/api/library/like", { libraryId: this.gameStore.libraryId })
         .then(() => {
           this.isLiked = true;
         })
@@ -85,16 +123,16 @@ export default {
           console.error("Error liking the library:", error);
         });
     },
-    navToPlans(){
-      this.$router.push("/plan")
-    }
+    navToPlans() {
+      this.$router.push("/plan");
+    },
   },
 };
 </script>
 
 
 <style scoped>
-.toolbar-container {  
+.toolbar-container {
   z-index: 111;
   width: 100%;
   display: flex;
@@ -129,20 +167,47 @@ export default {
   color: var(--highlight-color);
 }
 
+.score-container {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
 .score {
   font-weight: bold;
   transition: color 0.3s ease-in-out;
 }
 
+.time-spent {
+  font-weight: bold;
+  color: var(--text-color);
+  transition: color 0.3s ease-in-out;
+}
+
 .animating-score {
-  animation: pulse 0.3s ease-in-out forwards;
+  animation: pulseScore 0.3s ease-in-out forwards;
 }
 
-.completable-score {
-  color: var(--highlight-color);
+.animating-time {
+  animation: pulseTime 0.3s ease-in-out forwards;
 }
 
-@keyframes pulse {
+@keyframes pulseScore {
+  0% {
+    transform: scale(1);
+    color: var(--text-color);
+  }
+  50% {
+    transform: scale(1.1);
+    color: var(--highlight-color);
+  }
+  100% {
+    transform: scale(1);
+    color: var(--text-color);
+  }
+}
+
+@keyframes pulseTime {
   0% {
     transform: scale(1);
     color: var(--text-color);
