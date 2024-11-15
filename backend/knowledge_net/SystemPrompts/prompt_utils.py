@@ -3,7 +3,8 @@ from database.library_handlers import (
     get_library_room_names,
     get_library_content,
     get_library_settings,
-    get_library_topic
+    get_library_topic,
+    get_library_guide
 )
 
 def create_difficulty_message(difficulty):
@@ -48,6 +49,13 @@ def sys_lib_room(library_id):
 
     with open(system_message_path, "r") as file:
         system_message = file.read()
+
+    if "{base-persona}" in system_message:
+        name = get_library_guide(library_id)
+        base_persona_path = os.path.join(current_script_directory, f'Base{name}.txt')
+        with open(base_persona_path, 'r') as file:
+            persona = file.read()
+            system_message = system_message.replace("{base-persona}", persona)
 
     if "{library-topic}" in system_message:
         lib_topic = get_library_topic(library_id)

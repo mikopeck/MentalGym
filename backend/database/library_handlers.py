@@ -12,7 +12,7 @@ from database.models import (
 
 
 def create_library(
-    user_id, library_topic, room_names, difficulty, language, language_difficulty
+    user_id, library_topic, room_names, difficulty, language, language_difficulty,guide
 ):
     try:
         library = Library(
@@ -22,6 +22,7 @@ def create_library(
             difficulty=difficulty,
             language=language,
             language_difficulty=language_difficulty,
+            guide=guide,
         )
         db.session.add(library)
         db.session.commit()
@@ -285,6 +286,10 @@ def get_library_settings(library_id):
 def get_library_topic(library_id):
     library = Library.query.get(library_id)
     return library.library_topic
+
+def get_library_guide(library_id):
+    library = Library.query.get(library_id)
+    return library.guide
 
 def is_center_room(library_id, room_name):
     library = Library.query.get(library_id)

@@ -55,6 +55,13 @@
         <transition name="fade">
           <div class="libgen-section" v-if="showDetails">
             <div class="libgen-section">
+              <!-- Guide -->
+              <div class="form-group extra-context">
+                <div class="libgen-title">Tutor</div>
+                <MenuButton :label="currentMentorName" @click="changeMentor" />
+              </div>
+
+              <!-- Language -->
               <div class="form-group language-picker">
                 <div class="libgen-title">Language</div>
                 <select id="languageSelect" v-model="language">
@@ -122,12 +129,14 @@ import {
 import { useLibGenStore } from "@/store/libGenStore.js";
 import { usePopupStore } from "@/store/popupStore.js";
 import { useAuthStore } from "@/store/authStore.js";
+import { useMentorStore } from "@/store/mentorStore";
 import CtaButton from "../../Footer/LandingPageComponents/CtaButton.vue";
+import MenuButton from "@/components/Menus/MenuButton.vue";
 import LibraryBrowser from "./LibraryBrowser.vue";
 
 export default {
   name: "LibraryCreator",
-  components: { CtaButton, LibraryBrowser },
+  components: { CtaButton, LibraryBrowser,MenuButton },
   data() {
     return {
       topic: "",
@@ -182,8 +191,20 @@ export default {
       const authStore = useAuthStore();
       return !authStore.loggedIn;
     },
+    currentMentorName() {
+      const mentorStore = useMentorStore();
+      return mentorStore.currentMentor;
+    },
   },
   methods: {
+    async fetchCurrentMentor() {
+      const mentorStore = useMentorStore();
+      mentorStore.getCurrentMentorName();
+    },
+    changeMentor() {
+      const mentorStore = useMentorStore();
+      mentorStore.show();
+    },
     handlePaste(event) {
       const pastedText = event.clipboardData.getData("text");
       if (pastedText.length > 100) {
@@ -218,6 +239,7 @@ export default {
         extraContext: this.extraContext,
         languageDifficulty: this.languageDifficulty,
         libraryDifficulty: this.libraryDifficulty,
+        guide: this.currentMentorName(),
       };
       axios
         .post("/api/library/generate", postData)
@@ -321,7 +343,6 @@ export default {
   font-size: 0.8em;
   margin-top: 0.5em;
 }
-
 
 .randomize-btn {
   padding: 0 0.25em;

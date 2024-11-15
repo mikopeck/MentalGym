@@ -1,10 +1,10 @@
 # library_routes.py
 
+import random
 from flask import request, jsonify
 from flask_login import current_user, AnonymousUserMixin
 from bleach import clean
 from flask_executor import Executor
-from concurrent.futures import Future
 
 from openapi import moderate
 import database.library_handlers as lbh
@@ -40,6 +40,12 @@ def init_library_routes(app):
             library_difficulty = "Easy"
         else:
             library_difficulty = clean(library_difficulty)
+
+        # Guide checks
+        guide = request.json.get("guide")
+        VALID_GUIDES = ["Azalea", "Irona", "Bubbles", "Sterling"]
+        if not guide or guide not in VALID_GUIDES:
+            guide = random.choice(VALID_GUIDES)
 
         # Language & language difficulty checks
         language = request.json.get("language")
@@ -87,7 +93,6 @@ def init_library_routes(app):
         room_names_future = executor.submit(lgn.suggest_library_wing, user_id, topic, library_difficulty, language, language_difficulty, extra_context)
 
         # Start image generation task
-        guide = "Azalea" # pick random guide
         img_url_future = executor.submit(generate_images_task, topic, library_difficulty, guide)
 
         # Generate first room content
@@ -102,7 +107,7 @@ def init_library_routes(app):
 
         # Create the library
         room_names = room_names_future.result()
-        library_response, status_code = lbh.create_library(user_id, topic, room_names, library_difficulty, language, language_difficulty)
+        library_response, status_code = lbh.create_library(user_id, topic, room_names, library_difficulty, language, language_difficulty, guide)
         if status_code == 201:
             library_id = library_response.get_json().get("library_id")
             img_url = img_url_future.result()

@@ -3,6 +3,8 @@ Make it interesting and engaging so do not ask for dates, names etc. but rather 
 You will recieve the name of a room in a library, and you must generate the content on the theme of the room.
 Factoids should be about 200 tokens.
 
+Your persona is:{base-persona}.
+
 The topic of the whole library is {library-topic}.
 {library-settings}
 
