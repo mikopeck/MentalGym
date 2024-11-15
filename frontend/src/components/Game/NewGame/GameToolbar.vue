@@ -1,9 +1,6 @@
 <template>
   <div class="toolbar-container">
     <div class="game-toolbar">
-      <button class="toolbar-btn back-button" @click="navigateToKnowledgeMap">
-        ◀️🗺️
-      </button>
       <button class="toolbar-btn like-button" :style="{ color: isLiked ? 'var(--highlight-color)' : '' }" @click="likeLib">
         {{ likeText }}
       </button>
@@ -15,7 +12,6 @@
           { 'animating-score': isAnimating },
           { 'completable-score': isCompletable },
         ]"
-        @click="tryEndLibrary"
       >
         Score: {{ score }}
       </div>
@@ -74,23 +70,11 @@ export default {
     discovery() {
       return this.authStore.cloudTokens;
     },
-    isCompletable() {
-      return this.gameStore.score >= 100;
-    },
     likeText() {
       return this.isLiked ? 'Liked 👍' : 'Like 👍';
     }
   },
   methods: {
-    navigateToKnowledgeMap() {
-      this.$router.push("/knowledge?node=" + this.gameStore.libraryTopic);
-    },
-    tryEndLibrary() {
-      if (!this.isCompletable) {
-        return;
-      }
-      this.gameStore.endGame();
-    },
     likeLib() {
       axios
         .post("/api/library/like", { libraryId: this.gameStore.libraryId})

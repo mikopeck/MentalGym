@@ -33,6 +33,9 @@ export const useGameStore = defineStore("gameStore", {
         languageDifficulty: null,
         libraryTopic: null,
         likes: 0,
+        timer: null, 
+        timeSpent: 0,  
+        timerActive: false
     }),
     actions: {
         setId(libraryId) {
@@ -65,11 +68,12 @@ export const useGameStore = defineStore("gameStore", {
                     this.prepareNextRooms();
                 } else if (this.currentQuestion === 4 && !this.finalTest) {
                     this.questionVisible = false;
+                    this.stopTimer();
                     this.showNext = true;
                 } else if (this.currentQuestion === 5 && this.finalTest) {
                     this.questionVisible = false;
-                    this.completed = true;
                     this.endGame();
+                    this.completed = true;
                     return;
                 }
             } else {
@@ -268,12 +272,15 @@ export const useGameStore = defineStore("gameStore", {
             authStore.cloudTokens += 1;
             console.log(`Room ${room_name} entered successfully`);
             this.questionVisible = true;
+            this.startTimer();
             this.roomStates[room_name].state = 3;
             if (room_name === "Final Test Room") {
                 this.finalTest = true;
+                this.factoids = [];
             }
         },
         endGame() {
+            this.stopTimer();
             axios.post(`/api/library/end`, {
                 libraryId: this.libraryId,
                 score: this.score,
@@ -288,6 +295,24 @@ export const useGameStore = defineStore("gameStore", {
                 .catch(error => {
                     console.error("Error sending game end data:", error);
                 });
+        },
+        startTimer() {
+            if (!this.timer) {
+                this.timer = setInterval(() => {
+                    if (this.timerActive) {
+                        this.timeSpent++;
+                        console.log("Time Spent in Room:", this.timeSpent);
+                    }
+                }, 1000);
+            }
+            this.timerActive = true;
+        },
+        stopTimer() {
+            this.timerActive = false;
+        },
+        resetTimer() {
+            this.stopTimer();
+            this.timeSpent = 0;
         },
         resetGameState() {
             this.libraryId = null;
@@ -314,6 +339,7 @@ export const useGameStore = defineStore("gameStore", {
             this.languageDifficulty = null;
             this.libraryTopic = null;
             this.likes = 0;
+            resetTimer();
         }
     }
 });
