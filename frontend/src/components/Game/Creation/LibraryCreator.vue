@@ -156,7 +156,7 @@ export default {
         this.computedTopics
       );
     } else {
-      console.log("never started");
+      //console.log("never started");
     }
   },
   unmounted() {
@@ -222,7 +222,7 @@ export default {
       axios
         .post("/api/library/generate", postData)
         .then((response) => {
-          console.log(response.data);
+          //console.log(response.data);
           const libraryId = response.data.library_data.id;
           this.$router.push(`/library/${libraryId}`);
         })

@@ -120,17 +120,17 @@ export default {
     resetHeight() {
       this.$nextTick(() => {
         const textarea = this.$refs.messageInput;
-        console.log(textarea.style.height);
+        //console.log(textarea.style.height);
         textarea.style.height = "54px";
-        console.log(textarea.style.height);
+        //console.log(textarea.style.height);
       });
     },
     adjustHeight() {
       this.$nextTick(() => {
         const textarea = this.$refs.messageInput;
-        console.log(textarea.style.height);
+        //console.log(textarea.style.height);
         textarea.style.height = textarea.scrollHeight + "px";
-        console.log(textarea.style.height);
+        //console.log(textarea.style.height);
       });
     },
     focusTextarea() {

@@ -10,7 +10,6 @@ export const useUserStatsStore = defineStore('userStats', {
     async fetchStatsFromBackend() {
       try {
         const response = await axios.get('/api/user/stats');
-        console.log(response.data)
         if (response.data) {
           this.streak = response.data.streak;
           this.exp = response.data.exp;

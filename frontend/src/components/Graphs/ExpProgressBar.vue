@@ -87,7 +87,6 @@ export default {
       const diff = props.newExp - oldExp.value;
       const diffLevel = newLvl.value - oldLvl.value;
       levelUp.value = diffLevel > 0;
-      console.log(levelUp.value);
       let progress = 0;
       const step = () => {
         progress += diff / 100;
@@ -98,15 +97,7 @@ export default {
         offset.value = circumference * (1 - progressPercentage);
         if (progress < diff) {
           requestAnimationFrame(step);
-        } else {
-          console.log("done")
-          // if (levelUp.value) {
-          //   setTimeout(() => {
-          //     levelUp.value = false;
-          //     animateProgress();
-          //   }, 5000);
-          // }
-        }
+        } 
       };
       requestAnimationFrame(step);
     };

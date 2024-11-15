@@ -70,12 +70,7 @@ export default {
     question() {
       const store = useGameStore();
       if (store.currentQuestion === null) return null;
-      console.log(store.roomStates)
       const currentFactoid = store.factoids[store.currentQuestion];
-      console.log(currentFactoid)
-      console.log(!currentFactoid)
-      console.log(!Array.isArray(currentFactoid.questions))
-      console.log(currentFactoid.questions.length === 0)
       if (!currentFactoid || !Array.isArray(currentFactoid.questions) || currentFactoid.questions.length === 0) {
         console.error("No questions available or invalid questions format");
         return null;

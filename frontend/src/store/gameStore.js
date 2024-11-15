@@ -46,7 +46,6 @@ export const useGameStore = defineStore("gameStore", {
             this.openRoom(this.libraryTopic);
         },
         toggleFactoid() {
-            console.log("toggling")
             if (this.factoidVisible == null) {
                 this.questionVisible = false;
                 this.factoidVisible = this.currentQuestion;
@@ -63,7 +62,6 @@ export const useGameStore = defineStore("gameStore", {
                 this.currentQuestion += 1;
                 this.questionVisible = true;
 
-                console.log(this.currentQuestion)
                 if (this.currentQuestion === 2 && !this.finalTest) {
                     this.prepareNextRooms();
                 } else if (this.currentQuestion === 4 && !this.finalTest) {
@@ -94,7 +92,6 @@ export const useGameStore = defineStore("gameStore", {
                     }
 
                     this.incorrectQuestionAnswers = [];
-                    console.log(this.roomStates);
                 }
                 this.multiplier = Math.round(5 + Math.sqrt(Math.max(0, this.multiplier - 5)));
 
@@ -170,7 +167,6 @@ export const useGameStore = defineStore("gameStore", {
                     } else {
                         this.nextRooms.push(finalTestRoomName);
                     }
-                    console.log(`Final Test Room with factoids:`, finalTestFactoids);
                 }
             }
 
@@ -179,14 +175,12 @@ export const useGameStore = defineStore("gameStore", {
                     await this.loadRoom(roomName);
                 }
             }
-            console.log("prepared", this.roomStates)
         },
         async fetchLibraryDetails(libraryId) {
             this.setId(libraryId);
             try {
                 const response = await axios.get(`/api/library/${libraryId}`);
                 if (response.data.status === "success") {
-                    console.log(response)
                     const data = response.data.data;
 
                     this.roomNames = data.room_names || [];
@@ -270,7 +264,6 @@ export const useGameStore = defineStore("gameStore", {
             this.currentQuestion = 0;
             const authStore = useAuthStore();
             authStore.cloudTokens += 1;
-            console.log(`Room ${room_name} entered successfully`);
             this.questionVisible = true;
             this.startTimer();
             this.roomStates[room_name].state = 3;
@@ -301,7 +294,6 @@ export const useGameStore = defineStore("gameStore", {
                 this.timer = setInterval(() => {
                     if (this.timerActive) {
                         this.timeSpent++;
-                        console.log("Time Spent in Room:", this.timeSpent);
                     }
                 }, 1000);
             }
