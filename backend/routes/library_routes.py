@@ -29,42 +29,55 @@ def init_library_routes(app):
         topic = request.json.get("topic")
         if not topic:
             return jsonify(status="error", message="No topic provided"), 400
+        topic = clean(topic)
         if len(topic) > 200:
-                return jsonify({"error": "Topic is too long. Maximum 200 characters allowed."}), 400
+            return jsonify({"error": "Topic is too long. Maximum 200 characters allowed."}), 400
         if len(topic) < 1:
-                return jsonify({"error": "No message."}), 400
+            return jsonify({"error": "No message."}), 400
 
         # Difficulty checks
         library_difficulty = request.json.get("libraryDifficulty")
+        VALID_DIFFICULTIES = ["Easy", "Normal", "Hard"]
         if not library_difficulty:
             library_difficulty = "Easy"
         else:
             library_difficulty = clean(library_difficulty)
+            if library_difficulty not in VALID_DIFFICULTIES:
+                library_difficulty = "Easy"
 
         # Guide checks
         guide = request.json.get("guide")
         VALID_GUIDES = ["Azalea", "Irona", "Bubbles", "Sterling"]
+        if guide:
+            guide = clean(guide)
         if not guide or guide not in VALID_GUIDES:
             guide = random.choice(VALID_GUIDES)
 
         # Language & language difficulty checks
-        language = request.json.get("language")
+        language = request.json.get("language")  # Add other supported languages
         if not language:
             language = "English"
+        else:
+            language = clean(language)
+
         language_difficulty = request.json.get("languageDifficulty")
+        VALID_LANGUAGE_DIFFICULTIES = ["Easy", "Normal", "Hard"]
         if not language_difficulty:
             language_difficulty = "Normal"
-
+        else:
+            language_difficulty = clean(language_difficulty)
+            if language_difficulty not in VALID_LANGUAGE_DIFFICULTIES:
+                language_difficulty = "Normal"
         # Extra context checks
         extra_context = request.json.get("extraContent")
         if extra_context:
             extra_context = clean(extra_context)
-        if extra_context and len(extra_context) > 200:
+            if len(extra_context) > 200:
                 return jsonify({"error": "Extra context is too long. Maximum 200 characters allowed."}), 400
 
         # Check for existing library
         if not extra_context:
-            existing_library = lbh.get_library_id(topic, library_difficulty, language, language_difficulty)
+            existing_library = lbh.get_library_id(topic, library_difficulty, language, language_difficulty, guide)
             if existing_library:
                 # Now check if first room exists
                 existing_content = lbh.retrieve_library_room_contents(existing_library, topic)
@@ -75,11 +88,11 @@ def init_library_routes(app):
                         # Generate room content asynchronously
                         room_future = executor.submit(lgn.generate_libroom_content, user_id, topic, existing_library)
                         room_contents = room_future.result()
-                        lbh.save_library_room_contents(library_id, topic, room_contents)
+                        lbh.save_library_room_contents(existing_library, topic, room_contents)
                         return jsonify(status="success", library_id=existing_library)
                     except Exception as e:
                         return jsonify(status="error", message=f"Failed to generate room content {e}"), 500
-        
+
         if not user_id:
             mark_generation_done(ip, 'library')
         
@@ -96,7 +109,7 @@ def init_library_routes(app):
         img_url_future = executor.submit(generate_images_task, topic, library_difficulty, guide)
 
         # Generate first room content
-        room_future = executor.submit(lgn.generate_room_content, user_id, topic, library_difficulty, language, language_difficulty, extra_context)
+        room_future = executor.submit(lgn.generate_room_content, user_id, topic, library_difficulty, language, language_difficulty, extra_context, guide)
 
         # Wait for moderation result
         violation, message = moderation_future.result()

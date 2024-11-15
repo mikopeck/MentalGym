@@ -36,13 +36,14 @@ def create_library(
         db.session.rollback()
         return jsonify({"message": str(e)}), 400
 
-def get_library_id(library_topic, difficulty, language, language_difficulty):
+def get_library_id(library_topic, difficulty, language, language_difficulty, guide):
     try:
         library = Library.query.filter_by(
             library_topic=library_topic,
             difficulty=difficulty,
             language=language,
             language_difficulty=language_difficulty,
+            guide=guide
         ).first()
 
         if not library:
@@ -370,6 +371,8 @@ def update_library_image(library_id, image_url):
         if library is None:
             return jsonify({'error': 'Library not found'}), 404
         
+        if not image_url:
+            image_url=Library.DEFAULT_IMAGE_URL
         library.image_url = image_url
         db.session.commit()
         return jsonify({'message': 'Image updated successfully'}), 200

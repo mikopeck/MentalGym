@@ -66,8 +66,10 @@ export const useMentorStore = defineStore('mentorStore', {
                         const popupStore = usePopupStore();
                         popupStore.showPopup(`Mentor personality set to ${this.currentMentor}.<br/>This change will affect the main chat and any new lessons.`);
                     }
-                    const messageStore = useMessageStore();
-                    messageStore.fetchRecentMessages(path);
+                    if (path == "/lessons"){
+                        const messageStore = useMessageStore();
+                        messageStore.fetchRecentMessages(path);
+                    }
                 })
                 .catch((error) => {                    
                     const popupStore = usePopupStore();

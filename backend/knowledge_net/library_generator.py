@@ -67,9 +67,9 @@ def fill_libroom(user_id, room_name, library_id):
 
     return room_contents
 
-def fill_room(user_id, subtopic, library_difficulty, language, language_difficulty, extra_context):
+def fill_room(user_id, subtopic, library_difficulty, language, language_difficulty, extra_context, guide):
     def generate_room_contents():
-        system_msg = sys_first_room(subtopic, library_difficulty, language, language_difficulty, extra_context)
+        system_msg = sys_first_room(subtopic, library_difficulty, language, language_difficulty, extra_context, guide)
         function = [functions.GenerateLibraryRoom]
         function_call = {"name": function[0]['name']}
         messages = create_message(system_msg, subtopic)
@@ -101,9 +101,9 @@ def generate_libroom_content(user_id, subtopic, library_id):
     else:
         raise Exception("Failed to generate content")
     
-def generate_room_content(user_id, topic, library_difficulty, language, language_difficulty, extra_context):
+def generate_room_content(user_id, topic, library_difficulty, language, language_difficulty, extra_context, guide):
     # Generate room content
-    generated_content = fill_room(user_id, topic, library_difficulty, language, language_difficulty, extra_context)
+    generated_content = fill_room(user_id, topic, library_difficulty, language, language_difficulty, extra_context, guide)
     if generated_content:
         return generated_content
     else:

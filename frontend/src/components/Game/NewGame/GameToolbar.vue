@@ -179,6 +179,7 @@ export default {
 }
 
 .time-spent {
+  margin-right:1em;
   font-weight: bold;
   color: var(--text-color);
   transition: color 0.3s ease-in-out;

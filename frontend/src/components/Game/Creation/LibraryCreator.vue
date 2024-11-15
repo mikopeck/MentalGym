@@ -55,10 +55,11 @@
         <transition name="fade">
           <div class="libgen-section" v-if="showDetails">
             <div class="libgen-section">
+
               <!-- Guide -->
-              <div class="form-group extra-context">
+              <div class="form-group tutor-button">
                 <div class="libgen-title">Tutor</div>
-                <MenuButton :label="currentMentorName" @click="changeMentor" />
+                <MenuButton class="tutor-button-button" :label="currentMentorName" @click="changeMentor" />
               </div>
 
               <!-- Language -->
@@ -156,6 +157,7 @@ export default {
     };
   },
   mounted() {
+    this.fetchCurrentMentor();
     this.language = "English";
     this.libraryDifficulty = "Easy";
     this.languageDifficulty = "Normal";
@@ -185,7 +187,7 @@ export default {
       return this.$route.path === "/library";
     },
     submitButtonText() {
-      return this.isSubmitting ? "Loading..." : "Explore!";
+      return this.isSubmitting ? "Loading... (~10s)" : "Explore!";
     },
     disableExtras() {
       const authStore = useAuthStore();
@@ -239,7 +241,7 @@ export default {
         extraContext: this.extraContext,
         languageDifficulty: this.languageDifficulty,
         libraryDifficulty: this.libraryDifficulty,
-        guide: this.currentMentorName(),
+        guide: this.currentMentorName,
       };
       axios
         .post("/api/library/generate", postData)
@@ -439,6 +441,14 @@ input[type="text"] {
   border: none;
   font-size: 0.8em;
   cursor: pointer;
+}
+
+.tutor-button{
+  margin-bottom:2em;
+}
+
+.tutor-button-button{
+  margin:0 auto;
 }
 
 .fade-enter-active,
