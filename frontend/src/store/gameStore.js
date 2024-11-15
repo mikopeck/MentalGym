@@ -198,9 +198,9 @@ export const useGameStore = defineStore("gameStore", {
                     this.tutorial = data.tutorial || false;
 
                     this.roomStates = {};
-                    this.roomNames.forEach((roomName, index) => {
+                    this.roomNames.forEach((roomName) => {
                         let state = 0;
-                        if (index === 0) {
+                        if (roomName === this.libraryTopic) {
                             state = 2;
                             this.roomStates[roomName] = {
                                 state: state,
