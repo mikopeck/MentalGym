@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 
 import { useMessageStore } from "@/store/messageStore";
+import { useAuthStore } from '@/store/authStore';
 import { usePopupStore } from "@/store/popupStore";
 
 import azaleaImage from '@/assets/images/azalea.png';
@@ -44,18 +45,32 @@ export const useMentorStore = defineStore('mentorStore', {
     }),
     actions: {
         getCurrentMentorName() {
+            this.currentMentor = "Azalea"
+            const auth = useAuthStore();
+            if (!auth.loggedIn){
+                return;
+            }
             axios.get('/api/mentor')
-                .then(response => {
-                    // console.log(response);
-                    this.currentMentor = response.data.selectedMentorId;
-                })
-                .catch(error => console.error('Error fetching selected mentor:', error));
+            .then(response => {
+                // console.log(response);
+                this.currentMentor = response.data.selectedMentorId;
+            })
+            .catch(error => {
+                console.error('Error fetching selected mentor:', error)
+            });
         },
         confirmSelection(name) {
-            this.selectedMentorName = name;
             if (!this.isVisible) { return; }
+            const auth = useAuthStore();
+            if (!auth.loggedIn){
+                const popupStore = usePopupStore();
+                popupStore.showPopup(`Sign in to change tutors.`);
+                this.hide();
+                return;
+            }
+            this.selectedMentorName = name;
             if (!this.selectedMentorName) {
-                this.selectedMentorName = 'azalea';
+                this.selectedMentorName = 'Azalea';
             }
             this.hide();
             axios.post('/api/mentor', { mentorId: this.selectedMentorName })
@@ -79,9 +94,11 @@ export const useMentorStore = defineStore('mentorStore', {
         },
         show() {
             this.isVisible = true;
+            console.log("showed")
         },
         hide() {
             this.isVisible = false;
+            console.log("hid")
         },
     },
 });

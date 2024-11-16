@@ -7,7 +7,7 @@
       :key="forceUpdateKey"
     />
     <SideMenu />
-    <MentorSelection v-if="loggedIn"/>
+    <MentorSelection/>
 
     <div class="main-content">
       <div class="another" @scroll="onScroll">

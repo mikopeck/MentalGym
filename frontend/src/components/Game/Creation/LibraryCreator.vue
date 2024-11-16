@@ -187,7 +187,7 @@ export default {
       return this.$route.path === "/library";
     },
     submitButtonText() {
-      return this.isSubmitting ? "Loading... (~10s)" : "Explore!";
+      return this.isSubmitting ? "Loading (~10s)" : "Explore!";
     },
     disableExtras() {
       const authStore = useAuthStore();
@@ -206,6 +206,7 @@ export default {
     changeMentor() {
       const mentorStore = useMentorStore();
       mentorStore.show();
+      console.log("showins")
     },
     handlePaste(event) {
       const pastedText = event.clipboardData.getData("text");
