@@ -11,7 +11,7 @@
         :key="index"
         @click="openRoom(room.roomName)"
         :label="room.roomName"
-        :style="{ opacity: room.isLoading ? 0.6 : 1 }"
+        :isLoading="room.isLoading"
         :position="index"
       >
       </RoomButton>
@@ -54,6 +54,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .next-container {

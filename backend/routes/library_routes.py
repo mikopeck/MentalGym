@@ -217,7 +217,7 @@ def init_library_routes(app):
                 mark_generation_done(ip, 'room')
             return jsonify(status="success", data=existing_content)
         except Exception as e:
-            return jsonify(status="error", message="Failed to generate content"), 500
+            return jsonify(status="error", message=f"Failed to generate content {e}"), 500
     
     @app.route("/api/library/end", methods=["POST"])
     def end_game():

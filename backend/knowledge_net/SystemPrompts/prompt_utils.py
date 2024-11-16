@@ -52,6 +52,8 @@ def sys_lib_room(library_id):
 
     if "{base-persona}" in system_message:
         name = get_library_guide(library_id)
+        if not name:
+            name = "Azalea"
         base_persona_path = os.path.join(current_script_directory, f'Base{name}.txt')
         with open(base_persona_path, 'r') as file:
             persona = file.read()

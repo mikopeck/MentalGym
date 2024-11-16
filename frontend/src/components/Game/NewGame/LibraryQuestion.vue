@@ -57,7 +57,10 @@ export default {
       }
       setTimeout(() => {
         store.answerAttempt(correct === choice);
+        this.answerState.wrong = null;
+        this.answerState.correct = null;
       }, 300);
+
     },
     closeQuestion() {
       const store = useGameStore();
