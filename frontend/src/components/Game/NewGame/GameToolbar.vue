@@ -1,20 +1,25 @@
 <template>
   <div class="toolbar-container">
     <div class="game-toolbar">
-      <button
-        class="toolbar-btn like-button"
-        :style="{ color: isLiked ? 'var(--highlight-color)' : '' }"
-        @click="likeLib"
-      >
-        {{ likeText }}
-      </button>
-      <div class="toolbar-btn" @click="navToPlans">☁️{{ discovery }}</div>
-      <div
-        :class="[
-          'toolbar-btn',
-          'score-container',
-        ]"
-      >
+      <!-- Left side: Likes and Clouds -->
+      <div class="left-side">
+        <button
+          class="toolbar-btn like-button"
+          :style="{ color: isLiked ? 'var(--highlight-color)' : '' }"
+          @click="likeLib"
+        >
+          {{ likeText }}
+        </button>
+        <div class="toolbar-btn" @click="navToPlans">☁️{{ discovery }}</div>
+      </div>
+
+      <!-- Middle: Library Topic -->
+      <div class="middle">
+        {{ gameStore.libraryTopic }}
+      </div>
+
+      <!-- Right side: Score and Time -->
+      <div class="right-side score-container">
         <span
           class="score"
           :class="{ 
@@ -29,7 +34,7 @@
             'animating-time': isTimeAnimating 
           }"
         >
-          {{ formattedTime }}
+         Time: {{ formattedTime }}
         </span>
       </div>
     </div>
@@ -39,9 +44,9 @@
   </div>
 </template>
 
+
 <script>
 import axios from "axios";
-
 import { useGameStore } from "@/store/gameStore";
 import { useAuthStore } from "@/store/authStore";
 import { ref, watch } from "vue";
@@ -101,10 +106,9 @@ export default {
       return this.authStore.cloudTokens;
     },
     likeText() {
-      return this.isLiked ? 'Liked 👍' : 'Like 👍';
+      return this.isLiked ? "Liked 👍" : "Like 👍";
     },
     formattedTime() {
-      // Format the timeSpent property into a human-readable format (mm:ss)
       const minutes = Math.floor(this.gameStore.timeSpent / 60);
       const seconds = this.gameStore.timeSpent % 60;
       return `${minutes.toString().padStart(2, "0")}:${seconds
@@ -140,31 +144,29 @@ export default {
 }
 
 .game-toolbar {
+  position: relative;
   height: 2em;
   width: 100%;
-  display: flex;
+  display: flex;  
   justify-content: space-between;
   align-items: center;
-  padding: 0.5em;
-  color: var(--text-color);
   padding: 5px 0;
-}
-
-.toolbar-btn {
-  padding-left: 0.2em;
-  padding-right: 0.2em;
-}
-
-.back-button {
   color: var(--text-color);
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: color 0.3s ease;
 }
 
-.back-button:hover {
-  color: var(--highlight-color);
+.left-side,
+.middle,
+.right-side {
+  display: flex;
+  align-items: center;
+  padding: 0 0.5em;
+  gap: 1em;
+}
+
+.middle {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .score-container {
@@ -179,7 +181,6 @@ export default {
 }
 
 .time-spent {
-  margin-right:1em;
   font-weight: bold;
   color: var(--text-color);
   transition: color 0.3s ease-in-out;

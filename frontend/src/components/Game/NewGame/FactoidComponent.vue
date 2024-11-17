@@ -3,7 +3,7 @@
   <div v-if="factoidVisible != null && factoidText" class="factoid-overlay" @click="closeFactoid">
   <div class="factoid-box">
     <div class="factoid-content">
-      <p>{{ factoidText }}</p>
+      <p v-html="factoidText"></p>
     </div>
   </div>
   </div>
@@ -23,7 +23,16 @@ export default {
     },
     factoidText() {
       const store = useGameStore();
-      return store.factoids[store.factoidVisible]?.factoid_text || 'No factoid text';
+      let content =store.factoids[store.factoidVisible]?.factoid_text || 'No factoid text'
+      // Bold
+      let regex;
+      regex = /\*\*([^*]*?)\*\*/g;
+      content = content.replace(regex, "<strong>$1</strong>");
+
+      // Italics
+      regex = /_([^_]*?)_|\*([^*]*?)\*/g;
+      content = content.replace(regex, "<em>$1$2</em>");
+      return content;
     }
   },
   methods: {

@@ -132,7 +132,7 @@ def init_library_routes(app):
         try:
             room_contents = room_future.result()
             lbh.save_library_room_contents(library_id, topic, room_contents)
-            library = lbh.get_library(library_id, user_id)
+            library = lbh.get_library(library_id, user_id, False)
 
             return jsonify(status="success", library_data=library.get_json())
         except Exception as e:

@@ -6,7 +6,7 @@
         <div v-if="question === null" class="completion-message">
           Congratulations, you've completed all questions in this room!
         </div>
-        <div v-else class="question-content">{{ question.text }}</div>
+        <div v-else class="question-content"><p v-html="question.text" ></p></div>
         <div v-if="question !== null" class="choices-container">
           <div v-for="(choice, index) in question.choices" :key="index">
             <button
@@ -15,8 +15,8 @@
                 wrong: choice === answerState.wrong,
               }"
               @click.stop="submitAnswer(choice)"
+              v-html="choice"
             >
-              {{ choice }}
             </button>
           </div>
         </div>
@@ -68,6 +68,17 @@ export default {
       this.answerState.correct = null;
       this.answerState.wrong = null;
     },
+    format(content){
+      let regex;
+      // Bold
+      regex = /\*\*([^*]*?)\*\*/g;
+      content = content.replace(regex, "<strong>$1</strong>");
+
+      // Italics
+      regex = /_([^_]*?)_|\*([^*]*?)\*/g;
+      content = content.replace(regex, "<em>$1$2</em>");
+      return content;
+    }
   },
   computed: {
     question() {
@@ -86,8 +97,8 @@ export default {
       const choices = [currentQuestion.correct_choice, ...currentQuestion.wrong_choices];
       this.shuffleArray(choices);
       return {
-        text: currentQuestion.question_text,
-        choices: choices,
+        text: this.format(currentQuestion.question_text),
+        choices: choices.map(choice => this.format(choice)),
       };
     },
     questionVisible() {
