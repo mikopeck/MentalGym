@@ -33,8 +33,8 @@ export const useGameStore = defineStore("gameStore", {
         languageDifficulty: null,
         libraryTopic: null,
         likes: 0,
-        timer: null, 
-        timeSpent: 0,  
+        timer: null,
+        timeSpent: 0,
         timerActive: false
     }),
     actions: {
@@ -63,7 +63,13 @@ export const useGameStore = defineStore("gameStore", {
                 this.questionVisible = true;
 
                 if (this.currentQuestion === 2 && !this.finalTest) {
-                    this.prepareNextRooms();
+
+                    const authStore = useAuthStore();
+                    if (authStore.loggedIn){
+                        this.prepareNextRooms();
+                    }else{
+                        return false;
+                    }
                 } else if (this.currentQuestion === 4 && !this.finalTest) {
                     this.questionVisible = false;
                     this.stopTimer();
@@ -72,7 +78,7 @@ export const useGameStore = defineStore("gameStore", {
                     this.questionVisible = false;
                     this.endGame();
                     this.completed = true;
-                    return;
+                    return true;
                 }
             } else {
                 const currentFactoid = this.factoids[this.currentQuestion];
@@ -94,8 +100,8 @@ export const useGameStore = defineStore("gameStore", {
                     this.incorrectQuestionAnswers = [];
                 }
                 this.multiplier = Math.round(5 + Math.sqrt(Math.max(0, this.multiplier - 5)));
-
             }
+            return true;
         },
 
         async prepareNextRooms() {

@@ -70,7 +70,10 @@ export default {
     handleLoginSuccess() {
       const authStore = useAuthStore();
       authStore.login();
-      location.reload();
+
+      const redirectPath = this.$route.query.redirect || "/";
+      console.log(this.$route)
+      this.$router.push(redirectPath);
     },
     handleSignupSuccess() {
       const popupStore = usePopupStore();

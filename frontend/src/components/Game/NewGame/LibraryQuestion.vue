@@ -56,9 +56,11 @@ export default {
         this.answerState.correct = null;
       }
       setTimeout(() => {
-        store.answerAttempt(correct === choice);
-        this.answerState.wrong = null;
-        this.answerState.correct = null;
+        if (store.answerAttempt(correct === choice)){
+          this.answerState.wrong = null;
+          this.answerState.correct = null;
+        }
+        else{ this.$router.push("/login");}
       }, 300);
 
     },

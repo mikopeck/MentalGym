@@ -29,7 +29,6 @@
   <script>
   import axios from 'axios';
 import { usePopupStore } from "@/store/popupStore";
-import { useAuthStore } from "@/store/authStore";
 
 export default {
   data() {
@@ -50,9 +49,7 @@ export default {
         .then(response => {
           const data = response.data;
           if (data.status === "success") {
-            const authStore = useAuthStore();
-            authStore.login();
-            this.$router.push("/");
+            this.$emit("loginSuccess");
           } else {
             throw new Error("Login failed. Please try again.");
           }

@@ -30,33 +30,55 @@ const router = createRouter({
   routes,
 });
 router.beforeEach((to, from, next) => {
-  console.log("mainjs" + from.fullPath + to.fullPath);
-
+  console.log(from.fullPath, to.fullPath);
   const authStore = useAuthStore();
   const gameStore = useGameStore();
 
-  if (from.path.startsWith('/library/')){
+  if (from.path.startsWith('/library/')) {
     gameStore.resetGameState();
   }
 
-  if(to.path.startsWith('/library/') && from.path.startsWith('/library/')) {
+  if (to.path.startsWith('/library/') && from.path.startsWith('/library/')) {
     const toLibraryId = to.path.split('/')[2];
     gameStore.fetchLibraryDetails(toLibraryId);
   }
 
-  if (!authStore.loggedIn && to.path === '/') {
-    next('/about');
-  } else if (!to.path.startsWith('/lesson/') && !to.path.startsWith('/library') &&
-    to.path !== '/about' && to.path !== '/login' &&
-    to.path !== '/terms' && to.path !== '/contact' &&
-    to.path !== '/plan' && !authStore.loggedIn) {
-    next('/login');
+  const publicPaths = [
+    '/about',
+    '/login',
+    '/terms',
+    '/contact',
+    '/plan',
+    '/',
+  ];
+
+  const requiresAuth =
+    !publicPaths.includes(to.path) &&
+    !to.path.startsWith('/lesson/') &&
+    !to.path.startsWith('/library');
+
+  if (authStore.loggedIn && to.path === '/login') {
+    // Redirect authenticated users away from the login page
+    next('/');
+  } else if (!authStore.loggedIn && requiresAuth) {
+    // Redirect unauthenticated users to the login page with redirect to the intended page
+    next({
+      path: '/login',
+      query: { redirect: from.fullPath },
+    });
+  } else if (to.path === '/login' && !to.query.redirect) {
+    // Ensure the redirect query is included when navigating to the login page from any route
+    next({
+      path: '/login',
+      query: { redirect: from.fullPath },
+    });
   } else {
     next();
   }
 
   document.title = to.meta.title || 'Ascendance·☁️| Learn Anything!';
 });
+
 
 const pinia = createPinia()
 
