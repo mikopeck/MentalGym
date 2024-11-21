@@ -68,6 +68,8 @@ export const useGameStore = defineStore("gameStore", {
                     if (authStore.loggedIn){
                         this.prepareNextRooms();
                     }else{
+                        const popupStore = usePopupStore();
+                        popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
                         return false;
                     }
                 } else if (this.currentQuestion === 4 && !this.finalTest) {
