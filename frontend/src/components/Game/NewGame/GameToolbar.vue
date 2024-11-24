@@ -26,7 +26,7 @@
             'animating-score': isScoreAnimating
           }"
         >
-          Score: {{ score }}
+          💎{{ score }}
         </span>
         <span
           class="time-spent"
@@ -34,7 +34,7 @@
             'animating-time': isTimeAnimating 
           }"
         >
-         Time: {{ formattedTime }}
+          ⏳{{ formattedTime }}
         </span>
       </div>
     </div>
