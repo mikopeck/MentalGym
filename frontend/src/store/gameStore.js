@@ -138,7 +138,7 @@ export const useGameStore = defineStore("gameStore", {
                 : availableRooms.slice(0, 3);
 
             const completedRoomsCount = Object.values(this.roomStates).filter(room => room.state === 3).length;
-            if (completedRoomsCount > 4) {
+            if (completedRoomsCount > 3) {
                 let makeFinalTest = Math.random() < 0.5;
                 if (completedRoomsCount === 4) {
                     makeFinalTest = true;
@@ -167,6 +167,8 @@ export const useGameStore = defineStore("gameStore", {
                         state: 2,
                         factoids: finalTestFactoids
                     };
+                    console.log(this.roomStates)
+                    console.log(this.roomStates[finalTestRoomName])
                     this.roomNames.push(finalTestRoomName);
 
                     if (this.nextRooms.length > 0) {
@@ -277,7 +279,12 @@ export const useGameStore = defineStore("gameStore", {
             this.roomStates[room_name].state = 3;
             if (room_name === "Final Test Room") {
                 this.finalTest = true;
-                this.factoids = [];
+                this.factoids = this.factoids.map(factoid => {
+                    return {
+                        ...factoid,
+                        text: 'No cheating lol'
+                    };
+                });//this.factoids = []; todo: set the factoid text of all factoids to something like no cheating lol 
             }
         },
         endGame() {

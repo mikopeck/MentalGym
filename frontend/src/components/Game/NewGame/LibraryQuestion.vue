@@ -87,6 +87,7 @@ export default {
       const store = useGameStore();
       if (store.currentQuestion === null) return null;
       const currentFactoid = store.factoids[store.currentQuestion];
+      console.log(currentFactoid)
       if (!currentFactoid || !Array.isArray(currentFactoid.questions) || currentFactoid.questions.length === 0) {
         console.error("No questions available or invalid questions format");
         return null;

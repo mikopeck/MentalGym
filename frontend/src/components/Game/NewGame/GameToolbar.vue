@@ -97,8 +97,8 @@ export default {
   },
   computed: {
     progressBarWidth() {
-      return `${this.gameStore.score}%`;
-    },
+    return `${Math.min(this.gameStore.score, 100)}%`;
+  },
     score() {
       return this.gameStore.score + " (+" + this.gameStore.multiplier + ")";
     },
