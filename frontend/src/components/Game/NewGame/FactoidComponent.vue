@@ -54,7 +54,7 @@ export default {
 <style scoped>
 .factoid-overlay {
   position: absolute;
-  height: 100%;
+  height: 82%;
   aspect-ratio: 1 / 1;
   max-width: 100%;
   z-index: 110;

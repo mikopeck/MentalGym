@@ -121,7 +121,6 @@ export default {
 }
 .question-overlay {
   position: absolute;
-  height: 100%;
   aspect-ratio: 1 / 1;
   max-width: 100%;
   z-index: 110;
