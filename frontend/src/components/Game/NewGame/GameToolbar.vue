@@ -150,7 +150,7 @@ export default {
   text-align: center;
   font-size: 1.2em;
   font-weight: bold;
-  padding: 5px 0;
+  padding-top: 5px;
   color: var(--text-color);
 }
 
