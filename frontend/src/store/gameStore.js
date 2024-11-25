@@ -167,8 +167,6 @@ export const useGameStore = defineStore("gameStore", {
                         state: 2,
                         factoids: finalTestFactoids
                     };
-                    console.log(this.roomStates)
-                    console.log(this.roomStates[finalTestRoomName])
                     this.roomNames.push(finalTestRoomName);
 
                     if (this.nextRooms.length > 0) {

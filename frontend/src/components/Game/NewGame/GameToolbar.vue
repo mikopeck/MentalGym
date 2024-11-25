@@ -1,5 +1,11 @@
 <template>
   <div class="toolbar-container">
+    <!-- First Row: Room Name -->
+    <div class="room-name">
+      {{ gameStore.libraryTopic }}
+    </div>
+
+    <!-- Second Row: Toolbar -->
     <div class="game-toolbar">
       <!-- Left side: Likes and Clouds -->
       <div class="left-side">
@@ -11,11 +17,6 @@
           {{ likeText }}
         </button>
         <div class="toolbar-btn" @click="navToPlans">☁️{{ discovery }}</div>
-      </div>
-
-      <!-- Middle: Library Topic -->
-      <div class="middle">
-        {{ gameStore.libraryTopic }}
       </div>
 
       <!-- Right side: Score and Time -->
@@ -38,6 +39,8 @@
         </span>
       </div>
     </div>
+
+    <!-- Progress Bar -->
     <div class="progress-bar-container">
       <div class="progress-bar" :style="{ width: progressBarWidth }"></div>
     </div>
@@ -143,9 +146,15 @@ export default {
   flex-direction: column;
 }
 
+.room-name {
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: 0.5px 0;
+  color: var(--text-color);
+}
+
 .game-toolbar {
-  position: relative;
-  height: 2em;
   width: 100%;
   display: flex;  
   justify-content: space-between;
@@ -155,18 +164,11 @@ export default {
 }
 
 .left-side,
-.middle,
 .right-side {
   display: flex;
   align-items: center;
   padding: 0 0.5em;
   gap: 1em;
-}
-
-.middle {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
 }
 
 .score-container {
@@ -175,26 +177,18 @@ export default {
   gap: 1em;
 }
 
-.score {
-  font-weight: bold;
-  transition: color 0.3s ease-in-out;
-}
-
+.score,
 .time-spent {
   font-weight: bold;
-  color: var(--text-color);
   transition: color 0.3s ease-in-out;
 }
 
-.animating-score {
-  animation: pulseScore 0.3s ease-in-out forwards;
-}
-
+.animating-score,
 .animating-time {
-  animation: pulseTime 0.3s ease-in-out forwards;
+  animation: pulse 0.3s ease-in-out forwards;
 }
 
-@keyframes pulseScore {
+@keyframes pulse {
   0% {
     transform: scale(1);
     color: var(--text-color);
@@ -209,29 +203,14 @@ export default {
   }
 }
 
-@keyframes pulseTime {
-  0% {
-    transform: scale(1);
-    color: var(--text-color);
-  }
-  50% {
-    transform: scale(1.1);
-    color: var(--highlight-color);
-  }
-  100% {
-    transform: scale(1);
-    color: var(--text-color);
-  }
+.progress-bar-container {
+  width: 100%;
+  background-color: #0000001a;
 }
 
 .progress-bar {
   height: 4px;
   background-color: var(--element-color-1);
   transition: width 0.3s ease;
-}
-
-.progress-bar-container {
-  width: 100%;
-  background-color: #0000001a;
 }
 </style>

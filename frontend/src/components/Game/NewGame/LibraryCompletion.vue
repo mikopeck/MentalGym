@@ -260,7 +260,6 @@ export default {
 
 .celebratory-message {
   padding: 0.5em;
-  background-color: var(--background-color-1t);
   box-shadow: 0 0 16px 16px var(--background-color-1t);
   border-radius: 16px;
   color: var(--text-color);
