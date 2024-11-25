@@ -382,7 +382,7 @@ export default {
         .attr("x", canvasSize.width / 2 + 16)
         .attr("y", 0)
         .append("xhtml:div")
-        .attr("class", "menu-button goto-button")
+        .attr("class", "knowledge-menu-button goto-button")
         .text("📖Go to")
         .on("click", () => this.goToNode(nodeData));
 
@@ -394,7 +394,7 @@ export default {
         .attr("x", canvasSize.width / 2 - buttonSize.width - 16)
         .attr("y", 0)
         .append("xhtml:div")
-        .attr("class", "menu-button explore-button")
+        .attr("class", "knowledge-menu-button explore-button")
         .text("🔍Explore")
         .on("click", () => this.exploreNode(nodeData));
     },
@@ -513,7 +513,7 @@ export default {
 </script>
 
 <style>
-.menu-button {
+.knowledge-menu-button {
   text-align: center;
   margin: 0px;
   padding: 8px 16px;
@@ -526,10 +526,10 @@ export default {
   transition: transform 0.1s, background-color 0.1s;
 }
 
-.menu-button:hover {
+.knowledge-menu-button:hover {
   background-color: var(--element-color-1);
 }
-.menu-button.selected {
+.knowledge-menu-button.selected {
   background-color: var(--element-color-1);
 }
 

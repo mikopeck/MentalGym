@@ -1,6 +1,6 @@
 <template>
   <button 
-    class="menu-button" 
+    class="action-menu-button" 
     :class="{ selected: isSelected }" 
   >
     {{ label }}
@@ -24,7 +24,7 @@ export default {
 </script>
 
 <style scoped>
-.menu-button {
+.action-menu-button {
   padding: 8px 16px;
   margin: 4px;
   background-color: var(--background-color-1t);
@@ -37,15 +37,15 @@ export default {
   text-align: left;
 }
 
-.menu-button:hover {
+.action-menu-button:hover {
   background-color: var(--element-color-1);
 }
 
-.menu-button:active {
+.action-menu-button:active {
   transform: scale(0.95);
 }
 
-.menu-button.selected {
+.action-menu-button.selected {
   background-color: var(--element-color-1);
 }
 </style>

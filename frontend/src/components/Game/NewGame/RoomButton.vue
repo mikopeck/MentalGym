@@ -1,6 +1,6 @@
 <template>
   <button 
-    class="menu-button" 
+    class="room-menu-button" 
     :class="{ selected: isSelected, highlight: label === 'Final Test Room', loading: isLoading }"
     :disabled="isLoading"
   >
@@ -42,7 +42,7 @@ export default {
 </script>
 
 <style scoped>
-.menu-button {
+.room-menu-button {
   padding: 8px 16px;
   margin: 4px auto;
   background-color: var(--background-haze);
@@ -54,24 +54,24 @@ export default {
   transition: transform 0.1s, background-color 0.1s, opacity 0.1s;
 }
 
-.menu-button:hover {
+.room-menu-button:hover {
   background-color: var(--element-color-1);
 }
 
-.menu-button:active {
+.room-menu-button:active {
   transform: scale(0.95);
 }
 
-.menu-button.selected {
+.room-menu-button.selected {
   background-color: var(--element-color-1);
 }
 
-.menu-button.highlight {
+.room-menu-button.highlight {
   font-weight: 700;
   box-shadow: 0 0 10px var(--highlight-color);
 }
 
-.menu-button.loading {
+.room-menu-button.loading {
   cursor: wait;
   opacity: 0.6;
 }

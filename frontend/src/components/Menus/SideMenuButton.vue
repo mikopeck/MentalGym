@@ -1,5 +1,5 @@
 <template>
-  <button class="menu-button" :class="{ 'selected': isSelected }">
+  <button class="side-menu-button" :class="{ 'selected': isSelected }">
     <span class="icon"><slot name="icon"></slot></span> <!-- Slot for icon -->
     <span class="label">{{ label }}</span> <!-- Text label -->
   </button>
@@ -23,10 +23,10 @@ export default {
 </script>
 
 <style scoped>
-.menu-button {
+.side-menu-button {
   padding: 8px 16px;
   margin: 4px;
-  background-color: var(--background-color-1t);
+  background-color: var(--background-button-haze);
   border: 1px solid var(--text-color);
   border-radius: 8px;
   display: flex;
@@ -38,15 +38,15 @@ export default {
   transition: transform 0.1s, background-color 0.1s;
 }
 
-.menu-button:hover {
+.side-menu-button:hover {
   background-color: var(--element-color-1);
 }
 
-.menu-button:active {
+.side-menu-button:active {
   transform: scale(0.95);
 }
 
-.menu-button.selected {
+.side-menu-button.selected {
   background-color: var(--element-color-1);
   border-color: #e0e0e0;
 }

@@ -4,6 +4,7 @@
     --background-color: #0e0c14;
     --background-color-rgb: 14, 12, 20;
     --background-haze: #0e0c14ef;
+    --background-button-haze: #0e0c14ba;
     --background-color-1t: #4a148c42;
     --background-color-2t: #6a34b942;
     --element-color-1: #4a148c;
@@ -22,10 +23,11 @@
     --background-color: #f0f8ff;
     --background-color-rgb: 240, 248, 255;
     --background-haze: #f0f8ffef;
+    --background-button-haze: #f0f8ffba;
     --background-color-1t: #2a14ff42;
     --background-color-2t: #dad1ff42;
-    --element-color-1: #b48bff;
-    --element-color-2: #884afa;
+    --element-color-1: #9a8bff;
+    --element-color-2: #6a4afa;
     --highlight-color: #250849;
     --text-color: #0e0c14;
     --text-color-rgb: 14, 12, 20;
