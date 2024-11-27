@@ -152,8 +152,7 @@ export default {
         const libraryResponse = await axios.post("/api/library/generate", {
           topic: suggestion,
         });
-
-        const libraryId = libraryResponse.data.library_id;
+        const libraryId = libraryResponse.data.library_data.id;
 
         // Set the room names in the store
         this.loading = false;
@@ -242,7 +241,6 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;

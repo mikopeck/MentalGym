@@ -500,7 +500,7 @@ export default {
           topic: suggestion,
         });
 
-        const libraryId = libraryResponse.data.library_id;
+        const libraryId = libraryResponse.data.library_data.id;
         this.$router.push(`/library/${libraryId}`);
       } catch (error) {
         this.loading = false;
