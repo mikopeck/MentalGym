@@ -18,11 +18,11 @@
 
         <div class="stat-item">
           <span class="stat-value">{{ currentStreak }}</span>
-          <span class="stat-label">❤️‍🔥 Current Streak</span>
+          <span class="stat-label">🔥 Current Streak</span>
         </div>
         <div class="stat-item">
           <span class="stat-value">{{ maxStreak }}</span>
-          <span class="stat-label">🔥 Best Streak</span>
+          <span class="stat-label">❤️‍🔥 Best Streak</span>
         </div>
       </div>
     </div>

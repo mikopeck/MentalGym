@@ -4,6 +4,7 @@ import axios from "axios";
 
 import { useAuthStore } from "@/store/authStore";
 import { usePopupStore } from "@/store/popupStore.js";
+import { useUserStatsStore } from "@/store/userStatsStore";
 
 export const useGameStore = defineStore("gameStore", {
     state: () => ({
@@ -287,6 +288,8 @@ export const useGameStore = defineStore("gameStore", {
         },
         endGame() {
             this.stopTimer();
+            const userStatsStore = useUserStatsStore();
+            userStatsStore.resetStats();
             axios.post(`/api/library/end`, {
                 libraryId: this.libraryId,
                 score: this.score,

@@ -28,5 +28,9 @@ export const useUserStatsStore = defineStore('userStats', {
         exp: this.exp,
       };
     },
+    resetStats(){
+      this.streak = null;
+      this.exp = null;
+    }
   },
 });

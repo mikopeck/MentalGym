@@ -5,33 +5,36 @@
         <h1>Choose Your Tutor</h1>
         <button class="close-button" @click="mentorStore.hide">✖</button>
         <div class="mentor-grid">
-          <div
-            v-if="currentMentor"
-            class="mentor-item"
-            :class="{
-              selected: mentorStore.selectedMentorId === currentMentor.name,
-            }"
-          >
-            <img
-              :src="currentMentor.imageUrl"
-              :alt="currentMentor.name"
-              class="mentor-image"
-            />
-            <div class="mentor-name">
-              {{ currentMentor.name }}
-            </div>
+          <transition name="mentor-fade" mode="out-in">
             <div
-              class="mentor-personality"
-              v-html="currentMentor.personality"
-            ></div>
-          </div>
+              v-if="currentMentor"
+              :key="currentMentor.name"
+              class="mentor-item"
+              :class="{ selected: mentorStore.selectedMentorId === currentMentor.name }"
+            >
+              <img
+                :src="currentMentor.imageUrl"
+                :alt="currentMentor.name"
+                class="mentor-image"
+              />
+              <div class="mentor-name">{{ currentMentor.name }}</div>
+              <div class="mentor-personality" v-html="currentMentor.personality"></div>
+            </div>
+          </transition>
         </div>
         <div class="button-container">
-          <button class="menu-button" @click="changeMentor(-1)">&lt;</button>
-          <button class="menu-button" @click="mentorStore.confirmSelection(currentMentor.name)">
+          <button class="mentor-menu-button" @click="changeMentor(-1)" :disabled="isChangingMentor">
+            &lt;
+          </button>
+          <button
+            class="mentor-menu-button"
+            @click="mentorStore.confirmSelection(currentMentor.name)"
+          >
             Confirm
           </button>
-          <button class="menu-button" @click="changeMentor(1)">&gt;</button>
+          <button class="mentor-menu-button" @click="changeMentor(1)" :disabled="isChangingMentor">
+            &gt;
+          </button>
         </div>
       </div>
     </div>
@@ -41,32 +44,39 @@
 
 <script>
 import { useMentorStore } from "@/store/mentorStore";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 export default {
   name: "MentorSelection",
   setup() {
     const mentorStore = useMentorStore();
     const currentMentorIndex = ref(0);
+    const isChangingMentor = ref(false);
 
     const currentMentor = computed(() => {
       return mentorStore.mentors[currentMentorIndex.value];
     });
 
     const changeMentor = (direction) => {
-      // console.log(direction, currentMentorIndex.value);
-      currentMentorIndex.value =
-        (currentMentorIndex.value + direction + mentorStore.mentors.length) %
-        mentorStore.mentors.length;
+      if (isChangingMentor.value) return;
+      isChangingMentor.value = true;
 
-      // console.log(direction, currentMentorIndex.value);
+      // Update the mentor index safely
+      const totalMentors = mentorStore.mentors.length;
+      currentMentorIndex.value = (currentMentorIndex.value + direction + totalMentors) % totalMentors;
     };
 
-    return { mentorStore, currentMentor, changeMentor };
+    // Watch for mentor change and reset the flag after transition
+    watch(currentMentor, () => {
+      setTimeout(() => {
+        isChangingMentor.value = false;
+      }, 300); // Match this duration with your CSS transition
+    });
+
+    return { mentorStore, currentMentor, changeMentor, isChangingMentor };
   },
 };
 </script>
-
 
 <style>
 .popup {
@@ -104,7 +114,7 @@ export default {
   top: 0px;
   right: 0px;
   padding: 0px 8px;
-  background: #00000000;
+  background: transparent;
   border-radius: 8px;
   border: none;
   font-size: 1.5rem;
@@ -122,7 +132,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
   max-height: 75vh;
   margin-bottom: 8px;
 }
@@ -182,15 +191,20 @@ export default {
 }
 
 .fade-enter-active,
-.fade-leave-active {
+.fade-leave-active,
+.mentor-fade-enter-active,
+.mentor-fade-leave-active {
   transition: opacity 0.3s;
 }
+
 .fade-enter-from,
-.fade-leave-to {
+.fade-leave-to,
+.mentor-fade-enter-from,
+.mentor-fade-leave-to {
   opacity: 0;
 }
 
-.menu-button {
+.mentor-menu-button {
   padding: 8px 16px;
   margin: 4px;
   background-color: var(--background-color-1t);
@@ -200,17 +214,23 @@ export default {
   width: 100%;
   backdrop-filter: blur(8px);
   transition: transform 0.1s, background-color 0.1s;
+  cursor: pointer;
 }
 
-.menu-button:hover {
+.mentor-menu-button:hover {
   background-color: var(--element-color-1);
 }
 
-.menu-button:active {
+.mentor-menu-button:active {
   transform: scale(0.95);
 }
 
-.menu-button.selected {
+.mentor-menu-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.mentor-menu-button.selected {
   background-color: var(--element-color-1);
 }
 </style>
