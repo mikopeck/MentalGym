@@ -284,7 +284,7 @@ GenerateLibraryRoomNames = {
 
 GenerateLibraryRoom = {
     "name": "generate_library_room",
-    "description": "Generates a library room with 4 factoids and corresponding multiple-choice questions. Each factoid is an interesting snippet related to the room's theme, and each question tests understanding of its associated factoid.",
+    "description": "Generates a library room with 4 factoids and corresponding questions. Each factoid is an interesting snippet related to the room's theme. Two factoids have associated multiple-choice questions testing understanding of the factoid, and two factoids have a missing word denoted by an underscore for the user to fill in, each accompanied by multiple-choice options.",
     "parameters": {
         "type": "object",
         "properties": {
@@ -300,13 +300,18 @@ GenerateLibraryRoom = {
                         "question": {
                             "type": "object",
                             "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "enum": ["multiple_choice", "fill_in_the_blank"],
+                                    "description": "The type of question: 'multiple_choice' or 'fill_in_the_blank'."
+                                },
                                 "text": {
                                     "type": "string",
-                                    "description": "The text of the question associated with the factoid."
+                                    "description": "The text of the question. For 'fill_in_the_blank' questions, this must contain an underscore (_) where the answer should go."
                                 },
                                 "correct_choice": {
                                     "type": "string",
-                                    "description": "The correct choice for the question."
+                                    "description": "The correct choice for the question or the correct word/phrase that fills in the blank."
                                 },
                                 "wrong_choices": {
                                     "type": "array",
@@ -318,19 +323,70 @@ GenerateLibraryRoom = {
                                     "description": "Three incorrect choices for the question."
                                 }
                             },
-                            "required": ["text", "correct_choice", "wrong_choices"]
+                            "required": ["type", "text", "correct_choice", "wrong_choices"]
                         }
                     },
                     "required": ["factoid_text", "question"]
                 },
                 "minItems": 4,
                 "maxItems": 4,
-                "description": "An array of four objects, each containing a factoid and its corresponding multiple-choice question."
+                "description": "An array of four objects, each containing a factoid and its corresponding question."
             }
         },
         "required": ["factoids"]
-    },
+    }
 }
+
+
+# GenerateLibraryRoom = {
+#     "name": "generate_library_room",
+#     "description": "Generates a library room with 4 factoids and corresponding multiple-choice questions. Each factoid is an interesting snippet related to the room's theme, and each question tests understanding of its associated factoid.",
+#     "parameters": {
+#         "type": "object",
+#         "properties": {
+#             "factoids": {
+#                 "type": "array",
+#                 "items": {
+#                     "type": "object",
+#                     "properties": {
+#                         "factoid_text": {
+#                             "type": "string",
+#                             "description": "A snippet of an interesting fact related to the library room's theme, up to 200 tokens in length."
+#                         },
+#                         "question": {
+#                             "type": "object",
+#                             "properties": {
+#                                 "text": {
+#                                     "type": "string",
+#                                     "description": "The text of the question associated with the factoid."
+#                                 },
+#                                 "correct_choice": {
+#                                     "type": "string",
+#                                     "description": "The correct choice for the question."
+#                                 },
+#                                 "wrong_choices": {
+#                                     "type": "array",
+#                                     "items": {
+#                                         "type": "string"
+#                                     },
+#                                     "minItems": 3,
+#                                     "maxItems": 3,
+#                                     "description": "Three incorrect choices for the question."
+#                                 }
+#                             },
+#                             "required": ["text", "correct_choice", "wrong_choices"]
+#                         }
+#                     },
+#                     "required": ["factoid_text", "question"]
+#                 },
+#                 "minItems": 4,
+#                 "maxItems": 4,
+#                 "description": "An array of four objects, each containing a factoid and its corresponding multiple-choice question."
+#             }
+#         },
+#         "required": ["factoids"]
+#     },
+# }
 
 
 def try_get_object(fcn, response_message):
