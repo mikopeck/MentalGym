@@ -38,8 +38,8 @@ export default {
       switch (this.content_type) {
         case "lesson":
           return "📖";
-        case "challenge":
-          return "🎯";
+        case "library":
+          return "🏛️";
         default:
           return "☁️";
       }
