@@ -23,7 +23,7 @@ export default {
       width: 0,
       height: 0,
       currentZoomScale: 1,
-      baseCollisionRadius: 60,
+      baseCollisionRadius: 70,
     };
   },
   mounted() {
@@ -52,8 +52,12 @@ export default {
       // Convert custom edges into D3 link format by mapping node indices
       this.graphData.links = this.graphData.edges.map((edge) => {
         return {
-          source: this.graphData.nodes.findIndex((node) => node.name === edge.from),
-          target: this.graphData.nodes.findIndex((node) => node.name === edge.to),
+          source: this.graphData.nodes.findIndex(
+            (node) => node.name === edge.from
+          ),
+          target: this.graphData.nodes.findIndex(
+            (node) => node.name === edge.to
+          ),
           value: edge.similarity,
         };
       });
@@ -64,7 +68,8 @@ export default {
       this.height = window.innerHeight - 250;
       const vm = this;
 
-      this.svg = d3.select("#graph")
+      this.svg = d3
+        .select("#graph")
         .append("svg")
         .attr("width", this.width)
         .attr("height", this.height);
@@ -72,12 +77,17 @@ export default {
       const graphGroup = this.svg.append("g");
 
       // Create the force simulation with a repulsive force and collision detection
-      const simulation = d3.forceSimulation(this.graphData.nodes)
-        .force("link", d3.forceLink(this.graphData.links)
-          .id((d) => d.index)
-          .strength((d) => d.value))
+      const simulation = d3
+        .forceSimulation(this.graphData.nodes)
+        .force(
+          "link",
+          d3
+            .forceLink(this.graphData.links)
+            .id((d) => d.index)
+            .strength((d) => d.value)
+        )
         .force("charge", d3.forceManyBody().strength(-30))
-        .force("collide", d3.forceCollide(this.baseCollisionRadius)) 
+        .force("collide", d3.forceCollide(this.baseCollisionRadius))
         .force("center", d3.forceCenter(this.width / 2, this.height / 2));
 
       const linkColor = getComputedStyle(document.documentElement)
@@ -85,18 +95,20 @@ export default {
         .trim();
 
       // Draw Links
-      const link = graphGroup.append("g")
+      const link = graphGroup
+        .append("g")
         .attr("class", "links")
         .selectAll("line")
         .data(this.graphData.links)
         .enter()
         .append("line")
         .attr("stroke", linkColor)
-        .attr("stroke-width", (d) => (5 * Math.sqrt(d.value)));
+        .attr("stroke-width", (d) => 5 * Math.sqrt(d.value));
 
-      // Draw Nodes as Buttons (similar to suggestions)
+      // Draw Nodes as Buttons
       const nodeGroup = graphGroup.append("g").attr("class", "nodes");
-      const node = nodeGroup.selectAll("foreignObject")
+      const node = nodeGroup
+        .selectAll("foreignObject")
         .data(this.graphData.nodes)
         .enter()
         .append("foreignObject")
@@ -106,14 +118,16 @@ export default {
           this.selectNode(d);
         })
         .call(
-          d3.drag()
+          d3
+            .drag()
             .on("start", dragstarted)
             .on("drag", dragged)
             .on("end", dragended)
         );
 
       // Inside each foreignObject, create a styled button
-      node.append("xhtml:button")
+      node
+        .append("xhtml:button")
         .attr("class", "content-button")
         .classed("completed-button", (d) => d.category.includes("completed"))
         .html((d) => {
@@ -124,19 +138,28 @@ export default {
           return `
             ${emoji ? `<span class="emoji-indicator">${emoji}</span>` : ""}
             <span class="content-name">${contentName}</span>
-            ${extractedEmoji ? `<span class="emoji-indicator">${extractedEmoji}</span>` : ""}
+            ${
+              extractedEmoji
+                ? `<span class="emoji-indicator">${extractedEmoji}</span>`
+                : ""
+            }
           `;
         });
-
 
       // Zoom behavior
       this.zoom = d3.zoom().on("zoom", (event) => {
         vm.currentZoomScale = event.transform.k;
         graphGroup.attr("transform", event.transform);
 
-        // Instead of scaling everything visually, we update the collision radius
-        simulation.force("collide", d3.forceCollide(vm.baseCollisionRadius * vm.currentZoomScale));
-        simulation.alpha(1).restart();
+        // Update collision radius with zoom
+        simulation.force(
+          "collide",
+          d3.forceCollide(vm.baseCollisionRadius * vm.currentZoomScale)
+        );
+        simulation.alpha(0.02).restart();
+      //   setTimeout(() => {
+      //   simulation.stop();
+      // }, 200);
       });
       this.svg.call(this.zoom);
 
@@ -149,25 +172,29 @@ export default {
           .attr("y2", (d) => d.target.y);
 
         // Position nodes (foreignObjects)
-        node
-          .attr("x", (d) => d.x - 110) 
-          .attr("y", (d) => d.y - 30);
+        node.attr("x", (d) => d.x - 110).attr("y", (d) => d.y - 30);
       });
 
       // Initial focus if nodeName is provided
       if (nodeName) {
-        const nodeToSelect = this.graphData.nodes.find((n) => n.name === nodeName);
+        const nodeToSelect = this.graphData.nodes.find(
+          (n) => n.name === nodeName
+        );
         if (nodeToSelect) {
+          setTimeout(() => {
           this.selectNode(nodeToSelect);
+        }, 1200);
         }
-        setTimeout(() => {
-          this.zoomToNode(nodeName);
-        }, 1000);
       }
+
+      simulation.alpha(1).restart();
+      setTimeout(() => {
+        simulation.stop();
+      }, 1200);
 
       // Dragging functions
       function dragstarted(event, d) {
-        if (!event.active) simulation.alphaTarget(0.3).restart();
+        if (!event.active) simulation.alphaTarget(0.2).restart();
         d.fx = d.x;
         d.fy = d.y;
       }
@@ -184,28 +211,11 @@ export default {
       }
     },
 
-    zoomToNode(nodeName) {
-      if (!nodeName) return;
-      const node = this.graphData.nodes.find((n) => n.name === nodeName);
-      if (node) {
-        const zoomLevel = 4;
-        const translateX = this.width / 2 - node.x * zoomLevel;
-        const translateY = this.height / 2 - node.y * zoomLevel;
-
-        this.svg.transition()
-          .duration(3000)
-          .call(
-            this.zoom.transform,
-            d3.zoomIdentity.translate(translateX, translateY).scale(zoomLevel)
-          );
-      }
-    },
-
     selectNode(nodeData) {
       // Remove existing UI elements
-      //d3.selectAll(".node-button").remove();
       d3.select("#graph svg").selectAll(".node-suggestions").remove();
       this.showingSuggestions = false;
+      console.log("hiding")
 
       // Deselect previously selected node
       if (this.selectedNode && this.selectedNode.domRef) {
@@ -221,20 +231,36 @@ export default {
 
       // Update node appearance
       const allNodes = d3.selectAll(".content-button").nodes();
-      nodeData.domRef = allNodes.find((el) => d3.select(el).datum() === nodeData);
+      nodeData.domRef = allNodes.find(
+        (el) => d3.select(el).datum() === nodeData
+      );
       if (this.selectedNode && nodeData.domRef) {
         d3.select(nodeData.domRef).classed("selected", true);
-      }
 
-      // Show action buttons if a node is selected
-      if (this.selectedNode) {
+        // Center and zoom into the selected node so it's visible
+        const zoomLevel = 2; // Adjust zoom level as needed
+        const translateX = this.width / 2 - nodeData.x * zoomLevel;
+        const translateY = this.height / 2 - nodeData.y * zoomLevel;
+
+        this.svg
+          .transition()
+          .duration(1000)
+          .call(
+            this.zoom.transform,
+            d3.zoomIdentity.translate(translateX, translateY).scale(zoomLevel)
+          );
+
+        // Show action buttons if a node is selected
         this.createActionButtons(nodeData);
+        
+      console.log("showing")
       }
     },
 
-        getEmojiForContentType(contentType) {
+    getEmojiForContentType(contentType) {
       switch (contentType) {
         case "lesson":
+        case "completed_lesson":
           return "📖";
         case "completed_librarie":
         case "library":
@@ -244,14 +270,14 @@ export default {
       }
     },
 
-        extractEmoji(content) {
+    extractEmoji(content) {
       const emojiRegex =
         /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u;
       const match = content.match(emojiRegex);
       return match ? match[0] : "";
     },
 
-        removeEmoji(content) {
+    removeEmoji(content) {
       const emoji = this.extractEmoji(content);
       return content.replace(emoji, "").trim();
     },
@@ -260,7 +286,8 @@ export default {
       const canvasSize = { width: this.width, height: this.height };
       const buttonSize = { width: 120, height: 30 };
 
-      const buttonGroup = d3.select("#graph svg")
+      const buttonGroup = d3
+        .select("#graph svg")
         .append("g")
         .classed("node-buttons", true)
         .attr(
@@ -420,7 +447,6 @@ export default {
   border-radius: 8px;
   cursor: pointer;
   display: inline-block;
-  backdrop-filter: blur(8px);
   transition: transform 0.1s, background-color 0.1s;
 }
 
@@ -444,11 +470,8 @@ export default {
 }
 
 .selected {
-  transform: scale(1.2);
-  transform-origin: center;
   border-color: var(--highlight-color);
 }
-
 
 .content-name {
   padding: 8px;

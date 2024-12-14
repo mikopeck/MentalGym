@@ -30,7 +30,7 @@ def get_graph_data(user_id):
 def calculate_edges(similarities):
     num_nodes = similarities.shape[0]
     base_threshold = 0.3
-    threshold_increase_per_edge = 0.1
+    threshold_increase_per_edge = 0.16
 
     # Initialize thresholds and edge counts for each node
     thresholds = np.full(num_nodes, base_threshold)
