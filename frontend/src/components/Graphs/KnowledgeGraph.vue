@@ -24,6 +24,10 @@ export default {
       height: 0,
       currentZoomScale: 1,
       baseCollisionRadius: 70,
+      simulation: null,
+      link: null,
+      node: null,
+      graphGroup: null,
     };
   },
   mounted() {
@@ -49,7 +53,7 @@ export default {
     },
 
     prepareGraphData() {
-      // Convert custom edges into D3 link format by mapping node indices
+      // Convert custom edges into D3 link format
       this.graphData.links = this.graphData.edges.map((edge) => {
         return {
           source: this.graphData.nodes.findIndex(
@@ -74,10 +78,9 @@ export default {
         .attr("width", this.width)
         .attr("height", this.height);
 
-      const graphGroup = this.svg.append("g");
+      this.graphGroup = this.svg.append("g");
 
-      // Create the force simulation with a repulsive force and collision detection
-      const simulation = d3
+      this.simulation = d3
         .forceSimulation(this.graphData.nodes)
         .force(
           "link",
@@ -95,7 +98,7 @@ export default {
         .trim();
 
       // Draw Links
-      const link = graphGroup
+      this.link = this.graphGroup
         .append("g")
         .attr("class", "links")
         .selectAll("line")
@@ -105,10 +108,8 @@ export default {
         .attr("stroke", linkColor)
         .attr("stroke-width", (d) => 5 * Math.sqrt(d.value));
 
-      // Draw Nodes as Buttons
-      const nodeGroup = graphGroup.append("g").attr("class", "nodes");
-      const node = nodeGroup
-        .selectAll("foreignObject")
+      // Draw Nodes
+      this.node = this.graphGroup.append("g").attr("class", "nodes").selectAll("foreignObject")
         .data(this.graphData.nodes)
         .enter()
         .append("foreignObject")
@@ -125,13 +126,12 @@ export default {
             .on("end", dragended)
         );
 
-      // Inside each foreignObject, create a styled button
-      node
+      // Create node buttons
+      this.node
         .append("xhtml:button")
         .attr("class", "content-button")
         .classed("completed-button", (d) => d.category.includes("completed"))
         .html((d) => {
-          console.log(d);
           const emoji = this.getEmojiForContentType(d.category);
           const contentName = this.removeEmoji(d.name);
           const extractedEmoji = this.extractEmoji(d.name);
@@ -149,23 +149,18 @@ export default {
       // Zoom behavior
       this.zoom = d3.zoom().on("zoom", (event) => {
         vm.currentZoomScale = event.transform.k;
-        graphGroup.attr("transform", event.transform);
+        vm.graphGroup.attr("transform", event.transform);
 
-        // Update collision radius with zoom
-        simulation.force(
+        vm.simulation.force(
           "collide",
           d3.forceCollide(vm.baseCollisionRadius * vm.currentZoomScale)
         );
-        simulation.alpha(0.02).restart();
-        //   setTimeout(() => {
-        //   simulation.stop();
-        // }, 200);
+        vm.simulation.alpha(0.02).restart();
       });
       this.svg.call(this.zoom);
 
       // If the click is not on a node, deselect the current node.
       this.svg.on("click", (event) => {
-        console.log(event.target);
         if (
           !d3.select(event.target).classed("content-name") &&
           !d3.select(event.target).classed("content-button") &&
@@ -175,16 +170,14 @@ export default {
         }
       });
 
-      simulation.on("tick", () => {
-        // Position links
-        link
+      this.simulation.on("tick", () => {
+        this.link
           .attr("x1", (d) => d.source.x)
           .attr("y1", (d) => d.source.y)
           .attr("x2", (d) => d.target.x)
           .attr("y2", (d) => d.target.y);
 
-        // Position nodes (foreignObjects)
-        node.attr("x", (d) => d.x - 110).attr("y", (d) => d.y - 30);
+        this.node.attr("x", (d) => d.x - 110).attr("y", (d) => d.y - 30);
       });
 
       // Initial focus if nodeName is provided
@@ -199,14 +192,13 @@ export default {
         }
       }
 
-      simulation.alpha(1).restart();
+      this.simulation.alpha(1).restart();
       setTimeout(() => {
-        simulation.stop();
+        this.simulation.stop();
       }, 1200);
 
-      // Dragging functions
       function dragstarted(event, d) {
-        if (!event.active) simulation.alphaTarget(0.2).restart();
+        if (!event.active) vm.simulation.alphaTarget(0.2).restart();
         d.fx = d.x;
         d.fy = d.y;
       }
@@ -217,45 +209,41 @@ export default {
       }
 
       function dragended(event, d) {
-        if (!event.active) simulation.alphaTarget(0);
+        if (!event.active) vm.simulation.alphaTarget(0);
         d.fx = null;
         d.fy = null;
       }
     },
+
     deselectNode() {
       d3.select("#graph svg").selectAll(".node-suggestions").remove();
       d3.select("#graph svg").selectAll(".knowledge-menu-button").remove();
       this.showingSuggestions = false;
       this.updateExploreButtonText("🔍Explore");
-      // Deselect previously selected node
       if (this.selectedNode && this.selectedNode.domRef) {
         d3.select(this.selectedNode.domRef).classed("selected", false);
       }
-      console.log("hiding");
     },
 
     selectNode(nodeData) {
-      // Remove existing UI elements
       this.deselectNode();
 
-      // Toggle selection
       if (this.selectedNode === nodeData) {
         this.selectedNode = null;
       } else {
         this.selectedNode = nodeData;
       }
 
-      // Update node appearance
       const allNodes = d3.selectAll(".content-button").nodes();
       nodeData.domRef = allNodes.find(
         (el) => d3.select(el).datum() === nodeData
       );
-      console.log(this.selectedNode);
+
       if (this.selectedNode && nodeData.domRef) {
         d3.select(nodeData.domRef).classed("selected", true);
 
-        // Center and zoom into the selected node so it's visible
-        const zoomLevel = 2; // Adjust zoom level as needed
+        // Center and zoom into the selected node
+        const zoomLevel = 2;
         const translateX = this.width / 2 - nodeData.x * zoomLevel;
         const translateY = this.height / 2 - nodeData.y * zoomLevel;
 
@@ -267,13 +255,7 @@ export default {
             d3.zoomIdentity.translate(translateX, translateY).scale(zoomLevel)
           );
 
-        // Show action buttons if a node is selected
-        d3.select("#graph svg").selectAll(".node-buttons").remove();
-        d3.select("#graph svg").selectAll(".node-suggestions").remove();
-
         this.createActionButtons(nodeData);
-
-        console.log("showing");
       }
     },
 
@@ -285,6 +267,7 @@ export default {
         case "completed_librarie":
         case "library":
           return "🏛️";
+        case "suggestion":
         default:
           return "☁️";
       }
@@ -360,7 +343,8 @@ export default {
 
     async exploreNode(nodeData) {
       if (this.showingSuggestions) {
-        d3.select("#graph svg").selectAll(".node-suggestions").remove();
+        // Hide suggestions if already showing
+        this.removeSuggestionsNodes();
         this.showingSuggestions = false;
         this.updateExploreButtonText("🔍Explore");
       } else {
@@ -370,7 +354,7 @@ export default {
           const data = await response.json();
 
           if (data && data.suggestions) {
-            this.showSuggestions(data.suggestions);
+            this.addSuggestionsToGraph(data.suggestions, nodeData);
             this.showingSuggestions = true;
             this.updateExploreButtonText("🔽Hide");
           } else {
@@ -391,47 +375,113 @@ export default {
       d3.select("#graph svg").select(".goto-button").text(newText);
     },
 
-    showSuggestions(suggestions) {
-      const canvasSize = { width: this.width, height: this.height };
-      const minButtonHeight = 64;
-      const buttonWidth = 200;
-      const buttonSpacing = 24;
-
-      const suggestionGroup = d3
-        .select("#graph svg")
-        .append("g")
-        .classed("node-suggestions", true)
-        .attr("transform", `translate(10, 0)`);
-
-      let currentYPosition = canvasSize.height - 80;
-
+    // Add suggestion nodes to graph and connect them to the selected node
+    addSuggestionsToGraph(suggestions, nodeData) {
+      const originIndex = this.graphData.nodes.indexOf(nodeData);
+      // Create new nodes for suggestions
       suggestions.forEach((suggestion) => {
-        const estimatedLineCount = Math.ceil(suggestion.length / 25);
-        const buttonHeight = Math.max(
-          minButtonHeight,
-          estimatedLineCount * 20 + 24
+        const newNode = {
+          name: suggestion,
+          category: "suggestion"
+        };
+        this.graphData.nodes.push(newNode);
+        const newNodeIndex = this.graphData.nodes.length - 1;
+
+        this.graphData.links.push({
+          source: originIndex,
+          target: newNodeIndex,
+          value: 0.1,
+        });
+      });
+
+      // Update the simulation and re-draw
+      this.updateGraph();
+      // Restart simulation with slight alpha
+      this.simulation.alpha(0.1).restart();
+    },
+
+    removeSuggestionsNodes() {
+      // Remove all suggestion nodes from graphData
+      // This is optional; if we want to actually remove them, we need logic here.
+      // For now, we won't remove them, just won't show them again. 
+      // If needed, implement filtering out "suggestion" category nodes here.
+    },
+
+    updateGraph() {
+      const linkColor = getComputedStyle(document.documentElement)
+        .getPropertyValue("--element-color-1")
+        .trim();
+
+      // Update links
+      this.link = this.graphGroup.select(".links").selectAll("line")
+        .data(this.graphData.links, (d) => `${d.source.index}-${d.target.index}`);
+
+      this.link.exit().remove();
+
+      this.link = this.link
+        .enter()
+        .append("line")
+        .attr("stroke", linkColor)
+        .attr("stroke-width", (d) => 5 * Math.sqrt(d.value))
+        .merge(this.link);
+
+      // Update nodes
+      const nodeGroup = this.graphGroup.select(".nodes").selectAll("foreignObject")
+        .data(this.graphData.nodes, (d) => d.name);
+
+      nodeGroup.exit().remove();
+
+      const nodeEnter = nodeGroup
+        .enter()
+        .append("foreignObject")
+        .attr("width", 240)
+        .attr("height", 120)
+        .on("click", (event, d) => {
+          this.selectNode(d);
+        })
+        .call(
+          d3
+            .drag()
+            .on("start", (event, d) => {
+              if (!event.active) this.simulation.alphaTarget(0.2).restart();
+              d.fx = d.x;
+              d.fy = d.y;
+            })
+            .on("drag", (event, d) => {
+              d.fx = event.x;
+              d.fy = event.y;
+            })
+            .on("end", (event, d) => {
+              if (!event.active) this.simulation.alphaTarget(0);
+              d.fx = null;
+              d.fy = null;
+            })
         );
 
-        currentYPosition -= buttonHeight + buttonSpacing;
+      nodeEnter
+        .append("xhtml:button")
+        .attr("class", "content-button")
+        .classed("completed-button", (d) => d.category && d.category.includes("completed"))
+        .html((d) => {
+          const emoji = this.getEmojiForContentType(d.category);
+          const contentName = this.removeEmoji(d.name);
+          const extractedEmoji = this.extractEmoji(d.name);
+          return `
+            ${emoji ? `<span class="emoji-indicator">${emoji}</span>` : ""}
+            <span class="content-name">${contentName}</span>
+            ${
+              extractedEmoji
+                ? `<span class="emoji-indicator">${extractedEmoji}</span>`
+                : ""
+            }
+          `;
+        });
 
-        suggestionGroup
-          .append("foreignObject")
-          .attr("width", buttonWidth)
-          .attr("height", buttonHeight)
-          .attr("x", 0)
-          .attr("y", currentYPosition)
-          .append("xhtml:div")
-          .attr("class", "content-button")
-          .style("height", `${buttonHeight}px`)
-          .style("word-break", "break-word")
-          .style("white-space", "normal")
-          .style("max-width", "60vw")
-          .style("display", "flex")
-          .style("align-items", "center")
-          .style("justify-content", "center")
-          .text(suggestion)
-          .on("click", () => this.handleSuggestionClick(suggestion));
-      });
+      this.node = nodeEnter.merge(nodeGroup);
+
+      // Update simulation with new data
+      this.simulation.nodes(this.graphData.nodes);
+      this.simulation.force("link").links(this.graphData.links);
     },
 
     async handleSuggestionClick(suggestion) {
@@ -506,6 +556,7 @@ export default {
 }
 
 .completed-button {
+  border-color:  var(--gold-color);
   opacity: 0.9;
   position: relative;
 }
@@ -517,7 +568,7 @@ export default {
   font-size: 1.2rem;
   position: absolute;
   right: 10px;
-  top: 50%;
+  top: 80%;
   transform: translateY(-50%);
 }
 
