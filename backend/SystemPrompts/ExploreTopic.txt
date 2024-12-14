@@ -5,5 +5,6 @@ Your suggestions should include one of each of the following:
 - what naturally comes next like the next chapter in the textbook
 - deeper or more nuanced on the same topic
 - slightly creative and unusual for the user, like if a guest lecturer from a different faculty would teach the next lesson
+Avoid words like "advanced" or "basics of".
 Use only the function provided.
 Do not suggest anything the user has already completed or started - only topics new to the user.

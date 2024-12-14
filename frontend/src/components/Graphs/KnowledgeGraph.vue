@@ -113,7 +113,7 @@ export default {
         .enter()
         .append("foreignObject")
         .attr("width", 240)
-        .attr("height", 140)
+        .attr("height", 120)
         .on("click", (event, d) => {
           this.selectNode(d);
         })
@@ -157,11 +157,23 @@ export default {
           d3.forceCollide(vm.baseCollisionRadius * vm.currentZoomScale)
         );
         simulation.alpha(0.02).restart();
-      //   setTimeout(() => {
-      //   simulation.stop();
-      // }, 200);
+        //   setTimeout(() => {
+        //   simulation.stop();
+        // }, 200);
       });
       this.svg.call(this.zoom);
+
+      // If the click is not on a node, deselect the current node.
+      this.svg.on("click", (event) => {
+        console.log(event.target);
+        if (
+          !d3.select(event.target).classed("content-name") &&
+          !d3.select(event.target).classed("content-button") &&
+          !d3.select(event.target).classed("knowledge-menu-button")
+        ) {
+          this.deselectNode();
+        }
+      });
 
       simulation.on("tick", () => {
         // Position links
@@ -182,8 +194,8 @@ export default {
         );
         if (nodeToSelect) {
           setTimeout(() => {
-          this.selectNode(nodeToSelect);
-        }, 1200);
+            this.selectNode(nodeToSelect);
+          }, 1200);
         }
       }
 
@@ -210,17 +222,21 @@ export default {
         d.fy = null;
       }
     },
-
-    selectNode(nodeData) {
-      // Remove existing UI elements
+    deselectNode() {
       d3.select("#graph svg").selectAll(".node-suggestions").remove();
+      d3.select("#graph svg").selectAll(".knowledge-menu-button").remove();
       this.showingSuggestions = false;
-      console.log("hiding")
-
+      this.updateExploreButtonText("🔍Explore");
       // Deselect previously selected node
       if (this.selectedNode && this.selectedNode.domRef) {
         d3.select(this.selectedNode.domRef).classed("selected", false);
       }
+      console.log("hiding");
+    },
+
+    selectNode(nodeData) {
+      // Remove existing UI elements
+      this.deselectNode();
 
       // Toggle selection
       if (this.selectedNode === nodeData) {
@@ -234,6 +250,7 @@ export default {
       nodeData.domRef = allNodes.find(
         (el) => d3.select(el).datum() === nodeData
       );
+      console.log(this.selectedNode);
       if (this.selectedNode && nodeData.domRef) {
         d3.select(nodeData.domRef).classed("selected", true);
 
@@ -251,9 +268,12 @@ export default {
           );
 
         // Show action buttons if a node is selected
+        d3.select("#graph svg").selectAll(".node-buttons").remove();
+        d3.select("#graph svg").selectAll(".node-suggestions").remove();
+
         this.createActionButtons(nodeData);
-        
-      console.log("showing")
+
+        console.log("showing");
       }
     },
 
