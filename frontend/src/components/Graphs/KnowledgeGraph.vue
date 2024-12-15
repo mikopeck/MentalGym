@@ -9,6 +9,7 @@
 import axios from "axios";
 import * as d3 from "d3";
 import { usePopupStore } from "@/store/popupStore";
+import { useMessageStore } from "@/store/messageStore";
 
 export default {
   name: "KnowledgeGraph",
@@ -109,7 +110,10 @@ export default {
         .attr("stroke-width", (d) => 5 * Math.sqrt(d.value));
 
       // Draw Nodes
-      this.node = this.graphGroup.append("g").attr("class", "nodes").selectAll("foreignObject")
+      this.node = this.graphGroup
+        .append("g")
+        .attr("class", "nodes")
+        .selectAll("foreignObject")
         .data(this.graphData.nodes)
         .enter()
         .append("foreignObject")
@@ -216,10 +220,8 @@ export default {
     },
 
     deselectNode() {
-      d3.select("#graph svg").selectAll(".node-suggestions").remove();
-      d3.select("#graph svg").selectAll(".knowledge-menu-button").remove();
+      d3.select("#graph svg").selectAll(".node-buttons").remove();
       this.showingSuggestions = false;
-      this.updateExploreButtonText("🔍Explore");
       if (this.selectedNode && this.selectedNode.domRef) {
         d3.select(this.selectedNode.domRef).classed("selected", false);
       }
@@ -243,7 +245,7 @@ export default {
         d3.select(nodeData.domRef).classed("selected", true);
 
         // Center and zoom into the selected node
-        const zoomLevel = 2;
+        const zoomLevel = 1.4;
         const translateX = this.width / 2 - nodeData.x * zoomLevel;
         const translateY = this.height / 2 - nodeData.y * zoomLevel;
 
@@ -267,7 +269,7 @@ export default {
         case "completed_librarie":
         case "library":
           return "🏛️";
-        case "suggestion":
+        case "offered_lessons":
         default:
           return "☁️";
       }
@@ -298,29 +300,56 @@ export default {
           `translate(0, ${canvasSize.height - buttonSize.height - 20})`
         );
 
-      // "Go to" Button
-      buttonGroup
-        .append("foreignObject")
-        .attr("width", buttonSize.width)
-        .attr("height", buttonSize.height + 16)
-        .attr("x", canvasSize.width / 2 + 16)
-        .attr("y", 0)
-        .append("xhtml:div")
-        .attr("class", "knowledge-menu-button goto-button")
-        .text("📖Go to")
-        .on("click", () => this.goToNode(nodeData));
+      // If node is a suggestion, show three buttons: Library, Lesson, Hide
+      if (nodeData.category === "offered_lesson") {
+        // Library Button
+        buttonGroup
+          .append("foreignObject")
+          .attr("width", buttonSize.width)
+          .attr("height", buttonSize.height + 16)
+          .attr("x", canvasSize.width / 2 - buttonSize.width - 16)
+          .attr("y", 0)
+          .append("xhtml:div")
+          .attr("class", "knowledge-menu-button goto-button")
+          .text("🏛️Library")
+          .on("click", () => this.handleSuggestionLibrary(nodeData.name));
 
-      // "Explore" Button
-      buttonGroup
-        .append("foreignObject")
-        .attr("width", buttonSize.width)
-        .attr("height", buttonSize.height + 16)
-        .attr("x", canvasSize.width / 2 - buttonSize.width - 16)
-        .attr("y", 0)
-        .append("xhtml:div")
-        .attr("class", "knowledge-menu-button explore-button")
-        .text("🔍Explore")
-        .on("click", () => this.exploreNode(nodeData));
+        // Lesson Button
+        buttonGroup
+          .append("foreignObject")
+          .attr("width", buttonSize.width)
+          .attr("height", buttonSize.height + 16)
+          .attr("x", canvasSize.width / 2 + 16)
+          .attr("y", 0)
+          .append("xhtml:div")
+          .attr("class", "knowledge-menu-button explore-button")
+          .text("📖Lesson")
+          .on("click", () => this.handleSuggestionLesson(nodeData.name));
+      } else {
+        // Normal "Go to" Button
+        buttonGroup
+          .append("foreignObject")
+          .attr("width", buttonSize.width)
+          .attr("height", buttonSize.height + 16)
+          .attr("x", canvasSize.width / 2 + 16)
+          .attr("y", 0)
+          .append("xhtml:div")
+          .attr("class", "knowledge-menu-button goto-button")
+          .text("📖Go to")
+          .on("click", () => this.goToNode(nodeData));
+
+        // "Explore" Button
+        buttonGroup
+          .append("foreignObject")
+          .attr("width", buttonSize.width)
+          .attr("height", buttonSize.height + 16)
+          .attr("x", canvasSize.width / 2 - buttonSize.width - 16)
+          .attr("y", 0)
+          .append("xhtml:div")
+          .attr("class", "knowledge-menu-button explore-button")
+          .text("🔍Explore")
+          .on("click", () => this.exploreNode(nodeData));
+      }
     },
 
     goToNode(nodeData) {
@@ -344,7 +373,7 @@ export default {
     async exploreNode(nodeData) {
       if (this.showingSuggestions) {
         // Hide suggestions if already showing
-        this.removeSuggestionsNodes();
+        this.removeSuggestionNodes();
         this.showingSuggestions = false;
         this.updateExploreButtonText("🔍Explore");
       } else {
@@ -382,7 +411,9 @@ export default {
       suggestions.forEach((suggestion) => {
         const newNode = {
           name: suggestion,
-          category: "suggestion"
+          category: "suggestion",
+          x: nodeData.x,
+          y: nodeData.y,
         };
         this.graphData.nodes.push(newNode);
         const newNodeIndex = this.graphData.nodes.length - 1;
@@ -400,11 +431,38 @@ export default {
       this.simulation.alpha(0.1).restart();
     },
 
-    removeSuggestionsNodes() {
+    removeSuggestionNodes() {
       // Remove all suggestion nodes from graphData
-      // This is optional; if we want to actually remove them, we need logic here.
-      // For now, we won't remove them, just won't show them again. 
-      // If needed, implement filtering out "suggestion" category nodes here.
+      const suggestionNodes = this.graphData.nodes.filter(
+        (n) => n.category === "suggestion"
+      );
+      if (suggestionNodes.length > 0) {
+        const suggestionIndices = new Set(
+          suggestionNodes.map((n) => this.graphData.nodes.indexOf(n))
+        );
+
+        // Filter out suggestion nodes
+        this.graphData.nodes = this.graphData.nodes.filter(
+          (n, i) => !suggestionIndices.has(i)
+        );
+
+        // Filter out links connected to suggestion nodes
+        this.graphData.links = this.graphData.links.filter(
+          (l) =>
+            !suggestionIndices.has(l.source.index) &&
+            !suggestionIndices.has(l.target.index)
+        );
+
+        this.updateGraph();
+        this.simulation.alpha(0.1).restart();
+      }
+
+      this.showingSuggestions = false;
+      d3.select("#graph svg").selectAll(".node-buttons").remove();
+      if (this.selectedNode && this.selectedNode.domRef) {
+        d3.select(this.selectedNode.domRef).classed("selected", false);
+      }
+      this.selectedNode = null;
     },
 
     updateGraph() {
@@ -413,8 +471,13 @@ export default {
         .trim();
 
       // Update links
-      this.link = this.graphGroup.select(".links").selectAll("line")
-        .data(this.graphData.links, (d) => `${d.source.index}-${d.target.index}`);
+      this.link = this.graphGroup
+        .select(".links")
+        .selectAll("line")
+        .data(
+          this.graphData.links,
+          (d) => `${d.source.index}-${d.target.index}`
+        );
 
       this.link.exit().remove();
 
@@ -426,7 +489,9 @@ export default {
         .merge(this.link);
 
       // Update nodes
-      const nodeGroup = this.graphGroup.select(".nodes").selectAll("foreignObject")
+      const nodeGroup = this.graphGroup
+        .select(".nodes")
+        .selectAll("foreignObject")
         .data(this.graphData.nodes, (d) => d.name);
 
       nodeGroup.exit().remove();
@@ -461,7 +526,10 @@ export default {
       nodeEnter
         .append("xhtml:button")
         .attr("class", "content-button")
-        .classed("completed-button", (d) => d.category && d.category.includes("completed"))
+        .classed(
+          "completed-button",
+          (d) => d.category && d.category.includes("completed")
+        )
         .html((d) => {
           const emoji = this.getEmojiForContentType(d.category);
           const contentName = this.removeEmoji(d.name);
@@ -484,7 +552,7 @@ export default {
       this.simulation.force("link").links(this.graphData.links);
     },
 
-    async handleSuggestionClick(suggestion) {
+    async handleSuggestionLibrary(suggestion) {
       if (this.loading) return;
 
       this.loading = true;
@@ -501,6 +569,38 @@ export default {
         this.loading = false;
         this.updateGoToButtonText("📖Go to");
         console.error("Error in sending request to library:", error);
+      }
+    },
+    async handleSuggestionLesson(suggestion) {
+      if (this.loading) return;
+      this.loading = true;
+
+      const messageStore = useMessageStore();
+      this.updateGoToButtonText("⏳Loading");
+      try {
+        const response = await messageStore.sendMessage(
+          "Start lesson: " + suggestion,
+          "/"
+        );
+
+        if (!response || response === "not sent") {
+          console.error("No response or message not sent");
+          this.updateGoToButtonText("📖Go to");
+          this.loading = false;
+          return;
+        }
+        if (this.$router) {
+          this.loading = false;
+          this.$router.push(response);
+        } else {
+          this.loading = false;
+          this.updateGoToButtonText("📖Go to");
+          console.error("Router is undefined");
+        }
+      } catch (error) {
+        this.loading = false;
+        this.updateGoToButtonText("📖Go to");
+        console.error("Error in sendMessage: ", error);
       }
     },
   },
@@ -556,7 +656,7 @@ export default {
 }
 
 .completed-button {
-  border-color:  var(--gold-color);
+  border-color: var(--gold-color);
   opacity: 0.9;
   position: relative;
 }
