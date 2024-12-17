@@ -9,11 +9,11 @@ from database.library_handlers import (
 
 def create_difficulty_message(difficulty):
     messages = {
-        "Easy": "The game is set to Easy difficulty, so reply with content which is straightforward and introductory.",
+        "Easy": "The game is set to Easy difficulty, so reply with content which is simple to a complete newbie.",
         "Normal": "The game is set to Medium difficulty, so reply with content which is moderately challenging.",
         "Hard": "The game is set to Hard difficulty. Design the content to be complex and demanding."
     }
-    return messages.get(difficulty, "The game is set to Easy difficulty, so reply with content which is straightforward and introductory.")
+    return messages.get(difficulty, "The game is set to Easy difficulty, so reply with content which is simple and introductory.")
 
 def create_language_message(language, language_difficulty):
     messages = {

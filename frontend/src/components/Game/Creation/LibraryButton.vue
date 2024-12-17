@@ -62,13 +62,20 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
+  background: rgba(0, 0, 0, 0.274);
+  color: rgba(255, 255, 255, 0.534);
   padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+  transition: all ease 0.3s;
+}
+
+.info-overlay:hover {
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+
 }
 
 .top-info, .bottom-info {
@@ -81,6 +88,10 @@ export default {
     text-align: left;
   padding: 5px;
   font-size: 0.9em;
+}
+
+.library-topic{
+  color: var(--text-color);
 }
 
 .stats, .language-info {

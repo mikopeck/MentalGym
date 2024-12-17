@@ -76,6 +76,7 @@ def moderate(user_input):
         "Content-Type": "application/json"
     }
     data = {
+        "model": "omni-moderation-latest",
         "input": user_input
     }
 
@@ -94,7 +95,7 @@ def moderate(user_input):
                 response_data = response.json()
                 output = response_data["results"][0]
                 violation = output["flagged"] or any(score > 0.25 for score in output["category_scores"].values())
-                print(f"Moderation completed successfully.\n{output}")
+                print(f"Moderation completed successfully.\n{response_data}")
                 return violation, output
             else:
                 print(f"Request failed with status code {response.status_code}. Retrying...")

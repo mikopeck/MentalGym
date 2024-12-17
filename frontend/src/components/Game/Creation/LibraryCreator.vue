@@ -210,10 +210,10 @@ export default {
     },
     handlePaste(event) {
       const pastedText = event.clipboardData.getData("text");
-      if (pastedText.length > 100) {
+      if (pastedText.length > 80) {
         const popupStore = usePopupStore();
         popupStore.showPopup(
-          "Please write the topic you wish to learn about.</br>(Up to 100 characters)"
+          "Briefly describe the topic you wish to learn about in up to 80 characters.</br>Add other info into the <b>Extra</b> field."
         );
       }
     },

@@ -17,7 +17,7 @@ export default {
           icon: "🎓",
           title: "Personal Tutor",
           description:
-            "Get personalized guidance and support on your learning journey.",
+            "Your personal tutor ready to teach and explain anything at any time.",
         },
         {
           icon: "🧠",
@@ -35,7 +35,7 @@ export default {
           icon: "🏅",
           title: "Social Aspects",
           description:
-            "Coming soon: Connect and learn with peers, compete for exclusive rewards.",
+            "Race to place on the leaderboard and compete for exclusive rewards.",
         },
       ],
     };
@@ -72,6 +72,7 @@ export default {
 .feature.selected {
   background: var(--background-color-1t);
   border: 1px solid #ccc;
+  
 } */
 
 .feature.visible {
@@ -80,7 +81,7 @@ export default {
 
 .feature-title {
   font-weight: 700;
-  padding-bottom: 0.2em;
+  padding-bottom: 0.5em;
 }
 
 .feature-icon {
