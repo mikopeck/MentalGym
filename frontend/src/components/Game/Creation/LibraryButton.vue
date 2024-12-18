@@ -63,7 +63,7 @@ export default {
   left: 0;
   right: 0;
   background: rgba(0, 0, 0, 0.274);
-  color: rgba(255, 255, 255, 0.534);
+  color: rgba(255, 255, 255, 0.685);
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -91,7 +91,8 @@ export default {
 }
 
 .library-topic{
-  color: var(--text-color);
+  color: white;
+  /* color: var(--text-color); */
 }
 
 .stats, .language-info {
