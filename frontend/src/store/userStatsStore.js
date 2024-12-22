@@ -23,6 +23,7 @@ export const useUserStatsStore = defineStore('userStats', {
         console.log("nulls")
         this.fetchStatsFromBackend();
       }
+      console.log(this.exp, this.ste)
       return {
         streak: this.streak,
         exp: this.exp,

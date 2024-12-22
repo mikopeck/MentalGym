@@ -1,13 +1,14 @@
 <!-- TermsAndPoliciesPage.vue -->
 <template>
   <div class="page-main-container">
+    <!-- TERMS AND CONDITIONS SECTION -->
     <h1>Terms and Conditions</h1>
     <div class="page-main-section">
       <h2>Acceptance of Terms</h2>
       <p>
         By accessing and using this web application, you accept and agree to be
-        bound by the terms and provision of this agreement. Additionally, when
-        using this app's particular services, you shall be subject to any posted
+        bound by the terms and provisions of this agreement. Additionally, when
+        using this app’s particular services, you shall be subject to any posted
         guidelines or rules applicable to such services. Any participation in
         this service will constitute acceptance of this agreement. If you do not
         agree to abide by the above, please do not use this service.
@@ -28,11 +29,11 @@
         </li>
         <li>
           Activities with a high risk of physical harm, including weapons
-          development, military and warfare.
+          development, military, and warfare.
         </li>
         <li>
           Content that exploits or harms children, including Child Sexual Abuse
-          Material.
+          Material (CSAM).
         </li>
         <li>
           Activities with a high risk of economic harm, including multi-level
@@ -67,9 +68,38 @@
       <h2>Content Moderation</h2>
       <p>
         You acknowledge that we have the right, but not the obligation, to
-        monitor and edit or remove any content. We may also remove or refuse to
+        monitor and edit or remove any content. We may remove or refuse to
         distribute any content on the service, suspend or terminate users, and
         reclaim usernames without liability to you.
+      </p>
+
+      <h2>Leaderboard for the Library Trivia Minigame</h2>
+      <p>
+        By participating in the Library Trivia minigame, you understand and
+        agree that we collect certain information regarding your gameplay for
+        the purpose of displaying a leaderboard. Specifically:
+      </p>
+      <ul>
+        <li>
+          We display a masked version of your email address (e.g.,
+          u*****@mail.com) to identify you on the leaderboard.
+        </li>
+        <li>
+          We display your completion time for the trivia minigame on the
+          leaderboard.
+        </li>
+      </ul>
+      <p>
+        This information is displayed publicly for all users of the web
+        application. If you do not wish for your email address or completion
+        time to be displayed, please refrain from participating in the minigame
+        or contact us directly to request removal from the leaderboard.
+      </p>
+      <p>
+        You acknowledge that this information may be considered personal data
+        under certain data protection laws. We only use your email address and
+        completion time for the purpose of displaying the leaderboard and for
+        internal analytics to improve the minigame experience.
       </p>
 
       <h2>Disclaimer of Warranties</h2>
@@ -104,6 +134,7 @@
       </p>
     </div>
 
+    <!-- PRIVACY POLICY SECTION -->
     <div class="page-main-section">
       <h1>Privacy Policy</h1>
       <p>
@@ -117,10 +148,15 @@
         When you use Ascendance.cloud, we collect the following information:
       </p>
       <ul>
-        <li>Email Address: To create and manage your account.</li>
+        <li>Email Address: To create and manage your account, and to display
+          a masked version on the Library Trivia Leaderboard.</li>
         <li>
           Messages: We store the content of your messages when you use our
-          messaging service.
+          chat service.
+        </li>
+        <li>
+          Completion Times (Library Trivia Minigame): We store your completion
+          time for the purpose of displaying on the leaderboard.
         </li>
       </ul>
 
@@ -141,6 +177,10 @@
         </li>
         <li>Send you emails</li>
         <li>Find and prevent fraud</li>
+        <li>
+          Display a masked version of your email on our Library Trivia Leaderboard
+          along with your completion time
+        </li>
       </ul>
 
       <h2>How We Store and Protect Your Information</h2>
@@ -160,11 +200,25 @@
         or servicing you, so long as those parties agree to keep this
         information confidential.
       </p>
-
       <p>
         We may also release your information when we believe release is
         appropriate to comply with the law, enforce our site policies, or
-        protect ours or others' rights, property, or safety.
+        protect our or others' rights, property, or safety.
+      </p>
+
+      <h2>Leaderboard Display</h2>
+      <p>
+        The Library Trivia minigame leaderboard displays a masked version of
+        your email address and your completion time. This masking is designed to
+        protect your identity while still allowing you to track your performance
+        and compare results with other participants. By participating in the
+        trivia minigame, you consent to the public display of this masked
+        information.
+      </p>
+      <p>
+        If you wish to opt out of leaderboard display or request removal of your
+        data, please contact us. Upon receiving your request, we will remove or
+        anonymize your information from the leaderboard as soon as practicable.
       </p>
 
       <h2>Your Data Protection Rights</h2>
@@ -174,32 +228,59 @@
       </p>
       <ul>
         <li>
-          The right to access, update or delete the information we have on you.
+          The right to access, update, or delete the information we have on you.
         </li>
-        <li>The right of rectification.</li>
-        <li>The right to object.</li>
-        <li>The right of restriction.</li>
-        <li>The right to data portability</li>
-        <li>The right to withdraw consent</li>
+        <li>The right of rectification (to correct inaccurate personal data).</li>
+        <li>The right to object (to certain types of data processing).</li>
+        <li>The right of restriction (to limit how we process your data).</li>
+        <li>The right to data portability (to receive a copy of your data).</li>
+        <li>The right to withdraw consent (at any time where we rely on your consent).</li>
       </ul>
-      <p>Please contact us if you wish to exercise any of these rights.</p>
+      <p>
+        To exercise these rights, please contact us at the email address
+        provided in the <a href="/contact">Contact Us</a> section. We will
+        respond to your request within the timeframe required by applicable law.
+      </p>
+
+      <h2>International Data Transfers</h2>
+      <p>
+        Your information may be transferred to—and maintained on—computers
+        located outside of your state, province, country, or other governmental
+        jurisdiction where the data protection laws may differ than those from
+        your jurisdiction. We will take all steps reasonably necessary to ensure
+        that your data is treated securely and in accordance with this Privacy
+        Policy.
+      </p>
+
+      <h2>Children’s Privacy</h2>
+      <p>
+        Our services are not directed to individuals under the age of 13 (or
+        other age as required by local law). We do not knowingly collect
+        personal information from children under 13. If we become aware that we
+        have collected personal information from a child under that age without
+        parental consent, we will take steps to remove that information from our
+        servers.
+      </p>
 
       <h2>Changes to Our Privacy Policy</h2>
       <p>
-        We reserve the right to make changes to this privacy policy at any time.
-        If we decide to change our privacy policy, we will post those changes on
-        this page, and/or update the Privacy Policy modification date above.
+        We reserve the right to make changes to this Privacy Policy at any time.
+        If we decide to change our Privacy Policy, we will post those changes on
+        this page and/or update the modification date above. Your continued use
+        of the web application following the posting of changes indicates your
+        acceptance of those changes.
       </p>
 
       <h2>Contact Us</h2>
       <p>
-        If you have any questions about this Privacy Policy, the practices of
-        this site, or your dealings with this site, please
-        <a href="/contact">contact us</a>.
+        If you have any questions about these Terms and Conditions or this
+        Privacy Policy, the practices of this site, or your dealings with this
+        site, please <a href="/contact">contact us</a>.
       </p>
     </div>
   </div>
 </template>
+
 
 <script>
 export default {

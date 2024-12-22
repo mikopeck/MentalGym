@@ -32,3 +32,19 @@ def remove_emojis_except_first(text):
         return first_char + emoji_pattern.sub(r'', text[1:])
     else:
         return emoji_pattern.sub(r'', text)
+    
+def mask_email(email):
+    """
+    someone@example.com -> s*****@example.com
+    """
+    try:
+        local, domain = email.split('@')
+    except ValueError:
+        # If the email doesn't have '@', return it as is
+        return email
+
+    # Mask the local part: Keep the first character and replace the rest with `*`
+    masked_local = local[0] + '*' * (len(local) - 1)
+
+    return masked_local + '@' + domain
+

@@ -7,6 +7,7 @@ from bleach import clean
 from flask_executor import Executor
 
 from openapi import moderate
+from utils import mask_email
 import database.library_handlers as lbh
 import knowledge_net.library_generator as lgn
 from images.library_imager import generate_images_task, save_image
@@ -224,6 +225,8 @@ def init_library_routes(app):
         data = request.get_json()
         library_id = data.get('libraryId')
         score = data.get('score')
+        time = data.get('time')
+        completed_rooms = data.get('completed', []) 
         
         user_id = current_user.id if not isinstance(current_user, AnonymousUserMixin) else None
         if not user_id:
@@ -233,7 +236,7 @@ def init_library_routes(app):
             return jsonify({'status': 'error', 'message': 'Missing libraryId or score'}), 400
 
         try:
-            response, status = lbh.update_game_end(user_id, library_id, score, True)
+            response, status = lbh.update_game_end(user_id, library_id, score, time, completed_rooms, True)
             return response, status
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 500
@@ -247,3 +250,28 @@ def init_library_routes(app):
     def like_library():
         data = request.get_json()
         return lbh.like_library(data.get('libraryId'))
+    
+    @app.route('/api/scores', methods=['GET'])
+    def fetch_scores():
+        completions = lbh.get_top_scores_by_unique_users(limit=5)
+        data = []
+        for email, library_id, time in completions:
+            data.append({
+                "email": mask_email(email),
+                "library_id": library_id,
+                "time": time
+            })
+        return jsonify(data), 200
+
+
+    @app.route('/api/scores/library/<int:library_id>', methods=['GET'])
+    def fetch_scores_for_library(library_id):
+        completions = lbh.get_library_top_scores_by_unique_users(library_id=library_id, limit=5)
+        data = []
+        for email, library_id, time in completions:
+            data.append({
+                "email": mask_email(email),
+                "library_id": library_id,
+                "time": time
+            })
+        return jsonify(data), 200

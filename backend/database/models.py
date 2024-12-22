@@ -185,6 +185,9 @@ class LibraryCompletion(db.Model):
     library_id = db.Column(db.Integer, db.ForeignKey('library.id'), nullable=False)
     completion_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     score = db.Column(db.Integer, nullable=False)
+    time = db.Column(db.Integer, nullable=False)
+    completed_rooms = db.Column(db.Text, nullable=True)
+
     is_complete = db.Column(db.Boolean, default=False)
     
     library = db.relationship('Library', backref=db.backref('completions', lazy=True))
@@ -210,3 +213,4 @@ class LibraryQuestionChoice(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey('library_question.id'), nullable=False)
     choice_text = db.Column(db.String(400), nullable=False)
     is_correct = db.Column(db.Boolean, default=False)
+

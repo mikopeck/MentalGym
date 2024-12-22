@@ -8,6 +8,12 @@
       <library-creator />
     </div>
     <div class="landing-page-2">
+      <div class="features-container">
+        <FeaturesComponent />
+      </div>
+      <div class="cta-container" @click="redirectLogin">
+        <CtaButton />
+      </div>
       <div class="buttons">
         <div
           v-for="(item, index) in items"
@@ -42,13 +48,7 @@
           </div>
         </div>
       </transition>
-      <div class="cta-container" @click="redirectLogin">
-        <CtaButton />
-      </div>
-      <div class="features-container">
-        <FeaturesComponent />
-      </div>
-      <img :src="openaiPath" alt="Powered by OpenAI" class="openai" />
+      <!-- <img :src="openaiPath" alt="Powered by OpenAI" class="openai" /> -->
       <div class="faq-container">
         <FaqComponent />
       </div>

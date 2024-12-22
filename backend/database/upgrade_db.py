@@ -1,4 +1,4 @@
-from database.models import db, User, Library
+from database.models import db, User, Library, LibraryCompletion
 from stats import get_total_user_exp
 import os
 
@@ -8,6 +8,7 @@ def run_upgrades():
         upgrade_library_socials()
         upgrade_lib_imgs()
         upgrade_lib_guide()
+        upgrade_lib_times()
         db.session.commit()
 
 
@@ -45,3 +46,16 @@ def upgrade_lib_guide():
     libraries = Library.query.filter(Library.guide == None).all()
     for library in libraries:
         library.guide = "Azalea"
+
+def upgrade_lib_times():
+    libs = LibraryCompletion.query.filter(LibraryCompletion.time == None).all()
+    for lib in libs:
+        lib.time = 600
+
+    libs = LibraryCompletion.query.filter(LibraryCompletion.time == 0).all()
+    for lib in libs:
+        lib.time = 600
+
+    libs = LibraryCompletion.query.filter(LibraryCompletion.completed_rooms == None).all()
+    for lib in libs:
+        lib.completed_rooms = ""

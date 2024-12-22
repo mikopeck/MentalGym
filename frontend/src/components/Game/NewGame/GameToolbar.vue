@@ -1,12 +1,12 @@
 <template>
   <div class="toolbar-container">
     <!-- First Row: Room Name -->
-    <div class="room-name">
+    <div class="room-name" @click="gameStore.showGameInfo">
       {{ gameStore.libraryTopic }}
     </div>
 
     <!-- Second Row: Toolbar -->
-    <div class="game-toolbar">
+    <div v-if="visible" class="game-toolbar">
       <!-- Left side: Likes and Clouds -->
       <div class="left-side">
         <button
@@ -112,12 +112,11 @@ export default {
       return this.isLiked ? "Liked 👍" : "Like 👍";
     },
     formattedTime() {
-      const minutes = Math.floor(this.gameStore.timeSpent / 60);
-      const seconds = this.gameStore.timeSpent % 60;
-      return `${minutes.toString().padStart(2, "0")}:${seconds
-        .toString()
-        .padStart(2, "0")}`;
+      return this.gameStore.formattedTime();
     },
+    visible(){
+      return !this.gameStore.completed;
+    }
   },
   methods: {
     likeLib() {

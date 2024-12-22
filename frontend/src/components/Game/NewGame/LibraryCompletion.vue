@@ -1,9 +1,22 @@
 <template>
   <transition name="fade">
     <div v-if="completionVisible" class="completion-overlay">
-      <div class="completion-content">
+      <div v-if="firstPage" class="pre-completion-content">
         <div class="celebratory-message">🎉 Congratulations! 🎉</div>
         <UserStats />
+        <div class="header-bar">
+          <div class="time-spent">Final time: {{ formattedTime }}s</div>
+          <div class="completion-status">Rooms explored: {{gameStore.completion}}%</div>
+        </div>
+        <div class="cta-container">
+          <CtaButton
+            buttonText="Continue"
+            @click="nextPage"
+            :isSubmitting="isSubmitting"
+          />
+        </div>
+      </div>
+      <div v-else class="completion-content">
         <div class="suggestions-container">
           <div>{{ loading ? "Loading..." : "Continue with..." }}</div>
           <CyclingContentButton
@@ -14,6 +27,16 @@
             @navigate="startSuggestion"
             class="suggestion-button"
           />
+        </div>
+        <div class="cta-container" v-if="!showLeaderBoard">
+          <CtaButton
+            buttonText="Show Leaderboard"
+            @click="toggleLeaderBoard"
+            :isSubmitting="isSubmitting"
+          />
+        </div>
+        <div v-if="showLeaderBoard">
+          <LeaderBoard />
         </div>
         <div v-if="loggedIn" class="what-next-container">
           <div class="nav-row">
@@ -80,11 +103,14 @@ import { useAuthStore } from "@/store/authStore";
 import { useMessageStore } from "@/store/messageStore";
 import { useGameStore } from "@/store/gameStore";
 import CyclingContentButton from "../Creation/CyclingContentButton.vue";
-import UserStats from "../../Graphs/UserStats.vue"
+import UserStats from "../../Graphs/UserStats.vue";
+import CtaButton from "../../Footer/LandingPageComponents/CtaButton.vue";
+import LeaderBoard from "../LeaderBoard.vue";
 
 export default {
   data() {
     return {
+      page: 0,
       rating: 0,
       feedback: "",
       showFeedback: false,
@@ -92,11 +118,14 @@ export default {
       suggestions: [],
       exploreLoading: false,
       loading: false,
+      showLeaderBoard: false,
     };
   },
   components: {
     CyclingContentButton,
-    UserStats
+    UserStats,
+    CtaButton,
+    LeaderBoard,
   },
   computed: {
     gameStore() {
@@ -115,8 +144,20 @@ export default {
       const authStore = useAuthStore();
       return authStore.loggedIn;
     },
+    firstPage() {
+      return this.page === 0;
+    },
+    formattedTime() {
+      return this.gameStore.formattedTime();
+    },
   },
   methods: {
+    toggleLeaderBoard() {
+      this.showLeaderBoard = true;
+    },
+    nextPage() {
+      this.page = 1;
+    },
     navigateLibrary() {
       this.$router.push("/library");
     },
@@ -252,11 +293,12 @@ export default {
   color: var(--text-color);
   border-radius: 8px;
   padding: 2rem;
-  max-width: 600px;
+  max-width: 700px;
   text-align: center;
 }
 
 .celebratory-message {
+  text-align: center;
   padding: 0.5em;
   box-shadow: 0 0 16px 16px var(--background-color-1t);
   border-radius: 16px;
@@ -404,11 +446,38 @@ export default {
 
 .suggestions-container {
   padding-top: 1em;
+  padding-bottom: 1em;
   display: flex;
   flex-direction: column;
 }
 
 .suggestion-button {
   margin: 2px;
+}
+
+.pre-completion-content {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header-bar {
+  margin: 2.5em auto;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  text-align: center;
+}
+
+.time-spent {
+  font-size: 1.2rem;
+}
+
+.completion-status {
+  font-size: 1.2rem;
 }
 </style>

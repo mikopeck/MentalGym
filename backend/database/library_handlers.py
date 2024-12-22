@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask import jsonify
+from sqlalchemy import func, distinct
 from database.models import (
     db,
     User,
@@ -71,7 +72,8 @@ def get_library(library_id, user_id=None, click=True):
         existing_completion = LibraryCompletion.query.filter_by(library_id=library_id, user_id=user_id).first()
         if existing_completion:
             library_data["score"] = existing_completion.score
-
+            library_data["best_time"] = existing_completion.time
+            library_data["completion"] = len(existing_completion.completed_rooms.split(","))*4
         any_completion = LibraryCompletion.query.filter_by(user_id=user_id, is_complete=True).first()
         print(any_completion)
         if any_completion:
@@ -299,7 +301,7 @@ def is_center_room(library_id, room_name):
         return jsonify({"message": "Library not found"}), 404
     return room_name == library.library_topic
 
-def update_game_end(user_id, library_id, score, is_complete):
+def update_game_end(user_id, library_id, score,time, completed_rooms,  is_complete):
     try:
         user = User.query.get(user_id)
         if not user:
@@ -313,6 +315,13 @@ def update_game_end(user_id, library_id, score, is_complete):
             if score > existing_completion.score:
                 existing_completion.score = score
                 user.experience_points += (score - existing_completion.score)
+            if time < existing_completion.time:
+                existing_completion.time = time
+                
+            # Update completed_rooms
+            current_completed = set(existing_completion.completed_rooms.split(",")) if existing_completion.completed_rooms else set()
+            current_completed.update(completed_rooms)
+            existing_completion.completed_rooms = ",".join(sorted(current_completed))
         else:
             completion = LibraryCompletion(library_id=library_id, user_id=user_id, score=score, is_complete=is_complete)
             db.session.add(completion)
@@ -379,6 +388,80 @@ def update_library_image(library_id, image_url):
         return jsonify({'message': 'Image updated successfully'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
+def get_top_scores_by_unique_users(limit=5):
+    """
+    Returns the top 'limit' scores across all libraries, ensuring unique users,
+    returning the user's email instead of user_id.
+    """
+    subquery = (
+        db.session.query(
+            LibraryCompletion.user_id,
+            func.max(LibraryCompletion.score).label('max_score')
+        )
+        .group_by(LibraryCompletion.user_id)
+        .subquery()
+    )
+
+    # Pull in User.email by joining with the User model
+    query = (
+        db.session.query(
+            User.email,                  # <-- select User.email
+            LibraryCompletion.library_id,
+            LibraryCompletion.time
+        )
+        .select_from(LibraryCompletion)  # ensure the FROM is LibraryCompletion
+        .join(User, LibraryCompletion.user_id == User.id)
+        .join(
+            subquery,
+            (LibraryCompletion.user_id == subquery.c.user_id) & 
+            (LibraryCompletion.score == subquery.c.max_score)
+        )
+        .order_by(subquery.c.max_score.desc())
+        .limit(limit)
+    )
+
+    return query.all()
+
+
+
+def get_library_top_scores_by_unique_users(library_id, limit=5):
+    """
+    Returns the top 'limit' scores for a specific library, ensuring unique users,
+    returning the user's email instead of user_id.
+    """
+    subquery = (
+        db.session.query(
+            LibraryCompletion.user_id,
+            func.max(LibraryCompletion.score).label('max_score')
+        )
+        .filter(LibraryCompletion.library_id == library_id)
+        .group_by(LibraryCompletion.user_id)
+        .subquery()
+    )
+
+    # Pull in User.email by joining with the User model
+    query = (
+        db.session.query(
+            User.email,                  # <-- select User.email
+            LibraryCompletion.library_id,
+            LibraryCompletion.time
+        )
+        .select_from(LibraryCompletion)
+        .join(User, LibraryCompletion.user_id == User.id)
+        .join(
+            subquery,
+            (LibraryCompletion.user_id == subquery.c.user_id) &
+            (LibraryCompletion.score == subquery.c.max_score)
+        )
+        .filter(LibraryCompletion.library_id == library_id)
+        .order_by(subquery.c.max_score.desc())
+        .limit(limit)
+    )
+
+    return query.all()
+
 
 
 
@@ -399,3 +482,4 @@ Library.as_dict = lambda self: model_to_dict(self)
 LibraryFactoid.as_dict = lambda self: model_to_dict(self)
 LibraryQuestion.as_dict = lambda self: model_to_dict(self)
 LibraryQuestionChoice.as_dict = lambda self: model_to_dict(self)
+LibraryCompletion.as_dict = lambda self: model_to_dict(self)

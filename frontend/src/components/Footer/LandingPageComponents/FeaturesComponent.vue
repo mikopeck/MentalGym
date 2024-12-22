@@ -14,28 +14,40 @@ export default {
     return {
       features: [
         {
-          icon: "🎓",
-          title: "Personal Tutor",
+          icon: "🆓",
+          title: "Free",
           description:
-            "Your personal tutor ready to teach and explain anything at any time.",
+            "The generous free plan lets you enjoy all the content on Ascendance.",
+        },
+        {
+          icon: "🎓",
+          title: "Tutor",
+          description:
+            "Your personal tutor ready to teach and explain anything, at any time.",
         },
         {
           icon: "🧠",
           title: "Quizzes",
           description:
-            "Test your knowledge and reinforce learning with quizzes after each lesson.",
+            "Challenge yourself with quizzes that help you master what you've learned.",
         },
         {
           icon: "🗺️",
           title: "Knowledge Map",
           description:
-            "Visualize your learning progress and plan your educational path.",
+            "Make your own path or follow suggestions to discover new knowledge.",
+        },
+        {
+          icon: "📈",
+          title: "Grow",
+          description:
+            "Keep your streak alive, level up, and track your growth with stats and graphs!",
         },
         {
           icon: "🏅",
-          title: "Social Aspects",
+          title: "Compete",
           description:
-            "Race to place on the leaderboard and compete for exclusive rewards.",
+            "Challenge your friends and climb the leaderboard as you learn together.",
         },
       ],
     };
@@ -46,7 +58,7 @@ export default {
 
 <style scoped>
 .features-component {
-  max-width: 1024px;
+  max-width: 1200px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
@@ -91,7 +103,7 @@ export default {
   position: absolute;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 1000px) {
   .features-component {
     grid-template-columns: 1fr;
   }

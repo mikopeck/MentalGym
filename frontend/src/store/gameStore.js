@@ -22,6 +22,7 @@ export const useGameStore = defineStore("gameStore", {
         finalTest: false,
         score: 0,
         multiplier: 5,
+        showStart: true,
         showNext: false,
         completed: false,
         tutorial: true,
@@ -36,7 +37,9 @@ export const useGameStore = defineStore("gameStore", {
         likes: 0,
         timer: null,
         timeSpent: 0,
-        timerActive: false
+        timerActive: false,
+        bestTime: 0,
+        completion: 0,
     }),
     actions: {
         setId(libraryId) {
@@ -44,7 +47,24 @@ export const useGameStore = defineStore("gameStore", {
             this.libraryId = libraryId;
         },
         startGame() {
+            if (this.timeSpent != 0){
+                this.hideGameInfo();
+                return;
+            }
+            this.showStart = false;
             this.openRoom(this.libraryTopic);
+        },
+        hideGameInfo() {
+            this.showStart = false;
+            this.questionVisible = true;
+            this.factoidVisible = null;
+            this.startTimer();
+        },
+        showGameInfo() {
+            this.showStart = true;
+            this.questionVisible = false;
+            this.factoidVisible = null;
+            this.stopTimer();
         },
         toggleFactoid() {
             if (this.factoidVisible == null) {
@@ -56,6 +76,15 @@ export const useGameStore = defineStore("gameStore", {
             }
         },
         answerAttempt(correct) {
+            let yes = true;
+            if (yes) {
+                this.questionVisible = false;
+                this.factoidVisible = null;
+                this.endGame();
+                this.completed = true;
+                return true;
+            }
+
             if (correct) {
                 this.score = this.score + this.multiplier;
                 this.multiplier = this.multiplier + 1;
@@ -64,9 +93,9 @@ export const useGameStore = defineStore("gameStore", {
                 if (this.currentQuestion === 2 && !this.finalTest) {
 
                     const authStore = useAuthStore();
-                    if (authStore.loggedIn){
+                    if (authStore.loggedIn) {
                         this.prepareNextRooms();
-                    }else{
+                    } else {
                         const popupStore = usePopupStore();
                         popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
                         return false;
@@ -84,7 +113,7 @@ export const useGameStore = defineStore("gameStore", {
                     return true;
                 }
             } else {
-                this.timeSpent +=1;
+                this.timeSpent += 1;
                 const currentFactoid = this.factoids[this.currentQuestion];
                 if (!this.incorrectQuestionAnswers.includes(currentFactoid)) {
                     this.incorrectQuestionAnswers.push(currentFactoid);
@@ -195,6 +224,8 @@ export const useGameStore = defineStore("gameStore", {
 
                     this.roomNames = data.room_names || [];
                     this.score = data.score || 0;
+                    this.bestTime = data.best_time || 0;
+                    this.completion = data.completion || 0;
                     this.clicks = data.clicks || 0;
                     this.context = data.context || null;
                     this.difficulty = data.difficulty || "Normal";
@@ -284,16 +315,20 @@ export const useGameStore = defineStore("gameStore", {
                         ...factoid,
                         text: 'No cheating lol'
                     };
-                });//this.factoids = []; todo: set the factoid text of all factoids to something like no cheating lol 
+                });
             }
         },
         endGame() {
             this.stopTimer();
             const userStatsStore = useUserStatsStore();
             userStatsStore.resetStats();
+
+            const completedRooms = Object.keys(this.roomStates).filter(roomName => this.roomStates[roomName].state === 3);
             axios.post(`/api/library/end`, {
                 libraryId: this.libraryId,
                 score: this.score,
+                time: this.timeSpent,
+                completed: completedRooms,
             })
                 .then(response => {
                     if (response.data.status === "success") {
@@ -323,6 +358,13 @@ export const useGameStore = defineStore("gameStore", {
             this.stopTimer();
             this.timeSpent = 0;
         },
+        formattedTime() {
+            const minutes = Math.floor(this.timeSpent / 60);
+            const seconds = this.timeSpent % 60;
+            return `${minutes.toString().padStart(2, "0")}:${seconds
+                .toString()
+                .padStart(2, "0")}`;
+        },
         resetGameState() {
             this.libraryId = null;
             this.roomNames = [];
@@ -337,6 +379,7 @@ export const useGameStore = defineStore("gameStore", {
             this.factoidVisible = null;
             this.score = 0;
             this.multiplier = 5;
+            this.showStart = true;
             this.showNext = false;
             this.completed = false;
             this.clicks = 0;
@@ -348,6 +391,8 @@ export const useGameStore = defineStore("gameStore", {
             this.languageDifficulty = null;
             this.libraryTopic = null;
             this.likes = 0;
+            this.bestTime = 0;
+            this.completion = 0;
             this.resetTimer();
         }
     }
