@@ -27,16 +27,16 @@
             <td>{{ score.time }}</td>
             <td>{{ score.email }}</td>
             <td v-if="!isLibraryMode">
-              <router-link :to="`/library/${score.library_id}`"
-                >#{{ score.library_id }}</router-link
-              >
+              <router-link :to="`/library/${score.library_id}`">
+                #{{ score.library_id }}
+              </router-link>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div v-if="scores.length === 0">
+    <div v-else>
       Be the first!
     </div>
 
@@ -45,15 +45,26 @@
         Challenge your friends, classmates, colleagues:
       </p>
       <div class="share-link-box">
-        <input
-          ref="shareInput"
-          class="share-link-input"
-          type="text"
-          :value="currentURL"
-          readonly
-          @click="copyShareLink"
-        />
-        <span class="share-instruction">Click to copy</span>
+        <div class="share-link-container">
+          <input
+            ref="shareInput"
+            class="share-link-input"
+            type="text"
+            :value="currentURL"
+            readonly
+          />
+          <button class="copy-button" @click="copyShareLink">
+            Copy
+          </button>
+        </div>
+        <transition name="fade">
+          <span 
+            class="copy-status-message" 
+            v-if="copySuccessMessageVisible"
+          >
+            Copied!
+          </span>
+        </transition>
       </div>
     </div>
   </div>
@@ -70,6 +81,7 @@ export default {
       libraryId: null,
       originalLibraryId: null,
       currentURL: window.location.href,
+      copySuccessMessageVisible: false,
     };
   },
   computed: {
@@ -85,7 +97,7 @@ export default {
     checkRoute() {
       // Check if route matches /library/:id
       if (this.$route.params && this.$route.params.id) {
-        const id = parseInt(this.$route.params.id, 5);
+        const id = parseInt(this.$route.params.id, 10);
         if (!isNaN(id)) {
           this.libraryId = id;
           this.originalLibraryId = id;
@@ -106,15 +118,20 @@ export default {
       }
     },
     copyShareLink() {
-      const shareInput = this.$refs.shareInput;
-      if (shareInput) {
-        shareInput.select();
-        shareInput.setSelectionRange(0, 99999); // For mobile devices
-        document.execCommand("copy");
-      }
+      // Modern approach using the Clipboard API
+      navigator.clipboard
+        .writeText(this.currentURL)
+        .then(() => {
+          this.copySuccessMessageVisible = true;
+          setTimeout(() => {
+            this.copySuccessMessageVisible = false;
+          }, 1500);
+        })
+        .catch((err) => {
+          console.error("Failed to copy text: ", err);
+        });
     },
     toggleMode() {
-        console.log(this.scores)
       if (this.isLibraryMode) {
         // Switch to global mode
         this.libraryId = null;
@@ -123,7 +140,7 @@ export default {
         if (this.originalLibraryId) {
           this.libraryId = this.originalLibraryId;
         } else {
-          // If no original libraryId found, just remain global
+          // If no original libraryId found, remain in global mode
           return;
         }
       }
@@ -134,26 +151,39 @@ export default {
 </script>
 
 <style scoped>
+/* Fade transition for the "Copied!" text */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
 .leaderboard-container {
   max-width: 600px;
   margin: 0 auto;
   text-align: center;
   padding: 20px;
+  color: var(--text-color);
 }
 
 .leaderboard-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 .leaderboard-table {
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
+  color: var(--text-color);
 }
 
-/* Remove all borders */
+.leaderboard-table thead {
+  background: var(--background-color-2t);
+}
+
 .leaderboard-table th,
 .leaderboard-table td,
 .leaderboard-table tr {
@@ -171,6 +201,7 @@ export default {
   border: none;
   cursor: pointer;
   border-radius: 4px;
+  color: var(--light-text);
 }
 
 .mode-toggle-button:hover {
@@ -190,17 +221,42 @@ export default {
   margin-bottom: 20px;
 }
 
-.share-link-input {
+.share-link-container {
+  display: flex;
   width: 80%;
-  padding: 5px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.share-link-input {
+  flex: 1;
+  padding: 0.5em;
   font-size: 1em;
   text-align: center;
+  background: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--highlight-color);
+  border-radius: 4px;
+  cursor: text;
+}
+
+.copy-button {
+  background-color: var(--element-color-1);
+  border: none;
+  color: var(--light-text);
+  padding: 0.5em 1em;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-.share-instruction {
-  font-size: 0.8em;
-  color: #555;
-  margin-top: 5px;
+.copy-button:hover {
+  background-color: var(--element-color-2);
+}
+
+.copy-status-message {
+  color: var(--gold-color);
+  font-weight: bold;
+  margin-top: 10px;
 }
 </style>

@@ -117,8 +117,40 @@ export default {
         .data(this.graphData.nodes)
         .enter()
         .append("foreignObject")
-        .attr("width", 240)
-        .attr("height", 120)
+        // Start with minimal dimensions; we’ll measure the button and adjust
+        .attr("width", 280)
+        .attr("height", 1)
+        .each(function () {
+          // Insert the button inside the foreignObject
+          const fo = d3.select(this);
+          fo.append("xhtml:button")
+            .attr("class", "content-button")
+            .classed("completed-button", (node) =>
+              node.category.includes("completed")
+            )
+            .html((node) => {
+              const emoji = vm.getEmojiForContentType(node.category);
+              const contentName = vm.removeEmoji(node.name);
+              const extractedEmoji = vm.extractEmoji(node.name);
+              return `
+                ${emoji ? `<span class="emoji-indicator">${emoji}</span>` : ""}
+                <span class="content-name">${contentName}</span>
+                ${
+                  extractedEmoji
+                    ? `<span class="emoji-indicator">${extractedEmoji}</span>`
+                    : ""
+                }
+              `;
+            });
+
+          // Measure the rendered button and resize the foreignObject
+          setTimeout(() => {
+            const buttonEl = this.querySelector("button.content-button");
+            if (!buttonEl) return;
+            const rect = buttonEl.getBoundingClientRect();
+            d3.select(this).attr("width", rect.width).attr("height", rect.height);
+          }, 0);
+        })
         .on("click", (event, d) => {
           this.selectNode(d);
         })
@@ -129,26 +161,6 @@ export default {
             .on("drag", dragged)
             .on("end", dragended)
         );
-
-      // Create node buttons
-      this.node
-        .append("xhtml:button")
-        .attr("class", "content-button")
-        .classed("completed-button", (d) => d.category.includes("completed"))
-        .html((d) => {
-          const emoji = this.getEmojiForContentType(d.category);
-          const contentName = this.removeEmoji(d.name);
-          const extractedEmoji = this.extractEmoji(d.name);
-          return `
-            ${emoji ? `<span class="emoji-indicator">${emoji}</span>` : ""}
-            <span class="content-name">${contentName}</span>
-            ${
-              extractedEmoji
-                ? `<span class="emoji-indicator">${extractedEmoji}</span>`
-                : ""
-            }
-          `;
-        });
 
       // Zoom behavior
       this.zoom = d3.zoom().on("zoom", (event) => {
@@ -181,6 +193,7 @@ export default {
           .attr("x2", (d) => d.target.x)
           .attr("y2", (d) => d.target.y);
 
+        // Offset the node by half the final width, if desired
         this.node.attr("x", (d) => d.x - 110).attr("y", (d) => d.y - 30);
       });
 
@@ -499,8 +512,44 @@ export default {
       const nodeEnter = nodeGroup
         .enter()
         .append("foreignObject")
-        .attr("width", 240)
-        .attr("height", 120)
+        // Again, start small; we’ll measure inside .each()
+        .attr("width", 1)
+        .attr("height", 1)
+        .each((d, i, nodes) => {
+          const fo = d3.select(nodes[i]);
+
+          // Create the button inside
+          fo.append("xhtml:button")
+            .attr("class", "content-button")
+            .classed(
+              "completed-button",
+              (node) => node.category && node.category.includes("completed")
+            )
+            .html((node) => {
+              const emoji = this.getEmojiForContentType(node.category);
+              const contentName = this.removeEmoji(node.name);
+              const extractedEmoji = this.extractEmoji(node.name);
+              return `
+                ${emoji ? `<span class="emoji-indicator">${emoji}</span>` : ""}
+                <span class="content-name">${contentName}</span>
+                ${
+                  extractedEmoji
+                    ? `<span class="emoji-indicator">${extractedEmoji}</span>`
+                    : ""
+                }
+              `;
+            });
+
+          // Use a small delay so the browser can render and we can measure
+          setTimeout(() => {
+            const buttonEl = nodes[i].querySelector("button.content-button");
+            if (!buttonEl) return;
+            const rect = buttonEl.getBoundingClientRect();
+            d3.select(nodes[i])
+              .attr("width", rect.width)
+              .attr("height", rect.height);
+          }, 0);
+        })
         .on("click", (event, d) => {
           this.selectNode(d);
         })
@@ -523,28 +572,7 @@ export default {
             })
         );
 
-      nodeEnter
-        .append("xhtml:button")
-        .attr("class", "content-button")
-        .classed(
-          "completed-button",
-          (d) => d.category && d.category.includes("completed")
-        )
-        .html((d) => {
-          const emoji = this.getEmojiForContentType(d.category);
-          const contentName = this.removeEmoji(d.name);
-          const extractedEmoji = this.extractEmoji(d.name);
-          return `
-            ${emoji ? `<span class="emoji-indicator">${emoji}</span>` : ""}
-            <span class="content-name">${contentName}</span>
-            ${
-              extractedEmoji
-                ? `<span class="emoji-indicator">${extractedEmoji}</span>`
-                : ""
-            }
-          `;
-        });
-
+      // Merge to update existing + new
       this.node = nodeEnter.merge(nodeGroup);
 
       // Update simulation with new data
@@ -571,6 +599,7 @@ export default {
         console.error("Error in sending request to library:", error);
       }
     },
+
     async handleSuggestionLesson(suggestion) {
       if (this.loading) return;
       this.loading = true;
@@ -606,6 +635,7 @@ export default {
   },
 };
 </script>
+
 
 <style>
 .knowledge-menu-button {
