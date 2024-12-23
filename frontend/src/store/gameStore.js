@@ -76,15 +76,6 @@ export const useGameStore = defineStore("gameStore", {
             }
         },
         answerAttempt(correct) {
-            let yes = true;
-            if (yes) {
-                this.questionVisible = false;
-                this.factoidVisible = null;
-                this.endGame();
-                this.completed = true;
-                return true;
-            }
-
             if (correct) {
                 this.score = this.score + this.multiplier;
                 this.multiplier = this.multiplier + 1;
