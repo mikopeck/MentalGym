@@ -323,8 +323,16 @@ def update_game_end(user_id, library_id, score,time, completed_rooms,  is_comple
             current_completed.update(completed_rooms)
             existing_completion.completed_rooms = ",".join(sorted(current_completed))
         else:
-            completion = LibraryCompletion(library_id=library_id, user_id=user_id, score=score, is_complete=is_complete)
-            db.session.add(completion)
+            new_completion = LibraryCompletion(
+                library_id=library_id,
+                user_id=user_id,
+                score=score,
+                time=time,
+                completed_rooms=",".join(sorted(completed_rooms)) if completed_rooms else None,
+                is_complete=is_complete,
+                completion_date=datetime.utcnow() if is_complete else None
+            )
+            db.session.add(new_completion)
             user.experience_points += score
 
         db.session.commit()

@@ -67,6 +67,9 @@ export const useGameStore = defineStore("gameStore", {
             this.stopTimer();
         },
         toggleFactoid() {
+            if(this.showStart || this.showNext){
+                return;
+            }
             if (this.factoidVisible == null) {
                 this.questionVisible = false;
                 this.factoidVisible = this.currentQuestion;
@@ -104,7 +107,6 @@ export const useGameStore = defineStore("gameStore", {
                     return true;
                 }
             } else {
-                this.timeSpent += 1;
                 const currentFactoid = this.factoids[this.currentQuestion];
                 if (!this.incorrectQuestionAnswers.includes(currentFactoid)) {
                     this.incorrectQuestionAnswers.push(currentFactoid);
@@ -161,8 +163,8 @@ export const useGameStore = defineStore("gameStore", {
 
             const completedRoomsCount = Object.values(this.roomStates).filter(room => room.state === 3).length;
             if (completedRoomsCount > 3) {
-                let makeFinalTest = Math.random() < 0.5;
-                if (completedRoomsCount === 4) {
+                let makeFinalTest = Math.random() < 0.7;
+                if (completedRoomsCount === availableRooms.length || completedRoomsCount === 4) {
                     makeFinalTest = true;
                 }
                 if (completedRoomsCount === 5) {
@@ -313,14 +315,21 @@ export const useGameStore = defineStore("gameStore", {
             this.stopTimer();
             const userStatsStore = useUserStatsStore();
             userStatsStore.resetStats();
+            
 
             const completedRooms = Object.keys(this.roomStates).filter(roomName => this.roomStates[roomName].state === 3);
-            axios.post(`/api/library/end`, {
+            let data = {
                 libraryId: this.libraryId,
                 score: this.score,
                 time: this.timeSpent,
                 completed: completedRooms,
-            })
+            };
+            console.log(data)
+            console.log(this.libraryId,
+                this.score,
+                this.timeSpent,
+                completedRooms,)
+            axios.post(`/api/library/end`, data)
                 .then(response => {
                     if (response.data.status === "success") {
                         this.completed = true;

@@ -3,21 +3,29 @@
   <transition name="fade">
     <div v-if="questionVisible" class="question-overlay" @click="closeQuestion">
       <div class="question-backdrop">
+        <!-- Semi-translucent info icon -->
+        <div class="info-icon">i</div>
+        <!-- Completion message when no more questions -->
         <div v-if="question === null" class="completion-message">
           Congratulations, you've completed all questions in this room!
         </div>
-        <div v-else class="question-content"><p v-html="question.text" ></p></div>
+        <!-- Question text -->
+        <div v-else class="question-content">
+          <p v-html="question.text"></p>
+        </div>
+        <!-- Choices -->
         <div v-if="question !== null" class="choices-container">
           <div v-for="(choice, index) in question.choices" :key="index">
             <button
               :class="{
                 correct: choice === answerState.correct,
                 wrong: choice === answerState.wrong,
+                disabledButton: isDisabled
               }"
+              :disabled="isDisabled"
               @click.stop="submitAnswer(choice)"
               v-html="choice"
-            >
-            </button>
+            ></button>
           </div>
         </div>
       </div>
@@ -36,6 +44,7 @@ export default {
         correct: null,
         wrong: null,
       },
+      isDisabled: false, // Tracks whether buttons are temporarily disabled
     };
   },
   methods: {
@@ -47,22 +56,33 @@ export default {
     },
     submitAnswer(choice) {
       const store = useGameStore();
-      const correct = store.factoids[store.currentQuestion].questions[0].correct_choice;
+      const correct =
+        store.factoids[store.currentQuestion].questions[0].correct_choice;
+
       if (correct === choice) {
+        // Correct answer
         this.answerState.correct = choice;
         this.answerState.wrong = null;
       } else {
+        // Wrong answer: disable for 1s, show "wrong" color
         this.answerState.wrong = choice;
         this.answerState.correct = null;
+        this.isDisabled = true;
+        setTimeout(() => {
+          this.isDisabled = false;
+        }, 1000);
       }
+
+      // Proceed with existing logic
       setTimeout(() => {
-        if (store.answerAttempt(correct === choice)){
+        if (store.answerAttempt(correct === choice)) {
+          // Reset after correct attempt or question sequence logic
           this.answerState.wrong = null;
           this.answerState.correct = null;
+        } else {
+          this.$router.push("/login");
         }
-        else{ this.$router.push("/login");}
       }, 300);
-
     },
     closeQuestion() {
       const store = useGameStore();
@@ -70,38 +90,52 @@ export default {
       this.answerState.correct = null;
       this.answerState.wrong = null;
     },
-    format(content){
+    format(content) {
       let regex;
       // Bold
       regex = /\*\*([^*]*?)\*\*/g;
       content = content.replace(regex, "<strong>$1</strong>");
-
       // Italics
       regex = /_([^_]*?)_|\*([^*]*?)\*/g;
       content = content.replace(regex, "<em>$1$2</em>");
       return content;
-    }
+    },
   },
   computed: {
     question() {
       const store = useGameStore();
       if (store.currentQuestion === null) return null;
       const currentFactoid = store.factoids[store.currentQuestion];
-      //console.log(currentFactoid)
-      if (!currentFactoid || !Array.isArray(currentFactoid.questions) || currentFactoid.questions.length === 0) {
+
+      if (
+        !currentFactoid ||
+        !Array.isArray(currentFactoid.questions) ||
+        currentFactoid.questions.length === 0
+      ) {
         console.error("No questions available or invalid questions format");
         return null;
       }
+
       const currentQuestion = currentFactoid.questions[0];
-      if (!currentQuestion || !currentQuestion.question_text || !currentQuestion.correct_choice || !Array.isArray(currentQuestion.wrong_choices)) {
+      if (
+        !currentQuestion ||
+        !currentQuestion.question_text ||
+        !currentQuestion.correct_choice ||
+        !Array.isArray(currentQuestion.wrong_choices)
+      ) {
         console.error("Question structure is incomplete or invalid");
         return null;
       }
-      const choices = [currentQuestion.correct_choice, ...currentQuestion.wrong_choices];
+
+      const choices = [
+        currentQuestion.correct_choice,
+        ...currentQuestion.wrong_choices,
+      ];
       this.shuffleArray(choices);
+
       return {
         text: this.format(currentQuestion.question_text),
-        choices: choices.map(choice => this.format(choice)),
+        choices: choices.map((choice) => this.format(choice)),
       };
     },
     questionVisible() {
@@ -111,7 +145,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .completion-message {
@@ -131,6 +164,7 @@ export default {
 }
 
 .question-backdrop {
+  position: relative; /* So the info icon can be absolutely positioned */
   background-color: var(--background-haze);
   padding: 1em;
   display: flex;
@@ -139,6 +173,21 @@ export default {
   flex-direction: column;
   box-shadow: 0 16px 16px var(--background-color-2t),
     0 -16px 16px var(--background-color-2t);
+}
+
+/* Semi-translucent info icon in the top left */
+.info-icon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  text-align: center;
+  line-height: 24px;
+  font-weight: bold;
+  cursor: default;
 }
 
 .question-content {
@@ -178,6 +227,15 @@ button {
   transition: all ease 0.1s;
 }
 
+/* Correct and wrong answer colors */
+button.correct {
+  background-color: green;
+}
+button.wrong {
+  background-color: red;
+}
+
+/* Fade transition for the entire overlay */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s;
@@ -187,11 +245,21 @@ button {
   opacity: 0;
 }
 
-button.correct {
-  background-color: green;
+/* Disabled visual effect (1s animation) */
+button.disabledButton {
+  pointer-events: none; /* no clicks */
+  animation: fadeDisable 1s forwards;
 }
 
-button.wrong {
-  background-color: red;
+@keyframes fadeDisable {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>

@@ -23,7 +23,7 @@ export const usePopupStore = defineStore('popup', {
     },
     showLibraryInstructions() {
       this.isVisible = true
-      this.message = "<h4>Welcome to Ascendance·☁️</h4><div style='text-align: left;'><br/><ul><li>Answer questions to explore the library.</li><li>Tap a question to learn the answer.</li><li>Wrong answers cost 1 second, race for a spot on the leaderboard.</li><li>After four complete rooms, a final room can appear.</li><li>Complete the final room to start a daily streak and gain levels!</li></ul></div>"
+      this.message = "<h4>Welcome to Ascendance·☁️</h4><div style='text-align: left;'><br/><ul><li>Answer questions to explore the library.</li><li>Tap a question to learn the answer.</li><li>After four complete rooms, a final room can appear.</li><li>Race your friends for a spot on the leaderboard.</li><li>Start a streak by learning something new every day.</li></ul></div>"
     },
   }
 })

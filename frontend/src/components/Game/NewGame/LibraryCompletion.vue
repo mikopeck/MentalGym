@@ -4,10 +4,7 @@
       <div v-if="firstPage" class="pre-completion-content">
         <div class="celebratory-message">🎉 Congratulations! 🎉</div>
         <UserStats />
-        <div class="header-bar">
           <div class="time-spent">Final time: {{ formattedTime }}s</div>
-          <div class="completion-status">Rooms explored: {{gameStore.completion}}%</div>
-        </div>
         <div class="cta-container">
           <CtaButton
             buttonText="Continue"
@@ -465,16 +462,9 @@ export default {
   box-sizing: border-box;
 }
 
-.header-bar {
-  margin: 2.5em auto;
-  display: flex;
-  justify-content: space-between;
-  font-weight: bold;
+.time-spent {  font-size: 1.2rem;
   text-align: center;
-}
-
-.time-spent {
-  font-size: 1.2rem;
+  margin: 1em;
 }
 
 .completion-status {
