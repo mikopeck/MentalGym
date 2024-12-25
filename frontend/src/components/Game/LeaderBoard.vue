@@ -24,7 +24,7 @@
         </thead>
         <tbody>
           <tr v-for="(score, index) in scores" :key="index">
-            <td>{{ score.time }}</td>
+            <td>{{ score.time }}s</td>
             <td>{{ score.email }}</td>
             <td v-if="!isLibraryMode">
               <router-link :to="`/library/${score.library_id}`">

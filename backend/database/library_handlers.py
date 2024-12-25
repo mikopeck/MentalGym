@@ -406,27 +406,26 @@ def get_top_scores_by_unique_users(limit=5):
     subquery = (
         db.session.query(
             LibraryCompletion.user_id,
-            func.max(LibraryCompletion.score).label('max_score')
+            func.min(LibraryCompletion.time).label('min_time')
         )
         .group_by(LibraryCompletion.user_id)
         .subquery()
     )
 
-    # Pull in User.email by joining with the User model
     query = (
         db.session.query(
-            User.email,                  # <-- select User.email
+            User.email,
             LibraryCompletion.library_id,
             LibraryCompletion.time
         )
-        .select_from(LibraryCompletion)  # ensure the FROM is LibraryCompletion
+        .select_from(LibraryCompletion)
         .join(User, LibraryCompletion.user_id == User.id)
         .join(
             subquery,
             (LibraryCompletion.user_id == subquery.c.user_id) & 
-            (LibraryCompletion.score == subquery.c.max_score)
+            (LibraryCompletion.time == subquery.c.min_time)
         )
-        .order_by(subquery.c.max_score.desc())
+        .order_by(subquery.c.min_time.asc())
         .limit(limit)
     )
 
@@ -442,17 +441,16 @@ def get_library_top_scores_by_unique_users(library_id, limit=5):
     subquery = (
         db.session.query(
             LibraryCompletion.user_id,
-            func.max(LibraryCompletion.score).label('max_score')
+            func.min(LibraryCompletion.time).label('min_time')
         )
         .filter(LibraryCompletion.library_id == library_id)
         .group_by(LibraryCompletion.user_id)
         .subquery()
     )
 
-    # Pull in User.email by joining with the User model
     query = (
         db.session.query(
-            User.email,                  # <-- select User.email
+            User.email,
             LibraryCompletion.library_id,
             LibraryCompletion.time
         )
@@ -461,10 +459,10 @@ def get_library_top_scores_by_unique_users(library_id, limit=5):
         .join(
             subquery,
             (LibraryCompletion.user_id == subquery.c.user_id) &
-            (LibraryCompletion.score == subquery.c.max_score)
+            (LibraryCompletion.time == subquery.c.min_time)
         )
         .filter(LibraryCompletion.library_id == library_id)
-        .order_by(subquery.c.max_score.desc())
+        .order_by(subquery.c.min_time.asc())
         .limit(limit)
     )
 
