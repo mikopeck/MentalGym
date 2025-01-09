@@ -184,17 +184,22 @@ def init_library_routes(app):
         subtopic = data.get("subtopic")
         library_id = data.get("libraryId")
 
-        if not user_id:
-            ip = request.remote_addr
-            if not check_generation_allowed(ip, 'room'):
-                return jsonify(status="error", message="Room generation limit reached."), 403
-
         if not subtopic:
             return jsonify(status="error", message="No subtopic provided"), 400
         if not library_id:
             return jsonify(status="error", message="No library ID provided"), 400
 
-
+        # Attempt to retrieve existing room contents
+        existing_content = lbh.retrieve_library_room_contents(library_id, subtopic)
+        if existing_content:
+            return jsonify(status="success", data=existing_content)
+        
+        # If no content exists, generate new content
+        if not user_id:
+            ip = request.remote_addr
+            if not check_generation_allowed(ip, 'room'):
+                return jsonify(status="error", message="Room generation limit reached."), 403
+            
         if user_id:
             within_limit, message = is_within_limit(current_user)
             if not within_limit:
@@ -202,15 +207,7 @@ def init_library_routes(app):
         elif not lbh.is_center_room(library_id, subtopic):
             return jsonify(status="error", message="Please login to continue."), 400
 
-        # Attempt to retrieve existing room contents
-        existing_content = lbh.retrieve_library_room_contents(library_id, subtopic)
-        if existing_content:
-            if not user_id:
-                mark_generation_done(ip, 'room')
-            return jsonify(status="success", data=existing_content)
-
         try:
-            # If no content exists, generate new content
             generated_content = lgn.generate_libroom_content(user_id, subtopic, library_id)
             lbh.save_library_room_contents(library_id, subtopic, generated_content)
             existing_content = lbh.retrieve_library_room_contents(library_id, subtopic)
