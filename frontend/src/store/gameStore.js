@@ -1,7 +1,6 @@
 // src/store/gameStore.js
 import { defineStore } from "pinia";
 import axios from "axios";
-
 import { useAuthStore } from "@/store/authStore";
 import { usePopupStore } from "@/store/popupStore.js";
 import { useUserStatsStore } from "@/store/userStatsStore";
@@ -40,6 +39,7 @@ export const useGameStore = defineStore("gameStore", {
         timerActive: false,
         bestTime: 0,
         completion: 0,
+        noGeneratedRooms: false
     }),
     actions: {
         setId(libraryId) {
@@ -47,7 +47,7 @@ export const useGameStore = defineStore("gameStore", {
             this.libraryId = libraryId;
         },
         startGame() {
-            if (this.timeSpent != 0){
+            if (this.timeSpent !== 0) {
                 this.hideGameInfo();
                 return;
             }
@@ -67,9 +67,7 @@ export const useGameStore = defineStore("gameStore", {
             this.stopTimer();
         },
         toggleFactoid() {
-            if(this.showStart || this.showNext){
-                return;
-            }
+            if (this.showStart || this.showNext) return;
             if (this.factoidVisible == null) {
                 this.questionVisible = false;
                 this.factoidVisible = this.currentQuestion;
@@ -80,25 +78,26 @@ export const useGameStore = defineStore("gameStore", {
         },
         answerAttempt(correct) {
             if (correct) {
-                this.score = this.score + this.multiplier;
-                this.multiplier = this.multiplier + 1;
+                this.score += this.multiplier;
+                this.multiplier += 1;
                 this.currentQuestion += 1;
-
                 if (this.currentQuestion === 2 && !this.finalTest) {
-
                     const authStore = useAuthStore();
                     if (authStore.loggedIn) {
                         this.prepareNextRooms();
                     } else {
-                        const popupStore = usePopupStore();
-                        popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
-                        return false;
+                        this.prepareNextGeneratedRooms();
                     }
                 } else if (this.currentQuestion === 4 && !this.finalTest) {
-                    this.questionVisible = false;
-                    this.factoidVisible = null;
-                    this.stopTimer();
-                    this.showNext = true;
+                    if (this.noGeneratedRooms) {
+                        const popupStore = usePopupStore();
+                        popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
+                    } else {
+                        this.questionVisible = false;
+                        this.factoidVisible = null;
+                        this.stopTimer();
+                        this.showNext = true;
+                    }
                 } else if (this.currentQuestion === 5 && this.finalTest) {
                     this.questionVisible = false;
                     this.factoidVisible = null;
@@ -111,56 +110,69 @@ export const useGameStore = defineStore("gameStore", {
                 if (!this.incorrectQuestionAnswers.includes(currentFactoid)) {
                     this.incorrectQuestionAnswers.push(currentFactoid);
                 }
-
                 if (this.incorrectQuestionAnswers.length >= 4) {
-                    const newRoomName = 'Revision room ' + (Object.keys(this.roomStates).length + 1);
-
+                    const newRoomName = "Revision room " + (Object.keys(this.roomStates).length + 1);
                     if (!this.roomStates[newRoomName]) {
                         this.roomNames.push(newRoomName);
                         this.roomStates[newRoomName] = {
                             state: 2,
-                            factoids: this.incorrectQuestionAnswers.slice(),
+                            factoids: this.incorrectQuestionAnswers.slice()
                         };
                     }
-
                     this.incorrectQuestionAnswers = [];
                 }
                 this.multiplier = Math.round(5 + Math.sqrt(Math.max(0, this.multiplier - 5)));
             }
             return true;
         },
-
+        async prepareNextGeneratedRooms() {
+            try {
+                const response = await axios.post("/api/library/available-generated-rooms", { libraryId: this.libraryId });
+                if (response.data.status === "success") {
+                    const allAvailableRooms = response.data.data.rooms || [];
+                    if (allAvailableRooms.length === 0) {
+                        this.noGeneratedRooms = true;
+                        return;
+                    }
+                    allAvailableRooms.forEach((roomName) => {
+                        if (!this.roomStates[roomName]) {
+                            this.roomStates[roomName] = { state: 1, factoids: [] };
+                            this.roomNames.push(roomName);
+                        }
+                    });
+                    const roomsShuffled = [...allAvailableRooms];
+                    for (let i = roomsShuffled.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [roomsShuffled[i], roomsShuffled[j]] = [roomsShuffled[j], roomsShuffled[i]];
+                    }
+                    this.nextRooms = roomsShuffled.slice(0, 3);
+                } else {
+                    console.error("Failed to retrieve next generated rooms:", response.data.message);
+                }
+            } catch (error) {
+                console.error("Error retrieving next generated rooms:", error);
+            }
+        },
         async prepareNextRooms() {
             let roomsToUnlock = 2;
             const unlockedRoomsCount = Object.values(this.roomStates).filter(room => room.state > 1).length;
             if (unlockedRoomsCount === 1) {
                 roomsToUnlock = 3;
             }
-
             const lockedRooms = Object.keys(this.roomStates).filter(roomName => this.roomStates[roomName].state === 0);
-
-            // Shuffle the locked rooms array to make the selection random
             for (let i = lockedRooms.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [lockedRooms[i], lockedRooms[j]] = [lockedRooms[j], lockedRooms[i]];
             }
-
-            // Unlock 3 random rooms (or less if there are fewer locked rooms)
             for (let i = 0; i < roomsToUnlock && i < lockedRooms.length; i++) {
                 const roomName = lockedRooms[i];
                 this.roomStates[roomName].state = 1;
             }
-
-            // Update available rooms after unlocking
             const availableRooms = Object.keys(this.roomStates).filter(roomName => {
                 const roomState = this.roomStates[roomName];
                 return roomState.state === 1 || roomState.state === 2;
             });
-
-            this.nextRooms = availableRooms.length <= 3
-                ? availableRooms
-                : availableRooms.slice(0, 3);
-
+            this.nextRooms = availableRooms.length <= 3 ? availableRooms : availableRooms.slice(0, 3);
             const completedRoomsCount = Object.values(this.roomStates).filter(room => room.state === 3).length;
             if (completedRoomsCount > 3) {
                 let makeFinalTest = Math.random() < 0.7;
@@ -185,14 +197,12 @@ export const useGameStore = defineStore("gameStore", {
                             if (loadedRoomFactoids.length === 0) break;
                         }
                     }
-
-                    const finalTestRoomName = `Final Test Room`;
+                    const finalTestRoomName = "Final Test Room";
                     this.roomStates[finalTestRoomName] = {
                         state: 2,
                         factoids: finalTestFactoids
                     };
                     this.roomNames.push(finalTestRoomName);
-
                     if (this.nextRooms.length > 0) {
                         const randomIndex = Math.floor(Math.random() * this.nextRooms.length);
                         this.nextRooms[randomIndex] = finalTestRoomName;
@@ -201,7 +211,6 @@ export const useGameStore = defineStore("gameStore", {
                     }
                 }
             }
-
             for (const roomName of this.nextRooms) {
                 if (this.roomStates[roomName].state === 1) {
                     await this.loadRoom(roomName);
@@ -214,7 +223,6 @@ export const useGameStore = defineStore("gameStore", {
                 const response = await axios.get(`/api/library/${libraryId}`);
                 if (response.data.status === "success") {
                     const data = response.data.data;
-
                     this.roomNames = data.room_names || [];
                     this.score = data.score || 0;
                     this.bestTime = data.best_time || 0;
@@ -230,7 +238,6 @@ export const useGameStore = defineStore("gameStore", {
                     this.likes = data.likes || 0;
                     this.userId = data.user_id || null;
                     this.tutorial = data.tutorial || false;
-
                     this.roomStates = {};
                     this.roomNames.forEach((roomName) => {
                         let state = 0;
@@ -238,16 +245,15 @@ export const useGameStore = defineStore("gameStore", {
                             state = 2;
                             this.roomStates[roomName] = {
                                 state: state,
-                                factoids: response.data.room_data.factoids || [],
+                                factoids: response.data.room_data.factoids || []
                             };
                         } else {
                             this.roomStates[roomName] = {
                                 state: state,
-                                factoids: [],
+                                factoids: []
                             };
                         }
                     });
-
                     if (this.tutorial) {
                         const popupStore = usePopupStore();
                         popupStore.showLibraryInstructions();
@@ -265,7 +271,10 @@ export const useGameStore = defineStore("gameStore", {
                     console.error(`Trying to load ${room_name} in state ${this.roomStates[room_name].state}.`);
                     return;
                 }
-                const response = await axios.post("/api/library/room", { libraryId: this.libraryId, subtopic: room_name });
+                const response = await axios.post("/api/library/room", {
+                    libraryId: this.libraryId,
+                    subtopic: room_name
+                });
                 if (response.data.status === "success") {
                     this.roomStates[room_name].state = 2;
                     this.roomStates[room_name].factoids = response.data.data.factoids;
@@ -278,7 +287,7 @@ export const useGameStore = defineStore("gameStore", {
                     }
                 }
             } catch (error) {
-                if (error.response.status === 403) {
+                if (error.response && error.response.status === 403) {
                     const popupStore = usePopupStore();
                     popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
                     return false;
@@ -306,7 +315,7 @@ export const useGameStore = defineStore("gameStore", {
                 this.factoids = this.factoids.map(factoid => {
                     return {
                         ...factoid,
-                        text: 'No cheating lol'
+                        text: "No cheating lol"
                     };
                 });
             }
@@ -315,21 +324,17 @@ export const useGameStore = defineStore("gameStore", {
             this.stopTimer();
             const userStatsStore = useUserStatsStore();
             userStatsStore.resetStats();
-            
-
-            const completedRooms = Object.keys(this.roomStates).filter(roomName => this.roomStates[roomName].state === 3);
+            const completedRooms = Object.keys(this.roomStates).filter(
+                roomName => this.roomStates[roomName].state === 3
+            );
             let data = {
                 libraryId: this.libraryId,
                 score: this.score,
                 time: this.timeSpent,
-                completed: completedRooms,
+                completed: completedRooms
             };
-            console.log(data)
-            console.log(this.libraryId,
-                this.score,
-                this.timeSpent,
-                completedRooms,)
-            axios.post(`/api/library/end`, data)
+            axios
+                .post(`/api/library/end`, data)
                 .then(response => {
                     if (response.data.status === "success") {
                         this.completed = true;
@@ -361,9 +366,7 @@ export const useGameStore = defineStore("gameStore", {
         formattedTime() {
             const minutes = Math.floor(this.timeSpent / 60);
             const seconds = this.timeSpent % 60;
-            return `${minutes.toString().padStart(2, "0")}:${seconds
-                .toString()
-                .padStart(2, "0")}`;
+            return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
         },
         resetGameState() {
             this.libraryId = null;
@@ -393,6 +396,7 @@ export const useGameStore = defineStore("gameStore", {
             this.likes = 0;
             this.bestTime = 0;
             this.completion = 0;
+            this.noGeneratedRooms = false;
             this.resetTimer();
         }
     }
