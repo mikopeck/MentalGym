@@ -89,9 +89,10 @@ export const useGameStore = defineStore("gameStore", {
                         this.prepareNextGeneratedRooms();
                     }
                 } else if (this.currentQuestion === 4 && !this.finalTest) {
-                    if (this.noGeneratedRooms) {
+                    if (this.noGeneratedRooms) {console.log("wehere")
                         const popupStore = usePopupStore();
                         popupStore.showPopup("You have reached the limit.</br>Please login to continue.");
+                        return false;
                     } else {
                         this.questionVisible = false;
                         this.factoidVisible = null;

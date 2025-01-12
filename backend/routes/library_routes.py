@@ -217,6 +217,30 @@ def init_library_routes(app):
         except Exception as e:
             return jsonify(status="error", message=f"Failed to generate content {e}"), 500
     
+    @app.route('/api/library/available-generated-rooms', methods=['POST'])
+    def get_available_generated_rooms():
+        try:
+            data = request.get_json()
+            library_id = data.get('libraryId')
+                
+            if not library_id:
+                return jsonify(status="error", message="No library ID provided"), 400
+
+            # Call the separate DB logic function
+            rooms = lbh.get_available_generated_rooms(library_id)
+            print(rooms)
+            # Success response
+            return jsonify({
+                "status": "success",
+                "data": {
+                    "rooms": rooms  # could be an empty list if none
+                }
+            }), 200
+
+        except Exception as e:
+            return jsonify(status="error", message=f"Failed to generate content {e}"), 500
+
+
     @app.route("/api/library/end", methods=["POST"])
     def end_game():
         data = request.get_json()

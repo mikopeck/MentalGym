@@ -397,6 +397,20 @@ def update_library_image(library_id, image_url):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+def get_available_generated_rooms(library_id):
+    library = Library.query.get(library_id)
+    if not library:
+        return jsonify({"message": "Library not found"}), 404
+
+    room_names = library.room_names if library.room_names else []
+    available_rooms = []
+
+    for room_name in room_names:
+        factoids_count = LibraryFactoid.query.filter_by(library_id=library_id, room_name=room_name).count()
+        if factoids_count >= 4 and library.library_topic != room_name:
+            available_rooms.append(room_name)
+
+    return available_rooms
 
 def get_top_scores_by_unique_users(limit=5):
     """
